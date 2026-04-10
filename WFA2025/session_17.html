@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing with Subjective Beliefs</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link active">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Asset Pricing with Subjective Beliefs</h1>        <div class="paper-card">
+            <div class="paper-title">Index Investing and Sentiment Spillover</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Adem Atmaz (Purdue University), Zibo Zhou (Purdue University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=985992" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、インデックス銘柄と非インデックス銘柄の間の主要なクロスセクションの相違を調整することができるインデックス投資のダイナミック・モデルを開発した。我々のモデルでは、外挿的な期待を持つ投資家がセンチメントを作り出し、インデックス投資がインデックス銘柄のセンチメントを他の全てのインデックス銘柄に波及させる。主にこのスピルオーバー・メカニズムに起因して、インデックス投資家のほとんどが外挿型である場合、インデックス銘柄の株価はより高く、よりボラティリティが高いこと、他のインデックス銘柄とのコモーブがより強いこと、より強い負の価格自己相関を示すこと、同程度の非インデックス銘柄よりも取引量が多いことを発見しました。また、我々のモデルは、最近観測された「消えたインデックス効果」を調整し、インデックス・ファンドのフロー・パフォーマンス関係、投資家の主観的信念に対するポートフォリオの反応、インデックス投資の厚生コストに関する新しい示唆を与える。</p>
+        <p class="abstract-text en">We develop a dynamic model of index investing that can reconcile key cross-sectional differences between index and non-index stocks. In our model, investors with extrapolative expectations create sentiment, and index investing spills the sentiment on an index stock to all other index stocks. Primarily due to this spillover mechanism, we find that when index investors are mostly extrapolators, all consistent with empirical evidence, index stocks have higher and more volatile prices, comove more with other index stocks, exhibit stronger negative price autocorrelation, and have higher trading volume than comparable non-index stocks. Our model also reconciles the recently observed “disappearing index effect” and delivers novel implications on the flow-performance relation for index funds, the response of investor portfolios to their subjective beliefs, and the welfare costs of index investing.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mental Models and Financial Forecasts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francesca Bastianello (University of Chicago), Paul Décaire (Arizona State University), Marius Guenzel (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1012900" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、金融プロフェッショナルのメンタル・モデル（主観的な信念を説明するために使用するナラティブ）を明らかにする。82,000件の株式レポートを用いて、トピック、評価チャネル、センチメント、時間的見通しを組み合わせた350万件のナラティブを抽出するために大規模言語モデル（LLM）を用いた。我々の出力の信頼性を検証するために、多段階のLLMベースのアプローチと新しい診断ツールを導入した。その結果、3つの知見が得られた。第一に、ナラティブの中心は限られたトピックであり、主にトップライン・アイテムに焦点を当てている。また、ナラティブの大半は未来志向であり、過去よりも未来に焦点を当てた議論が3倍多い。第二に、予測者間のトピック・フォーカス、センチメント、時間的見通しの違いは、主観的な定量予測の不一致の程度を強く予測する。最後に、平均的なナラティブのセンチメントとトップライン項目に焦点を当てたナラティブの時系列変動は、シラーのCAPEレシオ（ρ=0.84とρ=0.42）と密接に連動し、ナラティブの横断的変動は主要な資産価格パターンを予測する。成長株に関連するナラティブはバリュー株に関連するナラティブよりも楽観的かつ前向きであり、これは予測者が成長株には平均以上の成長ポテンシャルがあると（誤って）認識していることと一致している。全体として、本稿は「予測者が何を信じるか」と「なぜ信じるか」のギャップを埋める一助となる。</p>
+        <p class="abstract-text en">We uncover financial professionals’ mental models—the narratives they use to explain their subjective beliefs. Using 82,000 equity reports, we prompt large language models (LLMs) to extract 3.5 million narratives, each combining a topic, valuation channel, sentiment, and time outlook. To validate the reliability of our output, we introduce a multi-step LLM-based approach and new diagnostic tools. We establish three sets of findings. First, narratives are centered around a limited set of topics, primarily focused on top-line items, with variation in topic focus over time and across industries. Narratives are mostly forward-looking, with three times as many arguments focusing on the future as on the past. Second, differences in topic focus, sentiment, and time outlook across forecasters strongly predict the extent of disagreement in their subjective quantitative forecasts. Lastly, time-series variation in the average narrative’s sentiment and in the average narrative’s focus on top-line items closely track Shiller’s CAPE ratio (ρ = 0.84 and ρ = 0.42), and the cross-sectional variation in narratives predicts key asset pricing patterns. Narratives associated with growth stocks are more optimistic and forward-looking than those for value stocks, consistent with forecasters (mis)perceiving growth stocks as having above-average growth potential. Overall, this paper helps bridge the gap between ‘what forecasters believe’ and ‘why they believe it.’</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A Model-Free Assessment of the Importance of Subjective Beliefs for Asset Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Paymon Khorrami (Duke University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1024268" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">資産価格決定において重要なのは、信念のダイナミクスなのか、それともリスクとリスク態度なのか？この古典的な問いに新たな光を当てるために、私は調査データと主観的信念バージョンの確率的割引係数（SDF）のボラティリティ・バウンズを組み合わせて使用する。投資家の限界効用に関連するリスクと主観的信念のダイナミクスに起因するSDFのボラティリティの下界を推定する。この推計は、リスク、特に長期リスクがSDFのボラティリティの少なくとも半分を占めることを示唆している。SDFのボラティリティに対する信念の直接的寄与が小幅（約25％）である外挿モデルの例で、私の推計を説明することができる。この例はまた、主観的リスクという新しいメカニズムの可能性を強調している。主観的リスクとは、誘発された限界効用変動を通じて、信念が資産価格に間接的に影響を与えることである。</p>
+        <p class="abstract-text en">Are belief dynamics or risks and risk attitudes more important for asset pricing? Al-lowing both, I use survey data combined with subjective-belief versions of stochasticdiscount factor (SDF) volatility bounds to shed new light on this classic question. Iestimate lower bounds for the volatility of the SDF attributable to (i) risks relevant forinvestor marginal utility, versus (ii) subjective belief dynamics. The estimates sug-gest that risks, particularly long-term risks, make up at least half of SDF volatility.An example extrapolation model with a modest direct contribution of beliefs to SDFvolatility (about 25%) can account for my estimates. This example also highlights thepotential for a novel mechanism, subjective risk, which is the indirect impact of beliefshave on asset prices through induced marginal utility volatility.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

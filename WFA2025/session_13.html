@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Deposits</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link active">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Bank Deposits</h1>        <div class="paper-card">
+            <div class="paper-title">The Economics of Reciprocal Deposit Insurance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Edward T. Kim (University of Michigan), Shohini Kundu (University of California-Los Angeles), Amiyatosh Purnanandam (University of Michigan)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1020572" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行が大口の預金を分割して他の銀行に預け、相殺することができる金融イノベーションである相互預金を用いて、預金保険の金融安定性への影響を検証する。一部の銀行がネットワークに参加するインセンティブを与えるような規制の変更を利用し、2023年の銀行危機の際に、より高い保険カバー率によって銀行が預金流出を食い止めることができたことを示す。ネットワーク銀行はより低い預金金利を支払い、規模を拡大し、地域の預金市場シェアを拡大したが、その一方で、より大きな金利リスクへのエクスポージャーを引き受けた。預金保険のトレードオフと銀行部門の産業組織への影響について議論する。</p>
+        <p class="abstract-text en">We examine the financial stability implications of deposit insurance using reciprocal deposits, a financial innovation through which banks can break up large deposits and place them with others in an offsetting manner. Exploiting a regulatory change that incentivized some banks to join the network, we show that higher insurance coverage allowed banks to stem deposit outflows during the 2023 banking crisis. Network banks paid lower deposit rates, grew larger, and expanded their local deposit market share, while assuming greater exposure to interest rate risk. We discuss the trade-offs of deposit insurance and its impact on the banking sector's industrial organization.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Banking on Deposit Relationships: Implications for Hold-Up Problems in the Loan Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jin Cao (Norges Bank), Emilia Garcia-Appendini (Norges Bank), Cédric Huylebroek (KU Leuven)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=972720" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業への貸し出しによって、内部銀行は外部銀行よりも情報優位性を獲得し、借り手をホールドアップして情報レントを引き出すことが可能になる。ノルウェーにおける企業-銀行間の預金・貸出関係に関する独自のデータを用いて、企業と外部銀行間の預金関係が内部銀行の情報優位性を緩和し、ホールドアップを減衰させることを示す。この結果は、預金保険の閾値によって誘発される預金関係の準ランダムな変動を用いても成立し、企業の預金口座の活動が（クロスセリングではなく）外部銀行に貴重な情報を提供するという事実によってもたらされる。全体として、本稿は、預金関係が貸し手の競争に影響を与えるという初めての証拠を提供している。</p>
+        <p class="abstract-text en">By lending to a firm, inside banks gain an informational advantage over outside banks, enabling them to hold up borrowers and extract informational rents. Using unique data on firm-bank deposit and lending relationships in Norway, we show that deposit relationships between firms and outside banks mitigate inside banks’ informational advantage, thereby attenuating hold-up. This result holds using quasi-random variation in deposit relationships induced by the deposit insurance threshold, and is driven by the fact that firms’ deposit account activity provides valuable information to outside banks (not cross-selling). Overall, our paper offers the first evidence that deposit relationshipsimpact lender competition.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Sticky Deposits, not Depositors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bronson Argyle (Brigham Young University), Benjamin Iverson (Brigham Young University), Jason Kotter (Brigham Young University), Taylor Nadauld (Brigham Young University), Christopher Palmer (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1013572" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、米国信用組合152行の1,000万口座以上の口座レベルデータを用いて、預金の粘着性を検証する。預金分布に著しい歪度があり、10％の預金者が預金総額の70％を支配していることが分かった。預金粘着性の総計は、高バランスの預金者によって牽引されている。預金保有の機会費用における外生的変動としてFed Funds金利の予期せぬ変化を用い、低バランス預金者は金利の変化に敏感であるが、高バランス預金者はそうではないことを示す。また、高バランス預金者は、特定の残高閾値における不連続な金利ジャンプに対して比較的鈍感であり、口座残高の大幅な減少に続く長期的な不活動期間を経験しやすい。我々の証拠は、預金粘着性が、長期貯蓄のためではなく流動性プールとして使用されている比較的少数の高バランス口座によって引き起こされていることを示唆している。</p>
+        <p class="abstract-text en">This paper examines deposit stickiness using account-level data from over 10 million accounts across 152 U.S. credit unions. We find significant skewness in deposit distributions, with 10% of depositors controlling 70% of total deposits. Aggregate deposit stickiness is driven by high-balance depositors. Using unexpected changes in Fed Funds rates as exogenous variation in the opportunity cost of holding deposits, we show that low-balance depositors are sensitive to changes in interest rates, but high-balance depositors are not. High-balance depositors are also relatively insensitive to discontinuous interest rate jumps at specific balance thresholds and are more likely to experience periods of prolonged inactivity followed by large reductions in account balances. Our evidence suggests that deposit stickiness is driven by relatively few high-balance accounts that are used as liquidity pools rather than for long-term savings.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

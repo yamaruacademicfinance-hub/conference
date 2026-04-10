@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Households</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link active">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Vulnerable Households</h1>        <div class="paper-card">
+            <div class="paper-title">Consumption Wedges: Measuring and Diagnosing Distortions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sasha Indarte (University of Pennsylvania), Raymond Kluender (Harvard University), Ulrike Malmendier (University of California-Berkeley), Michael Stepner (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=987504" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">正統的な消費-貯蓄モデルからの乖離は、金融制約や行動選好を含む様々な歪みに起因している。我々は、このような歪みが消費に与える影響を、実際の消費と「摩擦のない」反実仮想消費との間のミクロレベルのくさびとして測定する新しい十分統計アプローチを開発した。我々のアプローチは、幅広いクラスのモデルに適用可能であり、標準的なウェッジ測定アプローチとは異なり、完全情報合理的期待（FIRE）の仮定に依存しないため、FIREからの乖離から摩擦や行動選好の影響を分離することができる。摩擦が異なればウェッジの性質も異なるため、ウェッジの推定値はモデルを区別するための診断として用いることができる。このアプローチを実施するために、我々は経済信念に関する新しい調査を実施し、流動性の低い富を持つ主に中所得の米国消費者の銀行口座取引データとリンクさせた。その結果、消費の選択が上方にも下方にも大きく歪んでいることがわかった。ウェッジの中央値は、絶対値で摩擦のない消費の52％であり、75％が負のウェッジ（過小消費）、25％が正のウェッジ（過剰消費）であった。金融制約が負のウェッジしか生み出さないので、低流動性家計の消費決定を合理化するためには、追加的または代替的な歪み（現在バイアスや消費者慣性など）が必要である。</p>
+        <p class="abstract-text en">Deviations from canonical consumption-savings models have been attributed to a wide range of distortions, including financial constraints and behavioral preferences. We develop a new sufficient statistics approach to measure the impact of such distortions on consumption as a micro-level wedge between actual consumption and a counterfactual ”frictionless” consumption. Our approach is applicable to a broad class of models and, unlike standard wedge measurement approaches, does not rely on an assumption of full-information rational expectations (FIRE), which allows us to isolate the influence of frictions and behavioral preferences from deviations from FIRE. Since different frictions imply different properties of wedges, the estimates of wedges can be used as a diagnostic to distinguish between models. To implement this approach, we field a new survey of economic beliefs, which we link to bank account transactions data for a population of predominantly middle-income US consumers with low liquid wealth. We find that consumption choices are significantly distorted both upward and downward. The median wedge is 52% of frictionless consumption in absolute value, with 75% having negative wedges (under-consuming) and 25% having positive wedges (over-consuming). Since financial constraints only generate negative wedges, additional or alternative distortions (such as present bias or consumer inertia) are necessary to rationalize the consumption decisions of low-liquidity households.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Housing and Fertility</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Dimas Fazio (National University of Singapore), Tarun Ramadorai (Imperial College London), Janis Skrastins (Washington University-St. Louis), Bernardus van Doornik (Central Bank of Brazil)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=988904" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、ブラジルの住宅融資抽選による無作為変動を用いて、住宅へのアクセスが出生率に与える影響を検証する。住宅を取得することで、子どもを持つ確率が平均で3.8％、子どもの数が3.2％増加することが分かった。20-25歳の場合、対応する効果は32％と33％であり、40歳以上では出生率の増加は見られない。20歳の場合、30歳で住宅を取得した場合と比較して、すぐに住宅を取得した場合の生涯出生率の増加は2倍である。出生率の増加は、住宅の質が低く、収入に比して家賃負担が大きい地域の世帯、世帯収入が低く、女性の収入シェアが低い世帯ほど強い。これらの結果は、住宅クレジットや物理的スペースの制約を緩和することで、出生率が大幅に増加することを示唆している。</p>
+        <p class="abstract-text en">This paper examines the impact of access to housing on fertility rates using random variation from housing credit lotteries in Brazil. We find that obtaining housing increases the average probability of having a child by 3.8\% and the number of children by 3.2\%. For 20-25-year-olds, the corresponding effects are 32\% and 33\%, with no increase in fertility for people above age 40. The lifetime fertility increase for a 20-year old is twice as large from obtaining housing immediately relative to obtaining it at age 30. The increase in fertility is stronger for households in areas with lower quality housing, greater rental expenses relative to income, and those with lower household income and lower female income share. These results suggest that alleviating housing credit and physical space constraints can significantly increase fertility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Gambling Away Stability: Sports Betting's Impact on Vulnerable Households</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Scott Baker (Northwestern University), Justin Balthrop (University of Kansas), Mark Johnson (Brigham Young University), Jason Kotter (Brigham Young University), Kevin Pisciotta (University of Kansas)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1005200" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">家計取引データと時差差分法を用いて、オンライン・スポーツベッティングが家計の投資、支出、債務管理の意思決定に及ぼす因果効果を推計する。合法化後、スポーツベッティングは急速に普及し、参加者数もベット頻度も時間とともに増加する。この増加は、他のギャンブルや消費に取って代わることはないが、リスクの高い賭けが正の期待値の投資を押しのけるため、貯蓄を著しく減少させる。このような影響は経済的に困窮している家計に集中し、クレジットカードの負債が増加し、利用可能なクレジットが減少し、当座貸越の頻度が上昇する。この調査結果は、オンライン・スポーツベッティングが脆弱な家計に及ぼす潜在的な悪影響を浮き彫りにしている。</p>
+        <p class="abstract-text en">We estimate the causal effect of online sports betting on households' investment, spending, and debt management decisions using household transaction data and a staggered difference-in-differences framework. Following legalization, sports betting spreads quickly, with both the number of participants and frequency of bets increasing over time. This increase does not displace other gambling or consumption but significantly reduces savings, as risky bets crowd out positive expected value investments. These effects concentrate among financially constrained households, as credit card debt increases, available credit decreases, and overdraft frequency rises. Our findings highlight the potential adverse effects of online sports betting on vulnerable households.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

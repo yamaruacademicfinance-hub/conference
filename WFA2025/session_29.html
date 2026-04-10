@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link active">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Macro Finance</h1>        <div class="paper-card">
+            <div class="paper-title">A Macro-Finance Model of Mortgage Structure: Financial Stability & Risk Sharing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vadim Elenev (Johns Hopkins University), Lu Liu (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1003212" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅ローンの仕組みは、金融政策の伝達だけでなく、金融の安定にとっても重要である。金利変動型住宅ローン（ARM）制度では、金利上昇は住宅ローン返済額の増加によるデフォルト率の上昇を引き起こす。固定金利住宅ローン（FRM）制度では、家計は保護されるが、銀行は金利上昇にさらされる可能性が高くなる。異なる住宅ローン制度の下でのこれらの競合メカニズムを評価するために、我々は柔軟な住宅ローン契約構造、借り手、仲介部門を持つ定量的モデルを構築した。我々のアプローチは、借り手の内生的なデフォルト決定と、金利と信用リスク、および仲介機関の純資産との相互作用を反映した、住宅ローン金利とリスクプレミアに対する仲介機関の均衡価格付け効果を捉えるものである。金融安定リスクは住宅ローン構造において「U字型」であることを我々は発見した：ARMの支払いは金利に対してより敏感である一方、デフォルトは仲介機関の純資産が高い状態で起こり、その結果、ベンチマークであるFRM経済と比較して、世界の制約された状態におけるリスクプレミアは低くなる。その結果、中間的な住宅ローンの固定期間は、仲介者の純資産の変動を最小化し、総体的なリスクの分担を改善する。この結果は、住宅ローンの設計、マクロプルーデンス、金融政策に示唆を与えるものである。</p>
+        <p class="abstract-text en">Mortgage structure matters not only for monetary policy transmission, but also for financial stability. In an adjustable-rate mortgage (ARM) regime, interest rate rises cause higher default rates due to increases in mortgage payments. In a fixed-rate mortgage (FRM) regime, households are protected, but banks are potentially more exposed to rate rises. To evaluate these competing mechanisms under different mortgage regimes, we build a quantitative model with flexible mortgage contract structures, borrowers, and an intermediary sector. Our approach captures borrowers’ endogenous default decisions and intermediaries’ equilibrium pricing effects on mortgage rates and risk premia, reflecting the interaction between interest rate and credit risks, and intermediary net worth. We find that financial stability risks are “U-shaped” in mortgage structure: while ARM payments are more sensitive to interest rates, defaults happen in states when intermediary net worth is high, resulting in lower risk premia in constrained states of the world compared to the benchmark FRM economy. As a result, an intermediate mortgage fixation length minimizes the volatility of intermediary net worth and improves the sharing of aggregate risks. Our findings have implications for mortgage design, macroprudential, and monetary policy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Growth-Indexed Securities</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Stavros Panageas (University of California-Los Angeles)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=993132" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">無限に生きる代表エージェントをモデルとするマクロ金融モデルは、通常、（a）株式プレミアムは総体リスクに対する補償を反映し、（b）長期的なリスク調整後の消費成長率はリスクフリー・レートよりも小さい（``transversality condition''）ことを示唆している。成長率連動債の国際的な歴史的経験からは、総体変動のリスク・プレミアムを分離するこれらの債券は、中程度のリスク・プレミアムしか求められないことが示唆される。総体的な変動に対してヘッジされた株式投資は、依然としてかなりのエクイティ・プレミアムを徴収しており、エクイティ・プレミアムが総体的なリスクに対する単なる補償ではないことを示唆している。加えて、リスク調整後のGDP成長率はリスク・フリー・レートとほぼ同じ（あるいはわずかに高い）であり、標準的なマクロ・ファイナンス・モデルの基本的な考え方のひとつに疑問を投げかけている。この結果は、政府債務のプライシングに関する最近のいくつかのパズルに影響を与える可能性がある。</p>
+        <p class="abstract-text en">Macro-finance models featuring an infinitely-lived, representative agent typically imply that (a) the equity premium reflects compensation for aggregate risk and (b) the long-run, risk-adjusted growth rate of consumption is smaller than the risk-free rate (``transversality condition''). The international historical experience with growth-indexed bonds suggests that these bonds, which isolate the risk premium of aggregate fluctuations, command only a moderate risk premium. Equity investments that that are hedged against aggregate fluctuations still command a sizable equity premium, suggesting that the equity premium is not just compensation for aggregate risk. In addition, the risk-adjusted GDP-growth rate is roughly the same (and slightly higher) than the risk-free rate, which calls into question one of the basic tenets of standard macro-finance models. The findings have potential implications for some recent puzzles pertaining to the pricing of government debt.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Data, Markups, and Asset Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexandre Corhay (University of Toronto), Kejia Hu (University of Oxford), Jun Li (University of Warwick), Jincheng Tong (University of Toronto), Chi-Yang Tsou (University of Manchester)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1002372" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、データ技術が企業の市場力と資産価格にどのような影響を与えるかを調査する。データサイエンティストの比率が高い企業ほど、マークアップが大きく、売上予測の誤差が小さいことを指標とした情報の質が高く、株式リターンが高い。具体的には、企業のデータサイエンティスト比率に基づくロング・ショート・ポートフォリオ戦略は、年間約4％の有意な超過リターンを生み出している。これらの実証的知見を定量的に合理化するために、我々は、企業が観察されていない消費者の嗜好について学習するためにデータサイエンティストを最適に雇用する異質な企業モデルを開発した。このモデルは、企業がいかにデータによって需要予測の精度を向上させ、より高いマークアップを引き出すことができるかを示している。重要なことは、供給制約のある企業はデータ・サイエンティストを雇用するインセンティブが強く、データ・サイエンティストの雇用が反循環的に行われ、それが営業レバレッジ・チャネルを通じて総体リスクへのエクスポージャーを増幅させるということである。我々はモデルのメカニズムを裏付ける実証的証拠を提供する。</p>
+        <p class="abstract-text en">This paper investigates how data technology affects firms' market power and asset prices. Using a novel dataset tracking firms' employment of data scientists, we document three key empirical findings: firms with higher proportions of data scientists exhibit larger markups, have higher information quality proxied by lower sales forecast errors, and earn higher stock returns. Specifically, a long-short portfolio strategy based on firms' data scientist ratios generates significant annual excess returns of approximately 4%. To quantitatively rationalize these empirical findings, we develop a heterogeneous firm model in which firms optimally hire data scientists to learn about unobserved consumer tastes. The model demonstrates how data enables firms to improve demand forecasting accuracy and extract higher markups. Importantly, supply-constrained firms have stronger incentives to hire data scientists, leading to countercyclical data scientist hiring that amplifies their exposures to aggregate risk through an operating leverage channel. We provide empirical evidence supporting our model mechanism.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

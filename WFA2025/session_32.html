@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link active">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Housing Markets</h1>        <div class="paper-card">
+            <div class="paper-title">Climate Risk, Insurance Premiums, and the Effects on Mortgage Outcomes</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Shan Ge (New York University), Stephanie Johnson (Rice University), Nitzan Tzur-Ilan (Federal Reserve Bank of Dallas)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=985656" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">気候変動が自然災害を悪化させるにつれ、住宅所有者の保険料は劇的に上昇している。我々は、670万人の借り手の住宅保険契約に関する新しいデータセットを用いて、保険料の上昇が借り手の住宅ローンおよび信用結果に与える影響を検証した。保険料の上昇は、住宅ローンの延滞や期限前返済の確率を有意に上昇させることが分かった。これらの結果は、新たな道具変数（instrumental variable）を用いても成立する。住宅ローン延滞の効果はローン・トゥ・バリューの高い住宅ローンほど大きく、期限前償還の効果はこれらのローンほど小さい。この効果はGSEと非GSEの住宅ローンの両方に存在する。我々の調査結果は、気候変動が家計の健全性を脅かし、金融システムの安定性に影響を与える可能性のあるチャネルを明らかにした。</p>
+        <p class="abstract-text en">As climate change exacerbates natural disasters, homeowners’ insurance premiums are rising dramatically. We examine the impact of premium increases on borrowers’ mortgage and credit outcomes using a novel dataset on home insurance policies for 6.7 million borrowers. We find that higher premiums significantly raise the probability of mortgage delinquency and prepayment. These results hold using a novel instrumental variable. The mortgage delinquency effect is larger for higher loan-to-value mortgages, while the prepayment effect is smaller for these loans. The effects are present in both GSE and non-GSE mortgages. Our findings unveil a channel through which climate change can threaten household financial health and potentially impact the stability of the financial system.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mortgage Lock-in, Lifecycle Migration, and the Welfare Effects of Housing Market Liquidity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kristopher Gerardi (Federal Reserve Bank of Atlanta), Franklin Qian (University of North Carolina-Chapel Hill), David Zhang (Rice University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1015224" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅ローンのロックインによる住宅市場の非流動性がライフサイクルに及ぼす異質な厚生効果を、探索・マッチングモデルを用いて研究する。その結果、若年層の住宅購入者が住宅ローンのロックインの影響を不釣り合いに受けており、より質の高い地域へ移動するという典型的なパターンを破壊していることが分かった。CBSAの所得階層によって定義された市場内における異質な売り手と買い手の駆け引きと、市場間の内生的な移動を考慮したモデルを推計した。その結果、住宅ローンのロックインは、平均して世帯のリスティング確率を21～23％低下させ、市場滞在時間を52～142％増加させ、住宅価格を3％～8％上昇させ、検索とマッチングプロセスへの影響によってマッチング余剰を3％～29％減少させることが分かった。価格設定とマッチ余剰の効果は、若年世帯と低所得地域の世帯でより大きくなる。これは、買い手の評価における特異的な分散が大きいために、これらの地域ではマッチ余剰の変動が大きくなるためである。本研究は、不動産市場における市場の厚みがもたらす厚生的便益を浮き彫りにしている。</p>
+        <p class="abstract-text en">We use a search and matching model to study the heterogeneous welfare effects of housing market illiquidity due to mortgage lock-in over the lifecycle. We find that younger home buyers are disproportionately affected by mortgage lock-in, which disrupts their typical pattern of moving to higher-quality neighborhoods. We estimate a model with heterogeneous seller-buyers bargaining within markets defined by CBSA-income terciles and with endogenous migration across markets. We find that on average mortgage lock-in reduces household listing probabilities by 21--23%, increases time on the market by 52--142%, increases house prices by 3%--8%, and decreases match surplus by 3%--29% through its effects on the search and matching process. The pricing and match surplus effects are larger for younger households and for households in lower-income areas, due to a higher idiosyncratic dispersion in buyer valuation leading to larger match surplus variation in those areas. Our study highlights the welfare benefits of market thickness in real estate markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Unlocking Mortgage Lock-In: Evidence From a Spatial Housing Ladder Model</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Julia Fonseca (University of Illinois-Urbana-Champaign), Lu Liu (University of Pennsylvania), Pierre Mabille (INSEAD)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=978572" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅ローンの借り手は「ロックイン」している：低い住宅ローン金利を維持するための動きを見送っている。我々は、住宅ローンロックインが住宅市場に及ぼす一般均衡効果を研究している。ロックインされた借り手は、そうでなければより少ない住宅しか求めないため、ロックインが特に高価格帯の価格を上昇させるという因果的証拠を提供する。我々は、長期住宅ローンによる空間的な住宅ラダーモデルを設計し、ロックイン金利の分布と、移動と価格に対する均衡効果をデータと一致するように生成する。一時的な金利上昇はロックインを引き起こし、特に高価格帯の住宅需要と価格を上昇させる。スターターホームの売り手に対する1万ドルの税額控除は、移動性を緩やかに解除する一方で、下取り住宅価格を上昇させる。</p>
+        <p class="abstract-text en">Mortgage borrowers are "locked in": forgoing moves to keep low mortgage rates. We study the general equilibrium effects of mortgage lock-in on housing markets. We provide causal evidence that lock-in increases prices, particularly in expensive areas, because locked-in borrowers would otherwise demand less housing. We design a spatial housing ladder model with long-term mortgages, generating a distribution of locked-in rates and equilibrium effects on mobility and prices consistent with the data. A temporary rate hike causes lock-in, increasing housing demand and prices, especially in expensive areas. A $10k tax credit to starter-home sellers modestly unlocks mobility while increasing trade-up home prices.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Equilibrium Impacts of Broker Incentives in the Real Estate Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Gi Heung Kim (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=985600" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅取引の手数料率は、米国では他国に比べて2倍も高い。政策立案者は、売り手が買い手の仲介業者に手数料を提供する慣行が、手数料の高騰を招き、消費者に害を及ぼす可能性があるとの懸念を表明している。本稿では、「デカップリング」と呼ばれる、買い手と売り手がそれぞれブローカーに支払うことを義務付ける政策案の均衡への影響を検証する。買い手、売り手、ブローカーを統合した構造モデルを構築し、均衡住宅価格、手数料、厚生を特徴付ける。観測された異質性が豊富で、住宅価格と手数料のシフターを用いた識別可能な変動源を持つモデルを推定する。売り手は買い手を引き付けるために高い手数料を提供する必要がなくなり、ブローカーは価格に敏感な買い手を獲得するために競争する。売り手と買い手は、現状よりも高い純収入を得ることで、取引総額の4％の余剰利益を経験する。売り手が節約した手数料の一部を住宅価格に転嫁することで、買い手には所得を超えた顕著な余剰利益が生じることが分かる。</p>
+        <p class="abstract-text en">Commission rates for housing transactions are twice as high in the United States than in other countries. Policymakers have raised concerns that the practice of sellers offering buyers’ brokers commissions can lead to high commissions and harm consumers. This paper examines the equilibrium impacts of a proposed policy called “decoupling,” which would require buyers and sellers to each pay their respective brokers. I develop a structural model integrating buyers, sellers, and brokers to characterize the equilibrium house prices, commissions, and welfare. I estimate the model with rich observed heterogeneity and credible sources of identifying variation using shifters of house prices and commissions. I find that decoupling reduces commissions paid by 53%, as sellers no longer have to offer high commissions to attract buyers, and brokers compete for price- sensitive buyers. Sellers and buyers experience a surplus gain of 4% of the total transaction value from having higher net proceeds than the status quo. I find notable surplus gains for buyers across income as sellers pass through part of their commission savings to house prices.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

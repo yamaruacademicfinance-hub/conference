@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamaru Academic Finance Hub</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            background: #F8F9FA; 
+            margin: 0; 
+            padding: 60px 20px; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+        }
+
+        /* サイトタイトル */
+        h1 { 
+            color: #1A365D; 
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            padding-bottom: 15px;
+            border-bottom: 4px solid #1A365D;
+            letter-spacing: 1px;
+        }
+
+        /* グリッドレイアウト */
+        .conf-grid { 
+            display: grid; 
+            /* 最小幅を400pxから280pxに縮小し、カードをコンパクトに */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; /* カード同士の隙間も少し狭く調整 */
+        }
+
+        /* --- 共通のカードデザイン --- */
+        .conf-card { 
+            display: block;
+            padding: 25px 30px; /* 40pxあった内側の余白を減らしてスッキリと */
+            border-radius: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            text-decoration: none; 
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s; 
+            border-top: 5px solid; 
+        }
+        .conf-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12); 
+        }
+        .conf-card h2 { 
+            margin: 0 0 10px 0; 
+            font-size: 1.3em; /* 1.6emから少し小さくして上品に */
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .conf-card p { 
+            margin: 0; 
+            font-size: 0.95rem; /* 「View details」の文字もわずかに小さく */
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        /* --- WFA（デフォルト）のスタイル（ネイビー系） --- */
+        .conf-card.default-card {
+            background-color: #2C5282; /* ネイビー */
+            border-top-color: #1A365D; /* 濃いネイビーライン */
+            color: white;
+        }
+        .conf-card.default-card h2 { color: white; }
+        .conf-card.default-card:hover { background-color: #1A365D; } /* ホバーで濃く */
+
+        /* --- ★AFA専用のスタイル（茶色系）★ --- */
+        .conf-card.afa-card {
+            /* 指定の深い茶色(#800000)を「薄くした色」 */
+            background-color: #A52A2A; /* 彩度を落とした茶色 */
+            border-top-color: #800000; /* ★上部のラインを元の深い茶色に */
+            color: white; /* 文字は白 */
+        }
+        .conf-card.afa-card h2 { color: white; }
+        
+        /* ホバー（マウスを乗せた時）の動き */
+        .conf-card.afa-card:hover { 
+            /* ★ホバー時は、元の深い茶色(#800000)に近づける */
+            background-color: #800000; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Yamaru Academic Finance Hub</h1>
+        <div class="conf-grid">
+    <a href="AFA2021/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2021 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="AFA2022/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2022 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="AFA2023/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2023 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="AFA2024/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2024 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="AFA2025/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2025 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="AFA2026/index.html" class="conf-card afa-card">
+        <h2>American Finance Association 2026 Annual Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="WFA2022/index.html" class="conf-card default-card">
+        <h2>2022 Western Finance Association Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="WFA2023/index.html" class="conf-card default-card">
+        <h2>2023 Western Finance Association Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="WFA2024/index.html" class="conf-card default-card">
+        <h2>2024 Western Finance Association Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="WFA2025/index.html" class="conf-card default-card">
+        <h2>2025 Western Finance Association Meeting</h2>
+        <p>View details →</p>
+    </a>
+    <a href="WFA2026/index.html" class="conf-card default-card">
+        <h2>2026 Western Finance Association Meeting</h2>
+        <p>View details →</p>
+    </a>
+        </div>
+    </div>
+</body>
+</html>

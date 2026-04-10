@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money, Banking and Competition</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link active">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Money, Banking and Competition</h1>        <div class="paper-card">
+            <div class="paper-title">Smart Banks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alkis Georgiadis-Harris (University of Warwick), Maxi Guennewig (University of Bonn), Yuliyan Mitkov (University of Bonn)</div>
+            <a href="https://afajof.org/management/viewp.php?n=67928" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">Diamond and Dybvig (1983)以来、銀行は本質的に脆弱であると見なされてきた。我々は、一般的なメカニズム設計の枠組みでこの見方に挑戦する。そこでは、仲介者が将来のメカニズムに限定的にコミットすることを維持しつつ、銀行メカニズムの設計に柔軟性を持たせる。その結果、唯一の均衡結果は効率的であることがわかった。その結果、均衡において破綻は起こりえない。我々の分析は、銀行が満期変換を行うためではなく、ランの間に有用な情報を収集し、最適に対応することができない場合に銀行が脆弱になる、という最終的な脆弱性の原因を指摘するものである。私たちの銀行メカニズムは、「スマート・コントラクト」をめぐる最近の技術的進歩とリンクしており、銀行アレンジメントの現実的な可能性を豊かにしている。</p>
+        <p class="abstract-text en">Since Diamond and Dybvig (1983), banks have been viewed as inherently fragile. We challenge this view in a general mechanism design framework, where we allow for flexibility in the design of banking mechanisms while maintaining limited commitment of the intermediary to future mechanisms. We find that the unique equilibrium outcome is efficient. Consequently, runs cannot occur in equilibrium. Our analysis points to the ultimate source of fragility: banks are fragile if they cannot collect and optimally respond to useful information during a run and not because they engage in maturity transformation. We link our banking mechanisms to recent technological advances surrounding 'smart contracts,' which enrich the practical possibilities for banking arrangements.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Payments, Reserves, and Financial Fragility</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Itay Goldstein (University of Pennsylvania), Ming Yang (University College London), Yao Zeng (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=98448" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、交換媒体と価値貯蔵という、伝統的に補完的とみなされてきた貨幣の2つの役割の対立を浮き彫りにする決済理論を提案する。支払いには、希少な準備財の相互移転が必要であり、その準備財は支払い以外の目的でも価値を保持すると仮定する。エージェントが支払いを行うのは、準備財が十分に豊富で、支払い機能と非支払い機能の間の対立が低い場合に限られることを示す。そうでない場合、エージェントの支払い決定が均衡内の他のエージェントの支払い履歴に依存する履歴依存均衡が生じ、脆弱性が生じる。この理論は、たとえ準備金の価値が問われることなく常に決済手段として受け入れられていたとしても、決済が頻繁に遅延や中断に見舞われる理由を説明している。準備金が依然として希少であり、非支払い機能に対して価値がある場合には、支払い技術を向上させても、このような脆弱性は解消されないかもしれない。この理論は、不換紙幣以前の金属決済、現代の銀行決済、国境を越えた決済、そして現代のデジタル決済システムを含む、貨幣と決済システムの進化を説明するのに役立つ。</p>
+        <p class="abstract-text en">We propose a theory of payments that highlights a conflict between medium of exchange and store of value, two roles of money that are traditionally viewed as complementary. We posit that payments must involve the reciprocal transfer of a scarce reserve good, which holds value for other non-payment purposes. We show that agents make payments only when reserves are abundant enough and when the conflict between payment and non-payment functions is low. Otherwise, history-dependent equilibria arise in which an agent’s payment decision depends on the payment history of other agents within an equilibrium, giving rise to fragilities. The theory explains why payments frequently encounter delays and interruptions even if the reserve is always accepted as a payment means without its value being challenged. Improving payment technologies may not eliminate such fragility when reserves remain scarce and valuable for non-payment functions. The theory helps explain the evolution of money and payment systems, encompassing metallic payments before fiat money, modern bank payments, cross-border payments, and contemporary digital payment systems.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Oligopolistic Competition, Fund Proliferation, and  Asset Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Marco Loseto (University of Chicago), Federico Mainardi (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=115528" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、パッシブ型投資信託業界の動的寡占モデルを開発し、推計する。このモデルでは、多商品の資産運用会社がファンドのイニシエーターとして機能し、与えられた投資セクターでいくつのファンドを立ち上げるかを決定する。投資信託と運用会社はともにCournotのように競争し、代表的な家計投資家からの資産運用サービスに対する需要を考慮する。本稿の第1部では、各運用会社が一定数のファンドを運用し、均衡指数価格が一定である定常均衡の存在と一意性のための十分条件を提供する。本論文の第2部では、入れ子の固定小数点アルゴリズムを開発し、データで観察されたファンドの拡散パターンにマッチさせることで、米国のパッシブ株式業界の大手運用会社5社について、ファンドの開始コストを個別に推定する。その結果、上位5社は市場の他の部分と比較し て実質的に効率的であり、大きなスケールメリットを享受して いることが分かった。一連の反実仮想演習において、最大手の運用会社を市場から排除した場合、投資家の厚生が25％も減少することを示す。最後に、家計の富が株式インデックス価格に与える定常状態の乗数を、業界の技術的な基本要素という観点から分析的に特徴付ける。我々の推計によれば、家計の富が1％増加すると、株価指数の評価額は5.5％上昇する。</p>
+        <p class="abstract-text en">We develop and estimate a dynamic oligopoly model of the passive mutual fund industry in which multiproduct asset management firms act as fund initiators and decide how many funds to launch in a given investment sector. Both mutual funds and management companies compete a la Cournot and take into account the demand for asset management services from a representative household investor. In the first part of the paper, we provide sufficient conditions for the existence and uniqueness of a steady-state equilibrium in which each management firm operates a constant number of funds and the equilibrium index price is constant. In the second part of the paper, we develop a nested fixed-point algorithm to estimate fund initiation costs separately for the five biggest management companies in the US passive equity industry by matching fund proliferation patterns observed in the data. We find that the top five companies are substantially more efficient and enjoy large scale economies relatively to the rest of the market. In a series of counterfactual exercises, we show that removing the largest management companies from the market would reduce investors' welfare by as much as 25%. Lastly, we characterize analytically the steady-state multiplier of household wealth on the equity index price in terms of the technology primitives of the industry. Our estimates imply that a 1% increase in household wealth increases the valuation of the equity index by 5.5%, consistent with other estimates in the literature.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

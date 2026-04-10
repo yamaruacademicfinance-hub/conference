@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Capital Structure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link active">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Corporate Finance: Capital Structure</h1>        <div class="paper-card">
+            <div class="paper-title">Leverage Dynamics under Costly Equity Issuance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Patrick Bolton; Columbia University), Neng Wang; Columbia University), Jinqiang Yang; Shanghai University of Finance and Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1754" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、キャッシュフロー過程、内部留保、短期借入金、外部資本を含むレバレッジと投資ダイナミクスの簡略化されたモデルを提案する。株式発行はコスト高であることが重要である。企業は株式発行コストの発生を回避しようとするため、経験的にもっともらしい目標レバレッジと非線形レバレッジのダイナミクスを生み出すことを示す。逆説的ではあるが、Modigliani Miller and Lelandのトレードオフ理論やMyersの序列理論の予測とは対照的に、株式発行の固定コストが企業のレバレッジを低く保つ原因になっている。継続的な外部資金調達の限界は負債であるが、レバレッジが高くなりすぎると、企業はコストをかけて株式を発行し、最適にデレバレッジを行う。レバレッジが低いときは目標値に戻る傾向があるが、レバレッジが高くなると、企業は債務のデススパイラルに陥る。目標レバレッジのときは、利益は出るが、損失によってレバレッジは上昇する。レバレッジが高く、大きなジャンプロスに見舞われた場合、企業はデフォルトに陥る。</p>
+        <p class="abstract-text en">We propose a parsimonious model of leverage and investment dynamics featuring a jump diffusion cash flow process, retained earnings, short term debt, and external equity. Crucially equity issuance is costly. We show that firms' efforts to avoid incurring equity issuance costs generate empirically plausible target leverage and nonlinear leverage dynamics. Paradoxically, it is the fixed cost of equity issuance that causes the firm to keep leverage low, in contrast to the predictions of Modigliani Miller and Leland tradeoff and Myers' pecking order theories. The marginal source of external financing on an on going basis is debt, but when leverage gets too high, the firm optimally deleverages by issuing equity at a cost. When leverage is low, it tends to revert to the target, but when leverage is high, the firm is caught in a debt death spiral. When the firm is at its target leverage, profits are paid out, but losses cause leverage to drift up. When leverage is high and the firm is hit by a large jump loss, it defaults.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Optimal Time-Consistent Debt Policies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrey Malenko; University of Michigan), Anton Tsoy; University of Toronto)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=520" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業が自由に新規債務を発行し、既存債務を買い戻すことができる債務のトレードオフ・モデルにおいて、時間整合的な債務政策を研究している。負債政策が時間整合的であるのは、株主が負債政策から外れるよりも従うことを好むが、将来的に負債規律を維持するための信用を失うような状態であるときである。ある種の政策において、最適な時間整合的債務政策は、インタレスト・カバレッジ・レシオ（ICR）目標と、ICRの2つの領域（安定領域と窮迫領域）から構成される。安定領域では、企業は負債をICR目標まで積極的に管理し、負債の発行・買い戻しを行う。キャッシュフローに十分大きな負のショックが発生すると、企業は窮境領域に入り、目標を放棄し、キャッシュフローが回復するか、さらなる負のショックで破綻するまで待機する。信用スプレッドは、破綻領域ではキャッシュフローのショックに敏感であるが、安定領域では敏感ではない。最適な政策は、双方向の積極的な債務管理、内部最適な債務満期、「堕天使」の動態など、債務動態の現実的な特徴を捉えている。</p>
+        <p class="abstract-text en">We study time consistent debt policies in a trade off model of debt in which the firm can freely issue new debt and repurchase existing debt. A debt policy is timeconsistent if in any state equityholders prefer to follow it rather than to deviate from it but lose credibility in sustaining debt discipline in the future. In a class of policies, the optimal time consistent debt policy consists of an interest coverage ratio (ICR) target and two regions for the ICR: the stable and the distress regions. In the stable region, the firm actively manages liabilities to the ICR target by issuing/repurchasing debt. A sufficiently large negative shock to cash flows pushes the firm into the distress region, where it abandons the target and waits until either cash flows recover or further negative shocks trigger bankruptcy. Credit spreads are sensitive to cash flow shocks in the distress region but not in the stable region. The optimal policy captures realistic features of debt dynamics, such as active debt management in both directions, interior optimal debt maturity, and dynamics of 'fallen angels.'</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Share Issues versus Share Repurchases</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Philip Bond; University of Washington), Yue Yuan; Tsinghua University), Hongda Zhong; London School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1891" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ほぼすべての企業が公開市場買付（OMR）プログラムを通じて自社株買いを行っている。一方，発行形態はより多様で，OMR に類似した市場公募と，ほとんど利用されていない公開買付に類似した SEO の両方がかなりの割合で利用されている。さらに、SEOの平均値は市場公募の場合よりも大きい。このように、発行と買戻しにおける取引方法の多様性の非対称性と、発行における規模方法の関係は、企業が投資家に対して優れた情報を持っているという単一の情報摩擦の自然な帰結であることを示す。最後に、買戻しを行う企業は、短期的な株価の上昇よりも、長期的な株主のペイオフを最大化する可能性が高い。* Philip BondはUniversity of Washingtonに在籍。Yue Yuanは清華大学。Yue Yuanは清華大学、Hongda Zhongはロンドン・スクール・オブ・エコノミクスに所属している。ロンドン・スクール・オブ・エコノミクスとCICFのセミナー参加者の貴重な議論と意見に感謝する。Yue Yuanは、Paul Woolley Centreからの財政的支援に感謝する。</p>
+        <p class="abstract-text en">Almost all firms repurchase shares through open market repurchase (OMR) programs. In contrast, issue methods are more diverse: both atthe market offerings, analogous to OMR programs, and SEOs, analogous to the rarely used tender offer repurchases are used by significant fractions of firms. Moreover, average SEOs are larger than at the market offerings. We show that this asymmetry in the diversity of transaction methods in issuances and repurchases and the size method relation in issuances are natural consequences of the single informational friction of a firm having superior information to investors. Finally, repurchasing firms are likely maximizing long term shareholders' payoffs rather than boosting short term share prices. * Philip Bond is at the University of Washington. Yue Yuan is at Tsinghua University. Hongda Zhong is at the London School of Economics. We thank the seminar participants at the London School of Economics and the CICF for valuable discussions and comments. Yue Yuan gratefully acknowledges the financial support from the Paul Woolley Centre.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Corporate Calendar and the Timing of Share Repurchases and Equity Compensation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ingolf Dittmann; Erasmus University Rotterdam), Amy Yazhu Li; Erasmus University Rotterdam), Stefan Obernberger; Erasmus University Rotterdam), Jiaqi Zheng; Oxford University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1544" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究では、政治やメディアで定期的に懸念が叫ばれている、CEOが自社株買いを利用して、付与した株式を株価をつり上げて売却していないかどうかを検証している。我々は、自社株買いプログラムと株式報酬（株式の付与、権利確定、売却）のタイミングは、ブラックアウト期間と決算発表日を通じた企業カレンダーによって大きく左右されることを見出した。その結果、自社株買いと株式報酬には正の相関がある。この相関関係は、企業カレンダーを考慮すると消失するため、因果関係を解釈する必要はない。我々の結果は、CEO が株主を犠牲にして自社株買いを組織的に悪用したという結論を支持するものではありません。逆に、株式報酬は、自社株買いが長期的な株主価値にとって有益である場合に、自社株買いプログラムを開始する性向を増加させる。</p>
+        <p class="abstract-text en">This study examines whether the CEO uses share repurchases to sell her equity grants at inflated stock prices, a concern regularly voiced in politics and media. We find that the timing of buyback programs and equity compensation, i.e., the granting, vesting, and selling of equity, is largely determined by the corporate calendar through blackout periods and earnings announcement dates. As a consequence, share repurchases and equity compensation are positively correlated. This correlation disappears once we account for the corporate calendar and should thus not be interpreted causally. Our results do not support the conclusion that CEOs systematically misuse share repurchases at the expense of shareholders. To the contrary, equity compensation increases the propensity to launch a buyback program when buying back shares is beneficial for long term shareholder value.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

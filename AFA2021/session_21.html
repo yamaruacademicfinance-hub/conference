@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link active">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Macro Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Limited Household Risk Sharing: General Equilibrium Implications for the Term Structure of Interest Rates</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Indrajit Mitra; University of Michigan), Yu Xu; University of Hong Kong)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=38" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、特異な労働所得リスクの限定的なリスクシェアリングが、金利のダイナミクスを決定する上で重要な役割を果たすという理論を提示する。我々の生産ベースモデルは、労働所得リスクの断面分布と観測可能な労働市場総量変数とを関連付ける。このモデルは2つの重要な予測を行っている。第一に、長期債のリスクプレミアは正の値であり、同時にマクロ経済の主要なモーメントと一致することを予測する。第二に、現在の労働市場の状況（労働市場の逼迫度や就職率で測定）と将来の債券の超過収益率の間に負の相関があることを予測するものである。これらの予測に対する証拠を提供する。(JEL番号</p>
+        <p class="abstract-text en">We present a theory in which limited risk sharing of idiosyncratic labor income risk plays a key role in determining the dynamics of interest rates. Our productionbased model relates the cross sectional distribution of labor income risk to observable aggregate labor market variables. Our model makes two key predictions. First, it predicts positive risk premia for long term bonds while simultaneously matching key macroeconomic moments. Second, it predicts a negative correlation between current labor market conditions (as measured by labor market tightness or the job finding rate) and future bond excess returns. We provide evidence for these predictions. (JEL numbers:</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Leasing as a Risk-Sharing Mechanism</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kai Li; Hong Kong University of Science and Technology), Chi-Yang Tsou; Hong Kong University of Science and Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=809" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文は、リースがリスク共有メカニズムであることを主張する。すなわち、リスク許容度の高い貸手（資本の所有者）は、資金制約のあるリスク回避型の借手（資本の借り手）に対し、系統的な資本価格の変動に対して保険を提供する。この新しいリスクプレミアム・チャネルを支持する強力な実証的証拠を提供する。財務制約のある銘柄のうち、リース資本比率の高い企業は、低い企業よりも平均リターンが7.35%低く、これを負のリース資本プレミアムと呼ぶ。我々は、異質な企業と金融摩擦を考慮した一般均衡モデルを構築し、このチャネルを定量化した。また、IFRS第16号によるリース会計の変更に際しての注意点として、リース負債と金融負債はバランスシート上で同等に扱うべきではなく、企業の株式リスクと株式コストに対するインプリケーションが正反対であることを挙げている。</p>
+        <p class="abstract-text en">This paper argues leasing is a risk sharing mechanism: risk tolerant lessors (capital owners) provide insurance to financially constrained risk averse lessees (capital borrowers) against systematic capital price fluctuations. We provide strong empirical evidence to support this novel risk premium channel. Among financially constrained stocks, firms with a high leased capital ratio earn average returns 7.35% lower than firms with a low leased capital ratio, which we call it the negative leased capital premium. We develop a general equilibrium model with heterogeneous firms and financial frictions to quantify this channel. Our study also provides a caveat to the recent leasing accounting change of IFRS 16: lease induced liability and financial debt should not be treated equally on firms' balance sheet, as their implications for firms' equity risks and cost of equity are opposite.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Strategic Product Diversity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nuno Clara; London Business School), Alexandre Corhay; University of Toronto), Howard Kung; London Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=115" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2000年代半ば以降、企業内の製品集中が進んでいることがわかる。市場支配力を強化する企業は、製品範囲の拡大や生産の多様化を積極的に行っている。企業内の製品集中度が低いと、評価倍率は高くなるが、生産性、期待リターン、特異的ボラティリティは低くなる。これらの関係を、内生的な企業境界と産業境界を持つ多品種企業の一般均衡モデルで説明する。柔軟な生産技術を支配するパラメータは、Gabaix and Koijen (2020)のGIVアプローチにより、プロダクトミックスの分布におけるファットテールを利用することで同定している。推定されたモデルは、近年の生産性の鈍化と特異変動率の低下傾向を説明することができる。</p>
+        <p class="abstract-text en">We document adecreasing product concentration within firms since the mid 2000s. Firms consolidating market power have been actively expanding product scope and diversifying production. Lower product concentration within firms is associated with higher valuation ratios, but lower productivity, expected returns, and idiosyncratic volatility. We explain these relations in a general equilibrium model of multiproduct firms with endogenous firm and industry boundaries. Parameters governing the flexible production technology are identified using the GIV approach of Gabaix and Koijen (2020) by exploiting fat tails in the distribution of product mix. The estimated model can explain the recent productivity slowdown and declining trend in idiosyncratic volatility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Why Does Oil Matter? Commuting and Aggregate Fluctuations</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Robert Ready; University of Oregon), Nikolai Roussanov; University of Pennsylvania), Ewelina Zurowska; University of Pennsylvania)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=749" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">石油価格ショックは、総支出のうちエネルギーに充てられる割合が比較的小さいにもかかわらず、マクロ経済に大きな影響を与えることが知られている。我々はミクロデータを用いて、原油価格が労働供給と通勤距離に大きな影響を与えることを実証した。特に、賃金に比して通勤コストが大きい低技能労働者において顕著である。また、技能集約度の低い産業における企業の株式リターンは、石油価格の変動に対してより敏感である。このような経験則に基づき、石油に依存する通勤摩擦を考慮した2部門内生的成長モデルを用いて、オイルショックが雇用、実質賃金、成長率、株価に及ぼす影響を検証する。石油価格の上昇に続く石油供給のマイナス・ショックは、労働供給を押し下げ、特に、雇用が通勤コストに最も敏感な、資本集約度の低い低技能部門を押し下げる。その結果、イノベーションと資本が、より影響の少ない高技能部門に再配分され、その結果、技能プレミアムが上昇し、中期的に生産成長が鈍化する。このモデルは、2020年春のCOVID19のロックダウンのような、石油市場に対するセクター固有の需要主導型ショックについても重要な要素を捉えている。</p>
+        <p class="abstract-text en">Oil price shocks are known to have a sizable macroeconomic impact, despite a relatively small fraction of total expenditures that is devoted to energy. Using micro data we document a significant effect of oil prices on labor supply and commuting distance, especially among low skilled workers who face large commuting costs, relative to their wages. In addition, equity returns of firms in less skill intensive industries are more sensitive to oil price fluctuations. Motivated by this empirical evidence, we employ a two sector endogenous growth model with an oil dependent commuting friction to examine the effect of oil shocks on employment, real wages, and growth, as well as equity prices. Negative oil supply shocks followed by oil price increases depress labor supply, especially in the less capital intensive low skill sector, where employment is most sensitive to the cost of commuting. As a result, output growth slows down in the medium run as innovation and capital are reallocated towards the less affected high skill sector, resulting in subsequent rise in the skill premium. The model also captures key elements of sector specific demand driven shocks to oil markets, such as the COVID 19 lockdowns in the spring of 2020.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

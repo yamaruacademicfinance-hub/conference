@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link active">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</h1>        <div class="paper-card">
+            <div class="paper-title">Bank Liquidity Provision Across the Firm Size Distribution</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gabriel Chodorow-Reich; Harvard University), Olivier Darmouni; Columbia University), Stephan Luck; Federal Reserve of New York), Matthew Plosser; Federal Reserve Bank of New York)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1732" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">また、中小企業は大企業よりも短い期間の与信枠を取得し、積極的な満期管理を行わず、より多くの担保を設定し、利用率が高く、高いスプレッドを支払っていることを監督当局のローンレベルのデータを用いて実証している。これらの事実は、貸し手のコミットメントと裁量との間のトレードオフの均衡結果であると合理化される。COVIDリセッションを用いて、クレジットラインの利用状況を調べることで、中小企業が貸し手の裁量に大きく左右されるという予測を検証した。その結果、中小企業の需要にもかかわらず、大企業とは対照的に中小企業は引き下がらないが、PPPローンによってその不足分が軽減されることが示された。JEL E44; G21; G32; H32</p>
+        <p class="abstract-text en">We use supervisory loan level data to document that small firms (SMEs) obtain shorter maturity credit lines than large firms; have less active maturity management; post more collateral; have higher utilization rates; and pay higher spreads. We rationalize these facts as the equilibrium outcome of a trade off between lender commitment and discretion. Using the COVID recession, we test the prediction that SMEs are subject to greater lender discretion by examining credit line utilization. We show that SMEs do not drawdown in contrast to large firms despite SME demand, but that PPP loans helped alleviate the shortfall. JEL: E44; G21; G32; H32</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Corporate Flexibility in a Time of Crisis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: John Barry; Duke University), Murillo Campello; Cornell University and NBER), John Graham; Duke University), Yueran Ma; University of Chicago)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1730" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国のCFOを対象としたタイムリーな調査を用いて、柔軟性がCOVID 19危機の発生に対する企業の対応を形成し、企業部門の長期的な変化を促すかを研究している。我々が研究している企業の柔軟性の3つの側面は、それぞれ異なる機能を果たしながら、相互に補完し合っている。我々は、職場の柔軟性、すなわち従業員がリモートで働くことができる能力が、危機の間、企業の雇用と投資計画を調整する上で中心的な役割を果たすことを見出した。投資の柔軟性は、労働力の柔軟性によって形成された健康危機の間の企業の状況に基づいて、資本支出計画を増減させることを可能にする。最後に、財務の柔軟性は、雇用と投資計画の強化に寄与する。2008年の金融危機の際にはそのような効果が見られなかったため、職場の柔軟性の役割は2020年の健康危機の際には新しいものである。CFOは、2020年の職場の変革が今後何年にもわたって持続的な効果をもたらすと予想している。企業がリモートワークを継続し、労働力を代替する自動化への依存度が高まるにつれ、投資の規模や形態が変化すると予想されるのだ。</p>
+        <p class="abstract-text en">We use timely surveys of US CFOs to study how flexibility shapes companies' responses to the onset of the COVID 19 crisis and drives longer term changes in the corporate sector. The three dimensions of corporate flexibility that we study perform distinct functions, yet complement each other. We find that workplace flexibility, namely the ability for employees to work remotely, plays a central role in modulating firms' employment and investment planning during the crisis. Investment flexibility allows firms to increase or decrease capital spending plans based on their conditions during the health crisis, which are shaped by workforce flexibility. Finally, financial flexibility contributes to stronger employment and investment plans. The role of workplace flexibility is new during the 2020 health crisis, as we find no such effects during the 2008 financial crisis. CFOs expect the workplace transformation of 2020 to have lasting effects for years to come: the magnitude and form of investment are expected to change as companies continue remote work and rely more on automation to replace labor.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How Did Depositors Respond to COVID-19?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ross Levine; University of California (Berkeley), Chen Lin; University of Hong Kong), Mingzhu Tai; The University of Hong Kong), Wensi Xie; The Chinese University of Hong Kong)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1733" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">なぜ銀行はパンデミックの最初の数ヶ月間に大量の預金流入を経験したのか？支店レベルの週次金利データと県レベルのCOVID 19感染者データを用いると、COVID 19感染率の高い県の銀行支店の金利は、他の支店（同じ銀行の別の県の支店であっても）の金利よりも低下していることが分かった。株式市場の低迷の程度で週を区別し、COVID 19事件の経済不安への影響の大きさで郡を区別すると、予防的貯蓄の供給が急増し、預金金利が低下したことが示唆された。</p>
+        <p class="abstract-text en">Why did banks experience massive deposit inflows during the first months of the pandemic? Using weekly branch level data on interest rates and county level data on COVID 19 cases, we discover that interest rates at bank branches in counties with higher COVID 19 infection rates fell by more than rates at other branches - even branches of the same bank in different counties. When differentiating weeks by the degree of stock market distress and counties by the likely impact of COVID 19 cases on economic anxiety, the evidence suggests that a surge in the supply of precautionary savings boosted deposits and reduced deposit rates.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Public Guarantees for Small Businesses in Italy during Covid-19</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Fabrizio Core; Erasmus School of Economics), Filippo De Marco; Bocconi University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1731" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、コビッド19のパンデミック時の中小企業向け公的保証制度による信用供与の配分を研究している。2020年4月、イタリア政府は既存の保証を拡充し、竄ャ25,000以下の融資に対して、銀行の信用評価を必要としない100％無償保証を導入した。イタリア保証基金から得た独自の融資レベルデータを用いて、まず、当初はパンデミックの影響をより強く受けた地域に位置する財務的に脆弱な企業に資金が流れたが、その後、全国のあらゆる種類の企業が資金を受け取ったことを明らかにする。第二に、保証金の支払いには大きな異質性があること、すなわち、大規模な銀行や優れた情報技術（IT）システムを持つ銀行は、他の銀行と比べて、より低い金利で、より速く融資を行うことができることを示す。保証付き融資の利ざやは小さく、パンデミック時には大量のオンライン融資の申し込みがあったため、銀行の規模とデジタルインフラは重要である。最後に、銀行の支店網は依然として重要であることを示す。なぜなら、銀行は中核となる市場でより多くの融資を行い、支店の市場シェアが高いところでより多くの融資を行うからである。我々の結果は、情報技術や地域の銀行市場の構造が、危機時の公的救済資金の配分に果たす役割を理解することの重要性に光を当てている。</p>
+        <p class="abstract-text en">This paper studies the allocation of credit through a public guarantee scheme for small businesses during the Covid 19 pandemic. In April 2020, the Italian government expanded existing guarantees and introduced a free 100% guarantee on loans below €25,000 that required no credit assessment by banks. Using unique loan level data from the Italian Guarantee Fund, we first show that funds initially flowed to ex ante financially fragile firms located in areas more affected by the pandemic, but were later received by all types of firms nationwide. Second, we show that there is significant lender heterogeneity in disbursing guaranteed funds: larger banks and those with better information technology (IT) systems charge lower rates and disburse loans faster compared to other banks. Bank size and the digital infrastructure are important because of the small profitability margins on guaranteed lending and the large volume of online loan applications received during the pandemic. Finally, we show that the bank branch network still matters, because banks lend more in their core markets and where they have a larger market share of local branches. Our results shed light on the importance of understanding the role of information technology and the structure of local banking markets for the allocation of public relief funds during a crisis.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Pandemics, Vaccines and Corporate Earnings</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Harrison Hong; Columbia University), Jeffrey Kubik; Syracuse University), Neng Wang; Columbia University), Xiao Xu; Columbia University), Jinqiang Yang; Shanghai University of Finance and Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1729" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">COVID19から企業収益へのダメージのモデルを推定する。予期せぬパンデミックは、コストのかかる緩和策により現在の収益を低下させ、成長率を低下させる。被害は、収益を通常に戻すワクチンの到着予想に依存する。このモデルを用いて、アナリストの収益予測から、2020年5月中旬の時点で、有効なワクチンは0.96年後に予想されると推測される（95%ブートストラップCI [0.72,1.72]）。パンデミック時の成長率は平均25％低下する。レバ刺し産業と対面型産業は、ワクチン到着で最も恩恵を受けるだろう。アナリストの予想は、2021年半ばに予想されるワクチンが企業収益にとって銀の弾丸であることを意味する。</p>
+        <p class="abstract-text en">We estimate a model of damage to corporate earnings from COVID 19. An unexpected pandemic lowers current earnings due to costly mitigation and reduces growth rates. Damage depends on the expected arrival of a vaccine that reverts earnings to normal. Using this model, we infer from analysts' earnings forecasts that, as of mid May 2020, an effective vaccine is expected in 0.96 years (95% bootstrap CI [0.72,1.72]). Growth rates are on average 25% lower during the pandemic. Levered and face to face industries would benefit the most from a vaccine arrival. Analysts' expectations imply that the vaccine expected for the middle of 2021 is a silver bullet for corporate earnings.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Mutual Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link active">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Asset Pricing: Mutual Funds</h1>        <div class="paper-card">
+            <div class="paper-title">Bond Price Fragility and the Structure of the Mutual Fund Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mariassunta Giannetti; Stockholm School of Economics), Pab Jotikasthira; Southern Methodist University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=463" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">債券価格の脆弱性と投資信託業界の構造* Mariassunta Giannetti Stockholm School of Economics, CEPR and ECGI Chotibhak Jotikasthira Southern Methodist University February 2022 我々は、ある債券銘柄に大きなシェアを持つ投資信託は、償還が発生するとその銘柄の保有分をより低く売却するが、これはおそらく債券価格の下落やその結果として生じる未販売分への負のフィードバック効果を回避しようとするためだと考えられることを明らかにする。大規模な債券ファンドは、発行済み債券の株式を大量に保有する傾向があるため、結果的に保有債券の安定化効果を発揮している。保有比率が高い債券は、混乱期にアウトパフォームし、全体的な価格変動が小さくなる。我々は、債券ファンドがその大きなポジションから生じる負の価格波及を抑制する傾向が、FRBの流通市場企業信用枠が適格債と非適格債の両方を迅速に安定化させたことの説明に役立つという証拠を提供する。</p>
+        <p class="abstract-text en">Bond Price Fragility and the Structure of the Mutual Fund Industry*  Mariassunta Giannetti  Stockholm School of Economics, CEPR and ECGI  Chotibhak Jotikasthira  Southern Methodist University  February 2022  We show that mutual funds with a large share of a bond issue sell their holdings of that issue  to a lower extent when they experience redemptions, arguably because they attempt to avoid a  drop in the bond price and the consequent negative feedback effects on the unsold part of their  position. Since large bond funds tend to hold large shares of outstanding bond issues, they end  up exercising a stabilizing effect on the bonds they hold. Bonds with greater ownership  concentration outperform during periods of turmoil and have lower overall price volatility. We  provide evidence that the tendency of bond funds to limit negative price spillovers on their  large positions can help explain how the Fed's Secondary Market Corporate Credit Facility  quickly stabilized both eligible and ineligible bonds.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Money Management and Real Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Simon Gervais; Duke University), Gunter Strobl; University of Vienna)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=813" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、マネー・マネージャーの資産配分決定が企業の生産決定に影響を与えるような、マネー・マネジメントの均衡モデルを提案し、分析する。このモデルは、2つの主要な結果をもたらす。第一に、投資家が（内生的に）マネー・マネージャーに資金をより多く委ねることを選択すると、マネー・マネージャーのパフォーマンスを市場全体のポートフォリオのパフォーマンスと比較することが適切でなくなることである。実際、マネーマネジャーがより多くの資金を管理するようになると、彼らの持ち株は市場ポートフォリオに近づき、彼らが市場ポートフォリオをアウトパフォームする可能性は低くなる。第二に、マネー・マネージャーは、その手数料を考慮すると市場ポートフォリオよりアウトパフォームするかもしれないが、投資家にとって彼らのサービスを雇うことが最適である。なぜなら、マネー・マネージャーは、より効率的な資本配分を促し、その過程で経済の生産性を高め、企業の価値を高めるからである。実際、我々が示すように、マネーマネージャーの存在は、投資家が投資判断をマネーマネージャーに委ねるかどうかにかかわらず、すべての投資家の厚生を向上させることが可能である。</p>
+        <p class="abstract-text en">We propose and analyze an equilibrium model of money management in which the asset allocation decisions of money managers affect the production decisions of firms. The model produces two main results. First, comparing the performance of money managers to that of the overall market portfolio becomes less appropriate as investors (endogenously) choose to delegate more of their money to them. Indeed, as money managers control more money, their holdings get closer to the market portfolio, making it less likely that they outperform it. Second, although money managers may be outperformed by the market portfolio after their fees are taken into account, it is optimal for investors to hire their services. This is because money managers prompt a more efficient allocation of capital, making the economy more productive and firms more valuable in the process. In fact, as we show, the presence of money managers can improve the welfare of all investors, whether or not these investors choose to delegate their investment decisions to money managers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mutual Fund Liquidity Creation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sergey Chernenko; Purdue University), Viet-Dung Doan; Purdue University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=501" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、オープンエンド型投資信託が創出した流動性のドル換算額について、新たな尺度を開発した。この指標は、流動性ショックに対応して投資家が独自に取引を行った場合に発生するであろうコストと、オープンエンド型投資信託が投資家の償還を満たすために取引を行った場合に発生した実際のコストを比較したものである。この尺度を地方債投資信託に適用すると、2008年から2017年の間に、平均的なファンドは、グロス償還額1ドルあたり1.80セント、または年間ファンド資産の50ベーシスポイントに相当する流動性サービスを提供していることがわかる。この期間に提供された流動性サービスの総額は140～220億ドルであった。流動性創出は3つの要素に分解される。流動性創出は、1）フロー・ネッティング、2）流動性管理、3）取引執行の3つの要素に分解され、流動性創出におけるクロスセクションおよび時系列の変動が調査された。</p>
+        <p class="abstract-text en">We develop a novel measure of the dollar value of liquidity created by open end mutual funds. Our measure compares the costs investors would have incurred had they traded on their own in response to liquidity shocks with the actual costs incurred by open end mutual funds when trading to satisfy investor redemptions. Applying this measure to municipal bond mutual funds, we show that during the 2008 - 2017 period the average fund provides liquidity services worth 1.80 cents per dollar of gross redemptions or 50 basis points of fund assets per year. The aggregate value of liquidity services provided during this period was $14 - 22 billion. We decompose liquidity creation into three components: 1) flow netting, 2) liquidity management, and 3) trade execution, and explore the cross sectional and time series variation in liquidity creation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Economics of Mutual Fund Marketing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jingxuan Chen; London School of Economics), Wenxi Jiang; Chinese University of Hong Kong), Mindy Xiaolan; University of Texas at Austin)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1739" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、米国の投資信託会社におけるマーケティングとセールスに対する人的資本の配分を分析する。新しいデータセットを用いて，ファンド会社の雇用のうち，ポートフォリオ管理以外にマーケティングと販売にかなりの割合が割かれていることを明らかにした。投資信託のマーケティング部門の従業員比率は，(1)ファンド・ファミリーの規模と関係があり，(2)その後の高い資金流入を予測し，(3)パフォーマンスに対するフローの凸感度，(4)過去のパフォーマンスとの非単調関係，(5)市場の変動率に伴って上昇することが示された。我々は，ファンドの最適マーケティング配分を理解し，経験的パターンを調和させるために，費用対効果の高い学習とベイズ的説得に基づくフレームワークを開発した．</p>
+        <p class="abstract-text en">We analyze the allocation of human capital towards marketing and sales by U.S. mutual fund companies. With using a new dataset, we show that a significant share of employment of fund companies is devoted to marketing and distribution besides portfolio management. Mutual funds' marketing employee ratio (1) is related to fund family size, (2) predicts high subsequent fund flow, (3) is correlated with a more convex flow to performance sensitivity, (4) exhibit a non monotonic relationship with past performance, and (5) increases with market volatility. We develop a framework based on costly learning and Bayesian persuasion to understand funds' optimal marketing allocation and reconcile the empirical patterns.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

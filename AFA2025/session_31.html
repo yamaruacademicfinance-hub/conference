@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firm Growth via Labor and Intangible Capital</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link active">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Firm Growth via Labor and Intangible Capital</h1>        <div class="paper-card">
+            <div class="paper-title">Venture Labor: A Nonfinancial Signal for Start-up Success</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sean Cao (University of Maryland), Jie He (University of Georgia), Zhilu Lin (University of Tampa), Xiao Ren (Chinese University of Hong Kong-Shenzhen)</div>
+            <a href="https://afajof.org/management/viewp.php?n=71148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、撤退に成功した起業家から成熟していない新興企業への有能な従業員の流れを調べることで、労働市場マッチングの情報価値を探る。アクセス制限のある米国国勢調査データを用いて、こうした「シリアル・ベンチャー従業員」の存在が、撤退の可能性、規模の成長、イノベーションの生産性といった点で、彼らの新しい雇用主の将来の成功をポジティブに予測することを発見した。このような予測力は、シリアル・ベンチャー従業員と新しい雇用主との間の双方向の選択／マッチングによってもたらされた可能性が高く、前の雇用主から高給を得ていた従業員や、ベンチャー・キャピタル・バック／パブリック・ファームの経験がある従業員など、他のハイ・タレント労働力の予測力よりも強い。我々はさらに、ベンチャーキャピタルや求職者にとって、この労働ベースのシグナルが有用であることを実証する。全体として、我々の発見は、会計情報が不足している起業の世界における労働市場のマッチングに関する経営情報の重要性を浮き彫りにしている。</p>
+        <p class="abstract-text en">We explore the information value of labor market matching by examining the flow of talented employees from successfully exited entrepreneurial firms to less mature start-ups. Using restricted-access US Census data, we find that the presence of these “serial venture employees” positively predicts their new employers’ future success in terms of exit likelihoods, size growth, and innovation productivity. Such predictive power is likely driven by the two-way selection/matching between serial venture employees and their new employers, and is stronger than the predictive power of other high-talent labor such as employees top-paid by their previous employers or those having prior VC-backing/public-firm experience. We further demonstrate the usefulness of this labor-based signal to venture capitalists and job seekers, especially when alternative information sources about the start-ups are limited. Overall, our findings highlight the importance of managerial information about labor market matching in the entrepreneurial world where there is a lack of accounting information.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Corporate Finance Through Loyalty Programs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Dan Luo (Chinese University of Hong Kong)</div>
+            <a href="https://afajof.org/management/viewp.php?n=91448" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ロイヤリティ・プログラム（LP）は広く普及しており、一般的に経済研究において所得を増加させる役割について分析されている。本稿では、資金調達手段としてのLPの新たな役割を明らかにする。消費者に発行され、消費者によって償還される報酬は、企業の現在と将来のキャッシュフローに変化をもたらし、事実上、消費者からの借入れの形を作り出している。我々は、航空業界とホテル業界におけるLPに関する3つの定型化された事実を文書化した：1）LPは重要な資金調達源として機能しており、提携クレジットカード・プログラムがその大部分を占めていること、2）特典は広範な消費を通じて発行されるが、主に発行企業に関連する消費のために償還されること、3）LPは景気循環に逆行するキャッシュ・フローを生み出すこと。次に、資金調達手段としてのLPのダイナミック・モデルを構築する。このモデルは、消費者が自由に換金できる便利な特典を特徴としている。その結果、LPを通じて調達された資金は、リワードの発行と償還の相互作用の結果として、均衡において内生的に出現する。このモデルは、1)高価値、低頻度のサービスを提供する企業は、資金調達のためにLPをより効果的に活用できる、2)企業はリワードの発行をビジネスから切り離すことを目指すべきである、3)LPの循環的な性質は、プロシクリカルな企業の財務的回復力を強化する、ことを示唆している。</p>
+        <p class="abstract-text en">Loyalty programs (LPs) are widely prevalent and typically analyzed in economic research for their role in boosting income. This paper uncovers a novel role of LPs as financing instruments. The rewards issued to and redeemed by consumers cause shifts in firms' present and future cash flows, effectively creating a form of borrowing from consumers. We document three stylized facts about LPs in the airline and hotel industries: 1) LPs serve as significant financing sources, with co-branded credit card programs contributing a large portion; 2) rewards are issued through broad consumption but are redeemed predominantly for consumption related to the issuing firm; 3) LPs generate countercyclical cash flows. We then build a dynamic model of LPs as financing instruments. The model features convenient rewards, which consumers can freely redeem. As a result, the funds raised through LPs emerge endogenously in equilibrium as a result of the interplay between reward issuance and redemption. The model suggests that 1) firms supplying high-value, low-frequency services can leverage LPs more effectively for financing; 2) firms should aim to decouple reward issuance from their business; 3) the cyclical nature of LPs bolsters the financial resilience of procyclical firms.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Politics of Corporate Investment: Evidence from Political Turnovers and IPO Proceeds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matthew Denes (Carnegie Mellon University), Ran Duchin (Boston College), Hongbo Pan (Wuhan University), Wei Shi (Deakin University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=121212" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、新興企業による政治活動の新たなチャネルとして企業投資を研究する。中国の地方政治家の交代に伴うIPO資金の企業投資の変化に関するプロジェクトレベルのデータを用いて、IPO企業が新しいプロジェクトを開始したり、既存のプロジェクトを修正したりして、次期政治家に便宜を図っていることを発見した。特に投資の不可逆性が高い場合、成熟した同業他社のアクセスが低下する一方で、IPO企業は銀行融資や政府補助金へのアクセスが向上する。全体として、我々は、新興企業が、投資が不可逆的である成熟企業を犠牲にして、政治資本を構築するために未コミットの投資を再利用するという新しい証拠を提供する。</p>
+        <p class="abstract-text en">This paper studies corporate investment as a novel channel of political activity by startups. Using project-level data on changes in firms’ investments of IPO proceeds around turnovers of local Chinese politicians, we find that IPO firms initiate new projects and modify existing projects to cater to incoming politicians. Subsequently, they obtain better access to bank credit and government subsidies, while the access of their mature industry peers declines, particularly when investment irreversibility is high. Overall, we provide novel evidence that startups repurpose their uncommitted investments to build political capital at the expense of mature firms whose investment is irreversible.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Entrepreneur Experience & Success: Causal Evidence from Immigration Wait Lines</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Abhinav Gupta (University of North Carolina-Chapel Hill), Franklin Qian (University of North Carolina-Chapel Hill), Yifan Sun (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=107716" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、起業家の過去の経験が起業の成功に与える因果的影響について検討する。移民の初回起業家の経験を測定するために、グリーンカードの待機列の国内での変化を用いることで、より経験豊富な創業者が率いる起業が、資金調達、特許取得、従業員の成長に優れていることを明らかにする。具体的には、創業者の経験が1年増えるごとに、その後の10年間で、新興企業がIPOを果たす（従業員1000人以上に成長する）可能性が0.6p.p.（1p.p.）上昇する。元同僚をリクルートする能力が向上したことにより、初期のチーム規模が大きくなったことが、観察されたスタートアップの成功を説明している。我々の調査結果は、1年の経験延長は17万ドルの価値があることを示唆しており、政策立案者がスタートアップ・インキュベーターを設計する際の重要な考慮事項を強調している。</p>
+        <p class="abstract-text en">This paper investigates the causal impact of entrepreneurs' prior experience on startup success. Employing within-country changes in Green Card wait lines to instrument for immigrant first-time entrepreneurs' experience, we uncover that startups led by more experienced founders demonstrate superior funding, patenting, and employee growth. Specifically, each additional year of founder experience leads to a 0.6 p.p. (1 p.p.) increase in the likelihood of a startup undergoing an IPO (growing to over 1000 employees), over the subsequent decade. The larger initial team size, facilitated by the improved ability to recruit former colleagues, explains the observed startup success. Our findings imply that each extra year of experience is worth $170,000, underscoring a critical consideration for policymakers in the design of startup incubators.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

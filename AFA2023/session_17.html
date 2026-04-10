@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Market Mispricing and Limits to Arbitrage</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link active">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Asset Pricing: Market Mispricing and Limits to Arbitrage</h1>        <div class="paper-card">
+            <div class="paper-title">Mutual Fund Risk Shifting and Risk Anomalies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xiao Han; City (University of London), Nikolai Roussanov; University of Pennsylvania), Hongxun Ruan; Peking University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1719" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">運用成績の悪いファンドによるリスクシフトは、リスクの高い株式への需要を増加させる。我々は、よく知られたリスクアノマリー、すなわち、高いベータ値、特異的なボラティリティ、歪度を持つ株式の見かけ上の過大評価への寄与を調査する。その結果、これらのアノマリーは、主にラガード・ファンドが保有する銘柄に集中することが分かった。2002年のモーニングスターの方法論の変更を利用し、その「スター」評価は、ファンドユニバース全体ではなく、スタイルカテゴリー内の相対的なパフォーマンスに基づいている。ベータ異常は、ベータが2002年以前はS&P500インデックスに対して、2002年以降は関連カテゴリーインデックスに対して測定される場合にのみ有意であることを示す。資産需要システムからの反実仮想的な推定は、下位5分位のファンドからの需要圧力を取り除くことで、ベータ異常が本質的に排除されることを意味する。</p>
+        <p class="abstract-text en">Risk shifting by underperforming funds increases their demand for risky stocks. We investigate its contribution to the well known risk anomalies: the apparent overvaluation of stocks with high beta, idiosyncratic volatility, and skewness. We show that these anomalies are concentrated among stocks mainly held by the laggard funds. Exploiting the Morningstar methodology change in 2002, whereby its 'star' ratings became based on relative performance within a style category rather than across the entire fund universe, we show that the beta anomaly is significant only when beta is measured against the S&P 500 index for the pre 2002 period and against the relevant category index for the post 2002 period. Counterfactual estimates from an asset demand system imply that removing the demand pressure from the bottom quintile of funds essentially eliminates the beta anomaly.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Debt-Equity Spread</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hui Chen; Massachusetts Institute of Technology), Zhiyao Nicholas Chen; Lingnan University), Jun Li; University of Texas at Dallas)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=488" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業および債券レベルでの負債と資本の評価ギャップの指標として、実際の信用スプレッドと株式のインプライド・クレジット・スプレッドの差であるデット・エクイティ・スプレッド（DES）を提案する。DESは株式と債券のリターンを正反対に強く予測する。DESが低い企業（株式が債券に対して割安であることを示す）にロングポジションを取り、DESが高い企業にショートポジションを取る戦略は、年率平均6.31%の株式リターンと-5.53%の債券リターンを生み出している。このリターン予測力はサブサンプルにわたって一貫して有意であり、小規模で流動性が低く、ショートポジションが困難な株式や債券でより強くなる。さらに、DESが高い企業は、長期的な成長予測をより否定的に修正する傾向があり、株式の発行や債務の償還がより積極的で、その内部関係者は株式を売却する傾向がある。これらの結果は、DESが債券と株式の間の相対的なミスプライスの尺度であることを裏付けている。</p>
+        <p class="abstract-text en">We propose the debt equity spread (DES), the difference between the actual and equity implied credit spreads, as a measure of the valuation gap between debt and equity at the firm and bond level. DES strongly predicts stock and bond returns in opposite directions. A strategy that takes a long position in firms with low DES (indicating that stocks are cheap relative to bonds) and a short position in those with high DES generates an average stock return of 6.31% and bond return of - 5.53% per annum. The return predictability is consistently significant over subsamples and is stronger among smaller, less liquid, and more difficult to short stocks and bonds. In addition, firms with higher DES tend to have more negative revisions in long term growth forecasts, issue equity and retire debt more aggressively, and their insiders are more likely to sell their stocks. Together, these findings support DES being a measure of relative mispricing between debt and equity.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Statistical Limit of Arbitrage</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Rui Da; University of Chicago), Stefan Nagel; University of Chicago), Dacheng Xiu; University of Chicago)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=348" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">線形資産価格モデルの文脈では、裁定者は限られた時間幅のデータから十分な精度でアルファの大きな断面を学習することができないため、裁定取引に統計的限界があることを記録する。その結果、古典的な裁定価格理論（APT）における合理的期待値の下で開発された裁定ポートフォリオの最適なシャープ比は、サンプルサイズが大きくなり投資機会セットが拡大しても、過度に誇張されてしまう。我々は、あらゆる実現可能な裁定取引戦略によって達成可能な最適シャープ比を導き出し、このシャープ比が、裁定取引人の学習問題の難しさを特徴付けるアルファシグナルの強さと疎密によってどのように変化するかを簡単なモデルで説明する。さらに、アルファ・シグナルの条件に関わらず、この最適なシャープ比を達成する「全天候型」裁定取引戦略を設計する。また、アルファシグナルの異なる条件下で最適化を達成するために、裁定者が多重検定法、LASSO法、リッジ法をそれぞれどのように採用することができるかを示す。50年以上にわたる月次の米国個別株リターンの実証分析によれば、我々が検討したすべての戦略は、かなり高いが実現不可能なものにもかかわらず、サンプル外では中程度の低いシャープ比を達成しており、裁定取引の統計的限界とAPTの実証的成功の関連性が示唆されている。</p>
+        <p class="abstract-text en">In the context of a linear asset pricing model, we document a statistical limit to arbitrage due to the fact that arbitrageurs are incapable of learning a large cross section of alphas with sufficient precision given a limited time span of data. Consequently, the optimal Sharpe ratio of arbitrage portfolios developed under rational expectation in the classical arbitrage pricing theory (APT) is overly exaggerated, even as the sample size increases and the investment opportunity set expands. We derive the optimal Sharpe ratio achievable by any feasible arbitrage strategy, and illustrate in a simple model how this Sharpe ratio varies with the strength and sparsity of alpha signals, which characterize the difficulty of arbitrageurs' learning problem. Furthermore, we design an 'all weather' arbitrage strategy that achieves this optimal Sharpe ratio regardless of the conditions of alpha signals. We also show how arbitrageurs can adopt multiple testing, LASSO, and Ridge methods to achieve optimality under distinct conditions of alpha signals, respectively. Our empirical analysis of more than 50 years of monthly US individual equity returns shows that all strategies we consider achieve a moderately low Sharpe ratio out of sample, in spite of a considerably higher yet infeasible one, suggesting the empirical relevance of the statistical limit of arbitrage and the empirical success of APT.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Value of Arbitrage</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Eduardo Davila; Yale University), Daniel Graves; Yale University), Cecilia Parlatore; New York University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=208" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、金融市場における終値差の社会的価値について研究する。我々は、裁定取引ギャップ（市場間の価格差）が、裁定取引を行う際の限界的な社会的価値に正確に対応することを示す。さらに、裁定ギャップの解消による社会的価値の総和を計算するためには、裁定ギャップと価格インパクトの尺度があれば十分であることを示す。理論的には、ある裁定ギャップの場合、流動性の高い市場において裁定取引の社会的価値の総和がより高くなることを示す。我々は、この枠組みを応用し、カバー金利平価違反といくつかの二重上場企業の文脈で、裁定ギャップの解消から得られる厚生利得を計算する。裁定取引ギャップの解消の価値の推定値は、アプリケーションによって大きく異なる。</p>
+        <p class="abstract-text en">This paper studies the social value of closing price differentials in financial markets. We show that arbitrage gaps (price differentials between markets) exactly correspond to the marginal social value of executing an arbitrage trade. We further show that arbitrage gaps and measures of price impact are sufficient to compute the total social value from closing an arbitrage gap. Theoretically, we show that, for a given arbitrage gap, the total social value of arbitrage is higher in more liquid markets. We apply our framework to compute the welfare gains from closing arbitrage gaps in the context of covered interest parity violations and several duallisted companies. The estimates of the value of closing arbitrage gaps vary substantially across applications.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

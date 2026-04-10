@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Big Data and Machine Learning: Applications and Implications</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link active">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Economic Big Data and Machine Learning: Applications and Implications</h1>        <div class="paper-card">
+            <div class="paper-title">Data Privacy and Temptation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: John Zhuang Liu; Chinese University of Hong Kong), Michael Sockin; University of Texas at Austin), Wei Xiong; Princeton University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1717" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、一部の消費者が自己統制力が弱く、ギャンブルやビデオゲームなどの誘惑財のターゲット広告に苦しんでいる場合、デジタルプラットフォームのデータ共有スキームの違いが、消費者余剰と社会余剰にどのような影響を及ぼすかを分析する。消費者データを企業と共有することは、消費者と通常の消費財のマッチングの効率を高める一方で、意志の弱い消費者を誘惑財にさらすことになる。各消費者がデータ共有の可否を選択できるオプトイン政策は一見魅力的だが、我々の分析によれば、この政策は深刻な誘惑を受けた消費者を保護する上で有効でない可能性がある。通常の商品へのアクセス向上に動機づけられた他の消費者がデータの共有を選択した場合、彼らのオプトインは、オプトアウトを選択した意志薄弱な消費者の匿名性を低下させるのである。この外部性を緩和するために、プライバシー保護規制は、消費者がデータを共有する権限を、正常な財と誘惑の多い財の売り手にバンドルすることを制限する必要がある。</p>
+        <p class="abstract-text en">This paper analyzes how different data sharing schemes of a digital platform may affect consumer surplus and social surplus when a fraction of the consumers have weak self control and suffers from targeted advertising of temptation goods, such as gambling and video games. While sharing consumer data with firms improves the efficiency of matching consumers with normal consumption goods, it also exposes weak willed consumers to temptation goods. Despite the seeming appeal of the opt in policy of allowing each consumer to opt in or out of data sharing, our analysis shows that this policy may not be effective in protecting severely tempted consumers. When other consumers, motivated by the improved access to normal goods, choose to share their data, their opt in reduces the anonymity of the weak willed consumers who choose to opt out. To alleviate this externality, privacy protection regulation needs to limit the bundling of the consumer authorization to share data with normal good and temptation good sellers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Machine Learning versus Economic Restrictions: Evidence from Stock Return Predictability</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Doron Avramov; IDC Herzliya), Si Cheng; Chinese University of Hong Kong), Lior Metzker; Hebrew University of Jerusalem)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=174" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、機械学習の手法が標準的な経済的制約をクリアできないことが多いことを示す。ディープラーニングのシグナルに基づく投資は、裁定取引が困難な銘柄から収益性を引き出し、市場状態の裁定取引の制限を緩和している最中である。バリューウエイトのリターン、マイクロキャップやディストレスト銘柄の除外は、収益性を大幅に低下させる。プライシングカーネルによって暗示されるタンジェンシーポートフォリオの高回転または極端なポジションによる取引コストが存在する場合、パフォーマンスはさらに悪化する。機械学習は、その不透明な性質にもかかわらず、ほとんどのアノマリーと一致するミスプライス銘柄を識別します。経済的な制約を越えて、深層学習シグナルはロングポジションで利益を上げ、近年でも実行可能であり、低いダウンサイドリスクを命じる。</p>
+        <p class="abstract-text en">This paper shows that machine learning methods often fail to clear standard economic restrictions. Investments based on deep learning signals extract profitability from difficult to arbitrage stocks and during alleviated limits to arbitrage market states. Value weighting returns and excluding microcaps or distressed stocks considerably attenuate profitability. Performance further deteriorates in the presence of trading costs due to high turnover or extreme positions in the tangency portfolio implied by the pricing kernel. Despite their opaque nature, machine learning methods identify mispriced stocks consistent with most anomalies. Beyond economic restrictions, deep learning signals are profitable in long positions, remain viable in recent years, and command low downside risk.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Persuading Investors: A Video-Based Study</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Allen Hu; Yale University), Song Ma; Yale University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=399" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資家を説得する。説得力のあるコミュニケーションは、内容だけでなく、顔の表情、声のトーン、口調などのデリバリーも重要である。本稿では</p>
+        <p class="abstract-text en">Persuading Investors: A Video Based Study* Allen Hu Song Ma Persuasive communication is a function not only of content but also delivery, e.g., facial expression, tone of voice and diction. This paper examines the persuasiveness of delivery in start up pitches. Using machine learning (ML) algorithms to process full pitch videos, we quantify persuasion in visual, vocal, and verbal dimensions. Posit</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Who Benefits from Robo-advising? Evidence from Machine Learning</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alberto Rossi; Georgetown University), Steve Utkus; Vanguard University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=792" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の大規模なハイブリッドロボアドバイザーが、これまで自己勘定で投資していた投資家のポートフォリオに与える影響について研究している。すべての投資家において、ロボアドバイザーは投資家のマネーマーケット型投資信託の保有を減らし、債券の保有を増やした。また、個別株や米国・海外のアクティブ型投資信託の保有を減らし、低コストのインデックス型投資信託のエクスポージャーを増やすことで、特異的なリスクを低減させることができた。さらに、国際的な株式と債券の分散投資を大幅に増やすことで、ホームバイアスを排除している。最後に、サンプル期間を通じて、主に投資家のポートフォリオ・リスクを低下させることによって、投資家の全体的なリスク調整後パフォーマンスを向上させることができる。我々は、ブースト回帰木（BRT）と呼ばれる機械学習アルゴリズムを使用して、ポートフォリオ配分とパフォーマンスに対するアドバイスの効果における断面積の変動を説明する。アドバイスの恩恵を受ける投資家は、プラットフォームでの自己投資経験が少ない人、以前から現金保有量が多い人、アドバイスを採用する前に取引量が多かった人である。また、手数料の高いアクティブ型投資信託に投資している個人は、大きなパフォーマンスの向上を示している。最後に、投資家の登録と離脱の決定要因について検討した。ロボアドバイスの恩恵をより多く受ける投資家は、契約する確率が高く、サービスをやめる確率も低い。</p>
+        <p class="abstract-text en">We study the effects of a large U.S. hybrid robo adviser on the portfolios of previously selfdirected investors. Across all investors, robo advising reduces investors' holdings in money market mutual funds and increases bond holdings. It also reduces idiosyncratic risk by lowering the holdings of individual stocks and US and international active mutual funds and raising exposure to low cost indexed mutual funds. It further eliminates home bias by significantly increasing international equity and fixed income diversification. Finally - over our sample period - it increases investors' overall risk adjusted performance, mainly by lowering investors' portfolio risk. We use a machine learning algorithm, known as Boosted Regression Trees (BRT), to explain the cross sectional variation in the effects of advice on portfolio allocations and performance. Investors who benefit from advice are those with little self directed investment experience on the platform, those with prior high cash holdings, and those with high trading volume before adopting advice. Individuals invested in high fee active mutual funds also display significant performance gains. Finally, we study the determinants of investors' sign up and attrition. Investors who benefit more from robo advising are also more likely to sign up and less likely to quit the service.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

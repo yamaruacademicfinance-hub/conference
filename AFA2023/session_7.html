@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Real Effects of ESG Investment</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link active">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>The Real Effects of ESG Investment</h1>        <div class="paper-card">
+            <div class="paper-title">Communities as Stakeholders: Impact of Corporate Bankruptcies on Local Governments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sudheer Chava; Georgia Institute of Technology), Baridhi Malakar; Georgia Institute of Technology), Manpreet Singh; Georgia Institute of Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1744" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、上場企業の倒産が地域社会にもたらす外部性について、新たな証拠を提供する。経済動向が類似している県と比較すると、本社がある県の地方債利回りは、企業の破産申請から1年以内に10bps上昇する。その結果、利回りの上昇が続く県では、地域社会が長期的な経済的困難に陥っていることがわかった。この効果は、予算制約のある県でより顕著である。一方、ビジネスが盛んな州の郡は、その影響をあまり受けていない。この結果は、地域社会が公営企業の利害関係者であり、公営企業の財政難が地方債市場に影響を及ぼすことを浮き彫りにしている。</p>
+        <p class="abstract-text en">We provide new evidence on externalities imposed on local communities due to bankruptcy filings of publicly listed manufacturing firms. Compared to matched counties with similar economic trends, municipal bond yields for counties with firm headquarters increase by 10 bps within a year of a firm's bankruptcy filing. Notably, in counties with a lasting increase in yields, the local communities suffer prolonged economic distress. The effect is more pronounced for counties with budgetary restrictions. Meanwhile, counties in pro business states are less affected. Our results highlight local communities as stakeholders to public firms whereby firm financial distress affects the municipal bond market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">ESG News, Future Cash Flows, and Firm Value</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francois Derrien; HEC Paris), Philipp Krueger; University of Geneva (Swiss Finance Institute), Augustin Landier; HEC Paris), Tianhao Yao; HEC Paris)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=686" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ESGのネガティブな事件を受けて、セルサイドのアナリストがどのように業績予想を調整するかを調査した。その結果、ネガティブなESGのニュースを知った後、アナリストは長期的な視野を含むすべての視野で業績予想を有意に下方修正することが分かった。ネガティブなESG事件は、他のタイプの企業事件よりも長い水平軸で業績予想に影響を与える。このような業績予想の下方修正には、将来のコスト上昇よりも、将来の売上高減少への期待が反映されている。予測修正によって、ESGインシデントが企業価値に与える負の影響のほとんどが説明される。欧州では、ESGのニュースに対してより高い感度を示すアナリストは、同業他社よりも有意に正確な予測を提供する。</p>
+        <p class="abstract-text en">We investigate how sell side analysts adjust their earnings forecasts following negative ESG incidents. We find that after learning about negative ESG news, analysts significantly downgrade their earnings forecasts over all horizons, including long term horizons. Negative ESG incidents aﬀect earnings forecasts at longer horizons than other types of corporate incidents. The negative revisions of earnings forecasts reflect expectations of lower future sales (rather than higher future costs). Forecast revisions explain most of the negative impacts of ESG incidents on firm value. In Europe, analysts who exhibit greater sensitivity to ESG news provide significantly more precise forecasts than their peers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Labor Exposure to Climate Change and Capital Deepening</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Zhanbing Xiao; University of British Columbia)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=216" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">気候変動による気温の上昇は、屋外労働者に依存する企業の労働コストを上昇させる2つのタイプの気候リスクを発生させる。1）物理的リスク-高温下での労働生産性の低下、2）規制リスク-政府が労働者を暑さの危険から保護するための規制を導入すること。労働チャンネルを通じて気候変動にさらされた企業は、資本労働比率が高く、特に経営者が気候変動を信じている場合や、自動化が容易な仕事である場合に、資本労働比率が高くなることが分かった。物理的リスク（異常高温）と規制的リスク（カリフォルニア州における熱中症予防基準の採択）のショックを経験した後、高被曝企業はより資本集約的な生産関数へと転換する。また、これらの企業は、特に自動化や労働コスト削減を促進する技術において、より多くのイノベーションを行うことで対応している。さらに、労働者が気候変動にさらされることで、雇用創出が阻害され、労働者の収益が悪化する。全体として、今回の調査結果は、気候変動が気温上昇にさらされる職業において自動化を加速させることを浮き彫りにしている。</p>
+        <p class="abstract-text en">Rising temperatures induced by climate change generate two types of climate risks that raise labor costs of firms relying on outdoor workers: 1) physical risk - lower labor productivity in high temperatures; and 2) regulatory risk - governments introducing regulations to protect workers against heat hazards. I find that firms exposed to climate change through the labor channel have higher capital labor ratios, especially when managers believe in climate change or when jobs are easy to automate. After experiencing shocks to physical (abnormally high temperatures) and regulatory (the adoption of Heat Illness Prevention Standard in California) risks, high exposure firms switch to more capital intensive production functions. These firms also respond by innovating more, especially in technologies facilitating automation and reducing labor costs. Furthermore, labor exposure to climate change impedes job creation and hurts workers' earnings. Overall, the findings highlight that climate change accelerates automation in occupations exposed to rising temperatures.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Proxy Voting and the Rise of ESG</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Patrick Bolton; Columbia University), Enrichetta Ravina; Federal Reserve Bank of Chicago), Howard Rosenthal; New York University), Chris Tausanovitch; University of California (Los Angeles)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1676" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2005年から2018年まで、機関投資家の委任状投票によって明らかにされた機関投資家のイデオロギーの時間的パターンを追跡する。金融危機、委任状投票に関する規制の変更、それが生んだ資産運用業界の変革、そして社会的責任投資運動の台頭にもかかわらず、最大投資家のイデオロギーは非常に安定していることがわかった。機関投資家のイデオロギーは、561のミューチュアルファンドファミリーのすべての委任状投票について、動的な空間スケーリング分析によって明らかにされた。我々は、投票が2次元ユークリッド空間における単一ピークの選好によって駆動されていることを特徴づける。一次元は、社会的責任を重視する投資家を中心とする左派・右派のイデオロギー的傾向を反映し、もう一次元は、経営陣に対する態度の違いであり、一端は経営陣に優しい投資家、他端は経営陣を統制しようとする投資家である。大口投資家のイデオロギーは平均的に安定しているが、その他の投資家のイデオロギーは時間の経過とともに大きく変化していることが分かる。</p>
+        <p class="abstract-text en"> We track the temporal pattern of institutional investors' ideologies as revealed by their proxy votes from 2005 to 2018. Despite the financial crisis, the regulatory changes on proxy voting and transformation of the asset management industry it has spawned, and despite the rise of the socially responsible investment movement, we find that the ideology of the largest investors has remained highly stable. The ideologies of institutional investors are revealed by a dynamic, spatial scaling analysis of all proxy votes of 561mutual fund families. We characterize voting as driven by single peaked preferences in a two dimensional Euclidean space. One dimension reflects the familiar left right ideological leanings, with more socially responsible investors on the left, and the other dimension differences in attitudes towards management, with management friendly investors at one end and management disciplinarians at the other. Although the ideology of the largest investors remains solidly stable on average, we find that the ideologies of a substantial fraction of other investors evolve substantially over time.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

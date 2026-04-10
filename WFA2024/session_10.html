@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Making in Mutual Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link active">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Decision Making in Mutual Funds</h1>        <div class="paper-card">
+            <div class="paper-title">Why Do Index Funds Have Market Power? Quantifying Frictions in the Index Fund Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zach Brown (University of Michigan), Mark Egan (Harvard University), Jihye Jeon (Boston University), Chuqing Jin (Toulouse School of Economics), Alex Wu (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=958048" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">インデックス・ファンドは、投資家が金融市場にアクセスする最も一般的な方法の一つであり、アクティブ投資運用に代わる透明で低コストの選択肢であると認識されている。インデックス・ファンド投資のこのような美点や、新商品や競合他社の登場にもかかわらず、多くのファンドは依然として高コストであり、ファンド・マネジャーは実質的な市場支配力を行使しているように見える。なぜインデックスファンドは市場支配力を持つのだろうか？我々は、インデックス・ファンドの需要と供給に関する新しい定量的ダイナミック・モデルを開発した。このモデルでは、投資家は慣性と探索摩擦にさらされ、異質な選好を持つ。このような需要側の摩擦は、インデックス・ファンドの運用会社に市場支配力をもたらし、ファンド運用会社は、価格差別を行い、個人投資家により高い経費率を課すことによって、それをさらに利用することができる。我々の結果は、個人投資家が支払う平均経費率は、 摩擦のないベースラインと比較して、検索摩擦の結 果として約45％高く、慣性の結果として40％高いことを示 唆している。この反実仮想では、検索摩擦とイナーシャの相互 作用が見られる--イナーシャは、検索摩擦が低い（高 い）場合に投資家に高い（低い）コストを課す。</p>
+        <p class="abstract-text en">Index funds are one of the most common ways investors access financial markets and are perceived to be a transparent and low-cost alternative to active investment management. Despite these purported virtues of index fund investing and the introduction of new products and competitors, many funds remain expensive and fund managers appear to exercise substantial market power. Why do index funds have market power? We develop a novel quantitative dynamic model of demand for and supply of index funds. In the model, investors are subject to inertia, search frictions, and have heterogeneous preferences. These frictions on the demand side create market power for index fund managers, which fund managers can further exploit by price discriminating and charging higher expense ratios to retail investors. Our results suggest that the average expense ratios paid by retail investors are roughly 45\% higher as a result of search frictions and are 40\% higher as a result of inertia compared to the friction-less baseline. In our counterfactuals, we find an interaction between search frictions and inertia---inertia imposes higher (lower) costs on investors when search frictions are low (high).</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Investors Overvalue Startups? Evidence from the Junior Stakes of Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vikas Agarwal (Georgia State University), Brad Barber (University of California-Davis), Si Cheng (Syracuse University), Allaudeen Hameed (National University of Singapore), Harshini Shanker (London Business School), Ayako Yasuda (University of California-Davis)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=941640" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、投資信託が新興企業のジュニア持分を、新興企業の多層資本構造を考慮したモデルの公正価値よりも43％高い評価額で報告していることを示す。直近に発行された最も上位の証券は、投資信託が保有するジュニア証券よりも1株当たり48%高い価値があり、これは投資信託がジュニア証券を上位証券と同等に見なしていることを示唆している。我々の調査結果は、モデルの仮定に対してロバストである。シニア証券とジュニア証券の二重保有について報告された同一の評価額は、会社の暗黙の価値に37％の不一致を意味する。過大評価は、プライベート・スタートアップ投資の経験が長いファンド・ファミリーほど低く、セカンダリー取引で購入したジュニア証券ほど高い。過大評価は、ダウンラウンド（購入価格が前回よりも低い新規資金調達ラウンド）やIPOの後に減少する。この結果は、投資信託が、ジュニア証券がシニア証券よりも低い報酬しか得られないネガティブな結果の確率を無視し、すべての証券が普通株式に転換され、均等に報酬が支払われるイグジット成功の確率をオーバーウェイトしていることと一致している。</p>
+        <p class="abstract-text en">We show that mutual funds report their junior stakes in startups at 43% higher valuation than model fair values that consider multi-tier capital structures of startups. The latest-issued and most senior security is worth 48% more per share than junior securities held by mutual funds, implying that mutual funds mark junior securities close to par with the senior securities. Our findings are robust to model assumptions. Identical valuations reported for dual holdings of senior and junior securities imply 37% discrepancy in implied values of the firm. Overvaluation is lower for fund families with longer experience in private startup investments, and higher for junior securities purchased in secondary transactions. Overvaluation declines after down rounds (new financing rounds with purchase prices lower than previous rounds) and near IPOs. The results are consistent with mutual funds neglecting the probability of negative outcomes in which junior securities are paid less than senior securities and overweighting successful exits where all securities convert to common equity and are paid equally.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Income Risk and Flow Hedging by Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Amirabas Salarkia (Tilburg University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=933296" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、家計の所得リスクが投資信託マネージャーのポートフォリオ決定にどのような影響を与えるかを調査する。州レベルの地域所得ショックがリテール投資信託への資金流入に影響を与えるという新しい実証的証拠を提供する。ポートフォリオの保有データを分析することで、ポートフォリオ最適化モデルの予測と一致し、アクティブ・ファンド・マネジャーは地方所得の高いベータ株からポートフォリオを傾斜させることで、地方所得ショックをヘッジしていることが分かった。さらに、アクティブ・ファンド・マネジャーは、インカム・ショックに対するフロー感応度が高くなることを期待して、インカム・ショックをより強くヘッジするようにポートフォリオの傾斜を変更し、その逆もまた同様である。この発見は、インカムショックをヘッジするファンドマネジャーのインセンティブが、フローヘッジの動機によって部分的に引き起こされていることを明らかにしている。また、インカムヘッジとローカルバイアスのトレードオフが、ローカルバイアスのパズルを説明するのに役立つことも示した。</p>
+        <p class="abstract-text en">This paper investigates how household income risk influences mutual fund managers’ portfolio decisions. I provide novel empirical evidence that state-level local income shocks affect capital flows to retail mutual funds. By analyzing portfolio holdings data, I find that, consistent with the predictions of a portfolio optimization model, active fund managers hedge local income shocks by tilting their portfolios away from high local income beta stocks. Furthermore, in expectation of a higher flow to income sensitivity, active fund managers change their portfolio tilts to hedge income shocks more strongly, and vice versa. This finding reveals that fund managers’ incentive to hedge income shocks is partly driven by their flow-hedging motives. I also show that the trade-off between income hedging and local bias can help explain the local bias puzzle.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

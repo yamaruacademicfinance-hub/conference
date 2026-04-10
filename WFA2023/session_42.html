@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Determining Corporate Investment</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link active">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Determining Corporate Investment</h1>        <div class="paper-card">
+            <div class="paper-title">What Gets Measured Gets Managed: Investment and the Cost of Capital</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhiguo He (University of Chicago), Guanmin Liao (Renmin University of China), Baolian Wang (University of Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=866600" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、中国国有企業（SOE）の業績評価政策の段階的改革を検証することで、政府主導のインセンティブシステムの影響を研究する。資本配分の効率化を図るため、2010年から国有企業の業績評価を行う規制当局は、自己資本利益率（ROE）から経済付加価値（EVA）へと変更した。このEVA政策は、事実上すべてのSOEに対して固定資本コストを規定し、企業固有の資本コストの潜在的な異質性を無視することで、1つのサイズですべてに対応するアプローチを採用している。我々は、実際の借入金利が規定の資本コストから大きく離れている場合ほど、SOEが投資決定を変更することによって、業績評価改革に実際に反応したことを示す。本稿は、インセンティブ制度が実質投資に影響を与えるという因果関係を示すとともに、中国における経済改革が直面する課題に新たな光を当てている。</p>
+        <p class="abstract-text en">We study the impact of government led incentive systems by examining a staggered reform in the Chinese state owned enterprise (SOE) performance evaluation policy. To improve capital allocative efficiency, starting in 2010, regulators evaluating SOE performance switched from using return on equity (ROE) to economic value added (EVA). This EVA policy adopts a one size fits all approach by stipulating a fixed cost of capital for virtually all SOEs, ignoring the potential heterogeneity of firm specific costs of capital. We show that SOEs indeed responded to the performance evaluation reform by altering their investment decisions, more so when the actual borrowing rate was further away from the stipulated cost of capital. Our paper provides causal evidence that incentive schemes affect real investment and sheds new light on challenges faced by economic reforms in China.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Managerial Learning from Decoding Noisy Stock Prices: New(s) Evidence</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alan Kwan (University of Hong Kong), Tse-Chun Lin (University of Hong Kong), Po-Yu Liu (University of Hong Kong)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=874244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業経営者が株価から学習することを主張する長い文献があるが、組織の学習過程を観察することは困難である。我々は、企業レベルの金融メディア記事の読者数を、経営者の学習の顕在化として用いる新しいテストを提示する。金融メディアを読むことは、株価に含まれるノイジーなシグナルの解釈において経営者を助けるという仮説を立てた。その結果、企業の金融記事読書量が1標準偏差増加すると、研究開発費の古典的Q感度が26％増加することが示された。この関係は、主に経営者がいるであろう本社の近くで読むこと、そして経営者にとってより有益であると思われる記事を読むことによってもたらされたものである。</p>
+        <p class="abstract-text en">A long literature argues corporate managers learn from stock prices, but organizations' learning process is challenging to observe. We present a novel test using firm level readership of financial media articles as a manifestation of managerial learning. We hypothesize that reading financial media helps managers with the interpretation of noisy signals in stock prices. We show that the classic Q sensitivity of R&D expenditure increases by 26% when firms' reading of financial articles increases by one standard deviation. This relationship is mainly driven by reading from near the headquarters where managers are likely located and by articles likely more informative to managers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Coherence Side of Rationality: Rules of Thumb, Narrow Bracketing, and Managerial Incoherence in Corporate Forecasts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pamela Giustinelli (Università Bocconi), Stefano Rossi (Università Bocconi)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=887264" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業生産環境における予測の首尾一貫性の理論を開発し、これにより、首尾一貫性のある予測のベンチマークを得ることができる。我々の肯定的な理論では、非干渉性は「狭い思考」（同時期の複数の変数の予測を調整する際の個人内摩擦）から生じ、経験則の使用を通じて作用する。我々は、経営学の教科書で提案されている経験則のいくつかを、企業の生産技術に関するノイズの多い信号に対するセカンドベストの最適な反応として合理化する。米国の大企業のトップエグゼクティブを対象としたデュークサーベイを用い、企業経営者が複数のバランスシート項目の予測を同時に行う方法における異質性を記録し、異なる経験則の使用を反映する。その結果、企業業績は一貫性のなさと負の相関を示し、CFOが「ナローブラケット」予測（生産と労働を無視して過去の資本成長を未来に予測する）を行っている企業で最も低くなることがわかった。この結果は、CFOの約半数が、自社のアウトプットとインプットの成長について支離滅裂な予測をしていることを意味する。</p>
+        <p class="abstract-text en">We develop a theory of forecast coherence in a firm production setting, which yields a benchmark of first best coherent forecasts. In our positive theory, incoherence arises from ‘narrow thinking' - intra personal frictions in coordinating forecasts of multiple contemporaneous variables - and operates via the use of rules of thumb. We rationalize some of the rules of thumb proposed by managerial textbooks as second best optimal responses to noisy signals about the firm's production technology. Using the Duke Survey of top executives of large US corporations, we document heterogeneity in the way in which corporate managers provide forecasts of multiple balance sheet items at the same time, reflecting the use of different rules of thumb. Consistent with our model, we find that firm performance correlates negatively with incoherence, being lowest for firms whose CFOs provide 'narrow bracketing' forecasts - projecting past capital growth into the future while ignoring output and labor. Our results imply that about one half of CFOs make incoherent forecasts of their own firm's output and inputs' growth.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

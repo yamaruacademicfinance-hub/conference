@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance Theory</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link active">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Corporate Finance Theory</h1>        <div class="paper-card">
+            <div class="paper-title">The Optimal Structure of Securities under Coordination Frictions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Dan Luo (Chinese University of Hong Kong), Ming Yang (University College London)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=902076" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、協調摩擦が存在する場合のマルチエージェントのセキュリティ設計を研究する。校長は、未知の状態やエージェントの参加レベルに応じて価値が増加するプロジェクトを開発することを意図している。元々同質なエージェントの参加を動機付けるために、校長は彼らにプロジェクト価値を裏付けとする複数の単調証券を提供する。参加度が高ければ高いほど、プロジェクト価値が高くなり、参加エージェントに支払われる証券も高くなるため、参加決定は戦略的補完となる。ミスコーディネーションは、エージェントが状態に関するノイズの多い信号から他者の意思決定を正確に推論できないために発生する。我々は、セキュリティ設計において、ミスコーディネーションの悪影響を決定する2つの対象（「ペイオフ感度」と「参加の認識」）を特定する。ミスコーディネーションの悪影響を軽減するために、この2つのオブジェクトをエージェント間でアソート的にマッチングさせる必要がある。このメカニズムは、マルチトランシェ証券構造を意味し、シニアトランシェ保有者は潜在的なミスコーディネーションに強く、より積極的に参加し、ジュニアトランシェ保有者のミスコーディネーションへの恐怖を緩和するのに役立つ。我々は、証券形態においてエージェントを差別化するプリンシパルの能力が、差別化が望ましいかどうかにとって重要であることを発見した。</p>
+        <p class="abstract-text en">We study multi agent security design in the presence of coordination frictions. A principal intends to develop a project whose value is increasing in an unknown state and the level of agents' participation. To motivate the participation of ex ante homogeneous agents, the principal offers them multiple monotone securities backed by the project value. More participation results in a higher project value and thus higher security payment to participating agents, making participation decisions strategic complements. Miscoordination arises because agents cannot precisely infer others' decisions from noisy signals about the state. We identify two objects in security design - 'payoff sensitivity' and 'perception of participation' - that determine the adverse impact of miscoordination. To mitigate the adverse impact of miscoordination, the two objects should be matched assortatively over agents. This mechanism implies a multi tranche security structure in which senior tranche holders are more robust to potential miscoordination and participate more aggressively, helping alleviate the junior tranche holders' fear of miscoordination. We find that the principal's ability to differentiate agents in security format is crucial to whether differentiation is desirable.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Optimal Managerial Authority</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Joanne Chen (Boston University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=900984" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、最適な経営者の権限と経営者報酬との相互作用を調査するために、ダイナミック・エージェンシー・モデルを開発した。このモデルは、マネジャーを採用する際、約束された報酬とは対照的に、マネジャーの外部オプションにも会社の採用コストにも反応しない権限を校長が委譲し、その両方が増加することを示す。時間の経過とともに、マネージャーの権限と報酬の両方が、良いパフォーマンスの後に上昇し、悪い実現の後に低下する。権限のパフォーマンス感応度は、マネージャーの権限が大きくなるにつれて低下し、エンチャントメントに似ている。一方、給与のパフォーマンス感応度は、マネージャーの権限が大きくなるにつれて上昇する。経営者の権限が頻繁にしか調整されない場合、最適な契約は自己売買を可能にする可能性がある。モデルは、経営者の自己売買につながるキャリアの軌跡を明らかにする。さらに、このモデルは、経営者の権限と生涯効用を決定する上で、キャリア初期の運が不釣り合いな役割を果たすことを明らかにする。</p>
+        <p class="abstract-text en">I develop a dynamic agency model to investigate optimal managerial authority and its interaction with managerial compensation. The model shows that when hiring a manager, the principal delegates authority that is unresponsive to either the manager's outside options or the firm's recruitment costs, in contrast to promised compensation, which increases in both. Over time, both the manager's authority and his compensation rise after good performances and decline after bad realizations. Authority performance sensitivity decreases as the manager's authority grows, resembling entrenchment. In contrast, pay performance sensitivity increases with the manager's authority. If managerial authority can be adjusted only infrequently, the optimal contract may allow for self dealing. The model delineates career trajectories that lead to managerial self dealing. Moreover, the model reveals that early career luck plays a disproportionate role in determining the manager's authority and lifetime utility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Optimal Information and Security Design</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nicolas Inostroza (University of Toronto), Anton Tsoy (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=894460" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">資産所有者は、資産担保証券とその価値に関するシグナルを設計する。シグナルを私的に観測した後、資産家はその証券を独占的な流動性供給者に売却する。最適なシグナル構造は、証券売却を保証し、発行者が証券価値に関するあまりにポジティブな私的情報を知らないことを約束するものである。最適な証券設計は、純粋な株式、つまり最も情報感受性の高い証券である。バーゼルIII規制のような追加流動性要件の下では、リスクの高い負債となる。このように、最も情報感受性の低い証券としての負債の最適性についての標準的な直観は、証券またはシグナルデザインに関する追加的な制限（例えば、規制）の下でのみ成立します。</p>
+        <p class="abstract-text en">An asset owner designs an asset backed security and a signal about its value. After privately observing the signal, he sells the security to the monopolistic liquidity supplier. Any optimal signal structure guarantees the security sale and commits the issuer not to learn too positive private information about the security value. The optimal security design is pure equity - the most informationally sensitive security. It is risky debt under additional liquidity requirements akin to Basel III regulation. Thus, the standard intuition behind debt optimality as the least informationally sensitive security holds only under additional restrictions (e.g., regulatory) on security or signal design.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

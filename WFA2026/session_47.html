@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Microstructure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link active">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Market Microstructure</h1>        <div class="paper-card">
+            <div class="paper-title">Latency and the Look-Ahead Bias in Trade and Quote Data</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Robert Battalio (University of Notre Dame), Craig Holden (Indiana University), Matthew Pierson (University of Pennsylvania), John Shim (University of Notre Dame), Jun Wu (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1074416" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融研究や証券規制の分野で広く利用されているNYSEの取引・気配値データセット（TAQ）は、全米の証券取引所からの気配値と取引データを一元的に集約する「証券情報プロセッサ（SIP）」によって生成されています。我々は、SIPがイベントを時系列順とは異なる順序で報告していることを明らかにしました。具体的には、取引後に発生した気配値の変更が、取引前に発生したかのように報告されるケースが頻繁に見受けられます。 この問題の原因は、取引と気配値が（地理的要因などにより）変動する遅延をもって記録され、時間的に極めて密集していることにある。その結果、先読みバイアスが生じる。すなわち、取引の符号付けやスプレッドの測定に広く用いられているSIPの気配値には、その取引自体による価格インパクトが織り込まれているのである。我々は、この先読みバイアスが、誤った取引の符号付け、および下方バイアスのある実効スプレッドと価格インパクトをもたらすことを実証した。 報告の遅延が大きい取引の大部分において、これらの誤差は極めて大きい。取引の約20％が誤って署名されており、実効スプレッドと価格インパクトは40％以上過小評価されている。我々は、取引所の規則に基づいた署名手法を提案する。この手法は、取引量の大部分において100％の正確性を確保し、全取引を通じて現行の標準手法を上回る性能を発揮する。また、バイアスのない実効スプレッドと価格インパクトを測定するための新しいベンチマークも導入する。</p>
+        <p class="abstract-text en">The NYSE Trade and Quote (TAQ) dataset, used throughout finance research and securities regulation, is generated by a Securities Information Processor (SIP), which aggregates quotes and trades from all U.S. stock exchanges at a central location. We show that the SIP systematically reports events out of sequential order: quote changes that occur after a trade are frequently reported as occurring before the trade. The source of the issue is that trades and quotes are recorded with variable latency (due to, e.g., geography) and are extremely clustered in time. The result is a look-ahead bias: the prevailing SIP quotes, ubiquitous in signing trades and measuring spreads, incorporate price impact from the trade itself. We document that the look-ahead bias leads to incorrect trade signing and downward-biased effective spreads and price impact. The errors are extreme for the large fraction of trades with high reporting latency: approximately 20% of trades are incorrectly signed, and effective spreads and price impact are understated by more than 40%. We propose a signing methodology based on exchange rules that yields 100% accuracy for a significant majority of volume and, over all trades, outperforms the current standard. We also introduce a new benchmark to measure effective spreads and price impact that is free from bias.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Is 24/7 Trading Better?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Patrick Blonien (Carnegie Mellon University), Alexander Ober (Rice University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1082004" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">在庫リスクを管理する大規模トレーダーを対象とした動学モデルにおいて、我々は、毎日の市場閉鎖が流動性を調整することを示す。流動性の調整が配分効率を向上させ、閉鎖に伴うコストを完全に相殺するため、ある程度の閉鎖時間は24時間365日取引と比較して福祉を向上させる。小規模市場のトレーダーにとっては長い閉鎖時間が最適である一方、大規模市場のトレーダーは取引時間を24時間365日に近いレベルまで延長することで利益を得られる。 取引時間の延長を提案しているいくつかの主要株式取引所に対して本モデルを適用した結果、こうした提案を実施することはトレーダーにとって有益であることが示唆される。</p>
+        <p class="abstract-text en">In a dynamic model of large traders who manage inventory risk, we show that a daily market closure coordinates liquidity. Some length of closure is welfare-improving relative to 24/7 trade, as the coordination of liquidity improves allocative efficiency, fully offsetting the costs of the closure. A long closure is optimal for traders in small markets, while traders in large markets would benefit from extending trading hours to near 24/7. A calibration of our model to several large equity exchanges that have proposed extending trading hours suggests that implementing such proposals would benefit traders.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Does Internalization Impact Quote Competition?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Amber Anand (Syracuse University), Dmitriy Muravyev (University of Illinois-Urbana-Champaign)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1056608" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">従来、マーケットメーカーは、より有利な買い気配価格と売り気配価格を提示することで、顧客の注文獲得を競い合ってきた。しかし、オプション市場における価格改善オークションなどの内部化メカニズムにより、マーケットメーカーは競争的な気配価格を提示することなく取引を行うことができるようになった。 本稿では、主要なマーケットメーカーが提示価格の提示と個人投資家の注文フローの内部化の両方を主に担っているオプション市場において、内部化が提示価格競争にどのような影響を与えるかを検証する。その結果、内部化は提示価格競争を低下させることが判明した。マーケットメーカーは、自社の提示価格が競争力を持たない場合、最良価格での約定を求めて取引をオークションに回す。取引所が最良価格を提示していない場合、オークション取引が発生する確率は31パーセントポイント高くなるが、価格改善を受ける確率は17パーセントポイント低くなる。 オークションを提供する取引所では、最良価格を提示する可能性が12パーセントポイント低くなる。内部化がスプレッドに与える影響を検証するため、特定のオプションについてオークションを制限した市場全体のルール変更を分析した。対象となったオプションでは、提示スプレッドは23％縮小したが、実効スプレッドの変化ははるかに小さかった。また、オークションの利用増加に伴い、提示スプレッドと実効スプレッドの差が長期的に拡大していることを実証しており、これは内部化が提示価格競争を低下させるという我々の知見と一致している。</p>
+        <p class="abstract-text en">Market makers traditionally compete for client orders by posting better bid and ask prices. But internalization mechanisms – such as price improvement auctions in options – let market makers trade without posting competitive quotes. We examine how internalization affects quote competition in the options markets, where major market makers are primarily responsible for both posting quotes and internalizing retail order flow. We find that internalization reduces quote competition. Market makers route trades to auctions to match best prices when their quotes are uncompetitive: auction trades are 31 percentage points more likely to occur, but 17 percentage points less likely to receive price improvement when an exchange is not posting the best price. Exchanges that offer auctions are 12 percentage points less likely to quote the best price. To examine how internalization affects spreads, we analyze a market-wide rule change that restricted auctions for certain options. For affected options, quoted spreads narrowed by 23% while effective spreads show much smaller changes. We also document a long-term widening of the gap between quoted and effective spreads alongside an increase in auction use, consistent with our findings of internalization reducing quote competition.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

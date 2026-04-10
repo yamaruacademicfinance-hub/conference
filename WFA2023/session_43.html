@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Impacts</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link active">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Network Impacts</h1>        <div class="paper-card">
+            <div class="paper-title">Seizing Opportunities: Small Businesses, Social Capital, and Banks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vojislav Maksimovic (University of Maryland), Jing Xue (University of Maryland), Liu Yang (University of Maryland)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=903056" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">なぜ、中小企業は他の地域よりもある地域でビジネスチャンスをうまく活用できるのでしょうか？120万社の消費者向け事業所のサンプルにおいて、ソーシャルキャピタルは、銀行支店の近さ、収入、教育をコントロールしたリスクフリーローンの利用を予測する。ソーシャルキャピタルの指標を標準偏差で1つ増やすと、郵便番号による利用率の変動の20%を占め、1000ヤード以内に銀行支店があることの影響を上回る。ソーシャルキャピタルが強いと、ダイナミックでない地域にある低成長の大型店舗にメリットがあり、銀行の支店はダイナミックな地域にある高成長の小型店舗にメリットがあります。バーチャルなつながりは、すでに有利な立地にある店舗の利用率に最も大きな影響を与える。</p>
+        <p class="abstract-text en">Why do small businesses exploit business opportunities better in some areas than others? In a sample of 1.2 million consumer facing establishments, social capital predicts the uptake of risk free loans controlling for close by bank branches, income, and education. One standard deviation increase in the social capital metric accounts for 20 percent of the variation in uptake across zip codes, surpassing the impact of a bank branch within 1000 yards. Strong social capital benefits large, low growth stores in less dynamic areas, whereas bank branches benefit small, high growth stores in more dynamic areas. Virtual connections have the greatest effect on takeup in already advantaged locations.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Aggregated Compensation Peer Group Disclosure and Managerial Labor Market Competition: A Network Analysis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ray Gao (University of Rochester), Yifei Lu (University of Rochester)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=905240" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">労働経済学における人的資本のスキルウェイト観の理論に動機づけられ、我々は、報酬ピアグループの開示にネットワーク手法を適用し、労働市場の分類と競争指標を開発した。我々の手法は、管理職の労働市場の多次元的かつダイナミックな特徴を捉えているため、我々の分類はタレントフローの行き先を強く予測し、文献にある包括的な予測因子セットを凌駕している。また、競争指標は、より高い株式報酬や長い給与期間などのリテンションツールと関連し、労働市場の摩擦が外生的に減少した場合にその関係が強くなることを示し、競争指標を検証した。最後に、我々の測定法を適用して、3つの理論的予測を検証する。第一に、労働市場の競争は、論争的な給与慣行を説明しうることを発見した。第二に、労働市場は、将来の優れた業績を達成するためのトーナメント・インセンティブを経営者に提供することを示す。第三に、企業固有の人的資本の重要性は、トップマネジメントのポジションによって異なることを示す。</p>
+        <p class="abstract-text en">Motivated by the labor economics theory on the skill weights view of human capital, we apply network methods to aggregated compensation peer group disclosure and develop labor market classifications and competition measures. Because our methodology captures multidimensional and dynamic features of the managerial labor market, our classifications strongly predict talent flow destinations and outperform a comprehensive set of predictors in the literature. We also validate competition measures by showing that they are associated with retention tools such as higher equity pay and longer pay duration and that the relation becomes stronger when labor market friction decreases exogenously. Finally, we apply our measures to test three theoretical predictions. First, we find that labor market competition could explain controversial pay practices. Second, we demonstrate that the labor market provides managers with tournament incentives to deliver superior future performance. Third, we show that the importance of firm specific human capital varies across top management positions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Competition Network: Distress Spillovers and Predictable Industry Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Winston Dou (University of Pennsylvania), Shane Johnson (Texas A&M University), Wei Wu (Texas A&M University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=875784" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2つの産業は、少なくとも1つの多産業企業が両産業で主要なプレーヤーとして競争していることを共有する場合、産業間の競争ネットワークを構築し、これらの2つの産業の「共通市場リーダー」と呼ばれる。自然災害、リーマンショック、アメリカ雇用創出法の成立などの擬似実験を用いて、不利な苦境ショックに見舞われた企業は利益率を低下させ、それに対応して、競争圧力が強まった「未処理」の同業他社も利益率を低下させ、契約違反やデフォルトを起こしやすくなることを明らかにした。さらに、経営難のショックとその結果生じる競争激化の変化は、特に共通市場のリーダーがすでに財務的に制約を受けている場合、財務的に統合された共通市場のリーダーを通じて他の産業に伝播する可能性があります。このような異業種間のスピルオーバーは、投資家の学習摩擦とあいまって、競争ネットワークのリンクを通じて、業界のリターン予測可能性を合理化する。</p>
+        <p class="abstract-text en">We build a competition network of industries - two industries are connected if they share at least one multi industry firm that competes as a major player in both, referred to as a 'common market leader' of these two industries. Exploiting quasiexperiments induced by the local natural disaster occurrences, Lehman failure, and American Jobs Creation Act passage, we find that firms hit by adverse distress shocks cut their profit margins, and in response, their 'untreated' industry peers, driven by intensified competition pressure, also cut profit margins and become more likely to violate covenants or default. Further, distress shocks and the resulting changes in competition intensity can propagate to other industries through financially consolidated common market leaders, especially when they are already financially constrained. Such cross industry spillovers, with investors' learning frictions, rationalize industry return predictability through the competition network links.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

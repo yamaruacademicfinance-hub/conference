@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banks and Nonbanks in the Real Economy</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link active">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Banks and Nonbanks in the Real Economy</h1>        <div class="paper-card">
+            <div class="paper-title">Shadows on Main Street: Local Financial Architecture and Asset Reallocation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Virginia Traweek (Texas Christian University), Amiyatosh Purnanandam (University of Texas-Austin), Taylor Begley (University of Kentucky)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1071280" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、シャドーバンクが地域レベルで実物資産の再配分にどのような影響を与えるかを検証する。まず、1920年から2000年までのインディアナ州、ミシガン州、オハイオ州のイエローページを基に、銀行だけでなくすべての金融機関を対象とした、郡レベルの新規パネルデータセットを構築した。 我々は、シャドーバンクが地域金融構造の重要かつ持続的な構成要素であり、金融機関の3分の1以上を占めていることを実証した。世界的なトウモロコシ価格の変動を農業経済に対する外生的なショックとして用いると、地域経済におけるシャドーバンクのシェアが高いほど、経済ショックに対する資産の再配分が著しく促進されることが分かった。これらの郡では、トウモロコシ価格の上昇が、農場の統合促進、物的資本の効率的な活用、および地価の大幅な上昇をもたらす。 こうした便益は、効率性とボラティリティのトレードオフ理論と整合的に、当該郡における地価のボラティリティ上昇を代償として生じている。本論文は、シャドーバンクが資産の再配分を促進する上で重要な補完的役割を果たしていることを示す、初の詳細かつ長期的な実証的証拠を提供するものである。</p>
+        <p class="abstract-text en">We examine how shadow banks shape the reallocation of real assets at a local level. We first construct a novel county-level panel dataset of all financial institutions—not just banks—from Yellow Pages in Indiana, Michigan, and Ohio from 1920–2000. We document that shadow banks constitute a significant and persistent component of local financial architecture, representing over one-third of financial firms. Using changes in global corn prices as an exogenous shock to the economics of farming, we find that a higher shadow bank share in the local economy significantly enhances asset reallocation in response to economic shocks. In these counties, higher corn prices lead to greater farm consolidation, more efficient use of physical capital, and a larger increase in land values. The benefits come at the expense of higher volatility in land prices in these counties, consistent with an efficiency-volatility trade off. Our paper provides the first granular, long-run evidence that shadow banks play a key complementary role in facilitating asset reallocation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Leveraged Loans and the Transmission of Monetary Policy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Murillo Campello (University of Florida), Samuel Ross (Harvard University), Teng Wang (University of Texas-Arlington)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1086008" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">レバレッジド・ローンは、非銀行系投資家を惹きつける「オリジネート・トゥ・ディストリビュート（組成・販売）」型の融資モデルから生まれたものである。我々は、銀行と非銀行系金融機関との違い――主に負債の期間――が、融資を通じた金融政策の伝達メカニズムを根本的に変えるものであると論じる。我々の分析によれば、レバレッジド・ローンのスプレッドは、特に非銀行系投資家が保有するトランシェにおいて、フェデラル・ファンド金利の変動の影響を受けにくいことが示されている。 このパススルーパターンは、通常非銀行系投資家が保有するタームBローンにおいて最も顕著であり、タームAファシリティやリボルビングローンでは弱まっている。これは、忍耐強い非銀行系投資家を通じて作用するメカニズムと一致している。これらの影響は、財務的に健全な借り手への融資（金融引き締め局面において非銀行系投資家が好む）に集中しており、リスクの高い借り手が債務返済猶予により有利な条件を得ることになる「ゾンビ・レンディング」チャネル説を否定するものである。 我々が特定したスプレッドへの影響は、レバレッジド・クレジットの残高拡大および貸出期間の長期化を伴っており、金融政策の伝達に対する総体的な阻害要因となっている。</p>
+        <p class="abstract-text en">Leveraged loans are borne out of an originate-to-distribute lending model that attracts non-bank investors. We argue that differences between banks and non-banks—primarily, the duration of their liabilities—fundamentally alter the transmission of monetary policy through lending. Our analysis shows that leveraged loan spreads are shielded from federal funds rate shocks, especially for tranches held by non-banks. The pass-through pattern is strongest in Term B loans—typically held by nonbank investors—and muted in Term A facilities and revolvers, consistent with the mechanism operating through patient nonbank investors. These impacts are concentrated in loans to financially healthy borrowers (preferred by non-bank investors during tightenings), refuting a "zombie lending" channel in which risky borrowers receive better terms due to forbearance. The effects we identify on spreads are accompanied by expansions in leveraged credit volume and loan maturities, creating aggregate impediments to monetary policy transmission.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Banks as Stewards</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kristian Blickle (Federal Reserve Bank of New York), Adair Morse (University of California-Berkeley), Parinitha Sastry (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1082508" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行は、これまで報告されてきた以上に、企業金融において積極的な役割を果たしている可能性がある。業界に関する専門知識を持つ銀行は、企業が転換期にある技術や（企業にとって新規の）拡大分野において、価値創造の機会を捉えるよう導く。銀行による資金提供は、特に銀行が専門性を有し、企業が短期志向の割引率のために機会を見過ごしている場合、見過ごされていた機会を掘り起こすことができる。 我々は、Sun and Abraham (2021) の精神に基づき、動的比較対象戦略を発展させた実証的な双方向固定効果識別アプローチを構築し、米国の行政融資データを用いてこれらの予測を実証的に検証した。我々は、商業融資の70％以上をカバーする監督データに含まれる詳細な規制リスク指標と、ローン単位の細分化された業界属性情報を活用した。 我々の分析によると、企業は専門特化した銀行を通じて、事業転換や事業拡大のための融資を受ける傾向が強いことが判明した。さらに、ステュワードシップ（責任ある経営）の効果は、短期志向の企業においてより顕著であることが実証的に示された。これは、そうした企業がそうでなければ価値創造の機会（「コダック・モーメント」）を軽視してしまうという考えと一致する。また、インフレーション・リダクション法（IRA）の成立により同様の事業転換機会を持つ企業にサンプルを限定しても、結果は頑健であることが示され、動的な交絡変数に関する懸念は限定的であることが確認された。 銀行の専門化の結果としてスチュワードシップが生まれるという見解（例：Paravisini et al. (2023)、Blickle et al. (2024)）と一致して、我々は、銀行がこれらのプロジェクトに対してより低い金利を提供していることを実証した。銀行による積極的なスチュワードシップは、銀行を単なる信用供与者と見なす従来の見解を超えた新たな知見をもたらすものである。</p>
+        <p class="abstract-text en">Banks may play a more active role in corporate finance than previously documented. Banks with industry expertise steward firms to undertake value-creating opportunities in transition technologies or expansion (new to the firm) sectors. Bank financing can unlock neglected opportunities, especially when banks have specialization, and firms neglect opportunities because of short-termist discount rates. We set up an empirical two-way fixed effect identification approach, building off the dynamic comparables strategy in the spirit of Sun and Abraham (2021) to test these predictions empirically in U.S. administrative loan data. We leverage detailed regulatory risk measures and granular loan-level industry attribution in supervisory data that covers over 70\% commercial lending. We find that firms are more likely to undertake transition and expansion loans with specialized banks. Furthermore, we show empirically that the effect of stewardship is stronger for short-termist firms, consistent with the idea that such firms would otherwise neglect value-creating opportunities (Kodak moments). We show the results are robust to limiting the sample to firms with similar transition opportunities due to the passage of the Inflation Reduction Act, limiting concerns about dynamic confounders. Consistent with stewardship emerging a consequence of bank specialization (e.g. Paravisini et al. (2023), Blickle et al. (2024)), we document that banks offer lower interest rates for these projects. Active bank stewarding moves the literature beyond the classic view of banks as mere credit providers.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privatization and Regulation</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link active">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Privatization and Regulation</h1>        <div class="paper-card">
+            <div class="paper-title">Committing to Grow: Privatizations and Firm Dynamics in East Germany</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ufuk Akcigit (University of Chicago), Harun Alp (Federal Reserve Board of Governors), Andre Diegmann (Halle Institute for Economic Research), Nicolas Serrano-Velarde (Università Bocconi)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=924224" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿は、鉄のカーテン崩壊後の東ドイツ企業の民営化において、雇用を維持するために考案されたユニークな政策を調査したものである。この政策では、企業の新たな所有者が雇用目標にコミットすることが求められ、違反した場合には罰則が課された。ダイナミック・モデルを用いて、雇用目標が企業に影響を与える3つの経路（歪んだ雇用決定、生産性の向上、退出率の上昇）を明らかにする。新しいデータセットと道具変数的アプローチを用いた実証分析により、これらの知見が確認された。雇用目標を拘束する企業では、年間雇用成長率が22％ポイント、年間生産性成長率が14％ポイント、退出確率が3.6％ポイント上昇すると推定される。さらに、我々のキャリブレーション・モデルは、これらの目標がなければ、10年後の総雇用は15％低くなっていたことを示している。さらに、生産性投資補助金という代替政策は、短期的にはコストが高く、効果も低いことが判明した。</p>
+        <p class="abstract-text en">This paper investigates a unique policy designed to maintain employment during the privatization of East German firms after the fall of the Iron Curtain. The policy required new owners of the firms to commit to employment targets, with penalties for non-compliance. Using a dynamic model, we highlight three channels through which employment targets impact firms: distorted employment decisions, increased productivity, and higher exit rates. Our empirical analysis, using a novel dataset and instrumental variable approach, confirms these findings. We estimate a 22\% points higher annual employment growth rate, a 14\% points higher annual productivity growth, and a 3.6\% points higher probability of exit for firms with binding employment targets. Our calibrated model further demonstrates that without these targets, aggregate employment would have been 15\% lower after 10 years. Additionally, an alternative policy of productivity investment subsidies proved costly and less effective in the short term.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">All Clear for Takeoff: Evidence from Airports on the Effects of Infrastructure Privatization</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sabrina Howell (New York University), Yeejin Jang (University of New South Wales), Hyeik Kim (University of Alberta), Michael Weisbach (Ohio State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=934528" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、25年間にわたる世界の空港に焦点を当て、インフラ民営化における所有形態の意味を研究している。意外なことに、一般的に民営化は空港のパフォーマンスを向上させない。しかし、プライベート・エクイティによる所有は、量、効率、質の向上につながる。所有権の種類による格差は、地元の国の能力、競争、所有者の資本投資や航空会社との交渉能力に関連している。全体として、プライベート・エクイティの強力なインセンティブと資本へのアクセスは、付加価値を生むと思われるが、一方、空港の本質的かつ顕著な性質は、政府所有のもとで、まずまずのパフォーマンスをもたらす可能性がある。</p>
+        <p class="abstract-text en">We study the implications of ownership type in infrastructure privatization, focusing on global airports over a 25-year period. Surprisingly, privatization in general does not improve airport performance, though foreign firms appear good at selection. However, private equity ownership leads to higher volume, efficiency, and quality. The disparities across ownership types are related to local state capacity, competition, and the owner’s ability to invest capital and negotiate with airlines. Overall, private equity’s high-powered incentives and access to capital seem to add value, while the essential and salient nature of airports may lead to decent performance under government ownership.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Follow the Pipeline: Anticipatory Effects of Proposed Regulations</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Joseph Kalmenovitz (University of Rochester), Suzanne Chang (Tulane University), Alejandro Lopez Lira (University of Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=949620" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">逸話的な証拠によれば、企業は規制案が最終決定されるずっと前に規制措置を予測している。新しいデータセットに新しい機械学習アルゴリズムを適用することで、実質的な予見効果に関する初の大規模サンプル証拠を提供する。この詳細なデータセットは、1995年以降のすべての連邦政府機関の規則制定活動全体を追跡している。41,000件の規則案のうち、最終規則に転換したのはわずか3分の2であり、規則制定パイプラインで平均2年を費やした後にそうなった。我々は、各規則案のタイムラインを追跡し、機械学習アルゴリズムに基づいて規則案を企業に割り当て、規制パイプラインへの企業レベルの暴露の指標、すなわち企業に関連する規則案の量を導出した。その結果、規制パイプラインへの企業レベルの曝露には、大きな予期効果があることがわかった。エクスポージャーの大きい企業は、将来の政治的リスクに対する懸念を表明し、間接費を増加させ、利益を減少させる。予想される規制変更に備えるため、企業はロビー活動に多くの費用を費やし、手元資金を蓄え、設備投資を削減する。この影響は、企業の現在の規制負担とは無関係であり、最終ルールに変わる可能性の高いルール提案によってもたらされる。財政的に制約のある企業や小規模な企業は、規制のパイプラインに特に反応し、予算制約や規模の経済の役割を浮き彫りにしている。我々の結果は、潜在的な連邦規制の全体像に基づく予測効果を一貫して文書化した初めてのものである。</p>
+        <p class="abstract-text en">Anecdotal evidence suggests that firms anticipate regulatory actions long before the proposed regulations are finalized. Applying a novel machine-learning algorithm to a new dataset, we provide the first large-sample evidence of substantial anticipatory effects. The granular data set tracks the entire rulemaking activity of all federal agencies since 1995. Out of 41,000 rule proposals, only two-thirds converted into a final rule, and they did so after spending two years on average in the rulemaking pipeline. We track the timeline of each proposed rule, assign proposed rules to firms based on a machine-learning algorithm, and derive a firm-level measure of exposure to the regulatory pipeline: the amount of rule proposals which are relevant to the firm. We find that firm-level exposure to the regulatory pipeline has significant anticipatory effects. Firms with greater exposure express more concerns about future political risk, increase their overhead costs, and see lower profits. To prepare for the anticipated regulatory changes, firms spend more on lobbying, build up cash reserves, and reduce capital investment. The effects are independent of the firm's current regulatory burden and are driven by rule proposals that are more likely to convert into final rules. Financially constrained and small firms are especially responsive to the regulatory pipeline, which highlights the role of budget constraints and economies of scale. Our results are the first to consistently document anticipatory effects based on the entire body of potential federal regulations.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

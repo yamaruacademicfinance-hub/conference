@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empirical Asset Pricing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link active">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Empirical Asset Pricing</h1>        <div class="paper-card">
+            <div class="paper-title">The Hidden Cost of Stock Market Concentration: When Funds Hit Regulatory Limits</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lubos Pastor (University of Chicago), Taisiya Sikorskaya (University of Chicago), Jinrui Wang (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1078644" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株式市場の集中度が高まるにつれ、ファンドのポートフォリオ集中度に対する規制上の制限が、特に大型成長株ファンドにおいて、ますます厳格なものとなっている。ファンドがこれらの制限に近づくと、最大の保有銘柄を売却し、株式へのエクスポージャーを縮小する。ファンドはこうした制約下ではパフォーマンスが低下する。制約に基づく保有比率の指標は、特に最大手企業において、株価のリターンを予測する。これらの知見は、市場の集中度が高いと、楽観的な投資家がポジションを拡大する能力が制限されることで、株価が歪められる可能性があることを示唆している。 空売り規制が悲観的な投資家の見解を制限することで株価の過大評価を招くのと同様に、ロングポジションに対する制約は、楽観的な投資家の見解を抑制することで株価の過小評価を招く可能性がある。</p>
+        <p class="abstract-text en">As stock market concentration has risen, regulatory limits on fund portfolio concentration have become increasingly binding, especially for large-cap growth funds. When funds approach these limits, they trim their largest holdings and reduce equity exposure. Funds perform worse when constrained. A constraint-based ownership measure predicts stock returns, particularly among the largest firms. These findings suggest that high market concentration can distort stock prices by limiting the ability of optimistic investors to scale their positions. Just like short-sale constraints can produce overpricing by limiting pessimistic investors' views, constraints on long positions can generate underpricing by suppressing optimists' views.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Dirty Business: Transition Risk of Factor Portfolios</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ravi Jagannathan (Northwestern University), Iwan Meier (HEC Montréal), Valeri Sokolovski (University of Alberta)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1080996" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">炭素排出量の多い企業（排出量が多い企業）の上位10％が、通常、米国上場企業のスコープ1排出量の90％以上を占めている。 移行リスクへのエクスポージャーは、ファクター・ポートフォリオ間で体系的に異なる。バリュー・ポートフォリオの時価総額に占めるヘビー・エミッターの割合は最大35%に達するが、グロース・ポートフォリオではわずか5%にとどまる。この傾向は、定義の変更を行っても変わらない。特に注目すべきは、バリュー・ポートフォリオに含まれる残りの銘柄は、平均してグロース株と同程度の「環境配慮度」を有している点である。 「ビッグ・バリュー」ポートフォリオ内の排出量が多い銘柄と少ない銘柄（ファンダメンタルズは類似しているが、「環境負荷」が異なる銘柄）に焦点を当てると、2006年から2015年のパリ協定までの間、これらのサブポートフォリオは、平均実現リターン（未調整およびリスク調整後）および期待リターンの代用指標において、同様の傾向を示していたことが判明した。 2015年から2020年にかけて、高排出株はアンダーパフォームし、その期待リターン指標は大幅に上昇した。しかし、COVID-19以降、高排出株と低排出株の期待リターン指標は収束しており、移行リスクに対する持続的な追加プレミアムは存在しないことを示唆している。 さらに、排出量が少ない銘柄（「環境配慮度」は類似しているがファンダメンタルズが異なる銘柄）に限定した「ビッグ・バリュー」ポートフォリオと「ビッグ・グロース」ポートフォリオを比較すると、排出量が少ない「ビッグ・グロース」銘柄は一貫して高いリスク調整後リターンを獲得しており（インプライド・コスト・オブ・キャピタルの低下と並行して）、成長株の最近の相対的なアウトパフォームを気候変動への懸念だけで説明することはできないことが示唆される。</p>
+        <p class="abstract-text en">The top 10% of carbon-emission-intensive firms (heavy emitters) typically account for over 90% of all Scope 1 emissions from U.S. public companies. Transition risk exposure varies systematically across factor portfolios: heavy emitters comprise up to 35% of the market capitalization of Value portfolios, compared to just 5% for Growth portfolios, a pattern that is robust to alternative definitions. Notably, the remaining stocks in the Value portfolio are, on average, as ‘green’ as the Growth stocks. Focusing on the heavy and light emitters within the Big Value portfolio (stocks with similar fundamentals, but different ‘browness’) we find that from 2006 until the 2015 Paris Agreement, these sub-portfolios exhibited similar average realized returns (both raw and risk-adjusted) and expected return proxies. From 2015 to 2020, heavy emitters underperformed and we find a significant rise in their expected returns proxies. Since the COVID period, however, the expected return proxies for heavy and light emitters have converged, suggesting no persistent incremental premium for transition risk. Furthermore, comparing Big Value and Big Growth portfolios restricted to light emitters (stocks with similar ‘greenness’, but different fundamentals) we find that Big Growth light emitters consistently earned higher risk-adjusted returns (alongside declining implied cost of capital), suggesting that climate concerns alone cannot explain the recentsuperior relative performance of Growth stocks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Haven’t We Seen This Before? Return Predictions from 200 Years of News</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: AJ Chen (University of British Columbia), Gerard Hoberg (University of Southern California), Miao (Ben) Zhang (University of Southern California)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1053584" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、過去の記録が十分に長くなり、情報量も豊富になったため、新たに生じる経済状況は往々にして過去の状況と類似していると仮定する。この洞察に基づき、極めて類似した過去の状況に続いて生じた実績値の平均を用いて、将来の経済動向を予測するフレームワークを構築する。 1815年から2021年までの2億1000万件の新聞記事を用いて、各対象月と歴史的に類似した月を特定し、米国の株式リターンの総計を予測する指標「SeenItRet」を構築した。SeenItRetは、最大2年先までの市場全体の株式リターンを強力に予測し、1標準偏差の変動に対して年率4～7％の影響を与える。 本フレームワークは汎用性が高く、景気後退、インフレ、特許出願活動などの実体経済の成果も予測する。本アプローチの利点は、経済原理を用いて、基礎となる状態空間の高次元性を、事前の段階で測定可能かつ直感的な一次元予測変数へと低減している点にある。本モデルは、過去の状態が対象の状態により類似しているほど高い精度を発揮し、予測を牽引する具体的なテーマを浮き彫りにすることで、解釈可能な経済的洞察を提供する。</p>
+        <p class="abstract-text en">We postulate that our historical record has become adequately long and informative that newly arriving economic states often resemble historical states. Building on this insight, we develop a framework to predict future economic outcomes using the average of the realized outcomes that follow highly similar historical states. Using 210 million newspaper articles from 1815 to 2021, we identify historically similar months for each focal month and construct a predictor of aggregate U.S. stock returns, “SeenItRet”. SeenItRet strongly forecasts future market-wide stock returns up to two years ahead, with an annualized impact of 4–7% for a one standard deviation shift. Our framework is general and also predicts real economic outcomes, including recessions, inflation, and patenting activity. A virtue of our approach is its use of economic principles to reduce the high dimensionality of the underlying state space to an ex-ante measurable and intuitive unidimensional predictor. Our model performs better when historical states are more similar to the focal state, and it offers interpretable economic insights by highlighting the specific themes that drive its predictions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Asset Growth Effect and Q Theory of Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Leonid Kogan (Massachusetts Institute of Technology), Jun Li (University of Texas-Dallas), Xiaotuo Qiao (Harbin Institute of Technology-Shenzhen)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1054312" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">最近の線形ファクターモデル（例えば、Fama and French (2015) や Hou, Xue, and Zhang (2015)）では、投資の指標として総資産の伸びが用いられている。これは主に、長期資産や流動資産の伸びといった構成要素に比べて、総資産の伸びの方がリターンの予測力が高いことに起因する。 我々は、標準的な投資のq理論を、企業が長期資産と流動資産の両方を生産投入として用いる二資本設定へと拡張することで、後者の知見に対する説明を提示する。我々は、割引率とは無関係に流動資産成長率と長期資産成長率の間に負の共動をもたらす、新たな資産不均衡チャネルを明らかにした。この共動は総資産成長率においては弱まり、その結果として総資産成長率の収益予測力が強まるのである。 この共動を調整すると、流動資産および長期資産の成長率によるリターンの予測力は大幅に改善する。さらに、資産の不均衡が小さい企業ほど資産成長効果が高まるという本モデルの予測について、強力な証拠を提示している。我々の結果は、資産成長効果に関するQ理論に基づく説明を支持するものである。</p>
+        <p class="abstract-text en">The recent linear factor models (e.g., Fama and French (2015) and Hou, Xue, and Zhang (2015)) use total asset growth as the measure of investment, largely due to its stronger return predictive power than its components such as the long-term and current asset growths. We offer an explanation of the latter finding by extending the standard q theory of investment into a two-capital setup in which firms use both long-term and current asset as production inputs. We uncover a novel asset imbalance channel which creates negative comovement between current and long-term asset growths that are unrelated to discount rate. This comovement is muted in the total asset growth, giving rise to its stronger return prediction. Once controlling for this comovement, the return predictive power of current and long-term asset growths substantially improves. Furthermore, we document strong evidences for the model's prediction that the asset growth effects are more prominent among firms with low asset imbalance. Our results support the q theory based explanation for the asset growth effect.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

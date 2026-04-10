@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Markets and Information</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link active">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Financial Markets and Information</h1>        <div class="paper-card">
+            <div class="paper-title">Breaking the Data Chain: The Ripple Effect of Data Sharing Restrictions on Financial Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Simona Abis (University of Colorado-Boulder), Bo Bian (University of British Columbia), Huan Tang (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1069992" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">オルタナティブ・データは金融市場を一変させたが、それは従来の開示チャネルの外側で、市場参加者の制御の及ばないところで発生している。 我々は、Appleの「App Tracking Transparency」を、オルタナティブデータの生成に対するプライバシー主導のショックとして活用し、これまで見過ごされてきた金融市場の脆弱性を明らかにした。このポリシーは、企業の業績や投資信託の取引におけるモバイルトラフィックの予測力を弱める。こうしたデータに依存するファンドは、影響を受ける銘柄において優位性を失い、モバイルトラフィックを根拠とするアナリストの予測は精度が低下し、市場反応も鈍くなる。これらの市場参加者に依存度の高い企業ほど、情報摩擦に直面する度合いが大きくなる。</p>
+        <p class="abstract-text en">Alternative data has reshaped financial markets, yet it arises outside traditional disclosure channels, beyond market participants' control. We exploit Apple’s App Tracking Transparency as a privacy-driven shock to alternative data generation, revealing a previously overlooked vulnerability in financial markets. The policy weakens the predictive power of mobile traffic for firm performance and mutual fund trading. Funds reliant on such data lose their edge in exposed stocks, while analyst forecasts citing mobile traffic become less accurate and elicit weaker reactions. Firms more dependent on these market participants face greater information frictions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Breaching the Chinese Wall: Cross-Market Information Flow Following Financial Institution Mergers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Ehsan Mahdikhani (Stockholm School of Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1048852" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">貸付情報の非公開情報へのアクセスは、機関投資家の株式リターンにどのような影響を与えるのか。資産運用会社と貸し手との合併を、貸付側情報へのアクセスに対する妥当な外生的なショックとして利用して分析したところ、アクセス権を獲得した後、機関投資家はより高い異常株式リターンを上げていることが分かった。 同一機関内において、マネージャーは、融資側情報へのアクセス権を持つ株式について、そのようなアクセス権を持たない他の保有銘柄と比較して、年率換算で3.1ポイント高いリターンを獲得している。また、同一銘柄を取引する異なる機関間では、情報を持つマネージャーは株式のみを保有する同業者よりも年率換算で1.7ポイント高いパフォーマンスを示しており、これは、純粋な株主には入手できない情報を債務ポジションがもたらすという仮説と一致している。 メカニズム検証によると、財務報告に関する契約条項が拘束力を持つ場合、リターンの上昇幅はさらに大きくなる。合併前にそのような契約条項が存在する場合、リターンは約2ポイント上昇する。二重の保有者を持つ企業は調整を行い、公開される自主的な開示は約11％減少し、新規融資契約に情報集約型の契約条項が含まれる確率は11～17％高まり、貸出金利は改善する。 公開市場では、ビッド・アスク・スプレッドの拡大という反応が見られる。本研究の設計では、ローンサイドが保有する株式と、経営陣のその他のポジション、および同銘柄を保有する情報を持たない株主との保有状況を比較することで、ローンから株式への因果的な情報フローを特定し、株式サイドと融資サイドの企業間の合併を、取引利潤および公開情報環境の変化と結びつけている。</p>
+        <p class="abstract-text en">How does access to private loan information affect institutional investors’ equity returns? Exploiting mergers between asset managers and lenders as a plausibly exogenous shock to loan-side information access, I find that after gaining access institutional investors earn higher abnormal equity returns: within institutions, managers earn 3.1 pp higher annualized returns on stocks for which they have loan-side access than on their other holdings without such access, and across institutions trading the same stock, informed managers outperform equity-only peers by 1.7 pp annualized, consistent with debt positions conferring information unavailable to pure shareholders. Mechanism tests show larger gains when financial-reporting covenants bind; where such covenants exist pre-merger, returns rise by roughly 2 pp. Firms with dual holders adjust, public voluntary disclosures decline by about 11%, new facilities are 11–17% more likely to include information-intensive covenants, and loan pricing improves. Public markets respond with wider bid–ask spreads. By comparing holdings with loan-side access to managers’ other positions and to uninformed holders of the same stock, the design isolates causal loan-to-equity information flow, linking mergers between equity- and lending-side entities to trading rents and to shifts in the public information environment.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inside Out: Who Trade Before the Start of Cyber Attacks?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xi Dong (Baruch College), Edward Li (City University of New York), Xintian Lin (Central University of Finance and Economics), Xin Yuan (Dongbei University of Finance and Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1082144" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">独自のデータセットを用いて、サイバー攻撃が成功する前の取引動向に関する初の包括的な証拠を提示する。差し迫った侵害を予期できるのはハッカーだけであるはずだが、被害企業に対する空売りは数週間前から活発化しており――特に株式の貸出しが容易な場合――一方で、インサイダーや機関投資家の取引は横ばいのままである。 表向きは最も情報に疎い個人投資家もまた、同様に先見の明を持って、間もなく攻撃を受ける銘柄を売却・空売りしており、これはGoogleでの「+ハッキング」検索数の急増や、取引・空売りコストの上昇と時期を同じくしている。サイバー攻撃後、被害企業はマイナスのリターンを記録しており、これは広く報じられる身代金要求額を遥かに上回る富の移転を暗示している。 したがって、サイバー攻撃——外部者によって生成される情報の氷山の一角であり、そこで私的な情報の生成が実質的なファンダメンタルズの破壊と絡み合う可能性がある——は、外部者の情報取得が純粋に搾取的であり、決してファンダメンタルズを変えないとする、インサイダー中心の情報経済学の伝統的なパラダイムに異議を唱えるものである。</p>
+        <p class="abstract-text en">Using a unique data set, we provide the first comprehensive evidence of trading before successful cyberattacks. Although only hackers should expect an imminent breach, short selling in victim firms intensifies a few weeks earlier—particularly when shares are widely lendable—whereas insider and institutional trades remain flat. Retail investors, ostensibly the least informed, likewise presciently divest/short soon-to-be-attacked stocks, coinciding with spikes in “+hacking” Google queries and rising trading/short costs. Post-cyberattack, victims earn negative returns—implying a wealth transfer vastly exceeding widely-publicized ransom demands. Therefore, cyberattacks—the tip of the iceberg of outsider-generated information, where private information production can be intertwined with real fundamental destruction—challenges the traditional paradigm of insider-centric information economics, where outsiders’ information acquisition is purely extractive—it never changes fundamentals.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Valuation Models</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francesca Bastianello (University of Chicago), Paul Décaire (Arizona State University), Marius Guenzel (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1077636" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">評価モデルは金融理論と実務の両方の核心をなすものであるが、専門家が資産をどのように評価しているか、どのモデルが最も優れた成果を上げているか、そしてその理由について、体系的な証拠は不足している。 これらの疑問を解明するため、我々は110万件の株式アナリストレポートに含まれる評価モデルを分析した。平均的には、単純な倍率ベースのモデルの方が、より複雑な割引キャッシュフロー（DCF）モデルよりも正確な予測を生成するが、この結果は重要な不均一性を覆い隠している。すなわち、熟練したアナリストはDCFモデルを用いて、特に評価が困難な企業について優れた予測を生成しており、複雑なモデルを採用する際には専門知識が重要であることを示唆している。 モデル固有の専門知識が重要であることを立証するため、一部のアナリストに評価モデルの切り替えを余儀なくさせた準外生的なショックを利用し、新しい手法の使用に熟練した経験を持つアナリストと比較して、彼らの予測精度がその後低下することを示した。これは、評価における単純さと洗練さの間の根本的なトレードオフを浮き彫りにしており、最適な手法の選択はスキルなどのアナリストの特性に依存することを示唆している。 最後に、アナリストの無条件の優れたパフォーマンスを踏まえ、彼らがどのように倍率を決定しているかを検討する。アナリストは、倍率の選択を文脈化するために、過去、現在、および同業他社に基づく参照点を用いているが、価格を決定する際にこれらのベンチマークを機械的に適用しているわけではない。さらに、感応度分析がますます一般的になっており、強気・弱気のシナリオは非対称で下方リスクをより大きく反映しており、これらを含めることはより保守的な予測と関連していることを示す。</p>
+        <p class="abstract-text en">Valuation models lie at the core of both financial theory and practice, yet we lack systematic evidence on how professionals value assets, which models perform best, and why. To make progress on these questions, we analyze valuation models in 1.1 million equity analyst reports. While, on average, simpler multiples-based models generate more accurate forecasts than more complex discounted cash flow (DCF) models, this masks important heterogeneity: skilled analysts produce superior forecasts with DCF models, especially for hard-to-value firms, underscoring the importance of expertise when employing complex models. To establish that model-specific expertise matters, we exploit a quasi-exogenous shock that forced some analysts to switch valuation models, and show that their forecast accuracy subsequently declines relative to analysts with established experience using the new approach. This highlights a fundamental trade-off between simplicity and sophistication in valuation, where optimal method choice depends on analyst characteristics, such as skill. Finally, given their unconditional superior performance, we study how analysts determine multiples. Analysts use historical, current, and peer-based reference points to contextualize their choice of multiples, but they do not use these benchmarks mechanically when determining their prices. Moreover, we show that sensitivity analyses have become increasingly common, bull and bear scenarios are asymmetric and account for greater downside risk, and their inclusion is associated with more conservative forecasts.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

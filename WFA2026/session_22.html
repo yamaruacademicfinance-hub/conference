@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable Investing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link active">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Sustainable Investing</h1>        <div class="paper-card">
+            <div class="paper-title">Value, Values, and Opportunities in Corporate Environmental Practices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Deqiu Chen (University of International Business and Economics), Haoyuan Li (University of International Business and Economics), Yujing Ma (Hong Kong Polytechnic University), Roni Michaely (University of Hong Kong)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1029392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融市場が企業の環境対策をいかに解釈し、評価しているかを理解することは、効果的な気候政策と資本配分にとって極めて重要である。我々は、市場動向を左右する主要な情報仲介者であるセルサイド・アナリストを対象に、505名のアナリストからのアンケート回答および273,664件のレポートのテキスト分析を用いて、この点を検証した。アナリストは環境問題に多大な関心を寄せている。 アナリストの大半は、環境問題を価値に関連する事項として取り上げていますが、少なからぬ割合のアナリストは非財務的価値も考慮しています。重要な点として、彼らは環境要因を単なるリスクではなく、顕著なビジネスチャンスと捉えており、こうした認識を収益予測や株式推奨に反映させています。また、こうした評価は、その後の企業の業績を予測する指標ともなります。企業の環境改善の推進要因を評価する際、アナリストは政府の規制やメディアからの圧力を最も影響力のある要因として挙げている一方、機関投資家や従業員の影響力はかなり低いと評価しています。 全体として、一貫した調査結果と文献的証拠は、価値主導型の分析や環境的機会の財務的重要性を裏付けており、有意義な環境面の進展は、主に市場ベースの投資家からの圧力に依存するよりも、強固な規制枠組みや公的な説明責任メカニズムを通じて最も効果的に達成される可能性があることを示唆している。</p>
+        <p class="abstract-text en">Understanding how financial markets interpret and value corporate environmental practices is critical for effective climate policy and capital allocation. We examine this through sell-side analysts, key information intermediaries whose views shape market behavior, using survey responses from 505 analysts and textual analysis of 273,664 reports. Analysts devote substantial attention to environmental issues. The majority of analysts cover such topics for their value-relevance, while a non-trivial portion also consider non-financial values. Critically, they view environmental factors as prominent business opportunities rather than merely risks and incorporate these perceptions into earnings forecasts and stock recommendations. These assessments also predict subsequent firm performance. When evaluating drivers of corporate environmental improvement, analysts rank government regulations and media pressure as most influential, while rating institutional investors and employees substantially lower. Overall, the consistent survey and textual evidence underscore value-driven analysis, financial materiality of environmental opportunities, and suggest that meaningful environmental progress may be most effectively achieved through robust regulatory frameworks and public accountability mechanisms rather than relying primarily on market-based investor pressure.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Building Voice in Socially Responsible Investing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Richard Lowery (University of Texas-Austin), Michael Sockin (University of Texas-Austin)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1051204" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、大規模な世帯が企業の株式を取引し、非再生可能資源の枯渇を伴う生産決定について議決権を行使する、社会的責任投資の動的モデルを構築した。富の蓄積と発言権の行使は時間内代替関係にあるものの、影響力は富と結びついているため、これらは動的な補完関係にある。 社会的責任を重視する世帯は、将来的な影響力を確保するために富を蓄積する一方で、企業の生産性を低下させる資源保全策の実施を先送りする。一方、経済的動機を持つ世帯は、保全努力を阻むために富を蓄積する可能性がある。制約下での効率的な技術選択は、生産性の向上と社会が保全に対して支払う意思のある金額とのバランスをとっており、これは、持分ではなく資源枯渇が福祉に与える影響に基づいて発言権を割り当てる投票プロトコルを通じて実施することができる。</p>
+        <p class="abstract-text en">We develop a dynamic model of socially responsible investment where large householdstrade firm equity and vote on production decisions involving the depletion ofa nonrenewable resource. Although accumulating wealth and exercising voice areintratemporal substitutes, they are dynamic complements because influence is tiedto wealth. Socially responsible households delay implementing resource-preservingpolicies that reduce firm productivity to amass wealth for future influence, whilefinancially-motivated households may accumulate wealth to block conservation efforts.The constrained efficient technological choice balances higher productivity withsociety’s willingness to pay for conservation, and can be implemented through a votingprotocol that assigns voice based on how depletion impacts welfare rather thanshareholdings.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Ethical Capital, Coordination, and the Correction of Externalities</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Harshini Shanker (London Business School)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1040872" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文は、倫理的投資と協調的な外部性是正に関する一般均衡モデルを構築する。倫理的行動は、信念に基づく最善の反応ではなく規範的原則に依拠するため、しばしばナッシュ的合理性から逸脱する。本論文では、ナッシュ均衡を補完するものとしてカント均衡を導入し、選好のみではなく、推論の異質性と調整技術によって唯一の調整均衡が選択されること、アクティビズムにおける少数派の触媒作用を説明できること、そして「1株1票」制度が外部性の是正を助長するか阻害するかを予測できることを示す。 本論文では、世界の投資信託およびETFのパネルデータを用いて、モデルの予測を検証する。「Climate Action 100+」イニシアティブの段階的な展開を正の協調的ショックとして用いると、エンゲージメント志向のファンドは、他の企業や非エンゲージメント型ファンドと比較して、対象となる外部性の高い企業への保有比率を高め、協調的なエンゲージメント経路を通じて企業レベルの外部性アウトカムを因果的に改善することが判明した。</p>
+        <p class="abstract-text en">This paper builds a general equilibrium model of ethical investing and coordinated externality mitigation. Ethical behavior often departs from Nash rationality by relying on normative principles rather than belief-based best responses. I introduce the Kant equilibrium as a complement to Nash, and show that reasoning heterogeneity and coordination technology, rather than preferences alone, select unique coordination equilibria, explain minority catalysis in activism and predict when one-share-one-vote regimes aid or impede externality correction. I test model predictions on a global panel of mutual funds and ETFs. Using the staggered rollout of the Climate Action 100+ initiative as a positive coordination shock, I find that engagement-oriented funds increase ownership in targeted high-externality firms relative to other firms and non-engagement funds, and causally improve firm-level externality outcomes through coordinated engagement channels.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

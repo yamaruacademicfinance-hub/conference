@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgages</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link active">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Mortgages</h1>        <div class="paper-card">
+            <div class="paper-title">Credit Crunch in Housing Under Regulation Q</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Pauline Liang (Stanford University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1046780" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、1970年代の住宅市場を牽引した信用収縮の役割について検証する。規制Qの上限が適用されたことで資金調達が逼迫し、金融セクター全体に信用収縮がもたらされた。主要な住宅ローン貸し手である貯蓄貸付組合（S&L）は、銀行のような資金調達の柔軟性を欠いていたため、住宅市場における信用収縮は特に深刻であったことを示す。銀行は、金利上限が設定された個人預金を、上限の対象外である卸売資金で代替することができたが、S&Lにはそれができなかった。 地域レベルでは、S&Lの実質上限が1パーセントポイント引き締められると、翌年には住宅ローン伸び率が4.7パーセントポイント低下し、実質住宅価格上昇率が1.1パーセントポイント低下する。銀行を介した影響は限定的である。このメカニズムは需要側の要因と並行して作用し、この時代の住宅市場における価格と取引量の同時的な好況・不況のパターンを説明する一助となる。</p>
+        <p class="abstract-text en">I document the role of a credit crunch in driving the housing market in the 1970s. Binding Regulation Q ceilings tightened funding and induced a credit crunch across the financial sector. I show that the crunch was particularly severe in housing because the primary mortgage lenders, savings and loan associations (S&Ls), lacked the funding flexibility banks had. Banks could substitute rate-capped retail deposits with wholesale funds exempt from the ceiling, whereas S&Ls could not. At the local level, a 1 pp tightening in the effective S&L ceiling is followed over the next year by a 4.7 pp drop in the mortgage growth rate and a 1.1 pp drop in the real house-price growth rate. Effects through banks are muted. This mechanism operates alongside demand-side explanations and helps to explain the joint boom-bust patterns in prices and quantities in the housing market during this era.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Interest Rate Pass-Through With Adjustable Rate Mortgages</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Manuel Adelino (Duke University), Miguel Ferreira (Universidade Nova de Lisboa), Sujiao Zhao (University of Hong Kong)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1059828" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">変動金利型住宅ローン（ARM）は、一般的に考えられているほど直接的には金融政策を伝達しない。本研究では、住宅ローンの92％以上がユーロiborに連動しているポルトガルにおいて、ECBの2022～2023年の引き締めサイクル前後に生じたARM金利見直し時期の準実験的変動を利用し、住宅ローンの返済額ショックに対する反応を推定する。 金利見直し日以降、住宅ローンの再交渉は10パーセントポイント、貸し手の変更は4パーセントポイント、一部繰上返済は5パーセントポイント、全額繰上返済は3パーセントポイント増加し、政策金利が示唆する返済額の増加分の約17％を相殺している。こうした反応は、選択的無関心説と一致して、金利見直し直後にのみ発生し、若年層、高学歴層、および残高の多い借り手の間で最も顕著である。 供給側の要因がこれらの効果を増幅させる。金利が上昇し銀行間の競争が激化すると、より柔軟な銀行を利用している世帯は、条件再交渉、金融機関の乗り換え、および返済を前倒しする傾向が強まる。また、ブローカーの存在感が高まると、金融機関の乗り換えがさらに増加する。我々の分析結果は、変動金利型住宅ローンが主流の市場における金融政策の波及効果は、借り手の行動、市場の摩擦、および預金金利の硬直性に依存することを示唆している。</p>
+        <p class="abstract-text en">Adjustable-rate mortgages (ARMs) transmit monetary policy less directly than often assumed. We exploit quasi-experimental variation in ARM rate reset timing in Portugal---where over 92% of mortgages are indexed to Euribor---around the ECB’s 2022–2023 tightening cycle to estimate responses to mortgage payment shocks. After reset dates, mortgage renegotiations increase by 10 percentage points, lender switching by 4, partial prepayments by 5, and full prepayments by 3, offsetting about 17% of the payment increase implied by policy rates. Responses occur only immediately after resets, consistent with selective inattention, and are largest among younger, more educated, and higher-balance borrowers. Supply-side factors amplify these effects: as rates rise and bank competition intensifies, households at more flexible banks renegotiate, switch lenders, and prepay more, while greater broker presence further increases lender switching. Our findings suggest that monetary policy pass-through in ARM-dominated markets depends on borrower behavior, market frictions, and sticky deposit rates.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Extend-and-Pretend in the U.S. CRE Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matteo Crosignani (Federal Reserve Bank of New York), Saketh Prazad (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1075816" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、銀行が資本を償却することを避けるため、パンデミック後の期間において、不良化した商業用不動産（CRE）ローンを「延長・見過ごし（extend-and-pretend）」していたことを明らかにした。この行為は、信用の誤配分や金融システムの脆弱性の蓄積を招いている。我々は、不動産所有者やREIT向けローンの満期延長、銀行による信用リスク評価、および実際のデフォルトに関するローン単位の監督データを用いて、この行動を特定した。 「エクステンド・アンド・プリテンド」は新規融資の供給を圧迫し、2022年第1四半期以降、CREモーゲージの新規組成を4.8～5.3％減少させるとともに、近い将来に満期を迎えるCREモーゲージの残高を膨らませている。2023年第4四半期時点で、この「満期ウォール」は銀行資本の27％を占めている。</p>
+        <p class="abstract-text en">We show that banks “extended-and-pretended” their impaired CRE mortgages in the post-pandemic period to avoid writing off their capital, leading to credit misallocation and a buildup of financial fragility. We detect this behavior using loan-level supervisory data on maturity extensions, bank assessment of credit risk, and realized defaults for loans to property owners and REITs. Extend-and-pretend crowds out new credit provision, leading to a 4.8–5.3% drop in CRE mortgage origination since 2022:Q1 and fuels the amount of CRE mortgages maturing in the near term. As of 2023:Q4, this “maturity wall” represents 27% of bank capital.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demand Elasticities</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link active">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Demand Elasticities</h1>        <div class="paper-card">
+            <div class="paper-title">How (Not) to Identify Demand Elasticities in Dynamic Asset Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Christian Opp (University of Rochester), Jules van Binsbergen (University of Pennsylvania), Benjamin David (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1075564" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、動的な資産市場における需要弾力性を推定する手法について、理論的および実証的に評価を行う。有効な同定を行うために、指標化された資産価格変動のダイナミクスが満たすべき厳密かつ必要十分な条件を確立する。これらの知見を動的貿易の一般均衡モデルを用いて実証し、これらの条件が満たされない場合に生じるバイアスの大きさを導出する。 静的な投入産出（IO）モデルに基づく推定値は、計器化された価格変動が持続的または予測可能な場合、著しいバイアスを帯びる。実証的に、我々は、一般的に使用される計器を用いた弾力性の推定値が、桁違いに外れているか、あるいは符号さえ間違っていることを示す。標準的な乗数計算とは対照的に、我々の理論は、与えられた価格経路のサポート過程を維持するために必要な動的資産市場への介入を特徴づけ、量的緩和（QE）などの政策に直接的な示唆を与える。</p>
+        <p class="abstract-text en">We evaluate approaches to estimating demand elasticities in dynamic asset markets, both theoretically and empirically. We establish strict, necessary conditions that the dynamics of instrumented asset price variation must satisfy for valid identification. We illustrate these insights in a general equilibrium model of dynamic trade and derive the magnitude of biases that arise when these conditions are violated. Estimates based on static IO models are severely biased when the instrumented price variation is persistent or predictable. Empirically, we show that commonly used instruments yield elasticity estimates that are off by orders of magnitude, or even have the wrong sign. In contrast to standard multiplier calculations, our theory characterizes the dynamic asset market interventions required to sustain a given price path support process, with direct implications for policies such as Quantitative Easing (QE).</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Demand Elasticity in Dynamic Asset Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhiguo He (Stanford University), Peter Kondor (London School of Economics and Political Science), Jessica Li (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1041264" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">標準的な需要弾力性の推定では、投資家の需要の傾きは、外生的残差供給シフトによって追跡可能な安定した対象として扱われる。 我々は、この同定戦略が動的環境下では機能しないことを示す。すなわち、供給ショックは一般均衡効果を通じて需要曲線の傾きと変位を引き起こす。そのメカニズムは直感的である。投資家の需要は、ボラティリティ、共分散、投資機会との相関関係を含む、現在および将来の収益率の分布全体に依存している。今日の価格を変える供給ショックは、必然的に将来の収益率分布を再形成し、需要曲線そのものを移動させる。 我々は、この測定誤差を定量化するために動学モデルを構築し、パラメータ推定を行った。測定された傾きは概念上の値の約40%であり、これは需要曲線が推定値よりも実質的に急勾配であることを示唆している。この歪みは、内生的リスク（変動率と共分散の変化）および増幅された時間軸間ヘッジ（投資機会との相関の変化）という2つの経路を通じて生じる。この歪みは、極めて微小なショックや純粋に一時的なショックの場合であっても、依然として大きなものとなる。</p>
+        <p class="abstract-text en">Standard demand elasticity estimation treats investors’ demand slopes as stable objects that can be traced out by exogenous residual supply shifts. We show this identification strategy fails in dynamic settings: supply shocks cause demand curves to tilt and shift through general equilibrium effects. The mechanism is intuitive — investors’ demand depends on the entire distribution of current and future returns, including volatility, covariances, and correlations with investment opportunities. Supply shocks that change today’s prices inevitably reshape future return distributions, moving the demand curve itself. We develop and calibrate a dynamic model to quantify this mismeasurement. The measured slope is approximately 40% of its conceptual counterpart, implying that demand curves are substantially steeper than estimated. This distortion operates through two channels: endogenous risk (altered volatility and covariances) and amplified intertemporal hedging (changed correlation with investment opportunities). The distortion remains sizable even for infinitesimal or purely transitory shocks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">On the Recovery and Usage of Demand Elasticities in Dynamic Settings</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Carter Davis (Ohio State University), Mahyar Kargar (University of Illinois-Urbana-Champaign), Jiacui Li (University of Utah), Dejanir Silva (Purdue University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1076376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、価格とフローが相互に決定される動的環境において、需要の弾力性をどのように推定し、解釈すべきかを検討する。価格変動は必然的に期待収益やキャッシュフローを変化させるため、文脈に依存しない単一の弾力性というものは存在しない。すなわち、測定される弾力性は、どの期待値が調整されるかによって左右される。 我々は、静的弾力性、即時弾力性、および動的弾力性を形式化し、動的弾力性が均衡価格乗数の逆数に等しいことを示す。扱いやすい線形モデルを用いることで、価格乗数とリスク、持続性、システマティック・エクスポージャー、およびサプライズとを結びつける、検証可能な比較静学分析が可能となる。実証分析では、これらのパターンを確認するとともに、持続的なショック下であっても、簡約形の価格反応から構造的需要を推定できることを示す。</p>
+        <p class="abstract-text en">We study how to estimate and interpret demand elasticities in dynamic settings where prices and flows are jointly determined. Because price changes necessarily alter expected returns or cash flows, there is no single context-free elasticity: measured elasticities depend on which expectations adjust. We formalize static, immediate, and dynamic elasticities and show that the dynamic elasticity equals the inverse of the equilibrium price multiplier. A tractable linear model delivers testable comparative statics linking price multipliers to risk, persistence, systematic exposure, and surprise. Empirically, we confirm these patterns and show that structural demand can be recovered from reduced-form price responses even under persistent shocks.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance and Mortgage Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link active">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Household Finance and Mortgage Markets</h1>        <div class="paper-card">
+            <div class="paper-title">Is There a Puzzle in Underwater Mortgage Default?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lara Loewenstein (Federal Reserve Bank of Cleveland), Paul Willen (Federal Reserve Bank of Boston), Yuxi Yao (University of Nebraska-Lincoln), David Zhang (Rice University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1059660" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅ローン債務不履行に関する文献で繰り返し提起される疑問の一つは、モデル予測に比べて「アンダーウォーター債務不履行」がなぜ稀なのかという点である。我々の分析によれば、その一因はフロー・ペイオフの誤った設定にあることが分かった。 我々は、住宅ローン債務不履行に関する新規かつ詳細な定量モデルを構築し、現実的な家賃の変動に加え、適度なレベルの債務不履行コストがあれば、負の資産価値を理由とした戦略的債務不履行を排除するのに十分であることを明らかにした。さらに、本モデルがフローペイオフに焦点を当てていることを裏付ける実証結果を提示する。本モデルは、アンダーウォーター住宅ローンの債務不履行という謎に対処し、政策の影響についてより現実的な解釈を提供するとともに、キャッシュフローに基づく介入策の理論的有効性を裏付けるものである。</p>
+        <p class="abstract-text en">A recurring question in the mortgage default literature is why underwater default is rare relative to model predictions. We find that one answer is miscalibration of flow payoffs. We build a novel, detailed quantitative model of mortgage default and find that realistic rent dynamics plus mild levels of default costs are sufficient to eliminate negative-equity strategic default. We present further empirical results supporting our model’s focus on flow payoffs. Our model addresses the underwater mortgage defaultpuzzle, offers more realistic interpretations of policy consequences, and reinforces the theoretical effectiveness of cash-flow-based interventions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Lower Mortgage Rates Benefit First-Time Homebuyers?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Leonel Drukker (University of California-Berkeley)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1056664" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、金融政策が住宅購入行動に及ぼす影響について、住宅購入が初めての人々と既存の住宅所有者を対象に、住宅ローン経路を通じて検証する。2009年から2019年の間に、住宅購入に占める初めての購入者の割合は35％から22％へと低下したが、同期間において住宅ローン金利は7％近くから3.5％へと低下した。 まず、既存の金融政策ショックよりも将来の住宅ローン金利をより正確に予測できる、住宅ローン金利に特化した新たな金融政策ショックを構築し、住宅ローン金利変動の Instrumental Variable（IV）として用いる。次に、以下の3つの新たな知見について実証的証拠を示す。1) 成約住宅価格は、金融政策による住宅ローン金利変動に対して数週間以内に反応し、住宅需要が住宅ローン金利に迅速に反応していることを示している。 2) 25ベーシスポイントのマイナス住宅ローン金利ショックは、ショック発生後3ヶ月間で住宅購入における初回購入者のシェアを77ベーシスポイント低下させる。3) これらの結果は、高LTV制約を受ける借り手の割合が高い地域（通常、住宅危機が深刻な地域である）においてより顕著である。 最後に、住宅ラダー、異質な経済主体、および実証分析結果に基づいて調整された住宅関連税制を組み込んだライフサイクル・モデルを構築した。その結果、住宅ローン金利に対する1パーセントポイントの一時的かつ予期せぬマイナスショックが一度発生すると、潜在的な初回購入者は、消費に換算して0.05％の福祉損失を被ることが判明した。</p>
+        <p class="abstract-text en">This paper investigates the mortgage channel of monetary policy transmission to home purchasing behaviors of first-time home buyers and incumbent homeowners. Between 2009 and 2019, the first-time home buyer share of home purchases fell from 35% to 22%, a period in which mortgage rates fell from nearly 7% to 3.5%. First, I construct a new mortgage rate-specific monetary policy shock to use as an IV for mortgage rate changes which predicts future mortgage rates better than existing monetary policy shocks. Next, I provide empirical evidence for three new findings: 1) transacted house prices respond to monetary policy-induced mortgage rate changes within a matter of weeks, indicating a rapid housing demand response to mortgage rates; 2) a negative 25 basis point mortgage rate shock lowers the first-time buyer share of home purchases by 77 b.p. in the first three months after the shock; 3) these results are more pronounced in areas with higher shares of high LTV-constrained borrowers which tend to be areas with more severe housing crises. Finally, I construct a lifecycle model with a housing ladder, heterogeneous agents, and a system of housing-related taxes calibrated to my empirical findings. I find that a one-time unanticipated negative one p.p. transitory shock to mortgage rates causes potential first-time home buyers to face 0.05% consumption-equivalent welfare losses.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Global Housing Returns, Discount Rates, and the Emergence of the Safe Asset, 1465-2024</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Paul Schmelzing (Boston College)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1051148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、アーカイブデータと斬新なバックキャスティング機械学習手法を組み合わせることで、数世紀にわたる世界の住宅リターンを再構築し、新たな定式化された事実を提示する。一般的な見解とは対照的に、住宅評価額は長期的には極めて動的であり、ここ数十年のパターンは、（過剰）リターンと価格の上昇というより深層的なトレンドと一致している。 住宅市場は、時間経過に伴う割引率の妥当な範囲を再構築するのに極めて適している。本稿では、住宅評価額の上昇と並行して、割引率が明確な長期的な下降傾向を示していることを示す。 これと対をなすのが、長期的に上昇する「安全プレミアム」である。私はその出現を初めて実証し、特定の時期（1550-1650年）に特定することができた。これにより、近年の先進国資産における安全スプレッドの上昇を文脈化することが可能となり、構造的な断絶がほとんど見られないこと、そして数世紀にわたり年間約1ベーシスポイントという持続的な上昇傾向が観察されることが明らかになった。</p>
+        <p class="abstract-text en">This paper reconstructs global housing returns over centuries and presents new stylized facts, by combining archival data with a novel backcasting machine learning approach. Contrary to consensus, housing valuations have been highly dynamic over the long-horizon -- and patterns over recent decades align with deeper trends of rising (excess) returns and prices. Housing lends itself elegantly to a reconstruction of plausible ranges of discount rates over time: I show that discount rates exhibit a clear secular downward trend, parallel to rising housing valuations. The counterpart is a secularly rising "safety premium", the emergence of which I can for the first time document and pinpoint to a specific period (1550-1650): we can thus contextualize rising safety spreads in DM assets over recent years and observe a scarcity of structural breaks, coupled with a persistent trend increase of close to 1 basis point per annum over centuries.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

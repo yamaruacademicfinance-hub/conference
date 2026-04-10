@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Savings</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link active">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Retirement Savings</h1>        <div class="paper-card">
+            <div class="paper-title">Default Options and Market Power: Evidence from Target-Date Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hanbin Yang (London Business School), Marco Loseto (Università Bocconi)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1074696" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿は、米国の退職貯蓄市場において、デフォルト投資オプションがどのように市場支配力を生み出すかを分析する。401(k)プランにおける主要なデフォルトオプションであるターゲット・デート・ファンド（TDF）に焦点を当て、TDFが原資産となるファンドに対して課す追加手数料が、2010年の約4ベーシス・ポイントから2022年には17ベーシス・ポイント以上に増加したことを示す。 この上昇は、手数料に鈍感なデフォルト投資家を搾取するTDF運用会社の市場支配力の増大と一致している。この市場支配力を定量化し、政策介入を評価するため、我々はTDF市場および非TDF市場における需要と手数料設定の構造モデルを構築し、推定を行った。TDFと非TDF間の価格差別を防止することで、TDF投資家の福利は15億ドル増加し、ファンド運用会社の利益はわずかに減少するにとどまる。</p>
+        <p class="abstract-text en">This paper studies how default investment options generate market power in the U.S. retirement savings market. Focusing on Target-Date Funds (TDFs), the predominant default option in 401(k) plans, we show that the incremental fees TDFs charge over their underlying funds increased from about 4 basis points in 2010 to over 17 basis points in 2022. This increase is consistent with rising market power among TDF managers, who exploit fee-insensitive default investors. To quantify this market power and evaluate policy interventions, we develop and estimate a structural model of demand and fee setting in both TDF and non-TDF markets. Preventing price discrimination between TDFs and non-TDFs increases TDF investors’ welfare by $1.5 billion, with only modest reductions in fund manager profits.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Debt and Liquid Wealth: Evidence from Pension Fund Withdrawals</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Enzo Cerletti (Central Bank of Chile), Tomas Cortes (Central Bank of Chile), Borja Larrain (Pontificia Universidad Católica de Chile), Patricio Toro (Central Bank of Chile)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1063132" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、チリにおける準自然実験を活用し、流動性資産の変化に対する個人の借入行動の反応を検証する。新型コロナウイルス感染症（COVID-19）のパンデミック期間中、政府は通常は流動性のない年金口座からの一部引き出しを一時的に認めた。この政策の非線形な引き出しルールによりいくつかのキーンク（急変点）が生じ、我々はこれを用いて、回帰キーンク設計を通じて流動性資産に対する借入の弾力性を推定する。 その結果、主に低所得層、若年層、女性層において、特にその層の中でも所得対債務比率の高い個人を中心に、相当額の債務返済が行われたことが判明した。我々は、借入が増えるにつれて債務の限界費用が増加するというモデルを用いて、これらの結果を解釈する。</p>
+        <p class="abstract-text en">We examine the response of individual borrowing to changes in liquid wealth, exploiting a quasi-natural experiment in Chile. During the COVID-19 pandemic, the government temporarily allowed partial withdrawals from otherwise illiquid pension accounts. The policy’s nonlinear withdrawal rules generate several kinks, which we use to estimate the elasticity of borrowing with respect to liquid wealth through a regression kink design. We find substantial debt repayment among the predominantly low-income, young, and female population, particularly for individuals with higher debt-to-income ratios within that population. We interpret these findings through a model in which the marginal cost of debt increases with borrowing.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Design of Retirement Plan Match Schedules</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Guillermo Carranza (Yale University), Taha Choukhmane (Massachusetts Institute of Technology), Fiona Greig (Vanguard Group), Cormac O'Dea (Yale University), Lawrence Schmidt (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1070608" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、401(k)の事務データと連動した仮想的なシナリオに対するアンケート回答を用いて、雇用主による401(k)マッチング率の算定方式が効率性と公平性に及ぼす影響を分析した。その結果、(i) アンケート回答を用いて、実在するプランおよび仮想的なプランに対する貯蓄反応を正確に予測できること、(ii) 貯蓄はマッチング率に対して非弾力的であること、(iii) 非選択的拠出金が貯蓄を圧迫しないことが明らかになった。 これらの傾向は、(iv) 低いマッチング率と非選択的拠出を組み合わせたプランの方が、より高い貯蓄額とより公平なマッチング配分をもたらすこと、および (v) セーフハーバー方式を含む多くの既存プランが、これら両方の側面において厳密に劣っていることを示唆している。</p>
+        <p class="abstract-text en">We use survey responses to hypothetical scenarios linked with administrative 401(k) data to investigate the efficiency and equity implications of employer 401(k) match formulas. We find that (i) survey responses can be used to accurately predict saving responses to both observed and hypothetical plans, (ii) saving is inelastic to the match rate, (iii) non-elective contributions do not crowd out saving. These patterns imply that (iv) plans combining lower match rates with non-elective contributions generate higher savings and more equitable match distributions, and (v) many existing plans—including safe-harbor formulas—are strictly dominated along both dimensions.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venture Capital and Private Equity</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link active">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Venture Capital and Private Equity</h1>        <div class="paper-card">
+            <div class="paper-title">How Do Global Investors Make Decisions? Evidence from Venture Capital and Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Emanuele Colonnelli (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1046192" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、世界のプライベート・キャピタル投資家がどのように意思決定を行っているかを分析する。まず、ベンチャーキャピタル（VC）およびプライベート・エクイティ（PE）のグローバル化について実証し、絶対リターンは先進国市場（DM）で最も高いものの、多くの新興国市場（EM）においても、公開市場に相当するパフォーマンスが堅調であることを示す。 次に、国際金融公社（IFC）と提携し、105カ国を対象とした世界規模の実験的調査を実施し、運用資産総額約1.5兆ドルに上る1,315人のVCおよびPE投資家から回答を得た。この実験により、投資機会を評価する際、投資家は企業の事業進展と財務実績を最も重視し、地域および国のリスク要因に強く反応することが明らかになった。その他の企業やチームの属性は、それほど重要視されていない。 さらに本調査では、投資家がどのように案件を発掘・選定し、契約を構築し、リスクを管理し、投資後の価値を創出し、投資から撤退するかを詳細に検証している。新興市場（EM）と先進国（DM）の投資家の運用手法は類似しているが、リスク、特に政治リスクや為替リスクへの対処法においては著しい違いが見られる。これらの結果を通じて、我々は世界中で高成長企業や起業家がどのように資金調達を行っているかについて、初めての一端を明らかにした。</p>
+        <p class="abstract-text en">We study how global private capital investors make decisions. First, we document the globalization of venture capital (VC) and private equity (PE) and show that, while absolute returns are highest in developed markets (DM), public market equivalent performance in many emerging markets (EM) is strong. Second, in partnership with the International Finance Corporation, we field a worldwide experimental survey across 105 countries, reaching 1,315 VC and PE investors ac- counting for around $1.5 trillion in assets under management. Our experiment shows that, when evaluating investment opportunities, investors place the greatest weight on firm traction and financial performance and react strongly to regional and country risk factors; other company and team attributes matter less. Our survey further examines how investors source and select deals, structure contracts, manage risk, create value post-investment, and exit investments. EM and DM investors operate similarly, but differ starkly in how they deal with risk, especially political and currency risk. Together, our results shed some of the first light on how high-growth firms and entrepreneurs are financed around the world.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Asset Sorting in Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vladimir Gatchev (University of Central Florida), Vladimir Ivanov (Securities and Exchange Commission), Christo Pirinsky (University of Central Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1043280" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">大半のプライベート・エクイティ・ファームにおいて、ジェネラル・パートナーの報酬は、ファーム全体の総合的なパフォーマンスではなく、個々のファンドのパフォーマンスに連動している。我々は、この報酬体系が、投資家から徴収する手数料を増やすような形で、ファンド間で資産を配分するインセンティブをジェネラル・パートナーに与えていると論じる。 我々は、この慣行を「資産選別（アセット・ソーティング）」と呼び、過去40年間にわたりベンチャーキャピタル業界で広く行われてきた事実を明らかにする。資産選別は専門化を促進し得るものの、ベンチャーキャピタル企業は、専門化のメリットが限定的であると思われる場合でも、リターンが相関する投資をまとめてグループ化している。さらに、資産選別は投資パフォーマンスを向上させるわけでもなく、ベンチャーキャピタル企業の評判に対して報いるものでもないため、業界内に潜在的な代理問題が存在することを示唆している。</p>
+        <p class="abstract-text en">The compensation of general partners in most private equity firms is linked to the performance of the firm’s individual funds rather than its aggregate performance. We argue this compensation structure provides incentives for general partners to arrange assets across funds in a manner that increases fees collected from investors. We refer to this practice as asset sorting and document its prevalence in the venture capital industry over the last forty years. While asset sorting could facilitate specialization, VC firms group investments with correlated payoffs together even when the benefits of specialization appear limited. Furthermore, sorting does not enhance investment performance or reward VC firms for their reputation, pointing to a potential agency conflict in the industry.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Human Capital Breadth and the Financing of Innovative Startups</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Teodor Duevski (HEC Paris)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1043364" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、ベンチャーキャピタル（VC）パートナーの人材資本の幅広さが、投資選定、スタートアップの業績、およびイノベーションにどのような影響を与えるかを検証する。人材資本の幅が広いパートナーは、これまで未開拓のビジネスモデルを持つ革新的なスタートアップへの投資を主導する可能性が高く、そのスタートアップが大きな成功を収める確率を著しく高める。しかし、革新性のない案件を主導した場合には、業績が振るわない。 パートナーの時間的制約における外生的な変動を、VC企業内での案件主導確率に対するショックとして活用することで、これらの効果に関する因果的証拠を提示する。理論モデルでは、スタートアップの創出、パートナーの案件割り当て、および投資を内生化することで、実証的知見を理論的に説明し、検証可能な追加の予測を提供する。これらの結果は、イノベーションへの資金提供において、人的資本の幅広さが持つ微妙な価値を浮き彫りにしている。</p>
+        <p class="abstract-text en">I examine how the breadth of venture capital (VC) partners' human capital influences investment selection, startup performance, and innovation. Partners with broader human capital are more likely to lead investments in novel startups with previously unexplored business models and significantly increase their likelihood of major success; however, they underperform when leading non-novel deals. Exploiting plausibly exogenous variation in partner time constraints as a shock to the within-VC firm likelihood of leading a deal, I provide causal evidence for these effects. A theoretical model endogenizes startup creation, partner assignment, and investment to rationalize the empirical findings and provide additional testable predictions. The results highlight the nuanced value of human capital breadth in financing innovation.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

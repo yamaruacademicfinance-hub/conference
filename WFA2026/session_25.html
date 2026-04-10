@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Trading and Investing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link active">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>AI in Trading and Investing</h1>        <div class="paper-card">
+            <div class="paper-title">Human Edge, Machine Limits: AI-Human Competition in Financial Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Winston Dou (University of Pennsylvania), Itay Goldstein (University of Pennsylvania), Zigang Li (University of Toronto), Liyan Yang (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1075956" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、AIを活用した投資家と、熟練度が異なる人間投資家との間の競争を研究するための理論的枠組みを構築した。人間投資家は優れた非公開情報を有しているが、認知階層構造によってモデル化された有限の戦略的推論能力によって制約を受けている。対照的に、AI投資家は、時間の経過とともに取引利益を自律的に最適化する強化学習を通じて学習し、取引を行う。 我々は、AIの高度化が学習データによって制約されるため、人間投資家が常に高度なAI投資家よりも優れたパフォーマンスを発揮し得ることを示す。その学習データは、最先端の人間トレーダーではなく、平均的なトレーダーの行動を反映しているからである。 AIの収益性を制限する3つの要因がある。(i) 人間の非公開情報の優位性、(ii) 最も洗練された人間トレーダーによる価格安定化行動、および (iii) 市場シェアの拡大に伴い増大するAI取引の価格への影響である。これらのメカニズムは、アルゴリズムの優位性には限界があることを明らかにするとともに、金融市場におけるAIと人間の競争を理解するための基礎を提供する。</p>
+        <p class="abstract-text en">We develop a theoretical framework to study competition between AI-powered and human investors with heterogeneous sophistication. Human investors possess superior private information but are limited by bounded strategic reasoning, modeled through a cognitive-hierarchy structure. AI investors, in contrast, learn and trade through reinforcement learning that autonomously optimizes trading profits over time. We show that human investors can consistently outperform sophisticated AI investors because AI sophistication is constrained by the data it learns from, which reflects the behavior of the average rather than the most advanced human trader. Three forces limit AI profitability: (i) the advantage of human private information, (ii) the price-stabilizing actions of the most sophisticated human traders, and (iii) the growing price impact of AI trading as its market share expands. Together, these mechanisms reveal the limits of algorithmic superiority and provide a foundation for understanding AI–human competition in financial markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Trading against Algorithms: Price Dynamics and Risk-sharing in a Market with Q-Learners</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Snehal Banerjee (University of Michigan), Martin Szydlowski (Hong Kong University of Science & Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1034796" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、合理的な投資家とQ学習を行うトレーダーが存在する市場における価格形成のダイナミクスとリスク分担について検討する。Q学習者の取引は価格にフィードバックループを生み出す。すなわち、リスクのある証券に対する彼らの需要は、取引から得られると認識される利益に依存し、その利益は実現リターンに依存する。 我々は、このループが状態依存的な確率的ボラティリティ、予測可能なリターン、およびQラーナーの保有量と学習率に依存する新たな価格ダイナミクスを生み出すことを示す。合理的投資家が取引に対して強いリスク分担の動機を持っている場合、Qラーナーは価格のボラティリティを高めるにもかかわらず、（i）取引利益を得ることができ、（ii）投資家の平均効用を向上させることができることを示す。</p>
+        <p class="abstract-text en">We study pricing dynamics and risk-sharing in a market with rational investors and a Q-learning trader. The Q-learner’s trading generates a feedback loop in prices: their demand for the risky security depends on their perceived benefit from trading, which in turn, depends on realized returns. We show that this loop generates state-dependent stochastic volatility, predictable returns, and novel price dynamics which depend on the mass and learning rate of the Q-learner. When rational investors have strong risk-sharing motives for trading, we show that Q-learners can (i) earn trading profits and (ii) improve average investor utility, even though they increase the volatility of prices.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mimicking Finance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lauren Cohen (Harvard University), Yiwen Lu (University of Pennsylvania), Quoc Nguyen (DePaul University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1055628" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、人工知能（AI）と機械学習の最先端技術を活用し、主要な経済主体の行動のうち、過去の行動から予測可能な部分を抽出して分類する。経済主体自身でさえ、これらを斬新（革新的）な意思決定と見なしているかもしれない。しかし、我々は、これらの人物が不在であっても、こうした行動や振る舞いの大部分は予測可能であり、したがって模倣可能であることを、明確な対比をもって示す。 特に、投資信託運用担当者の売買方向の71％は、当該担当者が1件の売買も行わない状況下でも予測可能であることを示しています。一部の運用担当者については、これは特定の四半期における売買のほぼすべてにまで及びます。さらに、取引履歴が長く、競争の激しいカテゴリーに属していない運用担当者ほど、その行動は予測しやすく、再現しやすいことが判明しました。また、ファンドにおける運用担当者の持分比率が高いほど、その行動は予測しにくくなります。 最後に、我々は強力なパフォーマンスへの示唆を示す。予測困難な運用担当者は同業者を大幅に上回るパフォーマンスを示す一方、最も予測可能な運用担当者は著しく下回るパフォーマンスとなる。各運用担当者のポートフォリオ内においても、予測が困難な株式ポジションは、予測が容易なポジションよりも大幅に優れたパフォーマンスを示す。四半期ごとに全ファンド運用担当者を集計すると、ポジション変動が最も予測困難な銘柄は、全運用担当者を対象とした場合、ポジション変動が最も予測可能な銘柄よりもさらに著しく優れたパフォーマンスを示す。 我々のフレームワークにより、研究者は金融主体の行動セットのうち、予測可能な部分と、刺激に対する新規の反応である部分（価値の創出または破壊の観点から評価可能な部分）とを区別し、分類することが可能となる。</p>
+        <p class="abstract-text en">We use frontier advancements in Artificial Intelligence and machine learning to extract and classify the part of key economic agents’ behaviors that are predictable from past behaviors. Even the agents themselves might view these as novel (innovative) decisions; however, we show in strong contrast that a large percentage of these actions and behaviors can be predicted - and thus mimicked - in the absence of these individuals. In particular, we show that 71% of mutual fund managers’ trade directions can be predicted in the absence of the agent making a single trade. For some managers, this increases to nearly all of their trades in a given quarter. Further, we find that manager behavior is more predictable and replicable for managers who have a longer history of trading and are in less competitive categories. The larger the ownership stake of the manager in the fund, the less predictable their behavior. Lastly, we show strong performance implications: less predictable managers strongly outperform their peers, while the most predictable managers significantly underperform. Even within each manager's portfolio, those stock positions that are more difficult to predict strongly outperform those that are easier to predict. Aggregating across the universe of fund managers each quarter, stocks whose position changes are least predictable additionally significantly outperform stocks whose position changes are most predictable across the universe. Our framework allows researchers to delineate and classify the portion of financial agents’ action sets which are predictable from those which are novel responses to stimuli -- open to being evaluated for value creation or destruction.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

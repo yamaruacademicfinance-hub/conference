@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Liquidity and Trading</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link active">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Bank Liquidity and Trading</h1>        <div class="paper-card">
+            <div class="paper-title">Liquidity Flows to Bank-Affiliated Broker Dealers: Insights from Volumes and Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jennie Bai (Georgetown University), Erik Bostrom (Federal Reserve Board of Governors), Sebastian Infante (Federal Reserve Board of Governors), Victoria Ivashina (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1080772" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、同一の銀行持株会社（BHC）に属する取引相手間におけるレポ取引の役割について検証する。機密性の高い取引レベルのデータを用いて分析した結果、関連会社間の米国債レポ金利は、非関連会社間の金利よりも有意に高いことが判明した。この「関連会社プレミアム」は、ディーラーがより厳しいバランスシート制約に直面している場合に顕著に現れることから、規制上の資本要件が外部資金調達のコストを押し上げ、内部資金調達の価値を高めていることが示唆される。 レバレッジ規制が緩和された一時的な規制緩和期間中、この関連性プレミアムはほぼ消失したが、規制が復活すると再び現れた。我々の分析結果は、大規模なBHCに属するディーラーが持つ独自の競争優位性、すなわち関連銀行からの内部流動性へのアクセス能力を浮き彫りにしている。この内部流動性チャネルは、準備金水準の高い銀行から金融システム全体への流動性の供給を促進する役割も果たしている。</p>
+        <p class="abstract-text en">This paper examines the role of repo lending between counterparties affiliated with the same bank holding company (BHC). Using confidential transaction-level data, we find that Treasury repo rates between affiliated entities are significantly higher than those between unaffiliated parties. This affiliation premium is more pronounced when dealers face tighter balance sheet constraints, suggesting that regulatory capital requirements raise the cost of external borrowing and enhance the value of internal funding. During a temporary period of regulatory relief—when leverage requirements were relaxed—the affiliation premium nearly disappeared, only to re-emerge once the regulations were reinstated. Our findings underscore a unique competitive advantage for dealers within large BHCs: the ability to access internal liquidity from affiliated banks. This internal liquidity channel also facilitates the distribution of liquidity from banks with high level of reserves to the rest of financial system.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">What Do Bank Trading Desks Do?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lina Lu (Federal Reserve Bank of Boston), Jonathan Wallen (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1038772" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行のトレーディング・デスクは、顧客の取引量を仲介することで利益を上げています。幅広い資産市場において、我々は、米国の大手ディーラー銀行のトレーディング・デスクが、Duffie et al. (2005) で指摘されているように、手数料収入によって利益を得る金融仲介機関として機能していることを実証しました。多額の在庫を抱え、巨額の利益を上げているにもかかわらず、銀行のトレーディング・デスクが負う市場リスクはほとんど、あるいは全くありません。 リスクは主に特異的であり、各トレーディング・デスク間で分散されるため、高い収益性、すなわちリスク単位当たりの利益がもたらされる。米国の大手ディーラー銀行の横断的分析において、トレーディング・デスクの収益性は、同一の資産クラスや取引活動内であっても異なる。トレーディング・デスクは規模の経済性を示しており、トレーディング・デスクの規模が大きくなるにつれて収益性は向上する。</p>
+        <p class="abstract-text en">Bank trading desks earn profits from intermediating customer trading volume. Across a broad set of asset markets, we document that the trading desks of large U.S. dealer banks behave as financial intermediaries that profit from toll-taking as in Duffie et al. (2005). Despite having large inventories and earning large profits, bank trading desks bear little to no market risk. Risk is primarily idiosyncratic and diversifies across desks, resulting in high profitability, profits per unit of risk. In the cross-section of large U.S. dealer banks, the profitability of trading desks differs, even within the same asset class and trading activity. Trading desks exhibit economies of scale, where profitability is increasing in trading desk size.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Ample Reserves for Whom? The Role of Foreign Banks in U.S. Monetary Policy Implementation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Junko Oguri (Northwestern University), Cristoforo Pizzimenti (Northwestern University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1078392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、連邦準備制度（FRB）の「十分な準備金枠組み」の下で、外国銀行が準備金需要およびバランスシートの正常化にどのような影響を与えるかを分析する。外国銀行は米国の銀行業務に占める割合は小さいものの、準備金残高に占める割合は不釣り合いに大きい。 規制データと高頻度準備金供給ショックを用いて、我々は銀行間における準備金管理の顕著な異質性と、量的緩和（QE）と量的引き締め（QT）の間に強い非対称性が存在することを実証する。すなわち、外国系銀行はQE期間中に準備金の流入の大部分を吸収するが、QT期間中には対称的に準備金を放出せず、その調整負担は国内の大手銀行やONRRP（オンコール準備金リバースレポ）制度へとシフトする。 我々は、外国銀行の準備金需要を、スプレッドに敏感な裁定取引バッファーと、国内資本市場および世界的な金利差に根ざした構造的要素に分解する。これらのメカニズムを異質需要モデルに組み込むことで、外国銀行の準備金行動に関する不確実性が、バランスシートの正常化過程において、効果的な金利制御に必要な準備金バッファーを増加させることを示す。</p>
+        <p class="abstract-text en">This paper studies how foreign banks affect reserve demand and balance sheet normalization under the Federal Reserve’s ample-reserves framework. Although foreign banks account for a small share of U.S. banking activity, they hold a disproportionate share of reserve balances. Using regulatory data and high-frequency reserve supply shocks, we document pronounced heterogeneity in reserve management across banks and a strong QE–QT asymmetry: foreign banks absorb most reserve inflows during QE but do not symmetrically release reserves during QT, shifting adjustment toward large domestic banks and the ONRRP facility. We decompose foreign bank reserve demand into a spread-sensitive arbitrage buffer and a structural component anchored by internal capital markets and global interest rate differentials. Embedding these mechanisms in a heterogeneous-demand model, we show that uncertainty about foreign banks’ reserve behavior raises the reserve buffer required for effective interest rate control during balance sheet normalization.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Underwater: Strategic Trading and Risk Management in Bank Securities Portfolios</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andreas Fuster (École Polytechnique Fédérale de Lausanne), Teodora Paligorova (Federal Reserve Board of Governors), James Vickery (Federal Reserve Bank of Philadelphia)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1075284" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は債券レベルのデータを用いて、2022年から2023年にかけての金利急騰期に、米国の銀行が証券ポートフォリオのリスクをどのように管理したかを分析した。利回りの上昇により、コール可能債券（特に政府機関MBS）の実効デュレーションが長期化し、預金の流出を引き起こした。リスクにさらされた銀行は、債券購入の規模とデュレーションの両方を縮小させたが、既存の債券を売却することはほとんどなく、会計上適格なヘッジの拡大も行わなかった。 調整を制約する2つの要因がある。第一に、銀行は損失の実現を体系的に回避しており、特に未実現損失を規制資本から除外している銀行においてその傾向が強い。第二に、ヘッジ能力は固定費やコール可能債券の複雑さによって制限されている。その代わりに、銀行はハイリスク債券を満期保有目的の債券として分類することで、測定上のエクスポージャーを削減した。</p>
+        <p class="abstract-text en">We use bond-level data to study how US banks managed securities portfolio risk during the 2022–23 interest rate surge. Rising yields lengthened the effective duration of callable bonds (especially agency MBS) and triggered deposit outflows. Exposed banks reduced both the volume and duration of bond purchases, but rarely sold existing bonds and did not expand qualified accounting hedges. Two frictions constrain adjustment: first, banks systematically avoid realizing losses, especially banks that exclude unrealized losses from regulatory capital. Second, hedging capacity is limited by fixed costs and callable bond complexity. Instead, banks reduced measured exposure by classifying high-risk bonds as held-to-maturity.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

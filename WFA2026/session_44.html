@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information Frictions and Market Efficiency</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link active">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Information Frictions and Market Efficiency</h1>        <div class="paper-card">
+            <div class="paper-title">Natural Centralization in Decentralized Finance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pablo Azar (Federal Reserve Bank of New York), Adrian Casillas (New York University), Maryam Farboodi (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1078476" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、完全競争を前提として設計された環境において、市場支配力が集中する現象が生じ得るかどうかを検証する。許可不要な参入と透明性の高いルールを特徴とするイーサリアム・ブロックチェーンを分析した結果、情報の非対称性とリスク分担が相互作用することで、中央集権化が内生的に生じることが明らかになった。非公開の注文フローと公開の注文フローを区別する独自のデータを用いると、非公開情報の価値が1％増加するごとに、仲介業者の利益シェアが0.57％増加することが因果関係として示された。 動的交渉モデルによれば、これは均衡反応として説明される。すなわち、情報を持つ仲介業者は、取引の遅延をちらつかせることでレントを獲得するのである。我々の結果は、摩擦のないデジタル市場において、情報の摩擦のみが持続的な寡占を生み出す仕組みを実証している。</p>
+        <p class="abstract-text en">We ask whether concentrated market power can emerge in environments designed for perfect competition. Studying the Ethereum blockchain—a setting with permissionless entry and transparent rules—we show that centralization arises endogenously when information asymmetry interacts with risk-sharing. Using novel data distinguishing private from public order flow, a 1 percent increase in private information value causally increases intermediary profit shares by 0.57 percent. A dynamic bargaining model explains this as an equilibrium response: informed intermediaries gain rents by threatening to delay trade. Our results demonstrate how informational frictions alone can generate persistent oligopoly in frictionless digital markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do GSEs Subsidize Mortgage Lending?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Thomas Flanagan (Ohio State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1049888" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">政府支援機関（GSE）の主要な機能は住宅ローン債務不履行リスクの保証であるが、こうした保証の価格設定が適正であるかについてはほとんど知られていない。複製ポートフォリオと再保険された住宅ローン債務不履行リスクの価格を用いて、これらの保証から生じるキャッシュフローを評価した結果、GSEは世界金融危機（GFC）以前は20ベーシスポイントの補助金を提供していたが、GFC以降はリスク調整後利益として30ベーシスポイントを計上するようになったことを示した。 回帰不連続設計を用いて、この価格上昇が、コンフォーミング・モーゲージ金利の上昇を通じて借り手に転嫁されていることを実証する。この金利上昇を受けて、銀行はGSEsを通じたモーゲージ証券化を縮小したものの、依然として大部分を証券化しており、これは貸し手が、資金調達の補助という理由以外にもGSEsに価値を見出していることを示唆している。</p>
+        <p class="abstract-text en">A key function of government-sponsored enterprises (GSEs) is insuring mortgage default risk, yet little is known about whether these guarantees are fairly priced. Using a replicating portfolio and prices of reinsured mortgage default risk to value the cash flows from these guarantees, I show GSEs shifted from providing a 20-bps subsidy pre-GFC to earning risk-adjusted profits of 30-bps post-GFC. Using a regression discontinuity design, I document that this higher pricing is passed to borrowers through higher conforming mortgage rates. Following this increase, banks reduce but still securitize most mortgages through GSEs, implying lenders value GSEs for reasons beyond subsidized funding.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Hide in the Herd: Uncertainty and Informational Inefficiency</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wen Chen (Texas Tech University), Shen Zhao (University of Macau), Guofu Zhou (Washington University-St. Louis)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1039472" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、正確性よりもコンセンサスを優先する群集行動に起因して、マクロ経済の不確実性とアナリストの利益予想のばらつきとの間に負の相関関係が存在することを実証した。この収束は、ノイズの多いシグナルを伝達し、情報の非効率性に寄与する。企業の特性を調整して分析した結果、「群集行動を示す企業」――すなわち、不確実性が高まるにつれて予想のばらつきが縮小する企業――は、企業レベルの不確実性が高く、株価の情報価値が低く、過大評価が顕著であり、その後のリターンが低いことが判明した。 マクロレベルの不確実性とミクロレベルの予測行動を結びつけることで、本研究は、不確実性が心理的バイアスを増幅させ、情報処理を歪める行動的な伝達経路を浮き彫りにしている。これらの知見は、不確実性がいかにして市場の効率性を損なうかというメカニズムのミクロ的基盤について新たな洞察を提供し、従来のリスクに基づく説明を補完するものである。</p>
+        <p class="abstract-text en">We document a negative correlation between macroeconomic uncertainty and analysts’ earnings forecast dispersion, driven by herding behavior that favors consensus over accuracy. This convergence transmits noisier signals and contributes to informational inefficiencies. Controlling for firm characteristics, we find that “herding firms”—those whose forecast dispersion declines with rising uncertainty—exhibit higher firm-level uncertainty, less informative stock prices, greater overpricing, and lower subsequent returns. By linking macro-level uncertainty to micro-level forecast behavior, our study highlights a behavioral transmission channel through which uncertainty amplifies psychological biases and distorts information processing. These findings offer new insight into micro-foundations of how uncertainty impairs market efficiency, complementing traditional risk-based explanations.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

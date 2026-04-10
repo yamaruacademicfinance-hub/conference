@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Credit</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link active">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Household Credit</h1>        <div class="paper-card">
+            <div class="paper-title">Student Debt and the Cinderella Effect</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jess Cornaggia (Pennsylvania State University), Kimberly Cornaggia (Pennsylvania State University), Qiang Wang (University of Calgary), Han Xia (University of Texas-Dallas)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1056916" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">予想外の大学間スポーツでの成功は、大学に様々な変化をもたらす。その中には、学生の間でスポーツ関連活動の重要性や地位が高まる現象も含まれ、これは俗に「シンデレラ効果」として知られている。スポーツ競技の結果、賭けのオッズ、学生の債務不履行率、および卒業後の所得データをつなぎ合わせて分析した結果、シンデレラ現象は在学生の人材形成を阻害し、彼らの経済的成果に悪影響を及ぼすことが判明した。 こうした出来事の後、影響を受けた学生は債務不履行率が高くなり、所得が低下する。この効果は影響の度合いに比例して強まり（4年生よりも1年生の結果の方が顕著である）、ランキングの低い大学に集中している。これらの大学では収入や支出に変化が見られないことから、資源不足による説明が主な要因である可能性は低いと考えられる。 対照的に、上位ランクの大学に通う学生は、債務不履行率がわずかに低く、所得も高い。これは、これらの大学がより多くの出願を受け、選抜基準を厳格化し、収入と支出がわずかに高いためである。全体として、我々の結果は、スポーツでの成功が学生の関心を学業から逸らすことを示唆している。より広く言えば、我々の結果は、学生と大学間の選好一致を反映する選別効果とは区別して、大学環境が人的資本の形成に影響を与えることを示している。</p>
+        <p class="abstract-text en">Unexpected intercollegiate athletic success generates a variety of changes at universities -- including increased salience and status of sports-oriented activities among students, known colloquially as the “Cinderella effect". By linking data on athletic contest outcomes, betting lines, student debt default rates, and post-college earnings data, we find that Cinderella events disrupt human capital development among incumbent students and adversely affect their financial outcomes. Following such events, treated students exhibit higher default rates and lower earnings. This effect strengthens with treatment exposure (results are larger for freshmen than seniors) and is concentrated in low-ranked universities. These institutions show no changes in revenues or expenditures, suggesting that resource-driven explanations are unlikely to be the primary driver. In contrast, students at high-ranked universities have marginally lower default rates and higher earnings, as these schools receive more applications, increase selectivity, and have marginally higher revenues and expenditures. Overall, our results suggest that athletic success shifts students' preferences away from academic focus. More broadly, our results show that university environment affects human capital development, as distinct from selection effects that reflect assortive matching between students and universities.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Costs of Bankruptcy Misperceptions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Samuel Antill (Harvard University), Eleanor Jenke (Harvard University), Raymond Kluender (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1037008" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">連邦破産法第7章に基づく個人破産は、極めて手厚い債務免除措置を提供している。それにもかかわらず、なぜ破産を申し立てる消費者はこれほど少ないのだろうか。多額の負債を抱える個人を対象とした調査を通じて、我々は、彼らが抱く破産に関する最大の懸念が事実と異なることを明らかにした。すなわち、彼らは第7章の寛大さを著しく過小評価し、信用スコアへの影響を過大評価しているのだ。 無作為化比較試験において、我々は無作為に選ばれた多債務者に対し、破産に関する誤った認識を是正した。情報提供による介入の効果は数ヶ月間持続し、被験者が破産申請に向けた行動を起こすきっかけとなった。したがって、破産に関する誤った認識が申請を阻んでいるのである。この知見は、誤った認識のために申請するか否かに無関心となっている「限界申請者」であっても、申請することで実質的な純経済的利益を得られるはずであることを示唆している。 別の自然実験において、我々はこの示唆を裏付けた。破産申請予定者に関する新規データを用い、限界申請者が純資産を46,971ドル増加させていることを示した。最後に、単純化したモデルにおいて、誤解を是正することで、債務救済の配分が改善され、信用市場への悪影響を伴わずに社会福祉を向上させることができることを示した。</p>
+        <p class="abstract-text en">Chapter 7 personal bankruptcy provides remarkably generous debt relief. Why do so few consumers file for bankruptcy? Surveying high-debt individuals, we show that their top concerns about bankruptcy are factually inaccurate: they dramatically underestimate the generosity of Chapter 7 and overestimate credit score consequences. In a randomized controlled trial, we correct bankruptcy misperceptions for randomly selected high-debt individuals. The effects of our information provision treatment persist for months, causing study participants to take action toward filing for bankruptcy. Thus, bankruptcy misperceptions deter filings. This finding implies that marginal filers--whose mistaken beliefs make them indifferent between filing or not--should realize a substantial net financial benefit from filing. In a separate natural experiment, we confirm this implication. Using novel data on prospective filers, we show that the marginal filer increases net worth by $46,971. Finally, in a stylized model, we show that fixing misperceptions can improve social welfare, without credit market consequences, by improving debt relief allocation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">"No-Interest" Advertising in High-Interest Loan Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yufeng Huang (University of Rochester), Yukun Liu (University of Rochester), Bowen Luo (University of Houston), Xi Wu (University of California-Berkeley)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1087520" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、高金利の短期貸付市場において、借入コストに関する誤解を招く広告が消費者の選択にどのような影響を与えるかを検証する。我々は、詳細な広告内容、アプリのダウンロード数および利用状況、ならびに実際の借入コストと消費者が認識する借入コストを組み合わせた、オンラインキャッシングアプリに関する包括的なデータセットを構築した。 まず、多くの高コストアプリが、その誤解を招く性質にもかかわらず、時間の経過とともに「無利息」という主張をますます頻繁に広告していることを実証する。次に、こうした「無利息」の主張により、既存のアプリユーザーによる継続的な利用を促す広告効果が9倍に高まることを示す。 その背後にあるメカニズムをさらに探るため、事前登録済みの調査実験を実施したところ、こうした主張により、回答者の相当な割合、特に過去に利用経験のある人々が、融資にコストがかからないと誤って信じ込んでいることが判明した。これらの知見は、「無利息」という主張が消費者の借入決定を歪め、害を及ぼすことを示唆しており、この急成長市場における規制強化をめぐる現在の政策論議に直接的な示唆を与えるものである。</p>
+        <p class="abstract-text en">This paper examines how misleading advertising of borrowing costs affects consumer choices in the high-interest, short-term loan market. We assemble a comprehensive dataset on online cash-advance apps that combines detailed advertising content, app downloads and usage, and actual and consumer-perceived borrowing costs. We first document that many high-cost apps increasingly advertise "no interest" claims over time, despite their misleading nature. We then show that these "no interest" claims make advertising nine times more effective in driving existing app users' continued app usage. To further explore the underlying mechanism, we conduct a pre-registered survey experiment and find that such claims lead a substantial fraction of respondents to mistakenly believe the loans are costless, especially those with prior usage experience. These findings suggest that "no interest" claims distort consumer borrowing decisions and cause harm, directly informing the ongoing policy debate on strengthening regulation in this fast-growing market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Nepo Credit: The Effect of Borrowed Credit Histories</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexander Butler (Rice University), Alan Crane (Rice University), Erik Mayer (University of Wisconsin-Madison), Asli Uyanik (Rice University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1085392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">「承認ユーザー（AU）」というステータスを通じた信用履歴の世代間移転は、信用評価の結果に影響を及ぼします。毎年、若年成人の約16％がAUステータスの恩恵を受け、自身の金融活動よりも以前の信用履歴を獲得しています。 AUとして登録される年齢のばらつきを分析した結果、AUステータスには大きなメリットがあることが判明した。具体的には、クレジットスコアが22～42ポイント上昇し、クレジットカードや広範な市場における融資へのアクセスが拡大する。しかし、AUの借り手は、同程度のクレジットスコアを持つ他の借り手に比べて債務不履行に陥る可能性が高く、これはAUの履歴がスコアを水増しし、融資へのアクセスにおける不平等を助長していることを示唆している。</p>
+        <p class="abstract-text en">The intergenerational transfer of credit histories through authorized user (AU) status affects credit outcomes. About 16% of young adults benefit from AU status each year, gaining credit histories that pre-date their own financial activity. Using variation in the age at which individuals are added as AUs, we identify substantial gains to AU status: credit scores rise by 22-42 points, and access to credit cards and credit in broader markets increases. However, AU borrowers are more likely to default than others with similar credit scores, suggesting that AU histories inflate scores and reinforce inequality in credit access.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

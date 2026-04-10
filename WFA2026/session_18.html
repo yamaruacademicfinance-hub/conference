@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Keynesian Asset Pricing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link active">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link ">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>New Keynesian Asset Pricing</h1>        <div class="paper-card">
+            <div class="paper-title">The Austerity Threshold</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vadim Elenev (Johns Hopkins University), Tim Landvoigt (University of Pennsylvania), Stijn Van Nieuwerburgh (Columbia University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1039724" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、財政余力の新たな指標として「緊縮財政の閾値」を導入する。これは、債務の安全性を確保するために政府が財政黒字を計上しなければならない、GDP比債務水準の上限を指す。現実的なリスクプレミアム、名目硬直性、および仲介部門を組み込んだ、米国に合わせて調整されたモデルを用いて、この閾値を189％と推定した。 本稿では、安全プレミアムと仲介部門に起因する利便性利回りの役割を強調する。この閾値は、黒字の財源によって異なる。歳出削減はインフレを抑制し低金利を可能にする一方、増税は労働供給を歪め、インフレを上昇させる。緊縮政策の形態（歳出削減か増税か）に関する不確実性は、財政余力を大幅に低下させる。予想される緊縮政策の形態は、対GDP債務比率が閾値を大幅に下回っている場合でも、資産価格やマクロ経済の成果に影響を及ぼす。</p>
+        <p class="abstract-text en">We introduce a new indicator of fiscal capacity—the "austerity threshold": the debt-to-GDP level above which the government must raise fiscal surpluses to ensure debt safety. In a model with realistic risk premia, nominal rigidities, and an intermediary sector, calibrated to the U.S., we estimate this threshold at 189%. We highlight the roles of safety premia and intermediation-driven convenience yields. The threshold varies with the source of surpluses: spending cuts reduce inflation and allow low interest rates, while tax increases distort labor supply and raise inflation. Uncertainty over the austerity regime -- spending cuts or tax increases -- sharply lowers fiscal capacity. The expected austerity regime affects asset prices and macro outcomes even when debt-to-GDP is well below the threshold.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Innovation-Driven Contractions: A Missing Link for Asset Pricing Puzzles</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gill Segal (University of North Carolina-Chapel Hill), Chao Ying (Chinese University of Hong Kong)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1034096" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、「イノベーション主導の縮小」という概念を通じて、主要な条件付き資産価格決定の謎に対する統一的な解決策を提示する。実証的には、以下の2つの定式化された事実を明らかにしている。(1) 技術革新は当初、労働市場において著しい縮小をもたらす一方で、資本市場への影響はごくわずかである。(2) 株価リターンと投資成長率、あるいは雇用サプライズの間の不可解な乖離は、価格の硬直性が高まるにつれて強まる。 2セクター・ニューケインジアン・モデルは、これらの事実を定量的に結びつけ、株式リターンと投資リターンとの間の異常な負の相関、好ましい労働市場ニュースに対する市場の否定的な反応、および株式利回りの期間構造の傾きの景気循環追随性を説明する。我々のモデルから導出された投資ベースの配当利回りは、将来のリターンを強力に予測し、我々のメカニズムの実証的な適用可能性を裏付けている。</p>
+        <p class="abstract-text en">We provide a unified resolution for prominent conditional asset-pricing puzzles through ``innovation-driven contractions.'' Empirically, we document two stylized facts: (1) technological innovations initially cause significant labor contractions and have negligible impact on capital, and (2) puzzling disconnections---between stock returns and either investment growth or hiring surprises---intensify under stickier prices. A two-sector New-Keynesian model quantitatively ties these facts, explaining the anomalous negative correlation between stock-returns and investment-returns, the negative market reactions to favorable labor market news, and the procyclical equity yield term-structure slope. Investment-based dividend yields filtered from our model strongly predict future returns, underscoring our mechanism's empirical applicability.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">An Asset-Price Centric New Keynesian Model</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Zheng Gong (University of Bonn)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1044148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、資産の富効果が消費の動態を左右する新ケインズ派モデルを構築する。情報の非効率性により、経済主体は資産価格の総体的な変動と個別的な変動を完全に区別することができず、これが富の錯覚をもたらす。キャピタルゲインからの限界消費性向（MPC）と所得からのMPCが、共同で均衡消費を決定する。 MPCを実証推定値に直接適合させることで、本モデルは1998年から2018年にかけての米国の好況・不況サイクルにおける消費動向を忠実に再現する。この枠組みは、割引率ショックの伝播メカニズムを統一的に提示するものであり、そこでは実現資産価格が消費反応の十分統計量として機能する。金融政策に適用すれば、時間的代替弾力性（EIS）に関するミクロ推定値とマクロ推定値の間の乖離を解消することができる。 第二に、本モデルは資産評価をターゲットとする金融政策に対する扱いやすいアプローチを提供する。資産価格は総需要を決定し、バランスシート政策は資産価格テイラー・ルールを通じてモデル化される。第三に、異質エージェントの拡張分析により、標準的なHANKモデルとは対照的に、不平等がマクロ経済の変動性の主要な決定要因であることが明らかになった。不平等を縮小する政策は、マクロ経済の安定化にも寄与する。</p>
+        <p class="abstract-text en">This paper develops a New Keynesian model in which asset wealth effects drive consumption dynamics. Due to information frictions, agents cannot perfectly distinguish aggregate from idiosyncratic asset-price movements, leading to wealth illusion. The marginal propensity to consume (MPC) out of capital gains and the MPC out of income jointly determine equilibrium consumption. With MPCs calibrated directly to their empirical estimates, the model closely replicates U.S. consumption during the 1998--2018 boom-bust cycle. The framework offers a unified mechanism for the transmission of discount-rate shocks, in which realized asset prices serve as sufficient statistics for consumption responses. Applied to monetary policy, it reconciles the gap between micro and macro estimates of the elasticity of intertemporal substitution (EIS). Second, it provides a tractable approach to monetary policy that targets asset valuations. Asset prices determine aggregate demand and balance-sheet policies are modeled via an Asset-Price Taylor rule. Third, a heterogeneous-agent extension reveals that inequality is a key determinant of macroeconomic volatility, in contrast to standard HANK models. Policies reducing inequality also stabilize the macroeconomy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">State Ownership, Asset Prices, and Monetary Policy Transmission: A Tale of Two Sectors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Frederico Belo (INSEAD), Dapeng Hao (Renmin University of China), Xiaoji Lin (University of Minnesota), Zhigang Qiu (Renmin University of China), Jincheng Tong (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1073268" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、国有企業と民間企業における企業間の異質性が、中国の金融政策の伝達メカニズムにどのような影響を与えるかを検証する。本稿では、国有企業（SOE）と民間企業（POE）という異質な企業群に加え、マネーサプライ・ショックおよび金融摩擦を組み込んだ動学モデルを構築する。 推定結果によると、金融ショックやリスクプレミアムに対する反応は、セクター内およびセクター間で大きく異なり、実証的なパターンと一致している。対照分析によれば、民間企業における深刻な負債調達上の摩擦は、金融引き締め局面において資本の誤配分を悪化させ、総生産性や総生産量に多大な損失をもたらすことが示された。</p>
+        <p class="abstract-text en">We investigate how firm heterogeneity in state ownership and productivity shapes monetary policy transmission in China. We develop a dynamic model featuring heterogeneous firms -- state-owned (SOEs) and private-owned enterprises (POEs) -- along with money supply shocks and financial frictions. Our estimation reveals that responses to monetary shocks and risk premia vary significantly both within and across sectors, matching empirical patterns. Counterfactual analysis demonstrates that POEs’ severe debt-financing frictions exacerbate capital misallocation during monetary contractions, causing sizable losses in aggregate productivity and output.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

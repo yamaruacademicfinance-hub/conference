@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Effects of Information and Regulatory Frictions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link active">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Real Effects of Information and Regulatory Frictions</h1>        <div class="paper-card">
+            <div class="paper-title">The Cost of Regulatory Compliance in the United States</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francesco Trebbi (University of California-Berkeley), Miao Zhang (University of Southern California), Michael Simkovic (University of Southern California)</div>
+            <a href="https://afajof.org/management/viewp.php?n=67676" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">規制遵守のコストは、中小企業と大企業に均質にかかるのだろうか。企業のコンプライアンス・コストを、政府の規則を遵守するための労働支出という観点から定量化する。包括的な事業所レベルの職業マイクロデータと職業別のタスク情報を用いて、企業の賃金に占める規制遵守に従事する従業員の割合を算出した。2002年から14年の平均では、規制コストは企業の賃金請求額の1.34%から3.33%を占め、2014年には総額2390億ドル、資本設備コストを加えると2890億ドルに達した。その結果、企業の規制対応コストと雇用規模との間には逆U字型の関係があることが明らかになり、従業員500人程度の企業は、中小企業や大企業と比較して、賃金総額に占める規制対応コストの割合が約40％高いことが示された。最後に、企業のコンプライアンス・コストを左右する規制要件とエンフォースメントの影響を分離するために、道具変数法を開発した。</p>
+        <p class="abstract-text en">Does the cost of regulatory compliance fall homogeneously on small and large firms? We quantify firms' compliance costs in terms of their labor spending to adhere to government rules. Using comprehensive establishment-level occupational microdata and occupation-specific task information, we recover the proportion of a firm's wage bill attributable to employees engaged in regulatory compliance. On average for 2002-14, regulatory costs account for 1.34% to 3.33% of a firm's wage bill, totaling up in 2014 to $239 billion, and to $289 billion when adding capital equipment costs. Our findings reveal an inverted-U relation between firms' regulatory compliance costs and their scale of employment, indicating that firms with approximately 500 employees face compliance costs that are about 40 percent higher as a share of total wages compared to small or large firms. Finally, we develop an instrumental variable methodology to disentangle the influence of regulatory requirements and enforcement in driving firms' compliance costs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financial News Production</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Allen Hu (University of British Columbia)</div>
+            <a href="https://afajof.org/management/viewp.php?n=80836" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、金融ニュースの作成が、情報の到着や需要とは無関係な要因に強く影響される可能性があることを立証する。現実の経済活動の変動
+広告などの実体経済活動の変動はメディア部門にキャッシュフローショックをもたらし、メディア部門はニュースの量と質を変化させることで反応する。ニュース制作におけるこのような内生的ダイナミクスは、企業に関する不確実性と情報の非対称性のレベルを変化させ、現実と金融の結果に影響を与える。メディアの広告収入、ニュース、求人情報の包括的なデータセットに企業内推定法を実装し、広告収入が業界レベルの広告ショックに異なる形でさらされる異なるニュースメディアによる同一企業に関するニュース制作を比較する。金融ニュースの生産は総計レベルでプロシクリカルであり、経済ショックの伝達と増幅のチャネルとして機能する。</p>
+        <p class="abstract-text en">I establish that financial news production can be strongly influenced by factors unrelated to the arrival of, and demand for, information. Fluctuations in real economic
+activity, such as advertising, generate cash-flow shocks to the media sector, which reacts by changing news quantity and quality. Such endogenous dynamics in news production then shift the levels of uncertainty and information asymmetry about firms, affecting real and financial outcomes. Implementing a within-firm estimator on a comprehensive data set of media advertising revenue, news, and job postings, I compare news production about the same firm by different news media whose advertising revenues are differentially exposed to industry-level advertisement shocks. Financial news production is procyclical at the aggregate level and serves as a channel for economic shock transmission and amplification.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Government Arrears and Corporate Decisions: Lessons from a Natural Experiment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vicente Cunat (London School of Economics and Political Science), Rafael Zambrana (University of Notre Dame), Vicente Bermejo (ESADE Business School), Jose Maria Abad (World Bank)</div>
+            <a href="https://afajof.org/management/viewp.php?n=112392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、調達における支払い遅延（滞納）の影響を研究している。2012年にスペイン政府が実施した大規模な資金調達計画を自然実験として利用し、地方自治体のサプライヤーに対する累積滞納額（スペインのGDPの約3％に相当）を予期せず返済した。我々の同定戦略は、プログラムの第1フェーズに組み込まれた企業と、偶然漏れてしまったが1年後に返済された企業を比較することに依存している。返済は企業投資を大幅に増加させ、企業のレバレッジを低下させ、手元資金を増加させる。資金的に制約のある企業は、投資を増加させることで対応し、その効果を貿易信用を通じてサプライチェーンに伝達する。財務的制約の少ない企業は、負債を返済することによって反応する。また、滞納の累積は調達関係を悪化させるが、返済によって回復することも示した。我々の結果は、調達滞納の負の効果と資金調達摩擦との相互作用を浮き彫りにしている。また、大きな実質効果を持つ非伝統的な財政政策の有効性の証拠も示している。</p>
+        <p class="abstract-text en">We study the effects of late payment in procurement (arrears). We exploit as a natural experiment a large-scale financing plan of the Spanish government in 2012 that unexpectedly repaid accumulated arrears of local governments to their suppliers (amounting to about 3% of Spain’s GDP). Our identification strategy relies on comparing firms included in the first phase of the program and firms accidentally omitted but repaid a year later. Repayment significantly increases corporate investment, reduces firm leverage, and increases cash reserves. Financially constrained firms respond by increasing investment and transmit the effect to the supply chain through trade credit. Less financially constrained firms react by repaying debt. We also show the accumulation of arrears deteriorates procurement relations, which recover upon repayment. Our results highlight the negative effects of procurement arrears and their interaction with financing frictions. We also provide evidence of the effectiveness of an unconventional fiscal policy that has large real effects.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Big Data and Bigger Firms: A Labor Market Channel</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Abhinav Gupta (University of North Carolina-Chapel Hill), Naman Nishesh (University of North Carolina-Chapel Hill), Elena Simintzi (University of North Carolina-Chapel Hill)</div>
+            <a href="https://afajof.org/management/viewp.php?n=112896" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、世界最大のソフトウェア管理プラットフォームであるGitHubを通じた従業員のアウトプット情報の公開を分析することで、個人レベルのアウトプットデータが大企業への労働再分配に与える影響を調査する。GitHubは個人の貢献をリアルタイムで追跡し、公開している。2016年、ポリシーの変更により、GitHubユーザーはプロフィール上により正確な総貢献量を表示できるようになった。このアップデートの後、GitHubへの貢献度が1標準偏差高い社員は、大企業への転職が5％増加し、主に中小企業が犠牲になった。生産性の高い人材が大企業の上級職に就くために小企業を去った一方で、大企業は社内昇進によって彼らを引き留めた。生産性の高い労働者の離職は、ショック前に生産性の高い従業員を抱えていた小企業の雇用成長と生産性を全体的に低下させた。我々の発見は、労働関連のビッグデータが近年の大企業の優位性を増幅させる役割を担っていることを浮き彫りにしている。</p>
+        <p class="abstract-text en">This paper investigates the impact of individual-level output data on labor redistribution towards large firms by analyzing the disclosure of employee output information through GitHub, the world's largest software management platform. GitHub tracks and publicly displays real-time individual contributions. In 2016, a policy change enabled GitHub users to display their total contributions more accurately on their profiles. Following this update, employees with 1 standard deviation higher GitHub contributions witnessed a 5% increase in job transitions to large firms, predominantly at the expense of smaller companies. While productive individuals left small firms for senior roles in larger companies, the latter retained them through internal promotions. The departure of productive workers led to an overall reduction in employment growth and productivity for small firms with more productive employees before the shock. Our findings highlight labor-related big data's role in amplifying large firms' dominance in recent years.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funds and Liquidity</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link active">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Funds and Liquidity</h1>        <div class="paper-card">
+            <div class="paper-title">Information Acquisition by Mutual Fund Investors: Evidence from Stock Trading Suspensions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Clemens Sialm (University of Texas-Austin), David Xiaoyu Xu (Southern Methodist University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=120176" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資信託は、資産ポートフォリオの運用と流動性のある要求可能な株式の創出という2つの主要なサービスを提供している。本稿では、投資信託が生み出す流動性が、投資家にファンド・ポートフォリオに含まれる流動性の低い資産に関する情報を取得させることを示す。本稿では、株式が長期にわたって完全な非流動性となる中国の取引 停止イベントを調査することで、情報取得の流動性チャネルを研究する。我々の理論的枠組みと一致するように、投資信託へのエクスポージャーが大きい流動性の低い銘柄では、情報獲得活動が活発化し、投資家はそのような保有銘柄の陳腐化した価格を利用するためにファンド株を購入し、換金する。取引が再開されると、これらの銘柄の大きな値動きは投資家が獲得した情報を反映する。</p>
+        <p class="abstract-text en">Mutual funds offer two primary services: managing asset portfolios and creating liquid demandable shares. This paper shows that liquidity created by mutual funds induces investors to acquire information about illiquid assets in fund portfolios. We study this liquidity channel of information acquisition by examining trading suspension events in China, which turn stocks perfectly illiquid for prolonged periods. Consistent with our theoretical framework, illiquid stocks with large exposures to mutual funds experience increased information acquisition activities, and investors purchase and redeem fund shares to exploit the stale prices of such holdings. When trading resumes, large price movements of these stocks reflect the information acquired by investors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Passive Investing and Market Quality</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Philipp Höfler (Goethe-Universität Frankfurt), Christian Schlag (Goethe-Universität Frankfurt), Maik Schmeling (Goethe-Universität Frankfurt)</div>
+            <a href="https://afajof.org/management/viewp.php?n=78680" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">パッシブETF（上場投資信託）の保有が増加すると、米国株式のクロスセクショ ンにおいてリターンの反転がより強く、より持続的になることを示す。流動性とは無関係なリターン構成要素を除去すると、短期的なリターン反転に対する効果が強まり、パッシブETFの保有が流動性を低下させることを示唆する。ラッセル・インデックスの再構成による外生的変動を利用することで、パッシブ ETF の保有が株式の流動性だけでなく、他の関心のある要因に与える因果関係をさらに検証することができる。その結果、パッシブ ETF の保有比率が高いほど、ビッド・アスク・スプレッドの上昇、 流動性ショックの総体へのエクスポージャーの増加、および特異的ボラティリティの 上昇が生じることが分かった。我々は、リターンのジャンプ・リスクを捕捉するオプ ション・インプライド・テール・リスク測定法を利用することで、 市場参加者がこれらの効果も価格決定しているかどうかを 評価した。その結果、パッシブETFの保有が多い銘柄ほど極端な値動きをしやすいことが確認された。これは、パッシブ投資が株式の需要曲線を大幅に非弾力的にすることを示唆する最近の理論的研究と一致している。最後に、株式のリターンの変動を様々なタイプの情報に分解することで、本結果の潜在的な要因を検証する。パッシブETFの保有率が高いほど企業固有情報の重要性が低下することを、再びインデックスの再構成を用いて示します。これは、パッシブファンドがファンダメンタルズ情報を基に取引を行うアクティブ投資家をクラウディングアウトするという見解と整合的です。さらに、パッシブETFの保有比率が高いほど、一過性のノイズの重要性が高まる。これは、市場全体のセンチメント・ショックや短期的なノイズ取引へのエクスポージャーが高まるためであると考えられる。</p>
+        <p class="abstract-text en">We show that an increase in passive exchange-traded fund (ETF) ownership leads to stronger and more persistent return reversals in the cross-section of US equities. Removing return components unrelated to liquidity strengthens the effect on short-term reversals, suggesting that passive ETF ownership decreases liquidity. Exploiting exogenous variation from reconstitutions in the Russell indices allows us to further examine the causal impact of passive ETF ownership on stock liquidity as well as other factors of interest. We find that more passive ETF ownership causes higher bid-ask spreads, more exposure to aggregate liquidity shocks, and higher idiosyncratic volatility. We assess whether market participants also price these effects by making use of option-implied tail risk measures, which capture the jump risk in returns. Our findings confirm that stocks with more passive ETF ownership are more prone to extreme price movements in line with recent theoretical work suggesting that passive investments make demand curves for stocks substantially more inelastic. Finally, we examine potential drivers of our results by decomposing a stock’s return variation into different types of information. We show, again using index reconstitutions, that higher passive ETF ownership reduces the importance of firm-specific information, consistent with the view that passive funds crowd out active investors who trade on fundamental information. In addition, passive ETF ownership increases the importance of transitory noise which we attribute to heightened exposure to market-wide sentiment shocks and short-term noise trading.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Active ETFs Cloned from Mutual Funds: Competing for Investor Flows</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Linda Du (Carnegie Mellon University), Laura Starks (University of Texas-Austin), Mindy Xiaolan (University of Texas-Austin)</div>
+            <a href="https://afajof.org/management/viewp.php?n=121576" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、委任資産市場、特にETFと投資信託の間の競争を理解するために、透明性の低いアクティブETFの最近の技術革新に焦点を当てて、アクティブETFを検証する。新たにクローン化されたETFによる投資信託投資家のフローのカニバリゼーションは見られなかった。むしろ、クローン化された投資信託の評判が良いため、パフォーマンスが良くなくても、新しいETFは同業他社よりもフローを集める上で有利である。我々は、投資会社がフローの多様化のためにクローンETFを導入していることを示す更なる証拠を提供する-クローンETFのフローの一部は、ミューチュアルファンドとの顧客層の違いによってもたらされている。</p>
+        <p class="abstract-text en">We examine active ETFs, focusing on the recent innovation of less transparent active ETFs, to understand competition in the delegated asset market, particularly between ETFs and mutual funds. We find no cannibalization of mutual fund investor flows from newly cloned ETFs. Rather, the better reputation of the cloned mutual funds gives the new ETF advantages in attracting flows over their peers, even without better performance. We provide further evidence that investment companies introduce cloned ETFs for flow diversification – some of the cloned ETF flows are driven by a clientele difference from their mutual fund counterparts.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

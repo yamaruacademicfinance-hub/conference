@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Debt</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link active">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Corporate Debt</h1>        <div class="paper-card">
+            <div class="paper-title">Tax Policy, Investment, and Firm Financing: Evidence from the U.S. Interest Limitation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lucas Goodman (U.S. Department of the Treasury), Adam Isen (Johns Hopkins University), Jordan Richmond (University of Maryland), Matthew Smith (U.S. Department of the Treasury)</div>
+            <a href="https://afajof.org/management/viewp.php?n=122500" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、利子控除の制限が企業の投資と資金調達の選択に与える影響を、米国の税務データを用いて研究する。
+本稿では、利子控除の制限が企業の投資と資金調達の選択に与える影響を、米国の税務データを用いて研究する。減税・雇用法として知られる2017年の法律
+(TCJA)は、高金利の大企業に対して利子制限を実施した。イベント・スタディ
+大企業と小企業の高金利企業を比較するイベント・スタディ・デザインを用いて、利子制限の投資への経済的に有意な影響を除外する。
+利子制限が投資とレバレッジに及ぼす経済学的に有意な影響を除外し、利子制限が企業のレバレッジを増加させたという証拠を発見した。
+利子制限によって株式発行が増加したという証拠を発見した。三重差分デザイン
+他のTCJA政策変更による企業規模による影響を考慮した三重差分デザインでも、同様の結果が得られた。
+利子制限に直面するのに十分な規模の限界的企業に焦点を当てた回帰不連続デザインでも、同様の結果が得られた。
+利子制限に直面している。我々の結果は、多くの企業が負債を限界的な資金調達源として利用していないことを示している。
+また、固定的なレバレッジ調整コストを持つ資本構造モデルと整合的な証拠を示している。
+レバレッジ調整コストと整合的な証拠を示している。さらに、我々の結果は、利子控除を制限することが以下のことを示唆している。
+投資に大きな影響を与えたり、企業の負債水準上昇の懸念に対処したりする可能性は低い。
+負債水準が上昇する懸念に対処する可能性は低い。</p>
+        <p class="abstract-text en">This paper studies the impacts of limiting interest deductions on firms’ investment and
+financing choices using U.S. tax data. The 2017 law known as the Tax Cuts and Jobs Act
+(TCJA) implemented an interest limitation for big, high-interest firms. Using an event study
+design comparing big and small high-interest firms, we rule out economically significant
+impacts of the interest limitation on investment and leverage, and find evidence that the
+interest limitation led firms to increase their equity issuance. A triple difference design that
+accommodates size-varying impacts of other TCJA policy changes yields similar results, as
+does a regression discontinuity design focusing on marginal firms that are just large enough to
+face the interest limitation. Our results indicate many firms do not use debt as their marginal
+source of financing and provide evidence consistent with capital structure models with fixed
+leverage adjustment costs. Furthermore, our results suggest limiting interest deductions is
+unlikely to have large impacts on investment or to address concerns about rising corporate
+debt levels.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Secular Decline in Private Firm Leverage</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Christine Dobridge (Federal Reserve Board), Aymeric Bellon (University of North Carolina-Chapel Hill), Erik Gilje (University of Pennsylvania), Andrew Whitten (U.S. Department of the Treasury)</div>
+            <a href="https://afajof.org/management/viewp.php?n=78036" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業レベルの行政税務データを用いて、世界金融危機以降、民間企業のレバレッジが劇的に低下したことを明らかにする一方、公開企業のレバレッジはこの期間に上昇した。企業特性の変化はこのパターンを説明できない。若い企業や小規模な企業では、レバレッジが大幅に低下している。民間企業のレバレッジの低下は投資の減少と相関している。民間企業のレバレッジと投資の減少は、地方銀行の自己資本規制のもっともらしい外生的な引き上げと強く関連している。この結果は、銀行の信用供給が民間企業のレバレッジ・パターンを説明する上で重要な役割を果たしていることを示唆している。</p>
+        <p class="abstract-text en">Using firm-level administrative tax data, we document dramatic reductions in private leverage since the Global Financial Crisis, while leverage among public firms rose during this period. Changing firm characteristics are unable to account for this pattern. Younger and smaller private firms experience large declines in leverage. Reduced leverage among private firms is correlated with lower investment. The decline in private firm leverage and investment is strongly related to plausibly exogenous increases in local area bank capital requirements. Our findings suggest that banks’ credit supply plays a prominent role in explaining the leverage pattern of private firms.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Capital Structure & Firm Outcomes: Evidence from Dividend Recapitalizations in Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Abhishek Bhardwaj (Tulane University), Abhinav Gupta (University of North Carolina-Chapel Hill), Sabrina Howell (New York University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=112924" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、プライベート・エクイティ（PE）の支援を受けた企業における配当増資において、負債が企業、従業員、投資家、債権者にどのような影響を与えるかを評価する。このような案件では、所有権が一定であること、レバレッジが大幅に増加すること、融資金が企業内で分配されるのではなくPEファンドに支払われることから、負債が孤立している。  我々は、PE企業が配当再資本化のために優良案件を選択することを示す。因果分析によると、新たな負債が企業のリスクを高め、倒産率や破綻率を劇的に上昇させる一方で、IPOを増加させ、収益成長に拍車をかけることが分かった。また、従業員やリミテッド・パートナーの投資家が不利益を被る可能性もあり、賃金やファンドのリターンも減少させる。</p>
+        <p class="abstract-text en">We assess how debt affects firm, employee, investor, and creditor outcomes in the setting of dividend recapitalizations among private equity (PE)-backed firms. Debt is isolated in these deals because ownership remains constant, leverage increases substantially, and loan proceeds are paid to a PE fund rather than deployed within the firm.  We show that PE firms select high-quality deals for dividend recapitalizations. Causal analysis finds that the new debt makes firms riskier, dramatically raising bankruptcy and failure rates, but also increasing IPOs and spurring revenue growth. It also reduces wages and fund returns, potentially to employees’ and limited partner investors’ detriment.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link active">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Household Finance</h1>        <div class="paper-card">
+            <div class="paper-title">The Impact of Unconditional Cash Transfers on Consumption and Household Balance Sheets: Experimental Evidence from Two US States</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexander Bartik (University of Illinois), Elizabeth Rhodes), David Broockman (University of California-Berkeley), Patrick Krause), Sarah Miller (University of Michigan), Eva Vivalt (University of Toronto)</div>
+            <a href="https://afajof.org/management/viewp.php?n=137872" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、不労所得が消費、バランスシート、金融結果に及ぼす因果効果に関する新たな証拠を提供する。
+1000人を毎月1000ドル、2000人を毎月50ドルを3年間受け取るように無作為に割り当てた実験を利用することで
+1000人を毎月1000ドル、2000人を毎月50ドルを3年間受け取るように無作為に割り当てた。その結果
+その結果、家計支出は毎月少なくとも300ドル増加した。支出への影響は
+その影響は、ほとんどのカテゴリーでプラスであり、住居費、食費、自動車費で最大であった。治療によって
+は住宅単位と近隣の移動性を増加させる。また、資産価値への影響については、ノイズの少ない推定で小幅なプラス効果を見出した。
+しかし、これらの利益は負債の増加によって相殺され、その結果、資産価値への影響はほぼゼロとなった。
+純資産に対する効果はゼロに近い。譲渡は、自己申告による財務の健全性と信用スコアを増加させたが、信用限度額には影響を与えなかった。
+しかし、与信限度額、延滞、利用率、破産、差し押さえには影響を与えなかった。また
+過少申告を考慮した場合、非耐久財の限界消費性向は0.44～0.55と推定される。
+0.44～0.55、耐久財と準耐久財の消費性向は0.21～0.26、レバレッジ解消性向はほぼゼロであった。
+はほぼゼロであった。これらの結果は、大規模な一時的移転が短期的な消費を増加させ、財務の健全性を改善することを示唆している。
+を増加させ、財務の健全性を向上させるが、若年低所得世帯の財務状況を持続的に改善させることはない。
+これらの結果は、大規模な一時的移転は短期的な消費を増加させ、経済的健全性を向上させるが、若年低所得世帯の経済的地位の持続的な改善をもたらさない可能性を示唆している。</p>
+        <p class="abstract-text en">We provide new evidence on the causal effect of unearned income on consumption, balance
+sheets, and financial outcomes by exploiting an experiment that randomly assigned 1000 individ-
+uals to receive $1000 per month and 2000 individuals to receive $50 per month for three years. The
+transfer increased measured household expenditures by at least $300 per month. The spending im-
+pact is positive in most categories, and is largest for housing, food, and car expenses. The treatment
+increases housing unit and neighborhood mobility. We find noisily estimated modest positive ef-
+fects on asset values, driven by financial assets, but these gains are offset by higher debt, resulting
+in a near-zero effect on net worth. The transfer increased self-reported financial health and credit
+scores but did not affect credit limits, delinquencies, utilization, bankruptcies, or foreclosures. Ad-
+justing for underreporting, we estimate marginal propensities to consume non-durables between
+0.44 and 0.55, durables and semi-durables between 0.21 and 0.26, and marginal propensities to
+de-lever of near zero. These results suggest that large temporary transfers increase short-term con-
+sumption and improve financial health but may not cause persistent improvements in the financial
+position of young, low-income households.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Business Education and Portfolio Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Adam Altmejd (Stockholm University), Thomas Jansson (Sveriges Riksbank), Yigitcan Karabulut (Frankfurt School of Finance and Management gGmbH)</div>
+            <a href="https://afajof.org/management/viewp.php?n=81480" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、金融リテラシーの向上がポートフォリオのリターンと家計の富の蓄積に正の因果効果をもたらす証拠を提供する。大学での専攻選択に準ランダムなばらつきを生じさせる入試カットオフを用い、ビジネスや経済学を学ぶことで、個人は株式市場への投資を大幅に増やし、より高いポートフォリオ・リターンを獲得し、最終的には人生の後半においてより高いレベルの富を蓄積することを示す。このような効果の根底にあるのは、個人が金融情報を取得・処理する能力を向上させ、十分な情報に基づいた投資判断を行うようになったことである。したがって、金融リテラシーへの早期投資は、個人のライフサイクルの富のプロフィールを大きく変える、より高いリターンを生み出す上で重要な役割を果たしている。</p>
+        <p class="abstract-text en">We provide evidence of a positive causal effect of increased financial literacy on portfolio returns and household wealth accumulation. Using admissions cutoffs that generate quasi-random variation in college-major choices, we show that studying business or economics causes individuals to invest significantly more in the stock market, earn higher portfolio returns, and ultimately accumulate higher levels of wealth later in life. Underlying these effects is the improved ability of individuals to acquire and process financial information and to make informed investment decisions. Early investments in financial literacy thus play an important role in generating higher returns that significantly alter individuals' life-cycle wealth profiles.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Longterm Beliefs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Laura Starks (University of Texas-Austin), Richard Sias (University of Arizona), Harry Turtle (Colorado State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=121912" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">長期的（10年）な主観的リターン期待は、株式市場への参加とリスクの高い株式選択を説明する上で、短期的な期待よりもはるかに重要である。株式取引を行うか株式配分を維持するかの決定は、短期的期待よりも長期的期待の水準や変化とより強く関連している。プロシクリカルな短期的期待とは逆に、長期的期待は資産価格決定の合理的期待モデルと一致するカウンターシクリカルである。短期的期待のプロシクリカリティは金融的に洗練された個人ほど強く、長期的期待のカウンターシクリカリティはより普遍的である。この結果は、理論的にも実証的にも家計ファイナンスと資産価格決定に対して重要な示唆を与えるものである。</p>
+        <p class="abstract-text en">Long-term (10-year horizon) subjective return expectations are much more important than near-term expectations in explaining stock market participation and risky share choices. The decision to trade or maintain equity allocation is more strongly related to levels and changes in long-term expectations than near-term expectations. Contrary to procyclical near-term expectations, long-term expectations are countercyclical consistent with rational expectations models of asset pricing. The procyclicality of near-term expectations is stronger for more financially sophisticated individuals while the countercyclicality of long-term expectations is more universal. The results have important implications for both theoretical and empirical household finance and asset pricing.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

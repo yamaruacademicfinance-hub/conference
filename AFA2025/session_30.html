@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance and Gender</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link active">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Finance and Gender</h1>        <div class="paper-card">
+            <div class="paper-title">Productivity Changes around Childbirth: Evidence from the Mutual Fund Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Larissa Ginzinger (University of Mannheim), Kun Li (Australian National University), Alexandra Niessen-ruenzi (University of Mannheim), Gang Wang (Shanghai University of Finance and Economics)</div>
+            <a href="https://afajof.org/management/viewp.php?n=113232" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">新米母親はキャリアへのコミットメントが低いのではないかという社会的期待が、女性の労働市場における成果に対する持続的な子どものペナルティの一因となっている。出産をめぐる準実験的アプローチを採用し、妊娠と出産が女性ファンドマネージャーの生産性とキャリアの見通しにどのような影響を与えるかを調査する。  投資信託の設定により、日々のファンド・リターンがファンド・マネージャーのタイムリーで正確なパフォーマンス評価に利用できるため、出産時の生産性の変化を正確に測定することができる。2008年から2022年までのファンドマネジャーの出産休暇に関する新しいデータを用いて、投資信託業界における持続的な出産ペナルティは、持続的な生産性の変化では説明できないことを示す。女性の生産性は出産前後に一時的に低下するだけである。特に、出産を控えた運用会社のファンドは、妊娠中と産休から復帰した後の最初の6ヵ月間、年間2.3%から2.8%パフォーマンスが低下する。我々の証拠は、出産に伴う心理的・生理的な注意散漫が、この期間に女性マネジャーが仕事に全力を注ぐことを妨げていることを示唆している。そのため、企業訪問の回数が減り、ポートフォリオの管理もあまり積極的に行われなくなる。この影響は、より多くのファンドを担当する多忙なファンドマネージャーほど強い。しかし、復職後わずか6ヵ月後には、新米ママのパフォーマンスは再び同業他社と肩を並べるようになる。この生産性の落ち込みは一過性のものであるにもかかわらず、子供は投資信託業界における女性のキャリアに持続的なペナルティを課している。出産後の女性マネジャーの参加率は持続的に低下し、ファンド業界にとどまることを条件として、新米ママは昇進の見込みが低くなる。</p>
+        <p class="abstract-text en">Societal expectations that new mothers may be less committed to their careers contribute to a persistent child penalty on women's labor market outcomes. We adopt a quasi-experimental approach surrounding childbirth and investigate how pregnancy and motherhood affect the productivity and career prospects of female fund managers.  The mutual fund setting allows us to precisely measure productivity changes during the time of childbirth, as daily fund returns can be used for a timely and accurate performance evaluation of a fund manager. Using novel data on fund managers' maternity leaves from 2008 to 2022, we show that the persistent child penalty in the mutual fund industry cannot be explained by sustained productivity changes. We document that women's productivity declines only temporarily around childbirth. In particular, funds of managers entering motherhood underperform by 2.3% to 2.8% p.a. during pregnancy and the first six months after returning from maternity leave. Our evidence suggests that psychological and physiological distractions associated with childbirth prevent female managers from devoting full attention to their work during this period. They reduce the number of corporate site visits and manage their portfolios less actively. The effect is stronger for busier fund managers who are in charge of more funds. However, only six months post-return to work, new mothers’ performance aligns with peers again. Despite the transient nature of this productivity dip, children impose persistent penalties on women’s careers in the mutual fund industry. We document a persistent decline in the participation rate of female managers after childbirth, and conditional on staying in the fund industry, new mothers face lower promotion prospects.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Beyond Old Boys’ Clubs: Financial Analysts’ Utilization of Professional Connections</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Rachel Zhang (National University of Singapore), Mengqiao Du (National University of Singapore)</div>
+            <a href="https://afajof.org/management/viewp.php?n=68712" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">女性はしばしば排他的な社交クラブに入る機会に恵まれず、社交ネットワークから得られる恩恵が少ない。我々は、専門的な場で適切な人々と交流する機会を持つことを条件として、女性が男性よりもキャリア・パフォーマンスや昇進のために人脈を活用できるかどうかを調査する。ファイナンシャル・アナリストがいつ、どこで、誰と投資家会議で交流したかを記録した独自のデータセットを用いて、企業幹部とのコネクションを確立した後、女性アナリストが男性アナリストよりも正確な業績予測を行うことを発見した。この結果は
+この結果は、アナリストと企業のペア内におけるコネクションのばらつきを利用しても頑健である。さらに、女性アナリストは経営幹部との交流において同族性を克服しており、人脈を活用する優れた能力が資本市場と労働市場の双方で認められている。この結果は、女性の方が職業上の人脈を活用する能力に優れていることを示唆しており、職場での女性の人脈形成の機会を促進することの重要性を強調している。</p>
+        <p class="abstract-text en">Women often lack the opportunity to enter exclusive social clubs, reaping fewer benefits from their social networks. We investigate, conditioning on having the opportunity to interact with the right people in a professional setting, whether women can better utilize connections for career performance and advancement than men. Using a unique dataset that documents when, where, and with whom a financial analyst interacts at investor conferences, we find that female analysts issue more accurate earnings forecasts than their male counterparts after establishing connections with the firms’ executives. This result is robust to exploiting variations
+in connections within an analyst-firm pair. In addition, female analysts overcome homophily when interacting with executives, and their superior ability to utilize connections is recognized in both the capital and labor markets. Our findings suggest that women are better at capitalizing on professional connections and highlight the importance of promoting women’s networking opportunities in the workplace.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">To Grant or Not to Grant: Inventor Gender and Patent Examination Outcomes</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yuqi Gu (Willamette University), Connie (Xiangdong) Mao (Temple University), Yueru Qin (Temple University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=68376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">特許審査における男女格差の存在とその原因を探る。その結果、女性発明者の出願は、男性発明者の出願に比べ、一次査定や最終的な特許査定を受ける確率が有意に低いことがわかった。ジェンダー・バイアス」仮説と一致し、発明者の性別が審査官に知られにくい場合、特許取得における女性の不利益は小さくなる。さらに、女性発明者に付与された特許の経済的価値は有意に高く、女性が特許を取得するためには男性に比べて高いハードルをクリアしなければならないことを示唆している。さらに、第一審で拒絶査定を受けた後に出願を断念する確率は、女性の方が男性よりも有意に高いことが判明し、我々の「粘り強さの欠如」仮説の裏付けとなった。我々の発見は、特許審査における男女差の原因を明らかにし、特許取得における公平な競争条件を作ることを目的とした政策に示唆を与える。</p>
+        <p class="abstract-text en">We explore the existence and causes of gender disparities in the patent examination process. We find that applications filed by female inventors are significantly less likely to receive a first-action approval or a final granting than those filed by male inventors. Consistent with the ‘gender bias’ hypothesis, the female disadvantage in patenting becomes smaller when inventors’ gender is less likely known to examiners. Moreover, the economic value of patents granted to female inventors is significantly higher, suggesting that women must clear a higher hurdle to secure a patent compared to men. Additionally, we find that women are significantly more likely than men to abandon their applications after receiving a rejection in the first-action decision, lending support to our ‘lack of persistence’ hypothesis. Our findings shed light on the causes of gender differences in patent examination and offer implications for policies aimed at creating a level playing field in patenting.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financing The Next VC-Backed Startup: The Role of Gender</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Camille Hebert (University of Toronto), Heather Tookes (Yale University), Emmanuel Yimfor (Columbia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=86296" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">VCが支援する新興企業の連続創業にはジェンダー・ギャップがあるのだろうか？我々は、textit{same}スタートアップを共同設立した男女の将来の資金調達結果の違いを利用する新しい実証的デザインを導入することによって、この疑問に取り組む。我々は、平均的にも、現在のスタートアップの失敗または成功の後にも、実質的なジェンダー・ギャップを発見した。失敗の後、女性は男性である共同創業者と比較して、22.5％低い確率で別のVCの支援を受けたスタートアップを設立することを示唆している。  また、VCが支援する別の会社を設立した人のうち、女性の資金調達額は24.6％少ない。   さらに、アウトカムテストの結果は、大きな資金調達ギャップにもかかわらず、その後の起業の成功確率に男女差はないことを示している。我々が観察した男女間のギャップは、投資家による不平等な扱いに起因するものであり、品質や創業者の嗜好の男女差によるものではないようだ。  実際、潜在的な供給サイドのチャネルを分析した結果、投資家がtextit{other}女性創業者のスタートアップを経験した後の負のスピルオーバーが顕著であることが明らかになった。</p>
+        <p class="abstract-text en">Is there a gender gap in the serial founding of VC-backed startups? We address this question by introducing a new empirical design that exploits differences in future funding outcomes for men and women who cofounded the textit{same} startup. We find substantial gender gaps, both on average and following failure or success of the current startup. Following failure, our estimates imply that women are 22.5 percent less likely to found another VC-backed startup compared to their cofounders who are men.  Among those who do found another VC-backed firm, women raise 24.6 percent less capital.   Moreover, the results of an outcome test show no gender difference in the success probabilities of subsequent startups, despite the large funding gap. The gender gaps that we observe appear to be driven by unequal treatment by investors and not by gender differences in quality or founder preferences.  In fact, our analysis of potential supply-side channels reveals striking negative spillovers following investors’ experiences with textit{other} women-founded startups.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

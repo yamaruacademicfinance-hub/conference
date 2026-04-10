@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labor Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link active">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Labor Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Careers and Wages in Family Firms: Evidence from Matched Employer-Employee Data</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Edoardo Di Porto (University of Naples Federico II), Marco Pagano (University of Naples Federico II), Vincenzo Pezone (Tilburg University), Raffaele Saggio (University of British Columbia), Fabiano Schivardi (LUISS and EIEF)</div>
+            <a href="https://afajof.org/management/viewp.php?n=106904" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、事実上イタリアの法人企業のユニバースと株主情報を組み合わせた新しい雇用者-被雇用者マッチデータセットを用いて、同族企業と非同族企業の報酬政策を調査した。同族会社では賃金が著しく低く、キャリア形成も遅い。賃金格差の半分は労働者の時間不変特性によって説明され、残りは生産性の違いや非金銭的報酬の差では説明できない。この証拠は、同族オーナーが、労働者のキャリアアップを制限し、人的資本の蓄積を妨げる「ガラスの天井」を作り出すことによって、企業に対する支配力を守っているというモデルと整合的である。</p>
+        <p class="abstract-text en">We investigate the compensation policies of family and non-family firms using a novel employer-employee matched dataset, comprising virtually the universe of Italian incorporated companies combined with information on their shareholders. Family firms pay significantly lower wages and offer slower careers. Half of their wage gap is accounted for by workers' time invariant characteristics, while the rest cannot be explained by differences in productivity or in non-monetary compensating differentials. The evidence is consistent with a model where family owners protect their control over the firm by creating a  ``glass ceiling'' that limits workers' career progression, thus hindering their human capital accumulation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Equity Pay Beyond the C-Suite</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrea Eisfeldt (University of California-Los Angeles), Antonio Falato (Federal Reserve Board), Dongryeol Lee (University of California-Los Angeles), Mindy Xiaolan (University of Texas-Austin)</div>
+            <a href="https://afajof.org/management/viewp.php?n=111832" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">エクイティ・ペイはここ数十年でますます一般的になってきているが、企業間のエクイティ・ペイ水準の差は非常に大きい。  本研究では、エクイティ・ペイにおける企業間の不平等を明らかにし、エクイティ・ペイ政策における企業間格差の要因について説明する。  企業レベルのエクイティ・ペイは非常に永続的であり、エクイティ・ペイの企業間格差の大部分は初期値の差に起因していることを示す。  初期値の違いの一部は、企業間の財務的制約の違いや、実質的な同業者効果に起因している。  我々は、高株式報酬企業が株式報酬を最も積極的に管理し、特に株価の騰落の影響を打ち消していることを示している。  また、株式報酬の高い企業ほど若く、雇用成長率も高い傾向にある。  また、C-Suite以上のエクイティ・ペイとCEOのエクイティ・ペイを比較し、CEOのエクイティ・ペイは持続性が低く、若い企業や雇用成長率の高い企業では実際に低いことを示す。  我々は、エクイティ・ペイは報酬と資本構造の決定であると主張し、これらの類似性を明らかにする。</p>
+        <p class="abstract-text en">Equity pay has become increasingly common over the last several decades but the differences in the level of equity pay across firms are very large.  This study documents the inequality in equity pay across firms and describes the drivers of firm-level differences in equity pay policies.  We show that firm-level equity pay is very persistent, and a large fraction of the differences across firms in equity pay comes from differences in initial values.  Some of the differences in initial values can be attributed to differences across firms' financial constraints and to substantial peer effects.  We show that high equity pay firms manage equity pay most actively, in particular counteracting the effects of stock price gains and losses.  High-equity pay firms tend to be younger, and to experience subsequently higher employment growth.  We also compare equity pay beyond the C-Suite to CEO equity pay and show that CEOs' equity pay is much less persistent, and is actually lower at younger firms and firms that experience higher employment growth.  We argue that equity pay is both a compensation and a capital structure decision, and draw out these parallels.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Longevity and Occupational Choice</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Marius Guenzel (University of Pennsylvania), Ulrike Malmendier (University of California-Berkeley), Denis Sosyura (Arizona State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=113148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国人口の15％について行政のバイタル・レコードを用いたところ、職業グループ間で長寿に大きなばらつきがあることがわかった。いくつかの職業ペアでは、寿命の差は男女間の長寿格差に匹敵する。このばらつきは、長寿の人口統計学的要因、環境要因、経済的要因をコントロールした後も持続する。長寿の変動と職業を結びつける重要なメカニズムは、手作業の強度である。手作業の強度が高いほど寿命は短い。終末期の健康にとって仕事上の作業が重要であることと一致して、職業選択は、死亡時の年齢を一定にしても、死因を予測する。全体として、我々は、職業に基づくヘルスケアと退職計画に示唆を与える、長寿の重要なライフスタイル決定要因に関する証拠を提供する。</p>
+        <p class="abstract-text en">Using administrative vital records for 15 percent of the U.S. population, we find large variation in longevity across occupational groups. For some occupation pairs, the differences in lifespan are comparable to the longevity gap between men and women. This variation persists after controlling for demographic, environmental, and pecuniary drivers of longevity. A key mechanism linking the variation in longevity to occupations is the intensity of manual tasks. A higher manual intensity predicts a shorter lifespan. Consistent with the importance of on-the-job tasks for  terminal health, occupational choice predicts the cause of death, even holding  constant the age at death. Overall, we provide evidence on a key lifestyle determinant of longevity with implications for occupation-based healthcare and retirement plans.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Talent Market Competition and Firm Growth</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: AJ Yuan Chen (University of Southern California), Miao Zhang (University of Southern California), Zhao Zhang (International Monetary Fund)</div>
+            <a href="https://afajof.org/management/viewp.php?n=88536" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">人材獲得競争は企業の成長にどのような影響を与えるのか？事業所レベルの職業別雇用マイクロデータと求人広告データを組み合わせ、地元市場における他の企業の求人広告に基づいて、企業の人材維持圧力（TRP）を測定する。TRPは、CFOの主観的な人材維持の懸念を捉え、企業の人材流出を予測する。TRPが高い場合、企業は弾力的に人材を維持することができず、その後の人材の生産性が低下すること、(iii)TRPは主に遅れをとっている企業の成長を抑制するが、スーパースターの成長は抑制しないため、米国全体の投資への影響は限定的であるが、産業集中が進むことを示す。</p>
+        <p class="abstract-text en">How does competition for talent affect firm growth? Combining establishment-level occupational employment microdata with job posting data, we measure a firm's talent retention pressure (TRP) based on other firms' job postings for talent in the local market. Our TRP captures CFOs' subjective talent retention concerns and predicts firms' talent outflows. We show that (i) TRP substantially dampens firms' capital investment; (ii) firms do not elastically retain talent when TRP is higher, yielding lower subsequent talent productivity; and (iii) TRP dampens primarily laggard firms' growth but not superstars', leading to a limited impact on aggregate U.S. investment but increased industry concentration.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

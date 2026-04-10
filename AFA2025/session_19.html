@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Topics: Climate Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link active">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Special Topics: Climate Finance</h1>        <div class="paper-card">
+            <div class="paper-title">A Breath of Change: Can Personal Exposures Drive Green Preferences?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Steffen Andersen (Copenhagen Business School), Dmitry Chebotarev (Indiana University), Fatima Filali (Copenhagen Business School), Kasper meisner Nielsen (Copenhagen Business School)</div>
+            <a href="https://afajof.org/management/viewp.php?n=89992" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">責任投資に対する投資家の選好は、彼らの特異な個人的経験に影響されるのか？
+の影響を受けるのだろうか？病院受診に関する包括的なデータセットと、デンマークの個人投資家によるポートフォリオ保有情報を用いて、以下のことを明らかにする。
+デンマークの個人投資家のポートフォリオ保有に関する情報を用いて、以下のことを示す。
+ある投資家の子供が呼吸器疾患と診断された場合、その投資家は「茶色」（「茶色」）のポートフォリオのウェイトを減らす（増やす）。
+しかし、ESGファンドの保有比率は変化しない。
+は変化しない。親が呼吸器疾患を大気汚染に起因すると考えていることと整合的である、
+呼吸器疾患以外の疾患については、その影響は見られなかった。この結果は、より重篤な
+この結果は、子どもと同居している親に起因している。</p>
+        <p class="abstract-text en">Are investors’ preferences for responsible investing affected by their idiosyncratic
+personal experiences? Using a comprehensive dataset for hospital visits and the information
+on portfolio holdings by retail investors in Denmark, we show that when
+an investor’s child is diagnosed with a respiratory disease, the investor decreases (increases)
+portfolio weights of “brown” (“green”) stocks but does not alter their holdings
+of ESG funds. Consistent with parents attributing respiratory diseases to air pollution,
+we find no effects for non-respiratory diseases. The results are stronger for more severe
+diseases and are entirely driven by parents who live with their children.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Investments that Make our Homes Greener: The Role of Regulation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nuno Clara (Duke University), Joao Cocco (London Business School), S. lakshmi Naaraayanan (London Business School), Varun Sharma (Indiana University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=113092" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅（私たちの家）の運営は、世界のエネルギー消費の約22％、CO2排出量の17％を占めている。私たちは、民間の賃貸物件に最低限のエネルギー効率基準を満たすことを義務付けることで、二酸化炭素排出量の削減を目指す規制介入の効果を研究している。この規制は、賃貸セクターへの大規模な投資を誘発した。しかし、環境面での利益は小さく、より汚染度の高いエネルギー源の使用によって制限された。気候変動問題への取り組みには、炭素排出を直接対象とする規制介入の方が効果的かもしれない。</p>
+        <p class="abstract-text en">The operation of residential buildings (our homes) is responsible for roughly 22% of the global energy consumption and 17% of the CO2 emissions. We study the effects of a regulatory intervention aiming to reduce carbon emissions by requiring privately rented properties to satisfy minimum energy efficiency standards. The regulation triggered significant investments in the rental sector. However, the environmental gains were smaller, limited by the use of more polluting energy sources. Regulatory interventions that target carbon emissions directly may be more effective in tackling the climate challenge.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Adaptation Using Financial Markets: Climate Risk Diversification through Securitization</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matthew Kahn (University of Southern California), Amine Ouazad (HEC - Montréal), Erkan Yonder (Concordia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=72100" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">気候変動リスクの高まりに直面した場合、金融機関は、住宅ローン担保証券のような分散プールを構築する技術や専門知識を持つ証券化業者に、そのようなリスクを移転することで適応する可能性がある。分散されたプールでは、気候変動リスクへのエクスポージャーは、キャッシュフローの海の一滴に過ぎないかもしれない。本稿では、住宅ローンレベルからMBSディールレベルのキャッシュフローまで、証券化の連鎖全体のデータセットを構築し、月次頻度でトランシェの価格を観測する。山火事が発生すると、住宅ローン・レベルでは期限前償還や差し押さえの割合が高まり、差し押さえの売却時に損失が拡大する。MBSの取引レベルでは、ドル残高の空間的集中度が低く（空間的ドルハーフィンダールが低い）、山火事イベントの空間的相関（取引内相関）が低いほど、山火事イベントへのエクスポージャーが低くなる。これらの定量化可能な分散化の指標は、気候変動に強い設計となっている既存のディールを特定する。本稿では、リターンとリスクをターゲットとする資産需要システムにおけるポートフォリオのウェイトを求めることにより、最適な案件を構築する。きめ細かな山火事確率モデルと2050年の気温予測を用いて山火事リスクを推定し、山火事の発生しやすい地域に住宅ローンを供給しているにもかかわらず、山火事リスクによるリターンの影響を最小限に抑えた気候変動に強いMBSを構築する。最後に、各案件のキャッシュフローの山火事リスクに対する感応度を市場が評価しているかどうかを検証する。</p>
+        <p class="abstract-text en">In the face of rising climate risk, financial institutions may adapt by transferring such risk to securitizers that have the skill and expertise to build diversified pools, such as Mortgage-Backed Securities. In diversified pools, exposure to climate risk may be a drop in the ocean of cash flows. This paper builds a data set of the entire securitization chain from mortgage-level to MBS deal-level cash flows, and observes the prices of the tranches at monthly frequency. Wildfires lead to higher rates of prepayment and foreclosure at the mortgage level, and larger losses during foreclosure sales. At the MBS deal level, a lower spatial concentration of dollar balances (lower spatial dollar Herfindahl), a lower spatial correlation in wildfire events (within-deal correlation), leads to a lower exposure to wildfire events. These quantifiable metrics of diversification identify those existing deals whose design makes them resilient to climate change. This paper builds optimal deals by finding the portfolio weights in an asset demand system that targets return and risk. Extrapolating wildfire risk using a granular wildfire probability model and temperature projections in 2050, we build climate resilient MBSs whose returns are minimally impacted by wildfire risk even as they supply mortgage credit to wildfire prone areas. Finally, we test whether the market prices the sensitivity of each deal's cash flow to wildfire risk.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

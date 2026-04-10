@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Financial Behavior</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link active">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Household Financial Behavior</h1>        <div class="paper-card">
+            <div class="paper-title">Cookies and Shopping</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bo Bian (University of British Columbia), Michaela Pagel (Washington University in St. Louis), Huan Tang (London School of Economics and Political Science), Emily Williams (Harvard University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=118636" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究では、データ・プライバシーの強化がオンライン・ショッピングに与える影響を検証する。具体的には、欧州連合のデータ保護基準とカリフォルニア州プライバシー法に対応した、米国の小売業者によるクッキーの許可とコンプライアンス・システムの時差のある採用を分析する。特定の小売業者がクッキーのコンプライアンス・システムを導入した時期に関する情報と、米国のデータ集計・分析プロバイダーからの個人レベルの銀行およびクレジットカード取引データを組み合わせました。私たちは、小売業者におけるオンライン支出が、クッキー遵守システムを導入した後に著しく減少することを発見しました。誰が、いつ、プライバシーを強化して買い物をするかという選択の可能性に対処するために、我々はまた、政策前の買い物かごに基づくクッキー・コンプライアンス・システムへの暴露を、縮小形のIV仕様で使用する。我々のIV仕様の結果は、支出に関する最初の発見を確認し、個人がプライバシーの強化で扱われた場合、当座貸越手数料や延滞手数料がより少なく、クレジットカードの負債がより少なく、給料日ローンのような他の高金利の無担保クレジットでの借入がより少ないことを示している。我々は、これらの結果の背後にある3つの主要なチャネルとして、ターゲット広告、第三次価格差別、およびショッピングの利便性を議論する。我々の知見は、データ・プライバシー規制と消費者行動との関係についての洞察を提供し、州および連邦レベルでの政策検討に有益である。</p>
+        <p class="abstract-text en">This study examines the impact of enhanced data privacy on online shopping. Specifically, we analyze the staggered adoption of cookie permission and compliance systems by US retailers in response to the European Union’s data protection standards and the California Privacy Act. We combine information on when specific retailers implemented a cookie compliance system with individual-level bank and credit card transactions data from a US data aggregation and analytics provider. We find that online spending at retailers decreases significantly after they introduce cookie compliance systems. To address potential selection into who and when individuals shop with enhanced privacy, we also use exposure to cookie compliance systems, based on pre-policy shopping baskets, in a reduced form IV specification. Our IV specification results confirm the initial findings with respect to spending and show that individuals incur less overdraft and late fees, roll over less credit card debt, and borrow less in other high-interest unsecured credit such as payday loans when they are treated with enhanced privacy. We discuss targeted advertising, third-degree price discrimination, and shopping convenience as the three main channels behind these results. Our findings provide insights into the relationship between data privacy regulations and consumer actions, informing policy considerations at the state and federal levels.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Rewards and Consumption in the Credit Card Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Tianyu Han (University of California-Berkeley)</div>
+            <a href="https://afajof.org/management/viewp.php?n=71260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">特典プログラムはしばしばクレジットカードの大きな特徴である。私は中国の大手銀行と共同で、独自の消費者レベルデータと調査を組み合わせ、特典が消費と消費者の主観的期待に及ぼす因果効果を研究している。ファジー回帰不連続（RD）デザインを活用し、より寛大な特典デザインが、特典を得るカテゴリーと得られないカテゴリーの両方において消費の増加を引き起こすことを示す。ファジー回帰不連続（RD）を調査データに適用すると、消費者は報酬設計が報酬獲得消費に与える影響を正しく理解しているが、総消費に与える影響は過小評価していることが分かる。様式化されたモデルを用いて、この誤認が市場構造と厚生に与える影響を研究する。私のキャリブレーション結果は、消費者の誤った認識が銀行により寛大な報酬を提供する動機付けとなり、最終的に市場効率を低下させ、より洗練されていない消費者からより洗練された消費者への相互補助につながることを示している。</p>
+        <p class="abstract-text en">Reward programs are often a prominent feature of credit cards. Collaborating with a leading bank in China, I combine proprietary consumer-level data and a survey to study the causal effect of rewards on consumption and consumers' subjective expectations. I leverage a fuzzy regression discontinuity (RD) design to show that a more generous reward design causes consumption increases across both reward-earning and non-reward-earning categories. Applying the fuzzy RD to the survey data, I find that consumers correctly understand the impact of reward design on reward-earning consumption but underestimate its effect on total consumption. Using a stylized model, I study the implications of this misperception for market structure and welfare. My calibration results show that consumer misperceptions incentivize banks to offer more generous rewards, which ultimately diminishes market efficiency and leads to a cross-subsidy from less to more sophisticated consumers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Consumer Choice and Corporate Bankruptcy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Samuel Antill (Harvard University), Megan Hunter (Boston College)</div>
+            <a href="https://afajof.org/management/viewp.php?n=71316" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業の債務不履行にはどれほどのコストがかかるのか？トレードオフ理論」によれば、企業は負債の便益と潜在的なデフォルトのコストをトレードオフすることによって負債構造を選択する。長い文献によれば、企業は負債の便益が大きいにもかかわらず低いレバレッジを使用しており、これはデフォルト・コストが大きいことを示唆している。しかし、大企業はしばしば破産法第11条を利用して債務不履行を解決し、清算を回避している。このパズルに対する一般的な説明は、間接的な倒産コストが大きいはずだというものである。しかし、このような間接的なコストを定量化することは非常に困難である。というのも、観察されない負のショックが倒産と顧客喪失の両方を引き起こす可能性があるからである。既存の間接コストの推計では、デフォルトとその原因となるショックが混同されている。我々は、倒産の間接コストを測定する新しい方法を開発した。具体的には、3つのインセンティブ付き実験を用いて、倒産企業の製品に対する消費者需要に対する企業倒産の因果効果を推定する。倒産企業の倒産状況はランダムに変化させ、その他の企業や製品の詳細は固定する。その結果、連邦破産法第11条の適用を知った消費者は、業種にもよるが、倒産した企業の製品に対する支払い意欲を18～35％低下させることが分かった。また、消費者の最大48％が大企業の倒産を知っていることから、倒産は倒産した企業の消費者ベースの大部分に影響を与えることが分かる。構造的離散選択モデルを推定することで、産業にもよるが、倒産の間接コストが生産者余剰の10％から31％を破壊する可能性があることを示す。これらの推定によれば、間接的な倒産コストだけでも、トレードオフ理論モデルで観測されたレバレッジ比率を説明するのに十分な大きさである。我々は、これらのコストが倒産前に発生する可能性は低いことを示す。このように、我々の結果は、コーポレート・ファイナンスの柱であるトレードオフ理論に新たな裏付けを与えるものである。</p>
+        <p class="abstract-text en">How costly is a corporate default? This question is central to corporate finance: according to the “tradeoff theory,'' firms choose a debt structure by trading off the benefits of debt with the costs of a potential default. A long literature shows that firms use low leverage despite large benefits of debt, implying default costs are large. Yet large firms often resolve defaults using Chapter 11 bankruptcy, avoiding liquidation and paying puzzlingly small direct legal costs. The prevailing explanation for this puzzle is that indirect bankruptcy costs must be large --- firms use little debt because a bankruptcy would scare off customers, destroying value. However, these indirect costs are notoriously difficult to quantify because unobserved negative shocks can cause both a bankruptcy and a loss of customers. Existing estimates of indirect costs confound defaults with the shocks that cause them. We develop a new method to measure the indirect costs of bankruptcy. Specifically, we use three incentivized experiments to estimate the causal effect of corporate bankruptcy on consumer demand for a bankrupt firm's products. We randomly vary the firm's bankruptcy status, holding all other firm and product details fixed. We find that knowledge of a Chapter 11 bankruptcy filing causally reduces a consumer's willingness to pay for the bankrupt firm's products by 18-35%, depending on the industry. We also find that up to 48% of consumers are aware of major corporate bankruptcies, so a bankruptcy impacts a large fraction of the bankrupt firm's consumer base. Estimating a structural discrete-choice model, we show that the indirect costs of bankruptcy can destroy 10% to 31% of producer surplus, depending on the industry. By these estimates, indirect bankruptcy costs alone are large enough for trade-off-theory models to explain observed leverage ratios. We show that these costs are unlikely to arise before bankruptcy. Our results thus provide novel support for the tradeoff theory, a pillar of corporate finance.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

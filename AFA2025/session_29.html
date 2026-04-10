@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Corporate Disclosure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link active">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Corporate Finance: Corporate Disclosure</h1>        <div class="paper-card">
+            <div class="paper-title">The Information Content of Tone Dispersion: Evidence from Earnings Conference Call Q&As</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jyun-Ying Fu (National Chengchi University), Alan Huang (University of Waterloo), Russell Wermers (University of Maryland), Jingyu Zhang (Queen's University), Yuxin Zhang (University of Nottingham (Ningbo)</div>
+            <a href="https://afajof.org/management/viewp.php?n=93856" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">テキストの言語的特徴は、その情報内容にとって重要である。我々は、トーンレベルとトーン分散という2つの異なる次元に沿って、テキストの言語的特徴を定量化する。決算説明会の質疑応答（Q&A）をテキスト分析し、FinBERTモデルを用いてトーンレベルとトーン分散を測定する。その結果、トーン・レベルの分散が大きいQ&Aセッションを伴う決算ニュースに対して株価はより敏感に反応し、こうしたQ&Aセッションは決算発表時の株式売買高の増加と関連していることが分かった。これらの結果は、投資家の注目度を示すプロキシでコントロールした後でも維持され、代替的なストーリーについても議論される。これらの結果を総合すると、トーン分散の大きいカンファレンス・コールでは、冷ややかな財務数値だけでなく、より多くの付加的な情報が生み出され、その結果、株価へのインパクトが強まり、売買高が増加することが示唆される。追加分析により、この情報生産仮説を検証する。</p>
+        <p class="abstract-text en">Verbal features of a text matter for its information content. We quantify a text's verbal features along two distinct dimensions: tone level and tone dispersion. We textually analyze question-and-answer (Q&A) sessions of earnings conference calls and employ the FinBERT model to measure tone level and tone dispersion. We find share prices respond more sensitively to earnings news accompanied with highly tone-dispersed Q&A sessions, and these Q&A sessions are associated with larger stock trading volume upon earnings announcements. These results hold after controlling for investor attention proxies, and alternative stories are discussed. Combined, our findings suggest that conference calls with higher tone dispersion produce a greater quantity of incremental information beyond cold financial figures, thus resulting in enhanced price impacts and heightened trading volume. Additional analyses verify this information production hypothesis.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Performance Indicators of the Digital Age: Mobile Apps, Firm Disclosure, and Stock Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Shuping Chen (University of Texas-Austin), Xi Wu (University of California-Berkeley), Yukun Liu (University of Rochester)</div>
+            <a href="https://afajof.org/management/viewp.php?n=114548" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">スマートフォンやタブレットにダウンロード可能なiOSやAndroidのアプリであるモバイルアプリは、世界経済の重要な一部となりつつある。モバイルアプリは、アプリ内課金や広告を通じた製品提供の主要（または代替）プラットフォームとなり、アプリが収集するリアルタイムのユーザーデータから得られる洞察を活用することで、顧客エンゲージメントを向上させ、収益創出を促進します。我々は、モバイルアプリのダウンロード数がその後の四半期の収益を有意に予測することから、モバイルアプリのダウンロード数が先行業績指標であることを実証する。特に、アプリのダウンロード数は、収益を上げるために主にアプリに依存している企業（すなわち、アプリ内購入オプションやアプリ内広告の配置を持つアプリを持つ企業）だけでなく、製品を提供する代替手段としてモバイルアプリを採用する確立されたブランドを持つ実店舗型企業など、すべての企業の収益を予測する。しかし、投資コミュニティはモバイルアプリの価値を十分に理解していない。我々は、モバイルアプリのダウンロード数がアナリストの予測誤差と将来のリターンを有意に予測することを発見した。異常ダウンロードのロング・ショート戦略は、EW（VW）年率12%（9%）のリターンをもたらす。アナリストや投資家の誤解は、アプリの収益創出能力を直接観察できない企業のサブサンプル、すなわちアプリ内課金オプションや広告配置を持たない企業に集中しているようである。重要なことは、規制当局への提出書類におけるモバイルアプリに関する企業の情報開示が、アナリストの予測誤差とリターンの予測可能性を緩和していることである。本研究は、デジタル経済の新たなパフォーマンス指標と、投資コミュニティがそのような理解を容易にするための情報開示の役割についての理解を深めるものである。</p>
+        <p class="abstract-text en">Mobile apps, iOS or Android apps downloadable onto smartphones and tablets, are becoming an important part of the global economy. Mobile apps facilitate earnings generation by being the primary (or an alternative) platform of product delivery, via in-app purchases or advertisements. and better customer engagement by leveraging insights derived from real-time user data collected by apps. We demonstrate that mobile app download is a leading performance indicator as mobile app downloads significantly predict subsequent quarter’s earnings. Notably  app downloads predict earnings for all firms, not just firms that rely primarily on apps to generate revenue (i.e., firms with apps with in-app purchase options and in-app ad placements), but also brick-and-mortar firms with established brands that adopt mobile apps as an alternative way to deliver products. However, the investment community does not fully comprehend the value of mobile apps: we find that mobile app downloads significantly predict analyst forecast errors and future returns. A long-short strategy on abnormal downloads delivers an EW (VW) annualized return of 12% (9%). Analysts’ and investors’ misunderstanding appears to be concentrated in the subsample of firms where they cannot directly observe apps’ revenue generating capabilities, i.e., firms whose apps do not have in-app purchase options or ad placements. Importantly, firm disclosure on mobile apps in regulatory filings mitigates the predictability of analyst forecast errors and returns. Our study advances our understanding of new performance indicators of the digital economy and the role of disclosure in facilitating such understanding for the investment community.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Endogenous Corporate Disclosure during the COVID-19 Lockdown</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yeejin Jang (University of New South Wales), Taehyun Kim (Chung-Ang University), Jongsub Lee (Seoul National University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=119840" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">州レベルでのCOVID-19によるロックダウンが行われる中、ロックダウン中に財務諸表を提出した企業（処理企業）と直前に提出した企業（対照企業）を比較した。ロックダウンは、社会的流動性と経営者と投資家の間のソフト情報の共有を著しく制約した。その結果、処理された企業は、特に外部からの資金調達を必要とする企業や、評価の難しい資産や多額の取引債権を含む企業など、より詳細な会計情報を開示した。機関投資家の保有比率が高く、監査人のカバレッジが広い大企業では、このような傾向は少なかった。ハード情報の増加は収益予測を改善し、外部資金調達コストを抑制した。この調査結果は、経済的不確実性の高まりに伴い、情報の共有がソフトなものからハードなものへと変化し、企業内部者と外部者の間の情報の非対称性が緩和されることを示唆している。</p>
+        <p class="abstract-text en">Amid state-level COVID-19 lockdowns, we compare firms filing financial statements during the lockdown (treated) to those reporting just before (control). Lockdowns significantly constrained social mobility and the sharing of soft information between managers and investors. In response, treated firms disclosed more accounting details, especially those requiring external funding or involving hard-to-value assets and substantial trade credits. Larger firms with extensive institutional ownership and broad auditor coverage exhibited fewer such tendencies. Increasing hard information improved earnings forecasts and curtailed external funding costs. Our findings suggest a shift from soft to hard information sharing during economic uncertainty, which helps alleviate the information asymmetry between corporate insiders and outsiders.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How Managers Communicate about Capital Budgeting to Investors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Robert Battalio (University of Notre Dame), Tim Loughran (University of Notre Dame), Bill Mcdonald (University of Notre Dame)</div>
+            <a href="https://afajof.org/management/viewp.php?n=74396" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は45の資本予算用語の辞書を作成し、2010年から2020年にかけて行われた96,568件の決算電話会議における経営者の言葉遣いを記録した。経営者は電話会議において、キャッシュフロー、フリーキャッシュフロー、営業利益、投資利益率、資本利益率などの専門用語をよく使用する。我々は、Graham and Harvey (2001)の調査結果を実証し、経営者が電話会議において投資回収期間やROIのような概念を実際に使用していることを示す。資本予算の回数は、資本金が大きく、固定資産が多く、研究開発集約度が低い企業と関連している。資本予算に関する用語の使われ方とマネジャーが話す言葉の数は、暦年の第1四半期にピークを迎える。この結果は、大半の企業が12月決算であることから、年次コミュニケーションと四半期コミュニケーションの情報密度を示している。また、純利益のプラス・マイナスによって、マネジャーの言葉の選択がどのように変化するかも示している。純利益がプラスの場合、マネジャーはキャッシュフロー、フリーキャッシュフロー、営業利益、営業利益といった表現を、純利益がマイナスの場合よりも有意に多く使用する。対照的に、当期純利益がマイナスの場合、経営者は積極的なnon-GAAPフレーズであるEBITDAを有意に多く使用する。Graham and Harvey (2001)が強調しているように、企業で使用されている正式な資本予算策定手法の形態や程度を測定することは困難である。彼らの調査結果は、この重要だがとらえどころのないトピックに関するデータを取得するための、少なくとも一つの間接的なアプローチを提供する上で、大きな役割を果たした。我々は、資本予算編成に関連する実際の使用と実践について、より正確な理解を得ることができる別のレンズを提供する。</p>
+        <p class="abstract-text en">We create a lexicon of 45 capital budgeting terms and document manager language usage in 96,568 earnings conference calls during 2010-2020. Managers often use technical language like cash flow, free cash flow, operating income, return on investment, and return on capital during conference calls. We substantiate the survey evidence of Graham and Harvey (2001) by demonstrating that managers actually use concepts like payback period and ROI in conference calls. Capital budgeting counts are associated with larger capitalization, higher fixed assets, and lower R&D intensity firms. Capital budgeting term usage and the number of words spoken by managers peak in the first quarter of the calendar year. This finding illustrates the information density of annual versus quarterly communications, since the majority of the firms have December fiscal year ends. We also document how manager’s word selections vary on the basis of whether or not net income is positive. If the firm has positive net income, managers use phrases like cash flow, free cash flow, operating income, and operating profit significantly more often than if net income is negative. In contrast, when net income is negative, managers have significantly higher counts of the aggressive non-GAAP phrase EBITDA. As Graham and Harvey (2001) emphasized, it is difficult to measure the forms and extent of formal capital budgeting techniques that are used in a firm since they cannot be directly observed. Their survey results went a long way in providing at least one indirect approach to capturing data on this important but elusive topic. We provide another lens through which we can gain a more precise understanding of the actual uses and practices associated with capital budgeting.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

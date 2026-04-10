@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uninformed Trading and Asset Prices</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link active">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Uninformed Trading and Asset Prices</h1>        <div class="paper-card">
+            <div class="paper-title">Price Multipliers are Larger at More Aggregate Levels</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jiacui Li (University of Utah), Zihan Lin (Stanford University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=67564" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国株式市場における需要の不均衡を様々な集計レベルの構成要素に分解し、統一的なアプローチを用いてそれぞれの価格への影響を推計した。その結果、価格乗数は連続性を形成し、より集約的なレベルほど高くなることが明らかになった。我々の発見は、情報に基づく説明とは矛盾するが、リスク回避的な流動性供給者に基づくメカニズムとはほぼ整合的である。本稿は、資産価格研究のための新たな需要尺度を提案し、「フロー主導型」の総体的価格変動の見方を支持するとともに、需要に基づく価格効果のモデリングに示唆を与えるものである。</p>
+        <p class="abstract-text en">We decompose demand imbalances in the U.S. stock market into components at different levels of aggregation and estimate their respective price impacts using a unified approach. The results reveal that the price multipliers form a continuum that is higher at more aggregate levels. Our findings are inconsistent with information-based explanations but are largely consistent with mechanisms based on risk-averse liquidity providers. Our paper proposes a new demand measure for asset-pricing studies, provides support for the “flow-driven” view of aggregate price fluctuations, and bears implications for the modeling of demand-based price effects.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Short Covering</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jesse Blocher (Vanderbilt University), Xi Dong (CUNY-Baruch College), Matthew Ringgenberg (University of Utah), Pavel Savor (DePaul University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=116228" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">空売りがポジションから撤退するタイミングを検証するために、ネット・ショートカバーとグロス・ショートカバーの新しい直接的尺度を構築した。その結果、株価の不利な動き、ボラティリティ、エクイティ貸出手数料など、裁定取引に対する特異的な制限が、ポジション解消の有意な増加と関連していることが分かった。これとは対照的に、VIX、資金流動性、市場流動性など、裁定取引に対する総体的な制限がショートカバーに影響を与えるという証拠はほとんど見つからなかった。ショートカバーは将来のリターンを誤った方向に予測するが、それは裁定取引の制限によって誘発される場合に限られ、空売りが早すぎる退出を余儀なくされるという仮説と一致する。また、価格効率の低下、将来のアノマリー・リターンの上昇、他のインフォームド・トレーダーのパフォーマンスの向上とも関連している。これらの結果は、企業レベルの裁定取引制限が取引行動と将来のリターンの重要な決定要因であることを示している。</p>
+        <p class="abstract-text en">We construct novel, direct measures of net and gross short covering to examine when short sellers exit positions. We find that idiosyncratic limits to arbitrage, such as adverse stock price movements, volatility, and equity lending fees, are associated with significantly higher position closures. In contrast, we find little evidence that aggregate limits to arbitrage, including VIX, funding liquidity, and market liquidity, affect short covering. Short covering predicts future returns in the wrong direction, but only if it is induced by limits to arbitrage, consistent with the hypothesis that short sellers are forced to exit too early. It is also associated with lower price efficiency, higher future anomaly returns, and better performance of other informed traders. These results show that firm-level limits to arbitrage are important determinants of trading behavior and future returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inelastic Equity Markets: New Evidence From A Reform of U.S. Trust Law</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Oliver Spalt (University of Mannheim), Stefano Cassella (Tilburg University), Antonino emanuele Rizzo (University of Notre Dame), Leah Zimmerer (University of Mannheim)</div>
+            <a href="https://afajof.org/management/viewp.php?n=102816" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">信託投資に関する法改正が株式市場に与える影響を調査した、
+1986年から2006年にかけて米国の各州で段階的に実施された。慎重投資家ルールの導入により
+プルーデント・インベスター・ルールの導入は、米国株式のクロスセクションにおける銘柄の相対的な魅力を系統的に変化させた。
+信託ファンドにとって、米国株式のクロスセクションにおける銘柄の相対的な魅力が制度的に変化した。信託ファンドが
+は機関投資家の株式保有に占める割合が大きいため、今回の実証的設定は、米国株式が機関投資家の株式保有に与える影響を研究する貴重な機会となる。
+における機関投資家の株式保有と相対価格に対する規制変更の影響を研究する貴重な機会を提供するものである。
+米国株式市場における機関投資家の株式保有と相対価格に対する規制変更の影響を研究する貴重な機会を提供するものである。理論的にも実証的にも
+を理論的、実証的に示した。
+旧規制下で暗黙のうちに優遇されていた「慎重な」銘柄からポートフォリオのリバランスを行うことを理論的にも実証的にも示した。
+法改正後に信託が購入した銘柄は、信託が売却した銘柄を大幅にアウトパフォームした。
+を大幅に上回る。この新しくユニークな設定において、我々は平均的なU-REITの需要価格弾力性の上限推定値を導き出した。
+この結果は、非弾力的市場仮説と一致する。
+仮説と一致する。</p>
+        <p class="abstract-text en">We study the equity market implications of a reform in the laws that govern trust investments,
+implemented in a staggered fashion across U.S. states from 1986 to 2006. The
+introduction of the prudent investor rule systematically alters the relative attractiveness of
+stocks within the cross-section of U.S. equities for trust funds. As trust funds account for a
+substantial fraction of institutional equity holdings in our sample period, our empirical setting
+provides a rare opportunity to study the impact of a regulatory change on institutional
+investor holdings and relative prices in the U.S. equity market. We show both theoretically
+and empirically that, in response to the law change, trusts rebalance their portfolios away
+from “prudent” stocks, which were implicitly advantaged under the old regulatory regime.
+Stocks bought by trusts after the law change substantially outperform stocks sold by those
+funds. In this new and unique setting, we derive an upper bound estimate on the price
+elasticity of demand of the average U.S. stock of 11. Our results are in line with the inelastic
+markets hypothesis.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Losing is Optional: Retail Option Trading and Expected Announcement Volatility</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tim de Silva (Massachusetts Institute of Technology), Kevin Smith (Stanford University), Eric So (Massachusetts Institute of Technology)</div>
+            <a href="https://afajof.org/management/viewp.php?n=122472" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、リテール・オプション取引の成長を記録し、個人投資家がボラティリティの急上昇を予期することによってオプションに引き寄せられるという証拠を提供する。
+個人投資家は、ボラティリティの急上昇が予想されるオプションに引き寄せられるという証拠を示す。個人投資家
+個人投資家は、決算発表前にオプションを集中的に購入する。
+個人投資家は、決算発表前にオプションを集中的に購入する。資産市場全体で比較すると
+個人投資家は、予想される決算発表のボラティリティが上昇するにつれて、株式よりもオプションの取引に偏っていることがわかる。
+また、資産市場全体で比較すると、予想される決算発表のボラティリティが高まるにつれて、個人投資家は株式よりもオプション取引を偏って行うことが分かる。その際、個人投資家は3つの富を奪う行動をとる。
+個人投資家は、実現ボラティリティに比してオプションを買いすぎ、ビッド-アスク・スプレッドを大きくし、株式よりもオプションの取引を遅らせるという、3つの富を奪う行動をとる。
+また、発表への反応も鈍い。これらにより
+その結果、個人投資家の損失は平均で5～9% に達し、予想ボラティリティが高い場合には10～14% に達する。
+予想ボラティリティが高い場合には10～14%の損失となる。</p>
+        <p class="abstract-text en">We document the growth of retail options trading and provide evidence that retail
+investors are drawn to options by anticipated spikes in volatility. Retail investors
+purchase options in a concentrated fashion before earnings announcements, particularly
+those with greater expected abnormal volatility. Comparing across asset markets, we
+also find retail investors disproportionately trade options over stocks as anticipated
+announcement volatility increases. In doing so, retail investors display a trio of
+wealth-depleting behaviors: they overpay for options relative to realized volatility, incur
+enormous bid-ask spreads, and sluggishly respond to announcements. These translate
+to retail losses of 5-to-9% on average, and 10-to-14% for high expected volatility
+announcements.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Markets: Risk, Access, and Transparency</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link active">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Mortgage Markets: Risk, Access, and Transparency</h1>        <div class="paper-card">
+            <div class="paper-title">When Insurers Exit: Climate Losses, Fragile Insurers, and Mortgage Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Parinitha Sastry (Columbia University), Ishita Sen (Harvard University), Ana-maria Tenekedjieva (Federal Reserve Board)</div>
+            <a href="https://afajof.org/management/viewp.php?n=89572" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、気候変動による損害の拡大に対して住宅所有者保険市場がどのように対応し、それが住宅ローン市場のダイナミクスにどのような影響を与えるかを研究する。フロリダ州をケーススタディとして、伝統的な保険会社がリスクの高い地域から撤退し、質の低い保険会社が新たに参入してそのギャップを埋めていることを示す。これらの新しい保険会社は、最もリスクの高い地域にサービスを提供し、分散されておらず、自己資本も少なく、その20％が債務超過に陥っている。このような保険会社が増えた背景には、保険規制の甘さがある。しかし、これらの保険会社はその質の低さにもかかわらず、伝統的な格付け機関ではなく、新興の格付け機関から高い財務安定性格付けを取得している。重要なのは、これらの格付けが、政府支援企業（GSE）が定める最低格付け要件を満たすのに十分な高さであることである。伝統的な格付け業者の手法に従えば、これらの新興保険会社はGSE の適格基準を満たさないことが分かる。次に、こうしたダイナミクスが住宅ローン市場に与える影響を検証する。貸し手は保険の質の低下に対応するため、リスクにさらされたローンの大部分をGSEに売却する。ハリケーン「イルマ」の上陸前後に急増した深刻な延滞と差し押さえを検証することで、カウンターパーティ・リスクを定量化した。その結果、GSEは保険カウンターパーティーリスクの大部分を負担しており、これは保険会社の適格要件の較正ミスや保険規制の緩さに起因していることが示された。</p>
+        <p class="abstract-text en">This paper studies how homeowners insurance markets respond to growing climate losses and how this impacts mortgage market dynamics. Using Florida as a case study, we show that traditional insurers are exiting high risk areas, and new lower quality insurers are entering and filling the gap. These new insurers service the riskiest areas, are less diversified, hold less capital, and 20 percent of them become insolvent. We trace their growth to a lax insurance regulatory environment. Yet, despite their low quality, these insurers secure high financial stability ratings, not from traditional rating agencies, but from emerging rating agencies. Importantly, these ratings are high enough to meet the minimum rating requirements set by the government-sponsored enterprises (GSEs). We find that these new insurers would not meet GSE eligibility thresholds if subjected to traditional rating agencies’ methodologies. We then examine the implications of these dynamics for mortgage markets. We show that lenders respond to the decline in insurance quality by selling a large portion of exposed loans to the GSEs. We quantify the counterparty risk by examining the surge in serious delinquencies and foreclosure around the landfall of Hurricane Irma. Our results show that the GSEs bear a large share of insurance counterparty risk, which is driven by their mis-calibrated insurer eligibility requirements and lax insurance regulation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Dual Credit Markets: Income Risk, Household Debt, and Consumption</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: David Matsa (Northwestern University), Brian Melzer (Dartmouth College), Michal Zator (University of Notre Dame)</div>
+            <a href="https://afajof.org/management/viewp.php?n=85260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">多くの若年労働者は臨時的に働いており、同じ職業で同じような賃金の仕事であっても、「正社員」よりもかなり大きな収入リスクを伴う。このような収入の不確実性により、正社員は住宅投資のために住宅ローンを利用し、消費と耐久消費財の購入のためにローンを利用する。正社員の雇用保障を向上させる労働法は、二重の労働市場とともに二重の信用市場を生み出し、若年層が経済的に自立し、新しい家庭を築くことを難しくしている。</p>
+        <p class="abstract-text en">Many young employees work on a temporary basis, which entails significantly greater income risk than “permanent” work, even for jobs in the same occupation and at a similar wage. We find that this income uncertainty leads lenders to ration credit to temporary workers, precisely at the stage of life when permanent workers rely on mortgages to invest in housing and loans to smooth consumption and purchase durable goods. Labor laws that improve job security for permanent workers create a dual credit market alongside the dual labor market, making it harder for young adults to establish financial independence and new families.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financial Skills and Search in the Mortgage Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Marta Cota (CERGE-EI), Ante Sterc (CERGE-EI)</div>
+            <a href="https://afajof.org/management/viewp.php?n=68768" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融スキルの低い世帯は住宅ローン市場で不利な立場に置かれているのか？確率論的記録連結を用いて、住宅ローンの詳細と借り手の特性（客観的な金融リテラシー指標を含む）を豊富に含む米国独自のデータセットを構築した。その結果、金融リテラシーの低い世帯では、住宅ローンの検索が少なく、15～20％高い金利で契約する可能性が最大4％高いことがわかった。金融リテラシーの低い借り手は、住宅ローンの延滞率が35～45％高く、借り換えの可能性は30％低い。全体として、10万ドルのローンの場合、金融リテラシーの低さによる潜在的損失は、住宅ローン期間中に9,329ドル以上となる。金融教育、より利用しやすい住宅ローン、あるいは住宅ローン金利の変動が、金融リテラシーの低い世帯にどのような影響を与えるかを理解するために、我々は異質な検索摩擦と内生的な金融スキルを持つ住宅ローン検索モデルを定式化し、キャリブレーションを行った。我々のモデルによる推計では、探索強度と金融スキルの変動は、それぞれ住宅ローン金利変動の55％と10％に寄与している。我々は、i)より利用しやすい住宅ローンは、低スキル世帯においてより高い延滞リスクにつながること、ii)金融教育は、利用しやすくなることによる悪影響を緩和すること、iii)低い住宅ローン金利は、高スキルの住宅所有者に有利であり、借り換え活動を強化することによって、異なる金融スキルレベル間の消費格差を深めることを発見した。</p>
+        <p class="abstract-text en">Are households with low financial skills disadvantaged in the mortgage market? Using stochastic record linking, we construct a unique U.S. dataset encompassing a rich set of mortgage details and borrowers’ characteristics, including their objective financial literacy measure. We find that households with low financial literacy are up to 4% more likely to search less and lock in at 15-20 b.p. higher rates. Upon origination, unskilled borrowers face a 35-45% higher mortgage delinquency and end up with a 30% lower likelihood of refinancing. Overall, for a $100,000 loan, the potential losses from low financial literacy are more than $9,329 over the mortgage duration. To understand how financial education, more accessible mortgages, or mortgage rate changes affect households with low financial literacy, we formulate and calibrate a mortgage search model with heterogeneous search frictions and endogenous financial skills. Our model estimates show that search intensity and financial skill variations contribute to 55% and 10% of mortgage rate variations, respectively. We find that i) more accessible mortgages lead to a higher delinquency risk among low-skilled households, ii) financial education mitigates the adverse effects of increased accessibility, and iii) low mortgage rates favor high-skilled homeowners and, by reinforcing refinancing activity, deepen consumption differences across different financial skill levels.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Does the Disclosure of Consumer Complaints Reduce Racial Disparities in the Mortgage Lending Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Xiang Li (Fordham University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=72184" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">消費者金融保護局（CFPB）は2015年、消費者からの苦情に関するナラティブを公開した。その結果、CFPBの監督下にある銀行では、苦情内容が開示された後、住宅ローン融資市場においてマイノリティの借り手に対する差別が減少することが分かった。これにより、金利、デフォルト率、審査拒否率における人種間格差が縮小する。この開示により、マイノリティの借り手は1億200万ドルの利払いを節約でき、年間1万4,000世帯以上のマイノリティ世帯が融資を受けられるようになる。消費者、同業銀行、株式市場の投資家などの利害関係者は、差別撤廃に向けた情報開示の効果を促進している。</p>
+        <p class="abstract-text en">The Consumer Financial Protection Bureau (CFPB) publicly disclosed consumer complaint narratives in 2015. Utilizing a difference-in-differences design, I find that, following disclosure, CFPB-supervised banks whose complaint narratives are disclosed are less prone to discriminate against minority borrowers in the mortgage lending market. This reduces racial disparities in interest rates, default rates, and rejection rates. The disclosure saves minority borrowers $102 million in interest payments and aids over 14,000 minority households in securing loans annually, thereby narrowing the racial gap in homeownership. Stakeholders including consumers, peer banks, and stock market investors facilitate the disclosure’s effects on reducing discrimination.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

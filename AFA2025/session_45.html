@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: ESG and Sustainable Finance I</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link active">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Corporate Finance: ESG and Sustainable Finance I</h1>        <div class="paper-card">
+            <div class="paper-title">Green Revenues</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Johannes Klausmann (University of Virginia), Philipp Krueger (Swiss Finance Institute - University of Geneva), Pedro Matos (University of Virginia)</div>
+            <a href="https://afajof.org/management/viewp.php?n=98000" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、企業のグリーン収益という新たな尺度を用いてグリーン経済の規模を把握し、世界の上場企業が低炭素でより環境的に持続可能な経済への移行を支援する事業活動を増加させている要因に光を当てる。本稿では、パリ協定後にグリーン経済が加速度的に成長したことを明らかにする。この移行に寄与する3つの潜在的な経路を調査する。第一に、企業のグリーン・イノベーション能力が具体的なグリーン収益につながるかどうかを検証する。第二に、規制の強化がグリーンな事業活動を拡大するための企業の努力にどのような影響を与えるかを評価する。第三に、グリーン転換の推進における機関投資家の役割を探る。グリーンな事業活動の拡大が株主に価値をもたらすかどうかは不明であるため、株式市場がグリーンな収益を上げる企業をどのように認識しているかも調査する。その結果、グリーンシフトは、革新的な米国企業がグリーン特許をグリーン製品やサービスによる実際の収益に転換することによって推進されていることが分かった。さらに、欧州では、いくつかの規制イニシアチブによってグリーン経済の成長が加速していることもわかった。責任ある機関投資家は、より高いグリーン収益をあげている企業に投資している可能性が高いが、彼らの存在がパリ以降のグリーン経済へのシフトと関連することは見いだせなかった。最後に、グリーン収益が高い企業の株式リターンを調べたところ、グリーン・アルファのわずかな証拠しか見つからなかった。</p>
+        <p class="abstract-text en">Using a novel measure of a firm's green revenues, this paper sizes up the green economy, shedding light on the drivers behind global public firms increasing business activities that help with the transition to a low-carbon and more environmentally sustainable economy. We document that the green economy grew at an accelerated pace after the Paris Agreement. We investigate three potential channels contributing to this transition. Firstly, we examine whether corporate green innovation capabilities translate into tangible green revenues. Secondly, we assess how increased regulatory actions impact firms' efforts to increase their green business activities. Thirdly, we explore the role of institutional investors in driving this green transition. Since it is unclear whether more green business activities create value to shareholders, we also explore how the stock market perceives firms with higher green revenues. Our findings indicate that the green shift is driven by innovative US firms converting green patents into actual revenues from green products and services. Additionally, we find that several regulatory initiatives have led to an acceleration in the growth of the green economy in Europe. While responsible institutional investors are more likely to be invested in firms with higher green revenues, we do not find their presence to be associated with the post-Paris shift to a greener economy. Finally, when we examine the stock returns of firms with high green revenues, we find only modest evidence of a green alpha which seems to be concentrated mostly in US stocks in the post-Paris period.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Environmental Scandals and Green Products</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wan-chien Chiu (National Tsing Hua University), Po-hsuan Hsu (National Tsing Hua University), Kai Li (University of British Columbia), Joy Tianjiao Tong (University of Western Ontario)</div>
+            <a href="https://afajof.org/management/viewp.php?n=77140" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、USPTO商標データセットにおけるグリーン商標の識別に新しいテキストベースの分類手順を適用し、過去40年間の米国経済における環境に配慮した製品やサービスの発展を研究する。米国商標には「商業における使用」という要件があることから、これらの商標は新たに商業化されたグリーン製品・サービス、ひいては環境保護と持続可能性に対する企業のコミットメントを捉えることができる。我々はまず、より多くのグリーン製品を持つ企業がより高い環境評価を受け、より多くのグリーン特許を保有し、より高い収益成長率と市場価値を持つことを示す。次に、企業のグリーン製品導入が業界における環境スキャンダルの影響を受けるかどうか、またどのように影響を受けるかについて検討し、製品市場における同業他社が環境問題について否定的なメディア報道を行った後に、企業はより多くのグリーン新製品を発売することを発見した。また、このパターンの根底にある2つの原動力、すなわち製品市場における競争とステークホルダーからの圧力について示唆的な証拠を提示する。我々は、環境スキャンダルが利害関係者のグリーン要求の引き金となり、それらの要求に応える企業は、良いことをすることによって良い結果をもたらすと結論づけている。</p>
+        <p class="abstract-text en">In this paper, we apply a novel text-based classification procedure to identifying green trademarks in the USPTO trademark dataset and study the development of environment-friendly products and services in the US economy over the past forty years. Given the “use in commerce” requirement for US trademarks, these trademarks capture newly commercialized green products/services and thus firms’ commitment to environmental protection and sustainability. We first show that firms with more green products receive higher environmental ratings, hold more green patents, and have higher revenue growth and market value. We then explore whether and how firms’ green product introduction is influenced by the environmental scandals in their industry, and find that firms launch significantly more new green products after product market peers receive negative media coverage of their environmental issues. We also present suggestive evidence for the two driving forces underlying this pattern: product market competition and stakeholder pressure. We conclude that environmental scandals trigger stakeholders’ green demands and that firms catering to those demands do well by doing good.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Environmental Regulation, Pollution, and Shareholder Wealth</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Seungho Choi (Hanyang University), Ross Levine (Stanford University), Raphael Park (University of Technology Sydney), Simon Xu (Harvard University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=80808" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、地域の環境規制と企業の汚染行動との相互作用の変化に対する株式市場の反応を調査する。我々の同定戦略では、地域規制の厳しさの外生的変動要因として、国家大気質基準（NAAQS）の離散的な政策変更によって誘発された郡レベルのオゾン不適合指定を用いる。NAAQSの閾値が外生的に変更されたため、オゾン排出量がそれほど変化していなくても、多くの郡が突然、前年比で非遵守となった。したがって、非遵守への移行は、オゾン排出量の増加によってではなく、非遵守を定義するNAAQS基準値の引き下げによって引き起こされる。平均して、非遵守指定にさらされた企業は、そうでない企業に比べ、市場はポジティブに反応する。クロスセクションで見ると、企業の価値は、当初は不適合にさらされることで上昇するが、レベルが高くなるにつれて低下する。そのメカニズムを検討すると、この非線形的な変動は、コンプライアンス違反のエクスポージャーが既存企業に与える影響を相殺することから生じ、競争上の優位性と規制遵守のコストとの間のトレードオフを包含していることが明らかになった。さらに、コンプライアンス違反の指定に対する短期的な市場の反応は、企業の会計パフォーマンスに対する長期的な影響と整合的である。全体として、株式市場が地域の環境規制の便益とコストを内部化し、それによって株式市場の評価に影響を与えていることを示唆している。</p>
+        <p class="abstract-text en">This paper investigates the stock market’s reaction to changes in the interaction between local environmental regulations and a firm’s polluting behavior. Our identification strategy uses county-level ozone noncompliance designations induced by discrete policy changes in the National Ambient Air Quality Standards (NAAQS) as a source of exogenous variation in local regulatory stringency. Given the exogenous revision in the NAAQS threshold, many counties suddenly found themselves in nonattainment relative to the year prior, even if their ozone emissions did not change by all that much. Therefore, the switch to nonattainment is triggered by the lowering of the NAAQS threshold that defines noncompliance, rather than by rising ozone emissions. On average, the market responds positively to firms exposed to noncompliance designations compared to non-exposed firms. In the cross-section, firms’ value initially increases with noncompliance exposure but declines at higher levels. Examining the mechanisms reveals that this nonlinear variation arises from the offsetting effects of noncompliance exposure on incumbent firms, encompassing a trade-off between the benefits of competitive advantages and the costs of regulatory compliance. Furthermore, short-term market reactions to noncompliance designations are consistent with their long-term effects on firms’ accounting performance. Overall, the evidence suggests that the stock market internalizes the perceived benefits and costs of local environmental regulation, thereby influencing stock market valuations.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Pricing the Priceless: The Financial Cost of Biodiversity Conservation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Fukang Chen (Renmin University of China), Minhao Chen (Renmin University of China), Will Cong (Cornell University), Haoyu Gao (Renmin University of China), Jacopo Ponticelli (Northwestern University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=101780" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">生物多様性の損失は世界的な関心事であり、保全努力の劇的な転換が必要であるが、それには多大なコストがかかる。我々は、中国の国立自然保護区における生物多様性の保全を目的とした規制変更である「グリーン・シールド・アクション」（GSA）を、地方公共団体の資金調達に対する外生的ショックとして利用し、金融市場がこのような保全コストをどのように価格決定しているかについて、最初の調査を行った。その結果、GSAは生物多様性を改善する一方で、地方債の利回りを約25bp上昇させた。この効果は、償還期間の短い債券や財政状態の弱い地方政府ほど顕著である。公的資本コストの増加は、保護区内の既存の経済活動に起因する移行圧力と、改革後の生物多様性に関する地方公共支出の増加によるところが大きい。投資家は
+投資家は、金銭的な見返りを超えて、生物多様性の損失に対抗する努力をほとんど考慮していない。また、生物多様性保全のための資金調達ギャップを解決するための投資家教育や政策介入に関する知見も得られた。</p>
+        <p class="abstract-text en">Biodiversity loss as a global concern requires dramatic shifts in conservation efforts that carry substantial costs. We offer an initial investigation into how the financial market prices such conservation costs, exploiting the “Green Shield Action” (GSA) --- a regulatory change aimed at preserving biodiversity in national nature reserves in China --- as an exogenous shock to local public financing. We document that GSA, while improving biodiversity, augments the yields of municipal corporate bonds by around 25 basis points. The effects are more pronounced for bonds with shorter maturities and for local governments in weak fiscal positions. The increased cost of public capital can be largely attributed to transition pressure resulting from pre-existing economic activities within reserves and the growth in local public spending on biodiversity following the reform. Investors show little consideration towards
+endeavors counteracting biodiversity loss beyond financial payoffs. Our findings also provide insights concerning investor education and policy interventions for addressing the financing gap for biodiversity conservation.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

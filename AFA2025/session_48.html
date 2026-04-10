@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Expectations and Trading Behavior</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link active">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Investor Expectations and Trading Behavior</h1>        <div class="paper-card">
+            <div class="paper-title">Daily Momentum and New Investors in an Emerging Stock Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhenyu Gao (Chinese University of Hong Kong), Wenxi Jiang (Chinese University of Hong Kong), Wei Xiong (Shenzhen Stock Exchange), Wei Xiong (Princeton University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=95620" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">中国株式市場では、個人投資家が支配的であるにもかかわらず、週次および月次リターンには価格のモメンタムが顕著に見られない。本研究では、日次リターンに価格のモメンタムが存在することを明らかにし、投資家間の取引の異質性を体系的に分析することで、日次モメンタムと新規投資家の注目度や取引活動との関連性を明らかにした。さらに、我々の発見は、他の様々な新興市場における日次価格のモメンタムの存在を示しており、先進国における相対的な希少性とは対照的である。</p>
+        <p class="abstract-text en">Despite the dominance of retail investors in the Chinese stock market, there’s a conspicuous absence of price momentum in weekly and monthly returns. This study uncovers the presence of price momentum in daily returns and, through a systematic analysis of trading heterogeneity among investors, links daily momentum to the attention and trading activities of new investors—a phenomenon particularly significant in emerging stock markets. Furthermore, our findings indicate the existence of daily price momentum in various other emerging markets, contrasting with its relative scarcity in developed ones.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Crash Narratives</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: William Goetzmann (Yale University), Dasol Kim (Office of Financial Research), Robert Shiller (Yale University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=86436" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融専門誌は、歴史的出来事に関する集団的記憶を反映する大衆の物語を伝える媒体である。
+歴史的出来事に関する集団的記憶を反映する大衆の物語を伝える機関である。集団的記憶のなかには
+株式市場の大暴落に関連する集団的記憶もあり、投資家は関連する物語、すなわち
+「クラッシュ・ナラティブ（暴落物語）」は、現在の信念や選択に情報を与える。最近の
+計算言語学の最近の進歩を利用し、我々は次のような高次の物語性の尺度を開発した。
+大暴落の後に掲載された新聞記事に基づいて、物語性の高次尺度を開発した。
+を開発した。その結果、衝突事故に関するナラティブは、ニュース記事に掲載されると広範に伝播することが明らかになった。
+市場ボラティリティの予測変動を有意に説明する。
+市場ボラティリティの予測変動を有意に説明する。調査データを用いて投資家の異質性を利用し
+ナラティブの影響とファンダメンタルズの影響を区別するために、調査データを用いて投資家の異質性を利用する。
+一貫した証拠を見出した。最後に、純粋な物語性の尺度を開発し、次のことを検証する。
+金融専門紙がどのような場合にナラティブを用いやすいかを検証する。</p>
+        <p class="abstract-text en">The financial press is a conduit for popular narratives that reflect collective
+memory about historical events. Some collective memories relate to major
+stock market crashes, and investors may rely on associated narratives, or
+“crash narratives,” to inform current beliefs and choices. Using recent
+advances in computational linguistics, we develop a higher-order measure
+of narrativity based on newspaper articles that appear following major
+crashes. We provide evidence that crash narratives propagate broadly once
+they appear in news articles, and significantly explain predictive variation
+in market volatility. We exploit investor heterogeneity using survey data to
+distinguish the effects of narrativity and fundamental conditions and find
+consistent evidence. Finally, we develop a measure of pure narrativity to
+examine when financial press is more likely to employ narratives.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">What Drives Very Long-Run Cash Flow Expectations?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Paul Decaire (Arizona State University), Marius Guenzel (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=112616" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業のキャッシュ・フローをはるか将来まで予測することは、コーポレート・ファイナンスや資産価格決定において中心的な役割を果たす。予測者の身元に関する情報を含み、予測者の詳細な個人的背景を収集することを可能にする、プロの予測者による企業の最終成長率（TGR）に関する大規模かつ新規のデータセットを用いて、我々は重要な事実を確立し、彼らの（超）長期的なキャッシュフロー期待のドライバーを特定する。第一に、TGR予想には、IBESの長期成長（LTG）予想のような、3～5年の短い予測ホライズンを捉える他の予測系列とは異なる経済情報が含まれている。第二に、TGR予想は、実現された長期的な企業成長を強く頑健に予測する。第三に、企業のライフサイクルモデルと一致して、TGR予想は企業の年齢とともに低下する。第四に、TGRのばらつきの主因が国や産業であるような非常に成熟した企業を除き、TGR予想には予測者間の大きな持続的な異質性が存在する。最後に、他の設定（例えば、Giglio et al.2021）と比較すると、予測者の属性と経歴がTGR期待値の持続的な異質性の大部分を説明している。</p>
+        <p class="abstract-text en">Expectations of firms' cash flows far into the future are central to corporate finance and asset pricing. Using a large, novel dataset on professional forecasters' terminal growth rates (TGR) of firms that includes information about forecaster identities, allowing us to gather detailed personal backgrounds of forecasters, we establish key facts and identify drivers of their (very) long-run cash flow expectations. First, TGR expectations contain distinct economic information relative to other forecasting series, such as IBES long-term growth (LTG) forecasts which capture shorter, 3-5-year forecast horizons. Second, TGR expectations strongly and robustly predict realized long-run firm growth. Third, consistent with firm life cycle models, TGR expectations decline with firm age. Fourth, with the exception of very mature firms where a firm's country and industry primarily account for the variation in TGRs, there exists large, persistent heterogeneity in TGR expectations across forecasters. Finally, compared to other settings (e.g., Giglio et al. 2021), forecaster demographics and backgrounds explain a larger part of the persistent heterogeneity in TGR expectations.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Subjective Beliefs and Portfolio Choice: Evidence from Financial Advisors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Cynthia Balloch (London School of Economics and Political Science), Cameron Peng (London School of Economics and Political Science)</div>
+            <a href="https://afajof.org/management/viewp.php?n=122556" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">信念はマクロ経済学と金融のモデル、および関連する議論の中心である。
+投資家の主観的信条を検証し、その特徴を明らかにするために、調査がますます利用されるようになっている。
+主観的信念に関する証拠の多くは、リターン期待に焦点を当てている。
+- 主観的リターン期待には、リスクプレミアとミスプライシング（アルファ）の両方が含まれる可能性がある。
+主観的ビリーフに関する証拠の多くは、個人投資家を対象としている。
+- より洗練された個人投資家に関する知見は比較的少ない
+- 一般に、主観的信条とポートフォリオ・データをリンクさせることは非常に難しい</p>
+        <p class="abstract-text en">Beliefs are central to models of macroeconomics and finance, and related debates
+Ï Surveys are increasingly used to test and characterize investors’ subjective beliefs
+Ï Most evidence on subjective beliefs focuses on return expectation
+• Subjective return expectation may include both risk premia and mispricing (i.e. alpha)
+Ï Most evidence on subjective beliefs focuses on retail investors
+• We know relatively little about more sophisticated individual investors
+• In general, very difficult to link beliefs to portfolio data</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

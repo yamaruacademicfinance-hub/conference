@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance and Pension Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link active">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Insurance and Pension Funds</h1>        <div class="paper-card">
+            <div class="paper-title">Long Rates, Life Insurers, and Credit Spreads</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Ziang Li (Imperial College London)</div>
+            <a href="https://afajof.org/management/viewp.php?n=89208" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2008年以降、長期金利が上昇すると社債の信用スプレッドは低下する。このパターンは無条件に、また金融政策発表の前後で維持される。クロス・セクションでは、この負の共動作は生命保険会社が保有する債券で顕著である。これらの結果を合理化するために、長期の負債を抱える生命保険会社がデュレーションのミスマッチに直面し、長期の金利が上昇したときにエクイティゲインを実現するというモデルを提案する。エクイティ利益は保険会社のリスク負担能力を高め、均衡クレジット・スプレッドを押し下げる。このモデルは実証的な知見を定量的に説明し、保険会社のデュレーション・ミスマッチが非伝統的金融政策の債券利回りや債券発行への伝達を弱めたり、逆に弱めたりする可能性があることを示している。</p>
+        <p class="abstract-text en">Post-2008, corporate bond credit spreads decline when long-term interest rates increase. The pattern holds both unconditionally and around monetary policy announcements. In the cross-section, this negative co-movement is more pronounced for bonds held by life insurers. To rationalize these findings, I propose a model where life insurers with long-duration liabilities face duration mismatch and realize equity gains when long rates increase. The equity gains boost insurers' risk-bearing capacity and drive down equilibrium credit spreads. The model quantitatively explains the empirical finding and shows that insurers' duration mismatch can dampen or reverse unconventional monetary policy transmission to bond yields and issuance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Pension Liquidity Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kristy Jansen (University of Southern California), Sven Klingler (BI Norwegian Business School), Angelo Ranaldo (University of Basel), Patty Duijm (De Nederlandsche Bank)</div>
+            <a href="https://afajof.org/management/viewp.php?n=107128" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">年金基金は、負債から生じる金利リスクをヘッジするために金利スワップに依存している。オランダの年金基金に関する独自のデータを分析し、このヘッジ行動がマージンコールによる流動性リスクに年金基金をさらすことを示す。すなわち、(i) 規制上の制約が厳しい年金基金ほどスワップを積極的に利用していること、(ii) マージン・コールを引き起こす金利上昇に対応して、年金基金は安全な短期国債を主に売却していること、(iii) このプロシクリカルな売却がこれらの債券の価格に悪影響を及ぼしていること、である。</p>
+        <p class="abstract-text en">Pension funds rely on interest rate swaps to hedge the interest rate risk arising from their liabilities. Analyzing unique data on Dutch pension funds, we show that this hedging behavior exposes pension funds to liquidity risk due to margin calls, which can be as large as 15% of their total assets. Our analysis uncovers three key findings: (i) pension funds with tighter regulatory constraints use swaps more aggressively; (ii) in response to rising interest rates, triggering margin calls, pension funds predominantly sell safe and short-term government bonds; (iii) we demonstrate that this procyclical selling adversely affects the prices of these bonds.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Equal Prices, Unequal Access: The Effects of National Pricing in the US Life Insurance Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Derek Wenning (Princeton University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=69468" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">規制当局はしばしば、価格を制限することで金融包摂を促進する。これに対し、企業は商品の供給を減らす可能性があり、アクセスが減ることで損失を被る家計があることを示唆している。本稿では、米国の生命保険業界における国家的な価格設定規制の文脈において、このトレードオフを探索する。米国の通勤圏の一部について、100万件を超える保険者と代理店のリンクからなる新しいデータを収集し、貧しい通勤圏では、豊かな通勤圏に比べて、世帯当たりの代理店の数が少なく、アクティブな保険会社の数も少なく、保険会社の規模も小さく、格付けも低いことを明らかにする。このデータを動機として、複数の地域の保険会社と、差別化された生命保険商品に対する異質な嗜好を持つ世帯からなる空間モデルを構築した。このモデルは実証的な空間的ソートパターンを捉え、保険会社の立地選択がナショナルプライシングに反応してどのように変化するかについて明確な予測を行うことができる。このモデルをデータに当てはめ、低所得世帯と高所得世帯の価格弾力性を推計した。柔軟な価格設定の下では、最貧困層の通勤圏と最富裕層の通勤圏の間の厚生格差は年収の0.4-0.95%であり、そのほとんどは保険会社へのアクセス格差に由来する。ナショナル・プライシングは、保険会社の地理的な再配分を富裕層市場へと誘導するため、空間的なアクセス格差を増幅させる。アクセス・マージンをターゲットにした場所ベースの税制は、貧しい通勤ゾーンと裕福な通勤ゾーンの間の福祉格差を10.3-20.6%減少させる。</p>
+        <p class="abstract-text en">Regulators often promote financial inclusion by restricting prices. In response, firms may reduce the supply of their product, implying that some households lose from reduced access. This paper explores this tradeoff in the context of national price setting regulation in the US life insurance industry. I collect a new data set with over one million insurer-agent links across a subset of US commuting zones and document that poor commuting zones have fewer agents per household, fewer active insurers, and smaller and lower-rated insurers relative to rich commuting zones. Motivated by the data, I build a spatial model with multi-region insurers and households with heterogeneous preferences for differentiated life insurance products. The model captures the empirical spatial sorting patterns and admits clear predictions for how insurer location choices change in response to national pricing. I take the model to the data and estimate price elasticities for low- and high-income households. Under flexible pricing, welfare differences between the poorest commuting zones and the richest commuting zone are between 0.4-0.95% of yearly income, most of which comes from differential access to insurers. National pricing amplifies spatial access disparities due to the geographic reallocation of insurers toward richer markets. Place-based tax policies that target the access margin reduce welfare differences between poor and rich commuting zones by 10.3-20.6%.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Performance Capital Flows in DC Pensions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bryan Richard Gutierrez Cortez (University of Minnesota), Victoria Ivashina (Harvard University), Juliana Salomao (University of Minnesota)</div>
+            <a href="https://afajof.org/management/viewp.php?n=85876" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">確定拠出年金（DC）のキャピタル・フローはパフォーマンスに敏感か？
+多くの国では、従業員が年金運用会社を選択し、切り替える裁量を持っている。しかし、家計の金融選択に慣性があることを示す証拠が広く存在することを考えると、その答えは明らかではない。約1,000万人分の退職金口座に関する新しいデータを用いて
+1,000万人近い個人の退職金口座に関する新しいデータを用いて、年金制度のリスク・プロファイルを条件として、従業員の年金運用会社のスイッチング行動を調べた。その結果、同じ年金商品であっても、運用会社の切り替えは珍しいことではなく、切り替え傾向は時間の経過とともに増加することがわかった。また、運用会社間の資金フローは、ファンドのパフォーマンスに敏感であり、ファンドのパフォーマンスに凸であることを示す。
+ファンドのパフォーマンスに凸である。このパフォーマンスに対する口座フローの感応度は、マネジャーのインセンティブやポートフォリオ配分と結びついた重要な圧力である。関連して、我々は、年金プロバイダー間の競争圧力の高まりが、より高利回りの債券へのシフトを促進することを発見した。
+年金のリスクに応じて、より高利回りの債券へのシフトが促進される。</p>
+        <p class="abstract-text en">Are defined contribution (DC) pension funds capital flows sensitive to performance?
+In many countries, employees have the discretion to choose and switch their pension managers. However, given the widespread evidence on inertia in individual household financial choice, the answer is not clear. Using novel data on retirement accounts for
+nearly 10 million individuals, we look at the employee pension-manager switching behavior conditional on plan risk-profile. We see that switching across managers even within the same pension product is not uncommon, and switching propensity increase over time. We also show that these capital flows across managers are sensitive to and
+convex in fund performance. This account flow to performance sensitivity is an important pressure that is tied to managers incentives and portfolio allocation. Relatedly, we find that an increase in competitive pressure among pension providers is conducive to
+shift to higher-yielding bond holdings conditional on risk of the plan.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

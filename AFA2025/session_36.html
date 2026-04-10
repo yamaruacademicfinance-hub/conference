@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Data / Machine Learning</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link active">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>Big Data / Machine Learning</h1>        <div class="paper-card">
+            <div class="paper-title">Cyber Risk-Driven Innovation in the Modern Data Economy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Orlando Gomes (ISCAL), Roxana Mihet (University of Lausanne and Swiss Finance Institute), Kumar Rishabh (University of Lausanne)</div>
+            <a href="https://afajof.org/management/viewp.php?n=69272" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">サイバーリスクは現代のデータ経済において企業にどのような影響を与え、またどの程度影響を及ぼすのか。
+影響を与えるのだろうか？企業がデータやアルゴリズムを失う高いリスクに直面するとき、これは明らかに知識ストックの減少、生産性の低下、そして
+知識ストックの減少、生産性の低下、全体的な経済成長の鈍化につながる。
+全体的な経済成長の鈍化につながることは明白である。それにもかかわらず、本研究で追求した実証分析は
+本研究で追求した実証分析によれば、サイバーリスクは、それ自体がもたらす悪影響を軽減する可能性もある。
+というのも、サイバーリスクは、デジタルに精通した企業にデジタル・イノベーションの追求を事前的に促すためである。
+を追求するよう促すからである。我々は、サイバーリスクの高まりに対応して
+サイバーリスクが高まると、主にデータ集約的な企業や、社内でイノベーションを集中的に追求する企業によって、イノベーション率が高まる。
+サイバーセキュリティを第三者に委ねるのではなく、自社でサイバーセキュリティ対策を集中的に実施する企業によるものである。
+第三者によるサイバーセキュリティの委託よりも、自社によるサイバーセキュリティの保護を集中的に追求する企業である。第二段階では、サイバーリスクの高まりに対応した
+を説明するために、データ経済の構造的異質企業成長モデルを構築する。
+サイバーリスクが企業の生産性に及ぼす影響を説明する、
+利益、成長に影響を及ぼす経路を説明する。</p>
+        <p class="abstract-text en">How and to what extent does cyber risk impact firms in the modern data
+economy? When firms face a high risk of losing their data and algorithms, this
+unequivocally leads to reduced knowledge stocks, decreased productivity, and
+slower overall economic growth. Notwithstanding, the empirical analysis pursued
+in this study suggests that cyber risk may also mitigate some of its own adverse
+effects as it ex-ante prompts digitally-savvy firms to pursue digital innovation
+that can enhance productivity in other domains. We observe increased innovation
+rates in response to higher cyber risk, driven primarily by data-intensive firms and
+by firms which intensively pursue in-house cyber security protection rather than
+third-party cyber security delegation. In a second stage, we develop a structural
+heterogeneous-firm growth model of the data economy to illustrate and explain
+the channels through which cyber risk exerts influence over firms’ productivity,
+profits and growth.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Data Regulation in Credit Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Uday Rajan (University of Michigan), Yan Xiong (Hong Kong University of Science and Technology)</div>
+            <a href="https://afajof.org/management/viewp.php?n=73892" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、貸し手が借り手のデジタル・プロファイルに基づいて貸し出しの決定を行い、借り手がコストを支払ってデジタル・プロファイルを操作できる信用市場を研究している。我々は、貸し手によって収集されるデータの範囲が観測可能である場合、貸し手がその引受モデルにおいてより多くのデータを利用するほど、借り手はデジタル・プロファイルを操作する可能性が高くなり、貸し手のデータとその貸出決定の質が損なわれることを示す。したがって、追加データの取得と分析にコストがかからないとしても、貸し手は自らのデータ範囲を自発的に制限する。対照的に、データのカバレッジが観測不可能な場合、貸し手は利用可能なすべてのデータを使用する傾向がある。従って、開示方針は、貸し手が自らのデータ・カバレッジを制限することを信頼できる形で約束できるようにするという貴重な役割を果たすことができる。さらに、全体として見れば、借り手も一部のデジタルデータが収集されることを好む。</p>
+        <p class="abstract-text en">We study a credit market in which the lender bases its lending decisions on a borrower's digital profile, and the borrower can manipulate its digital profile at a cost. We show that when the extent of data collected by the lender is observable, as the lender utilizes more data in its underwriting models, the borrower is more likely to manipulate their digital profile, which impairs the quality of the lender's data and its lending decisions. Therefore, even if obtaining and analyzing additional data is costless, the lender will voluntarily limit its own data coverage. In contrast, when the data coverage is unobservable, the lender tends to use all available data. Thus, disclosure policy can play a valuable role in allowing the lender to credibly commit to limiting its data coverage. Moreover, in the aggregate, borrowers too prefer that some digital data be collected.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Capital Market Consequences of Generative AI: Early Evidence from the Ban of ChatGPT in Italy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jeremy Bertomeu (Washington University in St. Louis), Yupeng Lin (National University of Singapore), Yibin Liu (National University of Singapore), Zhenghui Ni (National University of Singapore)</div>
+            <a href="https://afajof.org/management/viewp.php?n=98028" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2023年3月31日、イタリアデータ保護庁はChatGPTを個人情報保護法違反と認定し、イタリアでのサービスを禁止した。このテクノロジーへの露出度が高いイタリア企業は、露出度が低い企業と比較して、禁止期間中に約9％のネガティブな市場反応を被った。このマイナスの影響は、小規模で創業間もない企業ほど大きく、創造的破壊との関連を裏付けている。また、禁止措置は情報環境にも影響を与えた。イタリアを拠点とするアナリストは、同じイタリア企業をカバーする外国人アナリストよりも少ない予測を発表した。さらに、特に機関投資家が少なく、アナリストのカバレッジが限定的で、外国人投資家が少ない企業では、禁止期間中にビッド・アスク・スプレッドが拡大した。全体として、我々の結果は、企業の生産性と情報処理を向上させる上で、ジェネレーティブAIが二重の役割を果たしていることを示唆している。</p>
+        <p class="abstract-text en">On March 31, 2023, the Italian Data Protection Authority found ChatGPT in violation of privacy laws and banned the service in Italy, providing a natural experiment to evaluate the economic impact of generative AI. Italian firms with higher exposure to the technology suffered a negative market reaction of about 9% during the ban period compared to firms with lower exposure. The negative impact was greater for smaller and more newly established businesses, supporting a link with creative destruction. We also document that the ban affected the information environment. Italian-based analysts issued fewer forecasts than foreign analysts covering the same Italian firm. Moreover, bid-ask spreads widened during the ban, especially for firms with fewer institutional investors, limited analyst coverage, and fewer foreign investors. Overall, our results suggest a dual role for generative AI in enhancing firm productivity and information processing.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

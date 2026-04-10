@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG and Sustainable Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2025 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Safe Assets Markets</a><a href="session_20.html" class="session-link ">Uninformed Trading and Asset Prices</a><a href="session_25.html" class="session-link ">Market and Funding Liquidity/Market Risk Factors</a><a href="session_27.html" class="session-link ">New Perspectives in Forecasting the Cross Section of Returns</a><a href="session_41.html" class="session-link ">Portfolio Choice and Asset Allocation</a><a href="session_43.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_46.html" class="session-link ">Derivatives and Commodities</a><a href="session_49.html" class="session-link ">Return Dynamics/Volatility and Tail Risk</a><a href="session_55.html" class="session-link ">Quantities and Prices</a><a href="session_58.html" class="session-link ">Fixed Income</a><a href="session_62.html" class="session-link ">New Perspectives on Cross-sectional Asset Pricing</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Behavioral Corporate Finance</a><a href="session_8.html" class="session-link ">Corporate Investment at Public and Private Firms</a><a href="session_14.html" class="session-link ">Corporate Debt</a><a href="session_17.html" class="session-link ">Managers, Shareholder Preferences, and Voting</a><a href="session_22.html" class="session-link ">Bankruptcy and Distress</a><a href="session_26.html" class="session-link ">Mergers and Acquisitions</a><a href="session_29.html" class="session-link ">Corporate Finance: Corporate Disclosure</a><a href="session_31.html" class="session-link ">Firm Growth via Labor and Intangible Capital</a><a href="session_37.html" class="session-link ">Entrepreneurial Finance/Private Equity/Venture Capital</a><a href="session_51.html" class="session-link ">Executive Pay and Incentives</a><a href="session_53.html" class="session-link ">Finance and Industrial Organization</a><a href="session_56.html" class="session-link ">The Innovation Process</a><a href="session_57.html" class="session-link ">Corporate Finance: Corporate Governance</a><a href="session_60.html" class="session-link ">Labor Finance</a></div><button class="accordion-btn">Financial Intermediation and Funds <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Lending</a><a href="session_6.html" class="session-link ">Mutual Fund and Hedge Fund Performance</a><a href="session_10.html" class="session-link ">Insurance and Pension Funds</a><a href="session_11.html" class="session-link ">Money, Banking and Competition</a><a href="session_16.html" class="session-link ">Funds and Liquidity</a><a href="session_44.html" class="session-link ">Bank Competition/Bank Funding and Risk Management</a><a href="session_63.html" class="session-link ">Technology and Risk in Banking and Non-Bank Financial Intermediaries</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Behavior</a><a href="session_13.html" class="session-link ">Social Interactions and Financial Decisions</a><a href="session_18.html" class="session-link ">Neurofinance, Cognition</a><a href="session_21.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_28.html" class="session-link ">Belief Formation and Economic Implications</a><a href="session_33.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_34.html" class="session-link ">SOCIETY FOR EXPERIMENTAL FINANCE: Experiments in Finance</a><a href="session_40.html" class="session-link ">Mortgage Markets: Risk, Access, and Transparency</a><a href="session_48.html" class="session-link ">Investor Expectations and Trading Behavior</a><a href="session_52.html" class="session-link ">Experience Effects and Memory</a><a href="session_54.html" class="session-link ">Household Finance: Borrowing and Investing</a><a href="session_59.html" class="session-link ">Household Finance</a></div><button class="accordion-btn">Climate Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">How Firms Manage Climate Change</a><a href="session_7.html" class="session-link ">Asset Pricing: Climate Change/Climate Finance</a><a href="session_19.html" class="session-link ">Special Topics: Climate Finance</a><a href="session_24.html" class="session-link ">Financial Intermediation: ESG and Sustainable Finance</a><a href="session_38.html" class="session-link active">ESG and Sustainable Finance</a><a href="session_45.html" class="session-link ">Corporate Finance: ESG and Sustainable Finance I</a><a href="session_50.html" class="session-link ">Climate Finance and Asset Pricing</a></div><button class="accordion-btn">Macro-Finance, Policy, and Global Economy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Finance, Development, and Growth</a><a href="session_15.html" class="session-link ">Financial Sector Profits and Societal Losses</a><a href="session_39.html" class="session-link ">International Finance</a><a href="session_42.html" class="session-link ">Real Effects of Information and Regulatory Frictions</a><a href="session_47.html" class="session-link ">Government Intervention and the Local Economy</a><a href="session_61.html" class="session-link ">Monetary Policy and Asset Prices</a></div><button class="accordion-btn">FinTech, Machine Learning, and Social Issues <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Finance and Race</a><a href="session_23.html" class="session-link ">Digital Currencies</a><a href="session_30.html" class="session-link ">Finance and Gender</a><a href="session_32.html" class="session-link ">Market Microstructure</a><a href="session_35.html" class="session-link ">The Political Economy of FinTech</a><a href="session_36.html" class="session-link ">Big Data / Machine Learning</a></div></div><div class="main-content"><h1>ESG and Sustainable Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Corporate Actions as Moral Issues</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zwetelina Iliewa (University of Bonn), Elisabeth Kempf (Harvard University), Oliver Spalt (University of Mannheim)</div>
+            <a href="https://afajof.org/management/viewp.php?n=87024" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の代表的なサンプルを用いて、幅広い企業行動の道徳性をどのように評価するかを研究している。
+を調査した。対象とする企業行動には
+企業価値の最大化に関連する古典的な教科書的意思決定と、環境・社会・ガバナンス（ESG）に関
+環境・社会・ガバナンス（ESG）に関連する意思決定も含まれる。我々の主な調査結果は以下の通りである。
+は以下の通りである：(i)我々が考慮するすべてのコーポレートアクションは、財務的な問題だけでなく、道徳的な問題であると認識されている。
+(ii)CEOの給与、人件費削減、法人税、社会的ガバナンス（ESG）など、古典的なファイナンスの教科書に載っているような問題
+(ii)CEOの給与、人件費削減、法人税、財務レバレッジなど、古典的なファイナンスの教科書に載っている問題は、最近の問題よりも道徳的な問題として認識されている。
+(ii)CEOの給与、人件費削減、法人税、財務レバレッジといった古典的なファイナンスの教科書的な問題は、再生可能エネルギーの使用や労働力の多様性といった最近強調されているESGの問題よりも、道徳的な問題として認識されている。
+(iii)参加者は、道徳的な懸念と金銭的なコストをトレードオフしている。
+(ⅳ)株主は、道徳的に望ましい企業行動に対して、金銭的コストよりも高い支払い意向を持っている。
+株主は、顧客や従業員よりも、道徳的に望ましい企業行動に対してより大きな支払い意欲を持っている。我々は
+(iv)株主は、顧客や従業員よりも、道徳的に望ましい企業行動に対価を支払う意欲が高い。
+道徳的配慮の絶対的な重要性については、参加者間で有意かつ妥当な異質性が観察されたが、異なる企業行動の道徳性の相対的順位付けは、参加者間で驚くほど安定していた。
+の相対的順位付けは、参加者間で驚くほど安定している。我々の結果は
+金融経済学の理論的・実証的研究のみならず、金融実務家にとっても広範な意味を持つ。
+金融実務家にとっても重要である。</p>
+        <p class="abstract-text en">We study how a representative sample of the U.S. population evaluates the morality
+of a broad range of corporate actions. The corporate actions we consider include
+classic textbook decisions related to maximizing firm value, as well as decisions related
+to environmental, social, and governance (ESG) concerns. Our core findings
+are that: (i) all corporate actions we consider are perceived to be not just financial
+but also moral issues; (ii) classic finance textbook issues, such as CEO pay, labor
+cost reductions, corporate taxes, and financial leverage, are perceived to be significantly
+more of a moral issue than more recently emphasized ESG issues, such as
+renewable energy usage and workforce diversity; (iii) participants trade off moral
+concerns against monetary costs; (iv) shareholders have a greater willingness to pay
+for morally desirable corporate actions than customers or employees. Although we
+observe significant and plausible heterogeneity across participants in the absolute
+importance given to moral considerations, the relative ranking of the morality of different
+corporate actions is surprisingly stable across participants. Our results have
+broad implications for theoretical and empirical work in financial economics, as well
+as for finance practitioners.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Pollution-Shifting vs. Downscaling: How Financial Distress Affects the Green Transition</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Aymeric Bellon (University of North Carolina-Chapel Hill), Yasser Boualam (University of North Carolina-Chapel Hill)</div>
+            <a href="https://afajof.org/management/viewp.php?n=94248" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">汚染行為は、企業を大きな環境責任リスクにさらす犠牲の上に、短期的にはコストを削減することができる。本稿では、企業が財務的に苦境に陥るにつれて、リスクテイクの動機に似た汚染強度を高めるかどうかを検証する。石油・ガス産業について詳細な汚染指標を構築し、実証的にこのチャネルの重要性を確認する。次に、内生的デフォルト、クリーン資本とダーティ資本、資金調達摩擦を特徴とする豊富なダイナミック・モデルをキャリブレーションし、財務上の苦境と汚染の関係を研究し定量化する。我々の反事実モデルは、企業が資産の縮小と汚染転換を同時に行う可能性があるため、包括的な企業売却キャンペーンの影響が限定的であることを指摘している。傾斜戦略は、全体的な汚染を抑制する上でより効果的である。</p>
+        <p class="abstract-text en">Polluting practices can reduce costs in the short-term at the expense of exposing firms to significant environmental liability risk. This paper examines whether firms increase their pollution intensity as they become more financially distressed, akin to a risk-taking motive. We construct granular pollution measures for the oil and gas industry and empirically confirm the prominence of this channel therein. We then calibrate a rich dynamic model featuring endogenous default, clean and dirty capital, and financing frictions to study and quantify the relationship between financial distress and pollution. Our counterfactuals point to the limited impact of blanket divestment campaigns, as firms may scale down and pollution-shift their assets simultaneously. Tilting strategies are more effective at taming overall pollution.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Willingness to Pay for Carbon Mitigation: Field Evidence from the Market for Carbon Offsets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Matthias Rodemeier (Bocconi University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=112252" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、オンライン・スーパーマーケットを用いた大規模なフィールド実験（N=255,000）を活用し、消費者に排出量を補償するカーボン・オフセットを提供する。消費者は価格弾力的であるが、オフセットの環境影響に対しては完全に非弾力的である。企業がオフセット費用を分担することを提案した場合、消費者は価格とインパクトの両方に反応するようになり、16ユーロ/tCO2の炭素削減に対する暗黙の支払い意思を示す。この結果は、消費者にカーボンフットプリントの削減を促す上で、持続可能な企業への投資が重要な役割を果たすことを浮き彫りにしている。企業がカーボン・オフセットを提供するが、消費者に全額を請求する場合、キャッシュ・フローは2%減少する。このマイナス効果は、企業が消費者とコストを分担すれば、十分に補うことができる。この発見は、企業の持続可能な投資はキャッシュフローを犠牲にするという一般的な見方に疑問を投げかけるものである。</p>
+        <p class="abstract-text en">This paper leverages a large-scale field experiment with an online supermarket (N=255,000) where consumers are offered carbon offsets that compensate for emissions. Consumers are price-elastic but fully inelastic to the environmental impact of the offsets---consistent with ``warm glow' utility. When the firm offers to share the offsetting costs, consumers become both more price- and impact-responsive and exhibit an implicit willingness to pay for carbon mitigation of 16 EUR/tCO2. This result highlights an important role of sustainable firm investments in encouraging consumers to lower their carbon footprint. If the firm offers carbon offsets but charges consumers the full price, cash flows fall by 2%. This negative effect can be fully compensated if the firm shares the costs with the consumer. This finding challenges the common view that corporate sustainable investment sacrifices cashflows.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Brown Capital (Re)Allocation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Olivier Darmouni (Columbia University), Yuqi Zhang (Columbia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=122416" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、世界最大の温室効果ガス排出源である石炭発電所の所有者を調査することで、化石燃料産業における資本の再配分を研究する。
+世界最大の温室効果ガス排出源である石炭発電所を誰が所有しているかを調査することによって、化石燃料産業における資本の再配分を研究する。
+我々は、欧州における企業の発電所所有（実質資本）に関する資産レベルのデータと、企業の発電所所有（実質資本）に関する資産レベルのデータを統合することで、これらの褐色資産の所有に関するボトムアップの尺度を構築した。
+ヨーロッパにおける企業の発電所所有に関する資産レベルのデータ（実物資本）を、企業の株主データ（金融資本）と統合することによって、このような褐色資産の所有に関するボトムアップの尺度を構築する。
+(金融資本）と統合することで、ボトムアップの褐色資産所有の尺度を構築した。私たちは、2015年以降、民間企業の石炭所有が急増していることを記録している。
+2015年以降、民間企業による石炭所有が急増し、それに伴って公的資本による所有が大幅に減少している。正式な分解
+しかし、公的株式所有の大幅な減少は、資本の再配分（「出口」）によるものではないことがわかった。
+資本再配置（「撤退」）によるものではなく、資本活用によるものである。
+これらの投資家は工場を売却したのではなく、縮小したのである。その代わりに、国営投資家が重要な役割を果たした。
+その一方で、プラントの規模を縮小するのが最も遅かった。我々は、茶色の資本配分の経済学を説明する。
+資本配分の経済学を、資産所有者が外部性をどのように評価するかによって異なるモデルのキャリブレーションによって説明する。
+外部性をどのように評価するかで資産所有者が異なるモデルをキャリブレーションすることで、ブラウン資本配分の経済性を説明する。社会的要因（例えば、偶発性）を重視する国営投資家による石炭発電所の国有化の可能性がある。
+社会的要因（例えば雇用や「エネルギー安全保障」）を重視する国家投資家による石炭発電所の国有化の可能性は、「グリーン・ファイナンス」が総体として石炭発電所を減少させる能力を制限する重要な要因である。
+「グリーン・ファイナンス」が総排出量を削減する能力を制限する重要な要因であり、ドイツやポーランドにおける最近のエピソードと一致している。
+とポーランドの最近のエピソードと一致している。</p>
+        <p class="abstract-text en">This paper studies capital reallocation in the fossil fuel industry by investigating who
+owns coal power plants – the largest single source of global greenhouse gas emissions.
+We build a bottom-up measure of the ownership of these brown assets by merging asset-
+level data on firms’ plant ownership (real capital) in Europe with firms’ shareholder data
+(financial capital). We document a sharp increase in private firms’ coal ownership since
+2015, accompanied by a large decline in public equity ownership. A formal decomposition
+shows that the large decline in public equity ownership was however not due to capital
+reallocation (“exit”) but to capital utilization: these investors scaled down plants, not
+sold them. Instead, state investors played a crucial role: they sold to private firms, while
+being the slowest at scaling down their plants. We illustrate the economics of brown
+capital allocation by calibrating a model in which asset owners vary in how they value
+externalities. The possibility of nationalization of coal plants by state investors that
+value social factors (e.g. jobs, “energy security”) is an important limit to the ability of
+“green finance” to decrease aggregate emissions, in line with recent episodes in Germany
+and Poland.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

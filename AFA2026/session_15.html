@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capital Structure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link active">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Capital Structure</h1>        <div class="paper-card">
+            <div class="paper-title">Debt and Assets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Efraim Benmelech (Northwestern University), Nitish Kumar (Rutgers University), Raghuram Rajan (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=181552" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、負債を支える企業資産の重要性を検証する。先行研究では通常、有担保債務のみが資産担保型であり、それ以外はキャッシュフロー型とみなされている。しかし、企業はしばしば債務に明示的に担保を提供することに抵抗があるため、無担保債務の多くは暗黙のうちに資産担保となっている。さらに、無担保債務が資産担保型であるか否かは、企業の状態や経済状況によって変化し得ることが分かった。その結果、資産価値は借入の量と価格に影響を与える可能性があり、その影響は金融アクセラレーター理論が示唆するように、不利な経済状況において強調される。企業の債務は、通常、予想されるキャッシュフローと資産の両方によって支えられ、その相対的な支 え方は時と状況によって変化することを考えると、債務を「資産ベース」か「キャッシュフローベ ース」かに分類する業界の慣行は、特に長期社債については、過度に分類的である。</p>
+        <p class="abstract-text en">We examine the importance of corporate assets in supporting debt. Prior studies typically see only secured debt as asset backed, while the rest is deemed cash flow based, which implies only a small fraction of US debt is asset backed. Yet because corporations often resist offering security explicitly to debt, much unsecured debt is implicitly asset backed. Moreover, we find that whether unsecured debt is asset backed or not can change with a firm’s condition and the economic situation. Consequently, asset values can affect the quantum and price of borrowing, with effects accentuated in adverse economic conditions, as suggested by financial accelerator theories. Given that a corporation’s debt is typically supported by both expected cash flows and assets, with the relative support varying with time and situation, the industry practice of classifying debt as “asset based” or “cash flow based” is overly categorical, especially for long term corporate bonds.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Diverging Paths: Productivity and the Financing Choices of Small Versus Large Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Murray Frank (University of Minnesota), Keer Yang (University of California-Davis)</div>
+            <a href="https://afajof.org/management/viewp.php?n=187880" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">生産性ショックに対する中小企業と大企業の反応には顕著な違いがある。生産性が1％上昇すると、小企業では外部資金調達が資産の0.7％減少するが、大企業では3.2％増加する。この差は、対外負債と株式の両方に影響を与える。州レベルの研究開発税額控除を道具として、生産性の向上がこの乖離を悪化させるという因果的証拠を示す。小企業は外部資金調達を9.0%減らし、大企業は5.1%増やす。この証拠は、技術導入の固定費が規模に依存した投資しきい値を生み出すモデルを用いて説明される。</p>
+        <p class="abstract-text en">We document striking differences in small and large firm responses to productivity shocks. A 1% increase in productivity reduces external financing by 0.7% of assets in small firms, but increases it by 3.2% in large firms. This difference affects both the use of external debt and equity. Using state-level R&D tax credits as an instrument, we provide causal evidence that productivity improvements exacerbate this divergence. Small firms reduce external financing by 9.0% and large firms increase it by 5.1%. We explain this evidence using a model in which fixed costs of technology adoption create size-dependent investment thresholds.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Demand-driven Corporate Leverage Choice: Implications for Intermediary Regulation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Janko Heineken (European Commission)</div>
+            <a href="https://afajof.org/management/viewp.php?n=187656" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ホームバイアスを考慮すると、国内家計の株式市場への参加は、国内企業が発行できる株式量の重要な決定要因となる。家計の株式投資に対する制約が、規制仲介機関や企業の資本構造に及ぼす影響を理論的・実証的に探る。各国間の比較では、家計の金融資産に占める株式比率と企業のレバレッジ、金融セクターのレバレッジとの間に負の関係があることを実証している。企業はレバレッジを最適に選択し、利子税控除とコストのかかるデフォルトをトレードオフしている一方、家計の一部のみが株式市場に直接参加でき、残りは規制仲介機関を通じて貯蓄している。私は、自己資本規制（バーゼル流の企業株式のリスク・ウェイトを含む）が、企業のレバレッジ、生産、リターンの不平等、金融安定性に及ぼす影響を調査した。第1均衡ではプランナーが家計に代わって株式に投資し、第2均衡では金融仲介機関が市場解よりも多くの企業株式を保有する。株式に高いリスク・ウェイトを課す資本規制は、自由放任の解決策と比較して、経済をさらに株式不足に追い込む。したがって、本稿は、規制当局が、企業株式を資産として保有する金融仲介機関に対して、より寛大であることが望ましいことを示唆している。</p>
+        <p class="abstract-text en">With home bias, the participation of domestic households in the equity market is a key determinant of the amount of equity domestic firms can issue. I explore theoretically and empirically the consequences of constraints on households' equity investment for regulated intermediaries and the corporate capital structure. In cross-country comparison, I document a negative relationship between the equity share in households' financial assets and corporate leverage, as well as financial sector leverage. I develop a general equilibrium model consistent with these observations: firms optimally choose leverage, trading off interest tax deduction, and costly default, while only a subset of households can participate in equity markets directly with the remainder saving via regulated intermediaries. I explore the effects of capital requirement regulation (including Basel-style risk-weighting of corporate equity) on corporate leverage, output, return inequality, and financial stability. In the first-best equilibrium the planner invests in equity on behalf of the households, and in the second-best equilibrium financial intermediaries hold more corporate equity than in the market solution. Capital regulation that imposes a high risk weight on equity pushes the economy even further into equity scarcity, relative to the laissez-faire solution. Therefore, this paper implies that regulators might want to be more lenient toward financial intermediaries that hold corporate equity as assets.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

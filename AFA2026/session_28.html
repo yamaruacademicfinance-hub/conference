@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belief Formation and Market Efficiency</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link active">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Belief Formation and Market Efficiency</h1>        <div class="paper-card">
+            <div class="paper-title">Analysts' Belief Formation in Their Own Words</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Shikun Ke (Yale University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=161728" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、110万件以上の株式調査レポートから、アナリスト自身が書いたテキストを用いて、企業の収益に関するアナリストの主観的信念の形成について研究している。アナリスト・レポートのテキストは、アナリストの予測修正と予測誤差を強く予測する。大規模言語モデルを用いて、事実と主観的な内容を区別し、企業のファンダメンタルズに関する解釈可能なトピックに抽出する。アナリストの主観的信念に関して、3つの新しい発見があった。(1)アナリストの注意配分は、景気サイクル、企業、予測期間によって大きく異なる。アナリストは好況期には収益性情報により多くの注意を払い、不況期には金融情勢とマクロ経済により多くの注意を払う。これらのパターンは合理的不注意のモデルと整合的である。(2)特定の情報に対するアナリストの誤った反応を研究するために、テキストを用いた新しいCoibion-Gorodnichenko回帰を導入する。その結果、アナリストの短期的な業績予想では、トピックをまたいだ広範な過小反応が見られる一方、長期的な業績予想では、主に事業運営、企業経営、マクロ経済情報に対する過剰反応が顕著であることがわかった。このパターンは、連想記憶における「ストーリーと統計のギャップ」が、定性的でストーリー性のある情報に対する過剰反応の重要なドライバーであることと整合的である。(3)非対称情報と意見の相違の両方が業績予測の不一致に寄与していることがわかった。これらの結果は、企業の収益に関する主観的な信念の形成に関する新たな洞察を提供するものである。</p>
+        <p class="abstract-text en">I study the formation of analysts' subjective beliefs about firms' earnings using analysts' own written text from over 1.1 million equity research reports. Text in analyst reports strongly predicts analysts' forecast revisions and forecast errors. Using a Large Language Model, I distinguish between factual and subjective content and distill it into interpretable topics on firm fundamentals. I document three sets of novel findings regarding analysts' subjective beliefs. (1) I show that analysts' attention allocation varies significantly over business cycles, firms, and forecast horizons. Analysts pay more attention to profitability information during booms and pay more attention to financial conditions and macroeconomics during recessions. These patterns align with a model of rational inattention. (2) I introduce a novel text-instrumented Coibion-Gorodnichenko regression to study analysts' misreaction to specific information. I find a pervasive underreaction across topics in analysts' short-term earnings forecasts, while their overreaction in long-term forecasts is mainly significant for business operations, corporate management, and macroeconomic information. This pattern is consistent with a 'story-statistics gap'' in associative memory being an important driver of overreaction to qualitative, story-like information. (3) I find that both asymmetric information and differences of opinion contribute to disagreement in earnings forecasts. Together, these results offer new insights into the formation of subjective beliefs about firms' earnings.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Emotions and Subjective Crash Beliefs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: William Goetzmann (Yale University), Dasol Kim (Office of Financial Research), Robert Shiller (Yale University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=186228" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">過去20年にわたるシラー投資家調査から、株式市場の大暴落の主観的確率は、市場価格が示唆するよりもはるかに高いことが明らかになった。我々は、投資家の語りから感情的な内容を抽出するために大規模な言語モデルを開発し、投資家の暴落信仰が否定的な感情と関連していることを発見した。まれではあるが近接した外生的ショックのニュースが、暴落確信形成にどのような影響を与えるかを検証した。その結果、リスク・アズ・フィーリング仮説と一致し、顕著な出来事に関するニュースに対する感情的反応が、稀な災害に関する投資家の信念の規模や変動に関与するメカニズムが示唆された。</p>
+        <p class="abstract-text en">Over the past two decades, the Shiller investor survey reveals that subjective probabilities of a catastrophic stock market crash are much higher than implied by market prices. We develop large language models to extract the emotional content from investor narratives and find that investor crash beliefs are associated with negative affect. We test how news of rare but proximate exogenous shocks influences crash belief formation. The results are consistent the risk-as- feelings hypothesis, suggesting a mechanism whereby emotional responses to news about salient events plays a role in the scale and variation in investor beliefs about rare disasters.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Structured Beliefs and Fund Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhenyu Gao (Chinese University of Hong Kong), Wei Xiong (Princeton University), Jian Yuan (Chinese University of Hong Kong)</div>
+            <a href="https://afajof.org/management/viewp.php?n=168840" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、中国の投資信託の強制的な見通しレポートを用いて、経済ショックを緩和するための政府の政策に対するファンドマネージャーの認識を分析する。ラージ・ランゲージ・モデル（LLM）を活用し、主要なトピックにおけるセンチメントを評価することで、市場、経済、政策に対するファンドマネージャーの信念を抽出する。我々は、景気ショックを相殺する政策に対す る各ファンドの期待を捕捉し、景気循環政策（CCP）信 念尺度を構築した。マネジャーの市場信念は市場リターンをプラスに予測する一方、CCP信念はこの予測力を高め、ファンドのパフォーマンスを向上させる。我々の研究は、投資決定と市場結果の形成における構造化された信念の役割を浮き彫りにしている。</p>
+        <p class="abstract-text en">We analyze fund managers’ perceptions of government policies in mitigating economic shocks using mandatory outlook reports from Chinese mutual funds. Leveraging Large Language Models (LLMs) to assess sentiment across key topics, we extract their beliefs about markets, the economy, and policies. We construct a countercyclical policy (CCP) beliefs measure, capturing each fund’s expectations about policies offsetting economic shocks. Managers’ market beliefs positively predict market returns, while CCP beliefs enhance this predictive power, improving fund performance. Our study highlights the role of structured beliefs in shaping investment decisions and market outcomes.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Learning from the Loudest: Do the Most Active Information Providers Sway Investors’ Equity Premium Expectations?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Anna Fitzgerald (National Association of Insurance Commissioners)</div>
+            <a href="https://afajof.org/management/viewp.php?n=176148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、個人投資家が将来の株式リターンに関する信念をどのように形成し、継続的に再構築しているかを研究する。経済のファンダメンタルズや合理的な期待のみに固定されるのではなく、投資家の信念は、情報エコシステムにおける競合する声の相互作用の結果として現れる。調査ベースのリターン予想に関するユニークで包括的なデータセットと、42のローカルニュースチャンネルで放送されたアナリストレポートや金融番組のテキスト分析を活用することで、特定のアナリストの予想が大量に、かつ目立つことで、株式リスクプレミアムに対する投資家の見方が決定的に変化することを発見した。広く知られた放送局が楽観的なシグナル、特に収益成長に関するシグナルを放送した場合、小売の期待値は大きく急上昇し、数ヵ月間持続する。これとは対照的に、「静かな」専門家によるあまり大々的に宣伝されない洞察は、市場リターンの予測力を含んでいるにもかかわらず、一般投資家には全く無視される。驚くべきことに、このような注目主導型の学習ダイナミズムは、富裕層の投資家から、ささやかなポートフォリオを持つ初心者まで、ほとんどすべての層にわたって維持されている。私の発見は、情報のポケットがどのように集団的センチメントを強力に増幅または減衰させるかを理解するための新しい枠組みを提示するものである。特定の市場情報の流れが投資家の信認の天秤をどのように傾けるかを明らかにすることで、厳密なファンダメンタルズだけでなく、ナラティブが価格ダイナミクスを形成する強力なチャネルを明らかにする。</p>
+        <p class="abstract-text en">This paper studies how retail investors form - and continually reshape - their beliefs about future stock returns. Far from being anchored solely in economic fundamentals or rational expectations, investor beliefs emerge here as the outcome of an interplay among competing voices in the information ecosystem. Harnessing a uniquely comprehensive dataset of survey-based return expectations, coupled with text analyses of analyst reports and financial shows aired on 42 local news channels, I find that the sheer volume and prominence of certain analyst forecasts decisively shift investors’ views on the equity risk premium. When widely visible outlets broadcast optimistic signals - particularly about earnings growth - retail expectations surge in a way that is both large and enduring, persisting for months. In contrast, less trumpeted insights from “quiet” experts are roundly ignored by the investing public, even though they contain predictive power for market returns. Remarkably, this attention-driven learning dynamic holds across almost all demographic segments, from high-net-worth investors to novices with modest portfolios. My findings present a new framework for understanding how pockets of information can powerfully amplify or dampen collective sentiment. By revealing how specific streams of market information tip the scales of investor belief, I illuminate a potent channel through which narratives, rather than strict fundamentals alone, shape price dynamics.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

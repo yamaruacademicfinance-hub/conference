@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavioral Finance: Predictable Stock Returns</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link active">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Behavioral Finance: Predictable Stock Returns</h1>        <div class="paper-card">
+            <div class="paper-title">GIFfluence: A Visual Approach to Investor Sentiment and the Stock Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ming Gu (University of California-Irvine), David Hirshleifer (University of Southern California), Siew Hong Teoh (University of California-Los Angeles), Shijia Wu (Chinese University of Hong Kong-Shenzhen)</div>
+            <a href="https://afajof.org/management/viewp.php?n=188244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、投資家のセンチメントの代理としての動的な視覚表現と、株式市場の結果との関係を研究している。我々のセンチメント指標であるGIFsentimentは、主要な投資ソーシャルメディア・プラットフォーム上のGIF（Graphics Interchange Format）のビジュアルを含む何百万もの投稿から構築されている。GIFsentimentは季節的なムードの変動やCOVIDロックダウンの深刻度と相関している。GIFセンチメントは、他のセンチメント指標でコントロールした後でも、同時期の市場リターンと正の相関を示し、その後3週間のリターンと負の相関を示した。これらの効果は、ミスプライシングの影響を受けやすい銘柄のポートフォ リオでより強い。GIFセンチメントは、取引量、空売り、市場ボラティリティ、株式ファンドへのフロー、債券ファンドからのフローを正に予測する。我々の証拠は、GIFsentimentが後に修正される誤認識の代理であることを示唆している。</p>
+        <p class="abstract-text en">We study dynamic visual representations as a proxy for investor sentiment and their relation to stock market outcomes. Our sentiment index, GIFsentiment, is constructed from millions of posts containing visuals in the Graphics Interchange Format (GIF) on a leading investment social media platform. GIFsentiment correlates with seasonal mood variations and the severity of COVID lockdowns. It is positively associated with contemporaneous market returns and negatively with returns in the subsequent three weeks, even after controlling for other sentiment measures. These effects are stronger among portfolios of stocks that are more susceptible to mispricing. GIFsentiment positively predicts trading volume, short sales, market volatility, and flows toward equity funds and away from debt funds. Our evidence suggests that GIFsentiment is a proxy for misperceptions that are later corrected.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Inflation Gamble</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Melina Vosse (University of San Diego), Yosef Bonaparte (University of Colorado-Denver), George Korniotis (University of Miami), Alok Kumar (University of Miami)</div>
+            <a href="https://afajof.org/management/viewp.php?n=164612" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、インフレと資産価格の間に新たな関連性があることを明らかにする。我々の主要な推測は、インフレが上昇すると、インフレに敏感な投資家は「より貧しい」と感じ、インフレによる購買力の低下を緩和しようとするため、宝くじ型の投資が魅力的になるというものである。この推測と一致して、高インフレはリスク回避度を低下させ、歪度選好を強め、宝くじに類似した投資への需要を増加させることが分かった。ギャンブル需要の増加により、宝くじ型株式はより割高になり、将来のリターンが低下する。この負の関係は、インフレに対する感応度が高く、裁定取引が困難な宝くじ型銘柄ほど強くなる。さらに、リテール取引の多い宝くじ型銘柄や、ギャンブル性向の強い地域に立地する銘柄は、より割高になる。これらの結果は、高インフレ環境におけるギャンブル需要の高まりが、株式リターンに予測可能なパターンを生み出していることを示している。</p>
+        <p class="abstract-text en">This paper identifies a new link between inflation and asset prices. Our key conjecture is that lottery-type investments will be attractive to inflation-sensitive investors when inflation rises, as they feel 'poorer' and attempt to mitigate inflation-induced loss in purchasing power. Consistent with this conjecture, we find that high inflation lowers risk aversion, strengthens skewness preference, and increases demand for investments that resemble lotteries. Due to increased gambling demand, lottery-type stocks become more overpriced and earn lower returns in the future. This negative relation is stronger for lottery-type stocks that have greater sensitivity to inflation and are harder to arbitrage. Further, lottery-type stocks with high retail trading and those located in regions with stronger gambling propensity become more overpriced. Together, these findings indicate that increased gambling demand in high inflationary environments generates predictable patterns in stock returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Correlation Neglect in Asset Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hongye Guo (The University of Hong Kong), Jessica Wachter (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=168756" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">四半期初月の米国株式市場のリターンは、2ヵ月目のリターンを正に予測し、次いで次の四半期の初月のリターンを負に予測する。このパターンは、投資家が四半期の2ヶ月目に発表される業績が本来1ヶ月目に発表される業績と類似していることを十分に認識しておらず、その結果、予測可能な反復的業績に対して過剰に反応するというモデルから生じている。同じパターンが産業別リターンと調査データのクロスセクションにも存在し、相関無視のこのメカニズムをサンプル外で裏付けている。</p>
+        <p class="abstract-text en">The U.S. stock market’s return during the first month of a quarter positively predicts the second month's return, which then negatively predicts the first month's return of the next quarter. The pattern arises from a model in which investors do not fully recognize that earnings announced in the second month of a quarter are inherently similar to those announced in the first month, thereby overreacting to such predictably repetitive earnings. The same pattern also exists on the cross section of industry returns and survey data, lending out-of-sample support to this mechanism of correlation neglect.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Same-Weekday Momentum</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhi Da (University of Notre Dame), Xiao Zhang (University of Maryland)</div>
+            <a href="https://afajof.org/management/viewp.php?n=181972" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株式モメンタムの不釣り合いな大部分（70％）は、同じ平日（例えば月曜日から月曜日）、または同じ平日のリターンを反映している。
+を反映している。
+モメンタム。他の平日における部分的な反転を考慮した後でも、同じ平日のモメンタムは以下の通りである。
+同じ曜日のモメンタムは、モメンタム効果のかなりの部分（20％～60％）に寄与している。
+を占めている。このパターンは、異なるサイズフィルター、計量スキームに対してロバストである、
+期間、サンプルカットの違いにも頑健である。同じ曜日のモメンタムは、投資家の誤解に基づく伝統的なモメンタム理論である
+投資家のミスリアクションに基づく伝統的なモメンタム理論との整合が難しい。その代わりに、我々は
+を週内の季節性や機関投資家取引における持続性と関連付ける直接的かつ新規の証拠を提供する。
+機関投資家の取引における持続性と関連付ける直接的で新しい証拠を提供する。全体として、我々の調査結果は、機関投資家の取引が株価モメンタムの重要な
+モメンタムの重要なドライバーであることを強調している。</p>
+        <p class="abstract-text en">A disproportionately large fraction (70%) of the stock momentum reflects return
+continuation on the same weekday (e.g., Mondays to Mondays) or the same-weekday
+momentum. Even after accounting for partial reversals in other weekdays, the
+same-weekday momentum still contributes to a significant fraction (20% to 60%) of
+the momentum effect. This pattern is robust to different size filters, weighing schemes,
+time periods, and sample cuts. The same-weekday momentum is hard to square with
+traditional momentum theories based on investor misreaction. Instead, we provide
+direct and novel evidence that links it to within-week seasonality and persistence
+in institutional trading. Overall, our findings highlight institutional trading as an
+important driver of the stock momentum.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

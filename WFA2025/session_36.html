@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutual Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link ">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link active">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Mutual Funds</h1>        <div class="paper-card">
+            <div class="paper-title">The Geography of Savings Opportunities in Retirement Plans</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Veronika Pool (Vanderbilt University), Clemens Sialm (University of Texas-Austin), Irina Stefanescu (Federal Reserve Board of Governors), Hanjiang Zhang (Washington State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1023456" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2011年から2021年までの401(k)プランにおける投資信託の手数料を調査し、退職貯蓄の機会における格差を検証する。我々は、ERISAに基づく訴訟や規制の注目の高まりにもかかわらず、労働者が地域間で大きな不平等に直面していることを発見した。また、手数料の高い制度に加入する参加者の資産配分の決定や、これらのメニューで利用可能な投資オプションのパフォーマンスの低さによって、貯蓄格差がさらに悪化していることを示す。</p>
+        <p class="abstract-text en">We study mutual fund fees in 401(k) plans from 2011 to 2021 to examine disparities in retirement savings opportunities. We find that despite an increase in ERISA-based lawsuits and regulatory attention, workers face significant inequalities across geographies. We also show that the savings gap is further exacerbated by the asset allocation decisions of participants in higher-fee plans and the lower performance of the investment options available on these menus.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">What Determines 401(k) Plan Fees? A Dynamic Model of Transaction Costs and Markups</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Hanbin Yang (London Business School)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=992236" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">過去10年間における401(k)プランの手数料削減の大半は、手数料の低いファンドを新たに導入するためにプラン・メニューを更新することによるものであることを示した。雇用主は、プランのプロバイダーを選択・変更する際に取引コストに直面するため、プロバイダーはメニューの更新を遅らせ、参加者がより手数料の低いファンドを利用できないようにすることができる。取引コストの影響を定量化するために、私は雇用主のプロバイダー選択とプロバイダーの手数料競争に関する動的構造モデルを開発した。その結果、取引コストは平均で11bps、総額で10億ドルの手数料に寄与していると推定された。しかし、前向きなプロバイダーがそれに応じて手数料戦略を修正すれば、取引コストを軽減する効果は限定的となる。対照的に、私の試算では、小規模事業主のプランを統合することで、手数料を大幅に節約できることを示唆している。</p>
+        <p class="abstract-text en">I show that most reductions in 401(k) plan fees over the past decade come from updating plan menus to incorporate newly introduced funds with lower fees. Because employer sponsors face transaction costs when selecting and switching plan providers, providers can delay menu updates, preventing participants from accessing these lower-fee funds. To quantify the impact of transaction costs, I develop a dynamic structural model of employers’ provider choice and providers’ fee competition. I estimate that transaction costs contribute 11 bps to plan fees on average or $1 billion in total. However, mitigating transaction costs has limited effects once forward-looking providers revise their fee strategies in response. By contrast, my estimates suggest that consolidating plans of small employers can generate substantial fee savings.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Self-Inflated Fund Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Philippe van der Beck (Harvard University), Jean-Philippe Bouchaud (Capital Fund Management), Dario Villamaina (Capital Fund Management)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1011528" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">多くのアクティブ・ファンドは集中ポートフォリオを保有している。フロー主導の取引は価格圧力を引き起こし、それがファンドの既存ポジションを押し上げ、結果として実現リターンを押し上げる。我々は、ファンドのリターンを価格圧力（自己インフレ）とファンダメンタルズの要素に分解し、ファンド間で資本を配分する際に、投資家は実現リターンが自己インフレかファンダメンタルズかを識別できないことを示す。投資家は高い頻度で自己インフレのファンド・リターンを追いかけているため、たとえ短期間のインパクトであっても、より長い時間スケールではファンド・フローに意味のある影響を与える。価格インパクトとリターン・ チェイシングの組み合わせは、内生的なフィードバック・ループを引き起こし、初期 のファンド投資家への富の再配分を引き起こすが、価格圧力が元に戻ると、そ れは解消される。自己膨張したリターンを追いかけるフローがETFのバブルとその後の暴落を予測し、ETFだけで1日5億ドルの富の再配分につながることを発見した。我々は、ファンドの自己インフレ・リターンの可能性を捕捉する簡単な規制報告指標（ファンドの非流動性）を提供する。</p>
+        <p class="abstract-text en">Many active funds hold concentrated portfolios. Flow-driven trading causes price pressure, which pushes up the funds’ existing positions resulting in realized returns. We decompose fund returns into a price pressure (self-inflated) and a fundamental component and show that when allocating capital across funds, investors are unable to identify whether realized returns are self-inflated or fundamental. Because investors chase self-inflated fund returns at a high frequency, even short- lived impact meaningfully affects fund flows at longer time scales. The combination of price impact and return chasing causes an endogenous feedback loop and a reallocation of wealth to early fund investors, which unravels once the price pressure reverts. We find that flows chasing self-inflated returns predict bubbles in ETFs and their subsequent crashes, and lead to a daily wealth realloca- tion of $500 Million from ETFs alone. We provide a simple regulatory reporting measure – fund illiquidity – which captures a fund’s potential for self-inflated returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">(Re)call of Duty: Mutual Fund Securities Lending and Proxy Voting</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tao Li (University of Florida), Qifei Zhu (National University of Singapore)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=977900" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資信託、特にESGファンドが議決権行使基準日前に貸株を回収していることを示す初めての系統的証拠を提供する。ファンドのリコール-議決権行使感応度は、表明された貸出方針、投資先企業の保有比率、保有期間によって異なり、これはファンドが認識する議決権の価値観に異質性があることを示している。リコールされた株式は、経営陣提案に反対票を投じ、委任状争奪戦では株主提案や反体制派候補に賛成票を投じる可能性が高い。リコールに敏感なファンドは機関投資家から高い資金フローを集めるが、その一方で貸し出し収入はそれなりに見送られる。</p>
+        <p class="abstract-text en">Taking advantage of a novel dataset on individual mutual funds' securities lending activities, we provide the first systematic evidence that mutual funds, especially ESG funds, recall loaned shares prior to voting record dates. Funds' recall-voting sensitivities differ based on their stated lending policies, ownership stakes in portfolio firms, and holding horizons, indicating heterogeneity in funds' perceived values of voting rights. Recalled shares are more likely to be voted against management proposals, and in favor of shareholder proposals and dissident slates in proxy contests. Recall-sensitive funds attract higher fund flows from institutional investors while foregoing a modest amount of lending revenue.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

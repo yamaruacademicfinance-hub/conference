@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Microstructure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link active">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Market Microstructure</h1>        <div class="paper-card">
+            <div class="paper-title">You Can Only Lend What You Own: Inferring Daily Institutional Trading From Security Lending Supply</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yashar Barardehi (Chapman University), Zhi Da (University of Notre Dame), Peter Dixon (U.S. Securities and Exchange Commission), Junbo Wang (Louisiana State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=155932" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機関投資家が保有する株式は貸出可能である。
+貸出可能株式数の日次変化を用いて、各銘柄の機関投資家による日次純取引を代用することができる。この代理指標は
+機関投資家の四半期ごとの保有比率の変化を、既存 の代替指標や実際の機関投資家の売買の一部よりもよく追跡で きる。
+機関投資家による実際の売買のサブセットよりも、四半期ごとの機関投資家の保有比率の変化をより適切に追跡することができます。
+を銘柄間で変化させる場合は特にそうである。このプロキシを用いると、(1) 価格モメンタム・アノマリー
+(1)価格モメンタムの異常は、機関投資家の取引と日中リターンがポートフォ リオ形成期間中に反対であった場合にのみ生じる。
+(2)負の短期リターン予測可能性。
+(3)機関投資家は決算発表前に保有株を解消する。
+(3)機関投資家は決算発表前に保有を解消し、決算発表後に再び保有を再開する、
+決算発表プレミアムが取引主導型であることを示唆している。
+(4)機関投資家は、株式分割の前後などに個人投資家に流動性を提供する。</p>
+        <p class="abstract-text en">Institutions make their equity holdings lendable, allowing us to use the daily change in
+lendable shares to proxy daily net institutional trading in each stock. Our proxy better
+tracks quarterly changes in institutional ownership than existing alternatives, or even a
+subset of actual institutional trades, especially if we allow the corresponding elasticity
+to vary across stocks. Using this proxy, we document (1) price momentum anomaly
+obtains only if institutional trading and intraday returns oppose during the portfolio
+formation period, consistent with under-reaction; (2) negative short-term return
+predictability, consistent with transitory institutional price impacts; (3) institutions
+unwind holdings before earnings announcements and re-establish them afterwards,
+suggesting the earnings announcement premium is trade-driven; and (4) institutions
+provide liquidity to retail investors, e.g., around stock splits.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Modern Bond Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tomy Lee (Central European University), Chaojun Wang (University of Pennsylvania), Adam Zawadowski (Central European University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=150864" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">債券市場の断片化は深刻である。私たちは、この分断に対抗するシンプルなイノベーションを特定する：債券トレーダーは、既存の取引モデルのように債券を1つずつ取引するのではなく、最新の債券プラットフォーム上で、多くの場合、同じディーラー群に数十の債券の見積もりを同時に依頼する。ディーラーはすべての債券に応じることもあれば、一部の債券に応じることもあり、トレーダーは、場合によっては異なるディーラーからの見積もりを受け入れることもあれば、まったく受け入れないこともある。このようなリス ト・リクエストは、最大規模のプラットフォームにおける全リクエストの 73%を占めており、トレーダーは代替債券を同時に検索することができる。我々は、トレーダーが価格の不確実性を解消し、代替債券の中から選択するためにリストを提出する、同時探索と学習の単純なモデルを開発した。このモデルの根底には2つの摩擦がある：第一に、債券は部分的に代替可能であり、ある債券は他の債券よりも代替可能である。第二に、トレーダーはクォートを受け取るまで現在の債券価格を知らない。均衡状態においては、各トレーダーは代替性の高い債券を自分のリストに含めるが、価格の不確実性が高い場合や、提示スプレッドが高くなる可能性が高い場合には、その傾向が強くなる。このモデルは、MarketAxessのデータを用いて検証することで、鋭い経験則に基づく予測を導き出す。最大手のプラットフォームにおけるハイイールド社債のリクエストを用いると、(i)トレーダーは各リスト内の債券間で代替を行うこと、(ii)代替は類似の満期または格付けを持つ債券ほど強くなること、(iii)リスト内の未充填債券の大部分は一度も充足されないこと、(iv)価格の不確実性が高いほど、リストにはより多くの代替債券が含まれることが実証された。</p>
+        <p class="abstract-text en">The bond market is severely fragmented. We identify a simple innovation that counteracts this fragmentation: Rather than trading bonds one at a time as in existing models of trade, a bond trader simultaneously requests quotes for often dozens of bonds from the same set of dealers on modern bond platforms. The dealers may respond to all or some bonds, and the trader may accept some or even none of the quotes, possibly from different dealers. Such List requests comprise 73% of all requests on the largest platform and allow traders to simultaneously search over swaths of substitute bonds. We develop a simple model of simultaneous search and learning  in which traders submit Lists in order to resolve price uncertainty and choose among substitute bonds. Two frictions underlie our model: First, bonds are partly substitutable, some more with each other than others. Second, traders do not know the current bond prices until they receive quotes. In equilibrium, each trader includes close substitute bonds into her List, and more so when there is greater uncertainty over prices or if quoted spreads are likely to be high. Our model yields sharp empirical predictions that we then test in the data from MarketAxess. Using requests for high-yield corporate bonds on the largest platform, we document that (i) traders substitute among bonds within each List, (ii) the substitution is stronger for bonds with similar maturities or ratings, (iii) a large fraction of unfilled bonds in Lists are never filled, and (iv) a List contains more substitute bonds when their prices are more uncertain.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Nocturnal Trading</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gregory Eaton (University of Georgia), Andriy Shkilko (University of Georgia), Ingrid Werner (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=162176" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">何十年もの間、米国株式市場のオープン前とクローズ後にいくつかの取引所が取引を提供してきたが、最近になって代替取引システムが夜8時から翌日午前4時までの間、つまり夜間取引を提供し始めた。この技術革新により、米国の個人投資家は週5日、24時間いつでも米国の株式や取引所商品を取引できるようになった。重要なことは、アジアの投資家がアジアの営業時間中に米国株を取引できるようになったことである。我々は、過去3年間における夜間取引の爆発的な伸びを記録している。最近、この動きに刺激され、いくつかの取引所が夜間取引も提供するようSECの承認を求めている。夜間取引時間帯の有効スプレッドは通常取引時間帯より悪いが、実現スプレッ ドは同程度かそれ以上であることが分かった。また、特に取引所取引商品については、午後8時から午前4時までの間に大幅な価格発見が行われることも分かった。最後に、夜間取引がプレオープン取引、通常取引、時間外取引にどのような影響を与えるかを、準自然実験に基づき研究する。</p>
+        <p class="abstract-text en">While several venues have offered trading prior to the U.S. equity market open and after the close for decades, only recently have alternative trading systems started offering trading between 8 p.m. in the evening and 4 a.m. the next day – nocturnal trading. This innovation enables U.S. retail investors to trade U.S. stocks and exchange traded products 24 hours, five days a week. Importantly, it also enables Asian investors to trade U.S. stocks during Asian business hours. We document the explosive growth of nocturnal trading in the last three years – a development that has recently motivated several additional venues to seek SEC approval to also offer nocturnal trading. We find that while effective spreads during the nocturnal hours are worse than during regular trading hours, realized spreads are about the same or better. We also find that significant price discovery takes place between 8 p.m. and 4 a.m., particularly for exchange-traded products. Finally, we rely on a quasi-natural experiment to study how nocturnal trading affects pre-open, regular, and after-hours trading.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Intermediary Option Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Julian Terstegge (University of Michigan)</div>
+            <a href="https://afajof.org/management/viewp.php?n=181272" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">S&P500オプションのリスク・プレミアムの大部分は、仲介者の在庫と株式の非流動性で説明できることを発見した。すなわち、株式の流動性が低いために、株式市場（デルタ）ヘッジの調整が妨げられる時間帯における株式価格の変動リスクである。仲介業者のギャップ・リスクは、株式の流動性が低い夜間や週末にオ プションのマイナス・リターンが集中する理由を説明することができる。一般的な直観に反して、仲介者のインベントリー・ガンマはこのインベントリー・リスクを捉えていない。その代わりに、私は「シャドウ・ガンマ」という概念を導入する。仲介業者のシャドウ・ガンマは大きく負の値であり、株式市場のリターンがマイナスの場合、仲介業者のプット・オプションのショート・ポジションから生じる予想在庫損失を捕捉している。ガンマは日中のリスクを捉えるが、シャドウ・ガンマは夜間のリスクを捉えるというのが私の主張である。この議論と一致して、オプションのシャドウ・ガンマはオプションのナイト・リターンを予測するが、オプションのデイ・リターンは予測しない。最後に、2006 年前後に株式のオーバーナイト取引が増加したことを利用する：2006年以降、月曜日から金曜日にかけてのオプション・リターンは、週末のオプション・リターンに比べて有意にマイナス幅が縮小した。オプションのリスク・プレミアムのこの変化は、仲介者がショートしているオプションに集中しており、仲介者の在庫と株式の流動性がオプションのリスク・プレミアムを共同で押し上げていることを示唆している。</p>
+        <p class="abstract-text en">I find that intermediary inventory and equity illiquidity can explain most of the risk premium in S&P 500 options. I show that intermediaries' option inventory exposes them to ``gap risk'', the risk of equity price changes over periods where low equity liquidity impedes an adjustment of equity market (delta) hedges. Intermediaries' gap risk can explain why negative option returns are heavily concentrated over nights and weekends, where equity liquidity is low. Contrary to common intuition, intermediaries' inventory gamma does not capture this inventory risk. Instead, I introduce the concept of ``shadow gamma'', the expected option gamma in case of large negative equity market returns. Intermediaries' shadow gamma is large and negative, capturing the expected inventory losses in case of negative equity market returns, that result from intermediaries' short position in put options. I argue that gamma captures intraday risk, but shadow gamma captures overnight risk. Consistent with this argument, options' shadow gamma predicts options' night-returns, but not options' day-returns. Finally, I exploit the increase of overnight equity trading around 2006: I find significantly less negative option returns from Mondays to Fridays, relative to option returns over weekends, after 2006. This change in the option risk premium is concentrated in options where intermediaries are short, suggesting that intermediary inventory and equity liquidity jointly drive the option risk premium.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

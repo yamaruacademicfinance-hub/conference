@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance and Government Policies in the 21st Century</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link active">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Corporate Finance and Government Policies in the 21st Century</h1>        <div class="paper-card">
+            <div class="paper-title">When Protectionism Kills Talent</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mehmet Canayaz (Pennsylvania State University), Isil Erel (Ohio State University), Umit Gurun (University of Texas-Dallas), Yufeng Wu (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=147924" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国のチップ製造業の活性化を意図した保護主義的な政策は裏目に出て、結局、再建を目指した国内労働力を弱体化させた。こうした措置は、人材の成長を促進するどころか、特に新入社員や関税の影響を受けた企業において、重要な科学技術職の雇用を減少させた。外国人材に依存する企業は国内採用を減らし、より有利な移民政策をとる国に採用をシフトした。また、米国の保護主義は、チップ関連の学位を目指す学生の意欲をそぎ、国内の人材パイプラインを縮小させた。我々の概念的枠組みは、これらの職種における外国人労働者の高い割合と非弾力的な労働供給が、保護主義政策の悪影響を助長していることを示している。</p>
+        <p class="abstract-text en">Protectionist policies intended to revitalize US chip manufacturing backfired, ultimately weakening the domestic workforce they aimed to rebuild. Instead of fostering talent growth, these measures diminished hiring for critical science and engineering roles, particularly in entry-level positions and at firms impacted by tariffs. Companies reliant on foreign talent reduced domestic hiring and shifted recruitment to countries with more favorable immigration policies. US protectionism also discouraged students from pursuing chip-related degrees, contracting the domestic talent pipeline. Our conceptual framework shows that high proportions of foreign workers and inelastic labor supply in these occupations contribute to the adverse effects of protectionist policies.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mega-Donors and Representation of the Wealthy in the Wake of Citizens United</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ilona Babenko (Arizona State University), Viktar Fedaseyeu (China Europe International Business School), Guosong Xu (Erasmus University Rotterdam)</div>
+            <a href="https://afajof.org/management/viewp.php?n=166320" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、富裕層の政治資金調達能力を高めた最高裁のシチズンズ・ユナイテッド判決を受け、上位1％の献金者に帰属する選挙献金総額の割合が2.7倍に増加したことを記録している。さらに、シチズンズ・ユナイテッド判決後、米国議員の投票が富裕層の選好に反応しやすくなり、富裕層以外の選好に反応しにくくなったこともわかった。議員の富裕層への傾斜は、財政問題を扱う法案や、高所得者と低所得者の嗜好が乖離している法案で顕著である。最後に、上位1％の献金者から選挙資金の多くを受け取っている政治家ほど、富裕層の選好に投票先をシフトさせる傾向が強い。全体として、我々の結果は、米国における政治的代表の性質を変える上で選挙資金が重要であることを浮き彫りにしている。</p>
+        <p class="abstract-text en">We document that in the wake of the Supreme Court’s Citizens United decision, which increased the ability of the wealthy to finance political campaigns, the share of total electoral giving attributable to top 1% donors increased by 2.7 times. Further, we find that the voting by U.S. legislators became more responsive to the preferences of the wealthy post-Citizens United and less responsive to the preferences of the less affluent. The increase in legislators’ alignment with the wealthy is most pronounced for the bills that deal with fiscal matters and for those bills on which the preferences of higher- and lower-income individuals diverge. Finally, it is the politicians who receive a larger share of their campaign funding from the top 1% donors that are more likely to shift their voting toward the preferences of the wealthy. Overall, our results highlight the importance of campaign finance in changing the nature of political representation in the United States.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Escaping Pay-for-Performance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jason Chen (Auburn University), Jakub Hajda (HEC - Montréal), Joseph Kalmenovitz (University of Rochester)</div>
+            <a href="https://afajof.org/management/viewp.php?n=154616" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">規制当局に成果給を支払うべきか？我々は、連邦政府のあらゆる規制活動を監督する最高位の官僚である26,000人の連邦政府上級規制官のキャリアを追跡したユニークなデータセットを用いて、この疑問に取り組んでいる。我々は、ほとんどの上級規制官を成果給制度に切り替えた大改革を利用する。差分法（difference-in-differences）の枠組みを用いると、この改革によって影響を受けた規制当局者の自発的な辞任が増加することがわかった。また、金融機関による業績給の時差導入、連邦航空局における業績給の拡大など、異なる集団を対象とした独立した改革についても同様の反応が見られた。公的部門の給与には上限があり、規制当局には民間部門で上限なしの給与を得るという外部オプションがあるという構造モデルを用いて、この反応を説明する。公的部門における業績給へのシフトは、公的部門への選好を弱め、より多くの努力を誘発する。このような変化は、外部オプションの価値を高め、生産性の高い規制当局者を辞職させ、内発的動機付けの強い生産性の低い規制当局者を留まらせる。我々のモデルを推計した結果、改革後の経営幹部の努力は4.5％増加し、彼らの給与の24％が業績に連動することがわかった。規制当局の努力を高めるための代替政策を評価し、その結果生じる公的部門内外の自己選択を定量化する。全体として、本稿は、規制当局に成果給を支払うことの意図せざる結果、そして努力と官民間の回転ドアへの共同の影響を浮き彫りにしている。</p>
+        <p class="abstract-text en">Should we pay regulators for performance? We address the question using a unique dataset that tracks the careers of 26,000 senior federal regulators, the highest-ranking bureaucrats overseeing all federal regulatory activities. We exploit a major reform that switched most senior regulators to a pay-for-performance system. In a difference-in-differences framework, we find that the reform increased voluntary resignations by affected regulators. We document a similar response to independent reforms targeting different populations: the staggered adoption of performance pay by financial agencies, and the expansion of performance pay within the Federal Aviation Administration. We explain this response with a structural model, where the public sector pay is capped and regulators have an outside option to earn an uncapped pay in the private sector. A shift to performance pay in the public sector induces more effort, accompanied by a weaker preference for the public sector. Those changes increase the outside option value, motivating high-productivity regulators to resign and low-productivity regulators with strong intrinsic motivation to stay. Estimating our model, we find that executives exert 4.5% more effort after the reform and 24% of their pay is tied to performance. We evaluate alternative policies to increase regulatory effort and quantify the resulting self-selection in and out of the public sector. Overall, our paper highlights the unintended consequences of paying regulators for performance and the joint impact on effort and on the revolving door between the public and private sectors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Unveiling the Fog of Law: Judicial Transparency and Entrepreneurship</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xing Liu (Tsinghua University), Xuan Tian (Tsinghua University), Zhiming Zhu (Tsinghua University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=180992" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">中国における判決文のオンライン公開の義務化によって生じた訴訟情報開示のもっともらしい外生的変動を利用し、司法の透明性が起業に及ぼす影響を検証する。その結果、司法の透明性が高まると起業への参入が促進されることが示された。この効果は、歴史的に訴訟を起こしやすい業種、特に原告になりやすい業種において顕著である。司法の透明性が法的不確実性を低減し、起業家精神を促進する根本的な経路として、制度の質に関する信念の再構築とテクノロジー主導の法的サービスの向上が考えられる。判決文書関連のイノベーションのテキスト分析により、訴訟結果の予測可能性を高め、潜在的参入者の起業リスクを評価する上で、司法データ供給の価値が明らかになった。司法の透明性は、起業家の財務、経営、イノベーションのパフォーマンスを向上させる。全体として、我々の発見は、不確実性の低減に対する微妙な効果を通じて、起業家のエコシステムを形成する透明な法制度の重要性を浮き彫りにしている。</p>
+        <p class="abstract-text en">Exploiting plausibly exogenous variation in litigation information disclosure generated by mandated online publication of court decisions in China, we examine the effect of judicial transparency on entrepreneurship. We show that enhanced judicial transparency promotes entry into entrepreneurship. The effect is more pronounced in industries that are historically more prone to litigation, especially those more inclined to be plaintiffs. Reshaped beliefs about the quality of institutions and enhanced technology-driven legal services are two plausible underlying channels through which judicial transparency reduces legal uncertainty and promotes entrepreneurship. Textual analysis of judgment document-related innovations reveals the value of judicial data supply in enhancing the predictability of litigation outcomes and assessing entrepreneurial risks for potential entrants. Judicial transparency improves financial, operating, and innovation performance of entrepreneurial firms. Overall, our findings highlight the importance of a transparent legal system in shaping entrepreneurial ecosystems via its nuanced effects on uncertainty reduction.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

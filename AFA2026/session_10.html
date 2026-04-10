@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inflation Drivers and Dynamics in Financial Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_10.html" class="session-link active">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Inflation Drivers and Dynamics in Financial Markets</h1>        <div class="paper-card">
+            <div class="paper-title">Subjective Expectations and Financial Intermediation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francesco D'Acunto (Georgetown University), Janet Gao (Georgetown University), Lu Liu (Central University of Finance and Economics), Kai Lu (University of Science and Technology Beijing), Zhengwei Wang (Tsinghua University), Jun Yang (Nanyang Technological University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=155988" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">カスタマイズされた調査と情報提供実験を用いて、インフレ、GDP成長率、政策金利に関する融資担当者の個人的主観的期待が、銀行タイプ内および銀行タイプ間で大きく異なり、信用供給の意思決定に大きな因果効果を持つことを立証する。融資の発行とプライシングに関する決定は、同じ時期に同じ借り手を評価した場合でも、融資担当者の主観的期待に基づく大きな異質性を示す。さらに、より楽観的なマクロ経済予想を持つ担当者は、より悲観的な予想を持つ担当者よりも、ファンダメンタルズが悪化している借り手へのペナルティーが少ない。我々の知見は、信用配分と信用サイクルの理論に示唆を与えるとともに、金融政策の伝達における見過ごされてきた人間ベースの摩擦を明らかにするものである。</p>
+        <p class="abstract-text en">Using a customized survey and an information-provision experiment, we establish that loan officers' individual subjective expectations about inflation, GDP growth, and policy rates vary substantially within and across bank types and have a sizable causal effect on credit-supply decisions. Decisions about loan issuance and pricing exhibit large heterogeneity based on loan officers' subjective expectations even for the same borrower assessed at the same time. Moreover, officers with rosier macroeconomic expectations penalize less borrowers with worsening fundamentals than do officers with more pessimistic expectations. Our findings have implications for theories of credit allocation and credit cycles and reveal an overlooked human-based friction to the transmission of monetary policy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inflation Expectation and Cryptocurrency Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Will Cong (Cornell University), Pulak Ghosh (Indian Insitute of Management-Bangalore), Jiasun Li (George Mason University), Qihong Ruan (Cornell University), Artem Streltsov (State University of New York-Buffalo)</div>
+            <a href="https://afajof.org/management/viewp.php?n=178192" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">インドの主要な暗号通貨取引所の独自データと同国の家計インフレ期待調査を用いて、インフレ期待と個人の暗号通貨購入との間に有意な正の関連があることを実証した。この効果はBitcoin（BTC）とTether（USDT）の取引に集中しており、投資家が期待する暗号通貨のリターンに関する調査によって把握された投機的需要をコントロールした後でも頑健であった。インフレ期待が高いほど、暗号通貨への新規投資家も増加する。これらの結果は、道具変数によって確認された因果的な解釈である。この結果は、家計がすでにインフレヘッジのために暗号通貨を採用していることを示す直接的な証拠であり、世界的に支配的な通貨を持たない発展途上国における暗号通貨の高い採用を合理化するものである。</p>
+        <p class="abstract-text en">Using proprietary data from the predominant cryptocurrency exchange in India together with the country’s Household Inflation Expectations Survey, we document a significantly positive association between inflation expectations and individual cryptocurrency purchases. The effect is concentrated in Bitcoin (BTC) and Tether (USDT) trading, and is robust after controlling for speculative demand captured by surveys of investors’ expected cryptocurrency returns. Higher inflation expectations are also associated with more new investors in cryptocurrencies. These results have causal interpretations as confirmed by instrumental variables. Our findings provide direct evidence that households already adopt cryptocurrencies for inflation hedging, which in turn rationalizes their high adoption in developing countries without a globally dominant currency.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How do Supply Shocks to Inflation Generalize?  Evidence from the Pandemic Era in Europe</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Viral Acharya (New York University), Matteo Crosignani (Federal Reserve Bank of New York), Tim Eisert (NOVA University Lisbon), Christian Eufinger (IESE Business School)</div>
+            <a href="https://afajof.org/management/viewp.php?n=169876" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、サプライチェーンの圧力、家計のインフレ期待の上昇、企業の価格決定力の相互作用が、ユーロ圏における消費者物価上昇率のパンデミック時代の急上昇にどのように寄与したかを記録する。当初、サプライチェーンの混乱は、特に製造業において、コストプッシュ・チャネルを通じてインフレ率を上昇させ、同時にインフレ期待も上昇させた。その結果、インフレ期待の高まりは、消費者需要の価格弾力性を低下させ、企業の価格決定力を強化し、当初は供給制約の影響を受けなかったサービス部門の企業でさえ、マークアップを引き上げることを可能にしたと思われる。我々の発見は、このメカニズムを通じて、供給サイドのショックに敏感なセクターにおける局所的なインフレが、広範なインフレへと一般化する可能性があることを示唆している。</p>
+        <p class="abstract-text en">We document how the interaction of supply chain pressures, elevated household inflation expectations, and firm pricing power contributed to the pandemic-era surge in consumer price inflation in the euro area. Initially, supply chain disruptions raised inflation, particularly in manufacturing sectors, through a cost-push channel while also elevating inflation expectations. In turn, higher inflation expectations appear to have lowered price elasticity of consumer demand and strengthened firms' pricing power, enabling even firms in service sectors, that were initially unaffected by supply constraints, to raise markups. Our findings suggest that through this mechanism, localized inflation in sectors sensitive so supply-side shocks can generalize into broad-based inflation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inflation, Default, and  Corporate Bond Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xiaomeng Lu (Fudan University), Yoshio Nozawa (University of Toronto), Zhaogang Song (Johns Hopkins University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=169988" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、システマティックなインフレ・エクスポージャー（長期インフレ・スワップ・レートの変化に対するベータ値で測定）が、クロスセクションの社債リターンに有意にプラスに影響し、その影響はデュレーションをマッチさせた国債リターンを上回るクレジット超過リターンに完全に寄与していることを発見した。以前からデータで実証されている負のインフレ-デフォルトの関係と一致して、クレジット超過リターンのインフレ・ベータはほとんど正であり、社債がインフレ上昇に対するプロテクションを提供していることを示唆している。さらに、債務不履行リスクの高い債券ほど、インフレ・ベータはプラスである。また、インフレ・ベータの影響に関して、負のインフレ・デフォルト関係のチャネルを探る。</p>
+        <p class="abstract-text en">We find that systematic inflation exposure--measured by the beta with respect to change in long-term inflation swap rate--positively affects corporate bond returns in the cross section significantly, with the effect totally bearing on the credit excess returns over the duration-matched Treasury returns. Consistent with the previously-documented negative inflation-default relation in the data, inflation betas of the credit excess returns are mostly positive, implying that corporate bonds provide protection against rising inflation. Further, higher-default-risk bonds have more positive inflation betas. We also explore the channels of the negative inflation-default relation in regard to the effect of inflation beta.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

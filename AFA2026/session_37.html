@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Theory</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link active">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Corporate Finance: Theory</h1>        <div class="paper-card">
+            <div class="paper-title">A theory of social capital and trust</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Quentin Dupont (Georgetown University), Jonathan Karpoff (University of Washington)</div>
+            <a href="https://afajof.org/management/viewp.php?n=176092" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ソーシャル・キャピタルはどのような条件下で不祥事を抑止し、あるいは経済成長を促進するのだろうか。ソーシャル・キャピタルが信頼を構築し、不祥事を減少させ、経済取引を促進するモデルを構築する。ソーシャル・キャピタルとは、契約上の約束に従って行動することによる社会的・感情的便益の価値を指す。ソーシャル・キャピタルは、共有文化を通じた共通的な要素と、個人の道徳的価値観を反映した特異的な要素を反映している。機会主義的行動は、社会的不承認や認知的不協和として現れるソーシャル・キャピタルの減少によって規律される。ソーシャル・キャピタルは、日和見主義的行動を規律し、信頼を構築するために、法的力や市場力の代替物としても補完物としても機能する。我々のモデルは、ソーシャル・キャピタル、信頼、経済活動の間の正の関係に関する先行する実証的知見の結果を解釈するための枠組みを提供する。モデルは、取引の確率は、買い手の売り手に対する信頼と取引の期待利益とともに増加するが、騙されるコストとともに減少することを予測する。さらに、このモデルの知見は、売り手による日和見的行動の可能性があるにもかかわらず、買い手が経済的交換を行おうとする意思を説明するのに役立ち、特に、信用を必要とする取引（例えば、脳外科手術）に比べて、信用を必要としない取引（例えば、散髪）において、買い手が経済的交換を行おうとする意思を説明するのに役立つ。我々は、取引から期待される利益が買い手の信頼と売り手のソーシャル・キャピタルによって増加する条件を特徴付ける。さらに、社会資本投資の可能性と、個人の社会資本形成を促進または阻害する要因について議論する。また、このモデルの知見は、詐欺、金融市場への参加、企業の投資行動、経済成長など、社会的要因が経済成果に与える影響に関する今後の研究の指針ともなる。</p>
+        <p class="abstract-text en">Under what conditions does social capital deter misconduct or facilitate economic growth? We develop a model in which social capital builds trust, decreases misconduct, and facilitates economic transactions. Social capital refers to the value of social and emotional benefits from performing in accord with contractual promises. It reflects a common component via shared culture and an idiosyncratic component reflecting individual moral values. Opportunistic behavior is disciplined by a decrease in social capital, which manifests as social disapprobation and cognitive dissonance. Social capital works as both a substitute and complement with legal and market forces to discipline opportunistic behavior and build trust. Our model provides a framework to interpret the results of prior empirical findings regarding the positive relationship between social capital, trust and economic activity: the model predicts that probability of trade increases with the buyer’s trust in the seller and with the expected gains of trade, but decreases with the cost of being cheated. Additionally, the model’s findings helps explain buyers’ willingness to engage in economic exchange in spite of the possibility of opportunistic behavior by sellers, especially for low-trust activities (e.g., getting a haircut) relative to trust-intensive transactions (e.g., brain surgery). We characterize the conditions under which the expected gains from trade increase with the buyer’s trust and with the seller’s social capital. Moreover, we discuss the possibility of social capital investment and the factors that facilitate or hinder individuals’ social capital formation. The model’s findings also guide future research on the influence of social factors on economic outcomes, including fraud, financial market participation, firms’ investment behavior, and economic growth.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A Unifying Theory of Blockholder Ownership and Corporate Policies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Simon Mayer (Carnegie Mellon University), Erwan Morellec (Swiss Federal Institute of Technology Lausanne), Sebastian Gryglewicz (Erasmus University Rotterdam)</div>
+            <a href="https://afajof.org/management/viewp.php?n=181244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ブロック株主は、企業の生産性を向上させるためにコストをかけて努力し、エージェンシー・コストを抑制するために経営陣と契約し、投資や資金調達の意思決定に影響を与えることができる。ブロック株主は、最初の持ち分から始めて、時間の経過とともに持ち分を調整し、エンゲージメントと企業政策を形成し、買収提案や撤退につながる可能性がある。ブロックホルダーのダイナミックな取引戦略、参入と撤退の意思決定、会社の報酬、資金調達、投資政策を分析的に特徴付ける。このモデルの重要な特徴は、ブロック株主の出資比率が内生的かつ動的であることであり、このことは、政策に対する支配権の配分が静的な文脈と動的な文脈で異なる効果を持つことを意味する。</p>
+        <p class="abstract-text en">We develop a theory of blockholder activism, in which a blockholder can expend costly effort to improve firm productivity, contract with management to limit agency costs, and influence investment and financing decisions. Starting with an initial toehold, the blockholder may also adjust its stake over time, shaping engagement and firm policies and potentially leading to a takeover bid or an exit. We analytically characterize the blockholder's dynamic trading strategy, its entry and exit decisions, and the firm’s compensation, financing, and investment policies. A key feature of the model is the endogenous and dynamic nature of the blockholder’s stake, which implies that the allocation of control rights over policies has divergent effects in static versus dynamic contexts.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A General Theory of Holdouts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Xiaobo Yu (University of Colorado-Boulder)</div>
+            <a href="https://afajof.org/management/viewp.php?n=147364" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、ホールドアウト問題の統一的な枠組みを提示する。ホールドアウト問題とは、他者の参加にフリーライドするインセンティブによって価値創造が阻害されるという、広く見られる現象である。私の枠組みは、買収や債務再編といった古典的な応用例を入れ子にしており、コミットメントの役割を強調している：ホールドアウト問題は、コミットメントを伴う偶発契約を用いて解決することができる。例えば、誰かがホールドアウトした場合、プリンシパルが取引の中止を約束できるのであれば、全会一致ルールによって解決することができる。これとは対照的に、コミットメントの欠如は、最初の契約の希薄化感応度によって最適なオファーを大きく変化させる。これは、全会一致ルールが有効であるにもかかわらず存在しないことや、オファーの横断的不均一性を説明するものである。(さらに、部分的なコミットメントの強化は、再交渉によって逆効果となり、ホールドアウト問題を悪化させる可能性がある。この非単調性は、ソブリン債におけるCACsに関する矛盾した知見を調整し、様々な政策に光を当てるものである。最後に、本稿は、投資家保護の強化が、限定的なコミットメントの下でのリストラクチャリングを妨げるのではなく、促進する可能性があることを示している。</p>
+        <p class="abstract-text en">This paper presents a unified framework for the holdout problem, a pervasive phenomenon in which value creation is hindered by the incentive to free-ride on others' participation. My framework nests classic applications, such as takeovers and debt restructuring, and highlights the role of the commitment: The holdout problem can be resolved using contingent contracts with commitment, e.g., by a unanimity rule if the principal can commit to calling off the deal when anyone holds out. In contrast, a lack of commitment substantially alters the optimal offers depending on the dilution sensitivities of the initial contracts, which explains the absence of the unanimity rule despite its efficacy, and cross-sectional heterogeneity in offers. (E.g., senior debt used in debt restructuring but not in takeovers.) Furthermore, stronger partial commitment can backfire via renegotiation, exacerbating the holdout problem. This non-monotonicity reconciles contradictory findings on the CACs in the sovereign debt and sheds light on various policies. Lastly, the paper shows stronger investor protection could facilitate instead of hinder restructuring under limited commitment.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

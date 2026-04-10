@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who is Monitoring Managers?</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link active">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Who is Monitoring Managers?</h1>        <div class="paper-card">
+            <div class="paper-title">Majority Voting Legislation and CEO Incentive Compensation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Zhengzhuo Li (University of Tennessee-Knoxville)</div>
+            <a href="https://afajof.org/management/viewp.php?n=141120" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">取締役選挙における株主の影響力を強化する多数決法制（MVL）の時差導入後、特に事前の取締役会の独立性が低く、男性取締役ばかりであった企業において、CEOのインセンティブ報酬が有意に減少することを発見した。この政策変更はまた、複数の取締役を兼任する取締役の顕著な減少、共同出資取締役の減少、およびCEOパワーの低下とも関連している。さらに分析を進めると、MVL採用後のインセンティブ報酬の減少は、企業の方針、ボラティリティ、収益性に大きな変化をもたらしていないことが明らかになり、これは、強力な取締役会の監視とCEOのインセンティブ報酬が、経営者の行動を株主の利益に一致させる上で代替的な役割を果たしうるという見方を補強している。</p>
+        <p class="abstract-text en">Following the staggered adoption of majority voting legislation (MVL), which enhances shareholder influence in director elections, I find a significant decrease in CEO incentive compensation, particularly in firms with ex-ante low board independence and all-male boards. This policy change is also associated with a notable decrease in directors holding multiple board seats, a decline in co-opted board members, and diminished CEO power. Further analysis reveals that the reduction in incentive compensation following MVL adoption has not led to significant changes in firm policies, volatility, or profitability, which reinforces the view that strong board monitoring and CEO incentive pay can serve as substitutes in aligning managerial actions with shareholder interests.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Consumers Care about Pay Inequality? Evidence from Household Purchase Data</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Konstantinos Bozos (University of Leeds), Jie Chen (University of Leeds), Yang Gao (University of Exeter), Xuan Tian (Tsinghua University), Jiayi Yuan (University of Leeds)</div>
+            <a href="https://afajof.org/management/viewp.php?n=146300" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2018年に米国の上場企業がCEOと従業員の給与比率を初めて開示したことに消費者がどのように反応するかを、ミクロレベルの家計購買データを活用して検証する。給与比率の開示が義務化されたことで、企業内の給与格差が消費者行動に影響を与えるかどうか、またどのように影響を与えるかを評価するためのユニークな環境が提供された。その結果、高賃金比率を公表している企業では、消費者の購買意欲が著しく低下し、同じ世帯が購入した高賃金比率でない企業の同等商品と比較して、その商品の売上高が4.9％減少することが分かった。この減少は供給主導型ではなく、需要主導型であり、開示後に初めて現れることから、消費者は企業の給与構造に関する新たな情報に応じて購買行動を調整していることがわかる。追加分析によれば、消費者の否定的反応は、不平等嫌悪の強い地域、高額商品や検証困難な商品、そして消費者が給与比率の情報に接しやすい場合に、より顕著になることが明らかになった。これらの知見を総合すると、消費者は、この情報を知っている限りにおいて、社会的選好と信頼の喪失によって、企業内における高い賃金格差を懸念していることが示唆される。本研究は、賃金の透明性が消費者の需要や企業の業績に影響を与えるという、意図せざる市場の結果をもたらしうるという新たな証拠を提供するものである。これらの洞察は、役員報酬、企業の社会的責任、給与格差の経済的意味合いに関するより広範な議論に貢献するものである。</p>
+        <p class="abstract-text en">We examine how consumers react to the first-time disclosure of CEO-worker pay ratios by U.S. public firms in 2018, leveraging micro-level household purchase data. The mandated disclosure of pay ratios provides a unique setting to assess whether and how within-firm pay disparity influences consumer behavior. We find that firms disclosing high pay ratios experience a significant decline in consumer purchases, with sales of their products dropping by 4.9% relative to comparable products from firms without high pay ratios, purchased by the same households. This decline is demand-driven rather than supply-driven and emerges only after disclosure, indicating that consumers adjust their purchasing behavior in response to new information about corporate pay structures. Additional analysis reveals that negative consumer reactions are more pronounced in regions with greater inequality aversion, for high-value or hard-to-verify products, and when consumers are more likely to be exposed to pay ratio information. Together, these findings suggest that consumers are concerned about high within-firm pay disparity, driven by their social preferences and a loss of trust, to the extent that they are aware of this information. Our study provides novel evidence that pay transparency can have unintended market consequences, affecting consumer demand and firm performance. These insights contribute to the broader debate on executive compensation, corporate social responsibility, and the economic implications of pay inequality.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Watching the Watchdogs: The Information Content of SEC Interactions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Steve Irlbeck (University of New Hampshire), William Gerken (University of Kentucky), Marcus Painter (Saint Louis University), Guangli Zhang (Saint Louis University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=159264" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">証券取引委員会の調査実務は、透明性が限られているため、調査が困難であった。我々は、スマートフォンの位置情報を非識別化したデータを使用して、企業の本社を訪問するSEC関連のデバイスを追跡した。その結果、SECの監視対象はエンフォースメント歴のある大企業であり、業種によってクラスター化されていることが確認された。これらの訪問は、その後の強制措置がない場合でも、株価の大幅なマイナスリターンを予測する。インサイダーは一般的に訪問の前後で売りを減らすが、取引を行うインサイダーは大幅な損失を避けることができる。我々の発見は、重要な規制情報の流れは、正式な手続きが始まる前に発生することを明らかにした。</p>
+        <p class="abstract-text en">The Securities and Exchange Commission’s investigative practices have been challenging to examine due to limited transparency. Using de-identified smartphone geolocation data, we track SEC-associated devices that visit firm headquarters. While confirming that SEC oversight targets larger firms with enforcement histories and clusters by industry, we document two novel patterns: most visits occur outside formal investigations and monitoring occasionally crosses regional boundaries. These visits predict significant negative stock returns, even absent subsequent enforcement actions. Though insiders generally reduce selling around visits, those who do trade avoid substantial losses. Our findings reveal that important regulatory information flows occur before formal proceedings begin.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-section of Returns</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link active">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Cross-section of Returns</h1>        <div class="paper-card">
+            <div class="paper-title">Common Risk Factors in the Returns on Stocks, Bonds (and Options), Redux</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhongtian Chen (University of Wisconsin-Madison), Nikolai Roussanov (University of Pennsylvania), Xiaoliang Wang (Hong Kong University of Science and Technology), Dongchen Zou (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=153384" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株式、債券、オプションといった企業証券の主要なクラスにわたって浸透しているリスク要因はあるのだろうか？我々は、条件付き潜在因子モデルを推定するために、資産の特徴に依存する新しい計量経済学的手法を採用する。資産クラス間で共通のリスク要因構造が顕著に現れる。いくつかの共通因子は、3つの資産クラスすべてにわたって、個々の資産リターンの時系列変動のかなりの部分を説明し、かなりのシャープレシオを持っている。また、いくつかの共通ファクターは、資産クラス固有のファクターやマクロ経済・金融変数と高い相関がある。小さな共通要因のセットは平均リターンのクロスセクションを完全に捕捉するものではないが、要因構造を課すことは、特にアウトオブサンプル分析において、実務上有用である。資産特性を利用した平均分散効率の高いポートフォリオは、異なる資産クラスが共通要因へのエクスポージャーを相互にヘッジするため、高いシャープレシオを達成する。</p>
+        <p class="abstract-text en">Are there risk factors that are pervasive across major classes of corporate securities: stocks, bonds, and options? We employ a novel econometric procedure that relies on asset characteristics to estimate a conditional latent factor model. A common risk factor structure prominently emerges across asset classes. Several common factors explain a substantial amount of time-series variation of individual asset returns across all three asset classes, and have sizable Sharpe ratios. Several of our factors are highly correlated with some of asset-class-specific factors as well as macroeconomic and financial variables. While a small set of common factors does not fully capture the cross-section of average returns, imposing the factor structure is useful in practice, especially in out-of-sample analysis. A mean-variance efficient portfolio that utilizes asset characteristics achieves a high Sharpe ratio as different asset classes hedge each other's exposures to the common factors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Co-Pricing Factor Zoo</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Philippe Mueller (University of Warwick), Christian Julliard (London School of Economics and Political Science), Alexander Dickerson (University of New South Wales)</div>
+            <a href="https://afajof.org/management/viewp.php?n=179200" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、社債と株式のリターンの共同プライシングに関する18兆のモデルを分析した。プライシングされたリスクの確実な要因となっているのは、行動要因や非貿易要因など、ほんの一握りである。しかし、真の潜在的な確率的割引要因は、観測可能な要因の空間において密である。社債要因と株式要因を組み合わせたベイズモデル平均化確率的割引要因（BMA-SDF）は、サンプルの内外を問わず、既存のすべてのモデルよりもリスク・プレミアムをよく説明する。BMA-SDFは複数のファクターを最適に集約する。SDF、およびその条件付き平均とボラティリティは持続的であり、景気循環と経済の不確実性が高まる時期を追跡し、将来の資産リターンを予測する。最後に、ストック・ファクターは社債の超過リターンのクレジット・コンポーネントをよくプライシングする一方、トレジャリー・コンポーネントはほとんどボンド・ファクターによってのみプライシングされることを示す。</p>
+        <p class="abstract-text en">We analyze 18 quadrillion models for the joint pricing of corporate bond and stock returns. Only a handful of factors, behavioural and nontradable, are robust sources of priced risk. Yet, the true latent stochastic discount factor is dense in the space of observable factors. A Bayesian Model Averaging Stochastic Discount Factor (BMA-SDF), combining the corporate bond and stock factor zoos, explains risk premia better than all existing models, both in- and out-of-sample. We show that multiple factors are noisy proxies for common underlying sources of risk, and the BMA-SDF aggregates them optimally. The SDF, as well as its conditional mean and volatility, are persistent, track the business cycle and times of heightened economic uncertainty, and predict future asset returns. Finally, we show that stock factors price the credit component of corporate bond excess returns well, while the Treasury component is priced almost exclusively by the bond factors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Asset Durability Premium</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Dun Calvin Jia (Peking University), Kai Li (Peking University), Chi-Yang Tsou (University of Manchester)</div>
+            <a href="https://afajof.org/management/viewp.php?n=163016" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、株式のリスクを理解する上で、資産の耐久性が資産価格に与える重要な影響を検証する。時折、借入制約に拘束されることによって、企業は資産の耐久性を最適化する。我々のモデルは、一般均衡において、耐久性のある資本は頭金が多いだけでなく、金融摩擦に対する価格リスク感応度が大きいため、資金調達が困難であるという、新たなリスク・プレミアム・チャネルを浮き彫りにしている。企業が耐久性の低い資本を保有することは、総体的なリスクに対するヘッジを提供するため、異なる資産耐久性の資本価格の特性は、企業のリスクに影響を与える。我々のモデルは、財務制約のある企業の株式リターンのクロスセクションに記録されている資産耐久性プレミアムを合理化するのに役立つ。</p>
+        <p class="abstract-text en">Our paper examines the significant asset pricing implications of asset durability for understanding equity risk. We develop a quantitative model with aggregate uncertainty where firms optimize over asset durability driven by occasionally binding borrowing constraints. Our model highlights a novel risk premium channel emerging in general equilibrium, with durable capital harder to finance not only due to its greater down payment, but because of its larger price risk sensitivities to financial frictions. As firms’ holding less durable capital provides hedging against aggregate risk, properties of capital prices of different asset durabilities affect the firm risk. Our model helps rationalize the asset durability premium documented in the cross-section of stock returns among financially constrained firms.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Equity Valuation Without DCF</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Thummim Cho (Korea University), Christopher Polk (London School of Economics and Political Science), Robert Rogers (London School of Economics and Political Science)</div>
+            <a href="https://afajof.org/management/viewp.php?n=179368" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株式評価のための新しいフレームワークであるディスカウント・アルファを紹介する。本アプローチは、割引キャッシュ・フロー（DCF）評価に必要な株式コストの推定を回避し、クラス最高のDCF手法では捕捉されないファンダメンタル価値における経済的に重要な変動を特定する。また、プライベート・エクイティ・ファンドが、バイアウト時およびエグジット時の両方において、実質的なCAPMのミス評価を捕捉しているようである。しかし、このような過小評価にもかかわらず、Black (1986)の定義によれば、企業の株式価値は「ほぼ効率的」であることがわかった。</p>
+        <p class="abstract-text en">We introduce discounted alphas, a novel framework for equity valuation. Our approach circumvents the need for stock-level cost-of-equity estimates required in discounted cash ow (DCF) valuation and identifies economically important variation in fundamental value not captured by best-in-class DCF methods. We find that discretionary buy-and-hold funds tilt toward characteristics that predict underpricing but not short-term alphas and that private equity funds appear to capture substantial CAPM misvaluation, both initially at buyout and subsequently at exit. However, despite these pockets of misvaluation, we find that firm equity values are “almost efficient” by Black’s (1986) definition.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

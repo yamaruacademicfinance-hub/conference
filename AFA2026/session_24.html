@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>International Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link active">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>International Finance</h1>        <div class="paper-card">
+            <div class="paper-title">The Implications of CIP Deviations for International Capital Flows</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Christian Kubitza (European Central Bank), Jean-David Sigaux (European Central Bank), Quentin Vandeweyer (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=161028" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ユーロ圏のデリバティブと証券保有をカバーする新しいデータを用いて、国際資本フローに対するカバー金利平価からの乖離の影響を研究する。為替リスク・ヘッジのダイナミック・モデルと整合的に、米ドル・ユーロのクロスカレンシー・ベーシス（CCB）が拡大した後、投資家の米ドル債保有が減少することを実証する。この効果は、為替ロールオーバー・リスクが大きく、ヘッジ・マンデートが大きい投資家によってもたらされ、CCBをインストルメント化することによってもロバストである。このような債券需要のシフトは債券価格に大きな影響を与える。我々の発見は、金融の安定性に重要な影響を及ぼす国際資本フローの新たな決定要因に光を当てるものである。</p>
+        <p class="abstract-text en">We study the implications of deviations from covered interest rate parity for international capital flows using novel data covering euro-area derivatives and securities holdings. Consistent with a dynamic model of currency risk hedging, we document that investors’ holdings of USD bonds decrease following a widening in the USD-EUR cross-currency basis (CCB). This effect is driven by investors with larger FX rollover risk and hedging mandates, and it is robust to instrumenting the CCB. These shifts in bond demand significantly affect bond prices. Our findings shed light on a new determinant of international capital flows with important consequences for financial stability.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Does the Dollar Lender of Last Resort Expand Dollar Dominance? Currency Mismatch, Reserves, and Global Liquidity Backstop</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ding Ding (University of Pennsylvania), Karen Lewis (University of Pennsylvania), Yao Zeng (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=184380" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国がドルの最後の貸し手として果たす役割が、長期的にどのような結果をもたらすのか。
+の意図せざる長期的帰結を検証する。新たな行政データを用いて、中央銀行のスワップ・ラインが、世界の銀行のドル資金調達の穴埋めにおいて、外国の中央銀行のドル準備の代用として機能していることを明らかにする。
+中央銀行のスワップ・ラインが、海外の中央銀行のドル準備の代わりとして、世界の銀行のドル資金不足を補う役割を果たしていることを明らかにした。
+特に市場からの合成ドル資金調達が乏しい場合には、中央銀行のスワップ・ラインが外国中央銀行のドル準備の代わりとなって、グローバルな銀行のドル資金不足を補っていることが分かった。しかし、このバックストップ
+は、グローバル銀行がより大きな通貨ミスマッチを引き受ける動機付けとなる一方で、海外の中央銀行がドル準備の保有額を減らすことを促す。
+その結果、海外の中央銀行はドル準備の保有を減らし、最終的には危機時のドル資金ギャップを拡大することになる。
+となる。我々は、グローバル・バンキングの枠組みの中で、「最後の砦の仲介融資」の概念を定式化したモデルを開発した。
+を形式化したモデルを構築し、緊急時のドル流動性供給におけるグローバルな仲介連鎖を捉える。
+ドル流動性供給におけるグローバルな仲介連鎖を捉える。スワップ・ラインはストレス時のドル資金調達市場の安定化に役立つ一方
+スワップ・ラインはストレス時のドル資金調達市場の安定化に役立つが、同時に、グローバルな銀行と外国の中央銀行との間の貨幣的外部性により、事前的なドルへの過度の依存を助長する。
+に起因するドルへの過度の依存を助長する。このような依存の高まりは、海外経済だけでなく
+このような依存の高まりは、米国債保有者の構成を変化させ、米国債の保有比率を高めることによって、外国経済だけでなく、米国にも意図せざるリスクをもたらす。
+ホルダーの構成を変化させ、国債の売却リスクに対する不均質なエクスポージャーを増大させる。</p>
+        <p class="abstract-text en">We examine the unintended long-term consequences of the U.S.’s role as a dollar lender
+of last resort. Using new administrative data, we find that central bank swap lines serve as
+substitutes for foreign central banks’ dollar reserves in filling global banks’ dollar funding
+gaps, especially when market-based synthetic dollar funding is scarce. However, this backstop
+incentivizes global banks to take on greater currency mismatches while prompting foreign
+central banks to hold fewer dollar reserves, ultimately amplifying dollar funding gaps during
+crises. We develop a model that formalizes the concept of intermediated lending of last resort
+within a global banking framework, capturing the global intermediation chain in emergency
+dollar liquidity provision. While swap lines help stabilize dollar funding markets in times of
+stress, they also encourage ex-ante over-reliance on the dollar due to pecuniary externalities
+between global banks and foreign central banks. This growing dependence introduces unintended
+risks not only for foreign economies but also for the U.S. by reshaping U.S. Treasury
+holder composition and increasing Treasuries’ heterogeneous exposure to fire-sale risks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Demand-Driven Risk Premia in FX and Bond Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ingomar Krohn (Bank of Canada), Andreas Uthemann (Bank of Canada), Rishi Vala (Bank of Canada), Jun Yang (Bank of Canada)</div>
+            <a href="https://afajof.org/management/viewp.php?n=169232" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国債入札前後の高頻度の価格変動を用いて、米国の安全資産に対する需要の変化を特定し、外国為替および債券市場への影響を分析する。米国債に対するプラスの需要ショックは、G9通貨のポートフォリオに対して平均で2ベーシスポイントの米ドル安をもたらし、価格への影響は発行証券の満期が長くなるほど大きくなる。米国に対する短期金利の相関が高い国は、短期金利の相関が低い国に比べ、通貨高が弱いが、米国債との債券利回りの共動作が強い。これらの結果は、グローバル・アービトラージャーが外国為替市場と債券市場の両方においてマージナルな投資家として機能するセグメント化された市場モデルを強固に支持するものであり、為替レートと債券利回りのコ・ムーブメントを促進する上でリスク・プレミアが重要な役割を果たすことを浮き彫りにするものである。</p>
+        <p class="abstract-text en">We use high-frequency price changes around U.S. Treasury auctions to identify shifts in demand for U.S. safe assets and analyze their effects on foreign exchange and bond markets. A positive demand shock for U.S. Treasuries leads, on average, to a 2-basis-point depreciation of the U.S. dollar against a portfolio of G9 currencies, with the price impact increasing with the maturity of the issued security. Countries with highly correlated short-term interest rates to the U.S. experience weaker currency appreciation but stronger bond yield co-movement with U.S. Treasuries, compared to countries with lower short-rate correlations. These findings provide robust support for segmented markets models, where global arbitrageurs act as marginal investors in both foreign exchange and bond markets, and highlight the critical role of risk premia in driving the co-movement of exchange rates and bond yields.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

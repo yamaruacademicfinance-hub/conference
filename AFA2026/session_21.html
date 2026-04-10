@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management, Portfolio Choice, and Asset Allocation</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link active">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Asset Management, Portfolio Choice, and Asset Allocation</h1>        <div class="paper-card">
+            <div class="paper-title">A Dynamic Model of Private Asset Allocation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hui Chen (Massachusetts Institute of Technology), Giovanni Gambarotta (Liberty Mutual Investments), Simon Scheidegger (HEC - Lausanne), Yu Xu (University of Delaware)</div>
+            <a href="https://afajof.org/management/viewp.php?n=176176" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">(1)私募資産の非流動性、(2)キャピタル・コミットメント、キャピタル・コール、最終的な分配の間のタイミング・ラグ、(3)時間変動する景気サイクル条件、(4)観測された私募資産リターンの系列相関、(5)特定の機関投資家のポートフォリオ選択に対する規制上の制約、という私募資産市場の5つの重要な特徴を考慮した、最先端の私募資産配分の動的モデルを構築する。我々は最先端の機械学習手法を用いて、ファンドのライフサイクルにおける最適な投資方針を定量化する。さらに、我々のモデルは、リスクベースの資本賦課金を設定する際のトレードオフを正確に定量化するためのツールを規制当局に提供する。</p>
+        <p class="abstract-text en">We build a state-of-the-art dynamic model of private asset allocation that considers five key features of private asset markets: (1) the illiquid nature of private assets, (2) timing lags between capital commitments, capital calls, and eventual distributions, (3) time-varying business cycle conditions, (4) serial correlation in observed private asset returns, and (5) regulatory constraints on certain institutional investors’ portfolio choices. We use cutting-edge machine learning methods to quantify the optimal investment policies over the life cycle of a fund. Moreover, our model offers regulators a tool for precisely quantifying the trade-offs when setting risk-based capital charges.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Unintended Consequences of Rebalancing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Campbell Harvey (Duke University), Michele Mazzoleni (Capital Group), Alessandro Melone (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=144452" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機関投資家は何兆ドルもの定期的なポートフォリオのリバランスを行っており、その多くはカレンダー・スケジュールや配分目標からの乖離に基づいている。我々は、このようなリバランスが市場に影響を与え、予測可能な価格パターンを生み出すことを文書化している。株式がオーバーウェイトになると、ファンドは株式を売り債券を買い、翌日の株式リターンが17ベーシスポイント低下する。
+日間の株式リターンの低下をもたらした。我々の結果は、モメンタム、反転、マクロ経済情報のコントロールに対してロバストである。重要なことは、現在のリバランスが投資家にとって年間約160億ドル、つまり米国の一世帯あたり200ドルのコストになっていることである。さらに、こうした取引の予測可能性により、特定の市場参加者は大規模な機関投資家ファンドの注文を前走することで利益を得ることができる。リバランス
+投資家にとってリバランスは依然として基本的な手段であるが、今回の調査結果は、従来の戦略に伴うコストを浮き彫りにし、これらのコストを軽減する革新的なアプローチの必要性を強調している。</p>
+        <p class="abstract-text en">Institutional investors engage in trillions of dollars of regular portfolio rebalancing, often based on calendar schedules or deviations from allocation targets. We document that such rebalancing has a market impact and generates predictable price patterns. When stocks are overweight, funds sell stocks and buy bonds, leading to a decrease in equity returns of 17 basis points over the next
+day. Our results are robust to controls for momentum, reversals, and macroeconomic information. Importantly, we estimate that current rebalancing practices cost investors about $16 billion annually—or $200 per U.S. household. Moreover, the predictability of these trades enables certain market participants to profit by front-running the orders of large institutional funds. While rebalancing
+remains a fundamental tool for investors, our findings highlight the costs associated with prevailing strategies and emphasize the need for innovative approaches to mitigate these costs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">On the Use of Currency Forwards: Evidence from International Equity Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wei Opie (Deakin University), Steven Riddiough (University of Toronto)</div>
+            <a href="https://afajof.org/management/viewp.php?n=169512" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">55,000以上の通貨フォワード・ポジションを手作業で収集した新規のデータセットを用いて、米国の国際株式投資信託における通貨管理に関する初めての大規模な実証研究を行った。一部のファンドは為替エクスポージャーをヘッジしているが、多くのファンドはロング・デリバティブとショート・デリバティブのポジションを持つ個別の「シャドー」為替ポートフォリオを構築しており、その多くは保有株式とは無関係の通貨である。意外なことに、両アプローチともファンド全体のパフォーマンスには限定的な影響しか与えないことが分かった。さらに、非利用者ファンドはダイナミックな為替ヘッジによってリスク調整後リターンを大幅に改善できた可能性がある。我々の発見は、為替管理における非効率性を浮き彫りにし、ポートフォリオのパフォーマンスを最適化するための洞察を提供するものである。</p>
+        <p class="abstract-text en">Using a novel, hand-collected dataset of over 55,000 net currency forward positions, we provide the first large-scale empirical study of currency management in US international equity mutual funds. Although some funds hedge currency exposure, many construct separate “shadow” currency portfolios with long- and short-derivative positions, often in currencies unrelated to their equity holdings. Surprisingly, we find that both approaches have a limited impact on overall fund performance, largely due to suboptimal implementation. Furthermore, non-user funds could have materially improved risk-adjusted returns through dynamic currency hedging. Our findings highlight inefficiencies in currency management and offer insight into optimizing portfolio performance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Tilting at Windmills: Biased Benchmarks and the Risk-Taking Response of Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Richard Evans (University of Virginia), Hugh Kim (Wilfrid Laurier University), Thomas Maurer (The University of Hong Kong)</div>
+            <a href="https://afajof.org/management/viewp.php?n=159376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2002年のモーニングスターの格付け方法変更以前は、すべての米国内株式ファンドをグループとして格付けすると、グロース・ファンドはバリュー・ファンドに比べて不利であった。その結果、グロース・ファンドはより大きなリスクを取っている。  このような結果は、レーティングのカットオフ付近や、投資家のフローを惹きつけるインセンティブが強いファンドほど顕著である。より大きなリスクテイクにより、不利なグロースファンドは有利なバリューファンドに匹敵するリターンを生み出すことができ、ベンチマークバイアスを緩和することができる。我々の分析を社会的責任投資(SRI)に拡張すると、同様のパターンが見出された：道徳的制約のあるファンドは、罪の株式をオーバーウェイトしている有利な同業他社に対抗するために、より大きなリスクを取っている。</p>
+        <p class="abstract-text en">Before the 2002 Morningstar ratings methodology change, we find that ranking all US domestic equity funds as a group disadvantages growth funds relative to value. In response, growth funds take significantly more risk.  These results are more pronounced near ratings cutoffs and among funds with stronger incentives to attract investor flows. Greater risk-taking enables disadvantaged growth funds to generate returns comparable to advantaged value funds, mitigating the benchmark bias. Extending our analysis to socially responsible investing (SRI), we find similar patterns: morally constrained funds take greater risks to compete with advantaged peers that overweight sin stocks.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

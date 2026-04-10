@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Lock-In (AREUEA-AFA Joint Session)</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link active">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Mortgage Lock-In (AREUEA-AFA Joint Session)</h1>        <div class="paper-card">
+            <div class="paper-title">Locked In: Rate Hikes, Housing Markets, and Mobility</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Aditya Aladangady (Federal Reserve Board), Jacob Krimmel (Federal Reserve Board), Therese Scharlemann (Federal Reserve Board)</div>
+            <a href="https://afajof.org/management/viewp.php?n=189448" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2022年の金利上昇は、低金利の住宅所有者に大きな引越し費用をもたらした、
+固定金利の住宅ローン住宅ローン、消費者信用プロファイル、不動産売買をリンクさせた新しいデータセットを用いて、金利上昇が家計の移動に及ぼす影響を検証する。
+金利上昇が家計の移動に及ぼす影響と、その結果生じる住宅ローン金利の固定化による広範な経済的影響を検証する。
+また、その結果生じる住宅ローン金利の固定化による広範な経済的影響を検証する。市場金利が
+市場金利が借り手の既存ローンの金利と比較して上昇すると、移動の可能性は低下する。
+金利が上昇すると、移動の可能性は低下する。その結果、次のことが示唆された。
+2021年から2022年にかけての住宅ローン保有者の移動の減少の44%は、借り手と借り手の金利差の拡大に起因している可能性がある。
+この結果は、2021年から2022年にかけての住宅ローン保有者の移動の減少の約44％が、借り手の既存金利と市場金利の格差の拡大に起因する可能性があることを示唆している。我々は
+労働市場間の移動はむしろ影響を受けないため、ロックインによる労働力のミスアロケーションの可能性は限定的である。
+というのも、労働市場をまたぐ移動はむしろ影響を受けないからである。その代わりに、ロックインは主に都市圏内での住み替えを減少させ
+その結果、不動産物件数は減少し、住宅価格は上昇する。
+住宅価格の上昇をもたらす。ロックインによる価格上昇を住宅検索モデルによって説明する。
+売り手市場では、解約が減ることで市場の逼迫度が高まり、価格が上昇する。このような
+このようなモデルと一致するように、市場の逼迫度はロックインの影響を受けて上昇する。
+このようなモデルと一致するように、市場の逼迫度を示す指標は、すでに逼迫していた市場において最も大きな効果を示した。</p>
+        <p class="abstract-text en">Rising interest rates in 2022 introduced large moving costs for homeowners with low,
+fixed-rate mortgages. Using a novel dataset linking mortgage loans, consumer credit
+profiles, and property sales, we examine the effects of rate hikes on household mobility
+and the broader economic impacts of the resulting mortgage rate lock-in. As market
+rates rise relative to those on borrowers’ existing loans, likelihood of moving falls with
+the highest elasticity among borrowers just “in the money.” Our results suggest about
+44% of the decline in moves among mortgage holders between 2021 and 2022 may be
+attributable to the widening gap between borrower’s existing and market rates. We
+find limited scope for labor misallocation due to lock-in, as moves across labor market
+areas are rather unaffected. Instead, lock-in primarily reduces within-metro churn and
+moves up the housing ladder, leading to fewer real estate listings and greater house price
+growth. We explain lock-in-driven price increases through a housing search model: in
+a seller’s market, reduced churn raises market tightness, driving up prices. Consistent
+with such a model, we show measures of market tightness increase in response to lock-
+in, with the most significant effects in markets that were already tight.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Unlocking Mortgage Lock-In: Evidence from a Spatial Housing Ladder Model</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pierre Mabille (INSEAD), Julia Fonseca (University of Illinois), Lu Liu (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=183960" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国の住宅ローン借り手は「ロックイン」している。
+というのも、低い固定住宅ローン金利を手放し、より高い現行金利に切り替える必要があるからである。われわれは、住宅ローンによる固定化が住宅価格、移動、住宅取得に及ぼす動的一般均衡
+住宅価格、流動性、持ち家に対する住宅ローンのロックインの動的一般均衡効果を研究し、ロックインの解除を目的とした政策を評価する。
+を評価する。まず、住宅ローンの固定化が地域の住宅価格を上昇させるという因果関係のある実証的証拠を示すことから始める。
+なぜなら、ロックインのために移動しなかった借り手
+- これは、ロックインのために引っ越しをしなかった借り手がダウンサイジングを行い、需要よりも大きな住宅を供給しているためである。
+次に、長期住宅ローンを用いた空間的な住宅ラダーモデルを設計し、ロックイン金利の内生的な分布を生成する。
+このモデルは、データに酷似したロックイン金利の内生的分布を生成し、均衡においてこれらの経験的価格パターンを再現する。
+を再現する。家計は、経済的機会とコストの異なる場所間を移動することができる。
+家計は、経済的機会とコストの異なる場所間を移動することができ、また、賃貸を選択するか、スターター住宅や下取り住宅を所有するかを選択することによって、住宅はしごの中を移動することができる。住宅価格と家賃
+は、場所内および場所間の移動によって均衡的に決定されるため、一時的な金利の上昇と内生的な住宅ローンの影響を受ける。
+によって影響を受ける。データと同様に、住宅ローンのロックインはモデルにおけるダウンサイジングを大幅に減少させ
+を大幅に減少させ、純住宅需要を増加させ、平均住宅価格を上昇させる、
+特に高コストの地域では。さらに、最近提案された1万ドルの税額控除の均衡効果を評価する。
+この税額控除は、住宅価格の上昇をもたらす一方で、住宅の底辺における流動性を高めることを明らかにした。
+一方、上部の価格は上昇する。</p>
+        <p class="abstract-text en">U.S. mortgage borrowers are 'locked in': unwilling to sell their house and move, as that would require
+giving up low fixed mortgage rates for higher current rates. We study the dynamic general equilibrium
+effects of mortgage lock-in on house prices, mobility, and homeownership, and evaluate policies aimed
+at unlocking lock-in. We start by providing causal empirical evidence that mortgage lock-in increases
+local house prices, particularly in high-cost areas, because borrowers who do not move due to lock-in
+– missing movers – would have downsized and thus supplied a larger home than the one demanded.
+We then design a spatial housing ladder model with long-term mortgages that generates an endogenous
+distribution of locked-in rates closely resembling the data and replicates these empirical price patterns in
+equilibrium. Households can move between locations differing in economic opportunity and costs, and
+within the housing ladder by choosing to rent or to own a starter or trade-up home. House prices and rents
+are determined in equilibrium by mobility within and between locations, and thus impacted by a temporary
+rise in rates and endogenous mortgage lock-in. As in the data, mortgage lock-in substantially reduces
+downsizing in the model, increasing net housing demand and resulting in higher average house prices,
+especially in high-cost areas. We further evaluate the equilibrium effects of a recent proposal to grant a
+$10k tax credit to starter-home sellers and find that it unlocks mobility at the bottom of the housing ladder
+while increasing prices at the top.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Rate Lock in Commercial Real Estate</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sean Flynn (Cornell University), Robert Kurtzman (Federal Reserve Board), Alexei Tchistyi (Cornell University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=141624" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">商業用不動産ローンにおける固定金利ロックインの存在とその影響を明らかにする。証券化された商業用住宅ローン（CMBS）のデータを用いて、現在の市場金利が住宅ローンの固定金利より100bp上昇した場合、平均的な不動産が10年間で売却される確率はおよそ6％低下することを発見した。この売却確率の低下は、売却価格の上昇に見合ったものである。特に、平均的な物件では、現在の市場金利と住宅ローン金利の間に100bpのギャップがある場合、販売価格が約9％上昇することが示唆された。</p>
+        <p class="abstract-text en">We document the existence and impact of fixed rate mortgage lock-in in commercial real estate loans. Using data on securitized commercial mortgages (CMBS), we find that the average property is roughly 6% less likely to sell over a ten year period when the current market interest rate rises 100bp above the fixed rate on the mortgage. This reduction in sales probability is commensurate with an increase in sales price. In particular, our results suggest a roughly 9% increase in sales price associated with a 100bp gap between current market rates and the mortgage rate, for the average property.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Human Capital and Local Credit Supply: Evidence from the Mortgage Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ruidi Huang (Southern Methodist University), Erik Mayer (University of Wisconsin-Madison), Sheridan Titman (University of Texas-Austin), David Xiaoyu Xu (Southern Methodist University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=142156" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ローン担当者の所在地とローン組成に関する包括的なデータを用いて、金融テクノロジーの発展にもかかわらず、米国の住宅ローン市場の大部分は依然としてローカルなものであることを明らかにした。しかし、ローン担当者の供給は、地域の住宅ローン需要ショックにほとんど反応しない。この反応性の欠如は、少なくとも部分的には、個人の生産性に関する情報の非対称性に起因しており、ローン担当者が労働市場を通じて需要の高い場所に移転する能力を制限している。遠隔地貸出とローン担当者の仕事量の増加は、地元のローン担当者の供給を完全に代替するものではない。この結果は、労働力の流動性が地域の信用供給を歪め、資本配分の効率を低下させる可能性があることを示唆している。</p>
+        <p class="abstract-text en">Using comprehensive data on the locations of loan officers and their loan originations, we find that the majority of the US residential mortgage market remains local, despite developments in financial technology. However, the supply of loan officers is largely unresponsive to local mortgage demand shocks. This lack of responsiveness stems at least in part from asymmetric information about individual productivity, which restricts loan officers' ability to relocate to high-demand locations through the labor market. Remote lending and increased loan officer workloads do not fully substitute for the supply of local loan officers. Our findings suggest that labor immobility can distort local credit supply and reduce capital allocation efficiency.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

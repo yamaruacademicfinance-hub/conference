@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance of Private Assets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2025 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Market Microstructure</a><a href="session_6.html" class="session-link ">Risk Premia and Options</a><a href="session_11.html" class="session-link ">Machine Learning in Asset Pricing</a><a href="session_17.html" class="session-link ">Asset Pricing with Subjective Beliefs</a><a href="session_18.html" class="session-link ">Asset Pricing</a><a href="session_43.html" class="session-link ">Demand-Based Asset Pricing</a><a href="session_47.html" class="session-link ">Information and Asset Prices</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Private Asset Markets</a><a href="session_3.html" class="session-link ">Corporate Financing Frictions</a><a href="session_19.html" class="session-link ">Real Investment</a><a href="session_23.html" class="session-link ">Corporate Debt Markets</a><a href="session_24.html" class="session-link ">Entrepreneurship</a><a href="session_25.html" class="session-link ">Law and Politics</a><a href="session_31.html" class="session-link ">Corporate Governance</a><a href="session_35.html" class="session-link ">Innovation</a><a href="session_39.html" class="session-link ">Corporate Debt</a><a href="session_42.html" class="session-link active">Performance of Private Assets</a><a href="session_46.html" class="session-link ">Labor and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank and Nonbank Financing</a><a href="session_13.html" class="session-link ">Bank Deposits</a><a href="session_16.html" class="session-link ">Fund Flows</a><a href="session_21.html" class="session-link ">Financial Stability</a><a href="session_30.html" class="session-link ">Banking</a><a href="session_36.html" class="session-link ">Mutual Funds</a><a href="session_45.html" class="session-link ">Insurance</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Institutions in Household Finance</a><a href="session_15.html" class="session-link ">Student Loans</a><a href="session_27.html" class="session-link ">Vulnerable Households</a><a href="session_32.html" class="session-link ">Housing Markets</a><a href="session_37.html" class="session-link ">Household Debt</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Monetary Policy</a><a href="session_28.html" class="session-link ">Foreign Exchange</a><a href="session_29.html" class="session-link ">Macro Finance</a><a href="session_34.html" class="session-link ">Debt Dynamics</a><a href="session_40.html" class="session-link ">Monetary Policy and Asset Prices</a><a href="session_41.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">FinTech</a><a href="session_10.html" class="session-link ">Cryptocurrency and DeFi</a><a href="session_12.html" class="session-link ">Belief Formation</a><a href="session_14.html" class="session-link ">AI in Finance</a><a href="session_26.html" class="session-link ">Valuations and Expectations</a><a href="session_38.html" class="session-link ">Retail Trading</a><a href="session_48.html" class="session-link ">Behavioral Finance</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_20.html" class="session-link ">Financing Frictions and the Green Transition</a><a href="session_22.html" class="session-link ">Inequality</a><a href="session_33.html" class="session-link ">Gender Gaps</a><a href="session_44.html" class="session-link ">Carbon Policy</a></div></div><div class="main-content"><h1>Performance of Private Assets</h1>        <div class="paper-card">
+            <div class="paper-title">Private Equity for Pension Plans? Evaluating Private Equity Performance from an Investor's Perspective</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Arthur Korteweg (University of Southern California), Stavros Panageas (University of California-Los Angeles), Anand Systla (University of California-Los Angeles)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1003128" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">プライベート・エクイティ（PE）のパフォーマンスを投資家特有の確率的割引係数を用いて評価し、投資家がPEへの配分を変更することで利益を得られるかどうかを検証する。平均リスク調整後パフォーマンスの高いPEファンドに投資している。これは主に成功したPEマネージャーへのアクセスによるものであり、優れた選択スキルによるものではない。リターンをリスク補償と「アルファ」に分解すると、より高いリスク調整後リターンを得ることなく、場合によってはより低いリスク調整後リターンを得ることなく、より高いPEリターンを得るプランがあることが分かる。</p>
+        <p class="abstract-text en">We evaluate private equity (PE) performance using investor-specific stochastic discount factors, and examine whether investors could benefit from changing their allocation to PE. Plans invest in PE funds with higher average risk-adjusted performance. This is mainly due to access to successful PE managers, not superior selection skill. Decomposing returns into risk-compensation and "alpha", we find that some plans obtain higher PE returns by taking more risk without earning higher, and in some cases earning lower, risk-adjusted returns, broadly consistent with agency problems within plans.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Democratizing Private Markets: Private Equity Performance of Individual Investors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Cynthia Balloch (London School of Economics and Political Science), Federico Mainardi (University of Chicago), Sangmin Simon Oh (Columbia University), Petra Vokata (Ohio State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1012368" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国の富裕世帯に関する新たなデータを用いて、個人投資家によるプライベート・エクイティ投資について初めて体系的な研究を行った。逆選択の懸念に反して、個人投資家によるプライベート・エクイティ投資は機関投資家と同様のパフォーマンスを示し、公開市場をアウトパフォームすることが分かった。我々は、個人投資家がプライベート・エクイティに投資することを可能にする3つのイノベーションを明らかにした：最低投資金額が低いファンドの普及、アドバイザーを介した資金プール、アドバイザーのネットワークを活用したファンド・マネージャーへのアクセスである。我々の調査結果は、アドバイザーとプライベート・エクイティ・ファンドへのアクセスが、家計のポートフォリオ・リターンをいかに向上させるかを実証している。</p>
+        <p class="abstract-text en">Using new data on wealthy U.S. households, we provide the first systematic study of private equity investments by individual investors. Contrary to concerns about adverse selection, we find that private equity investments by individual investors perform similarly to those of institutions and outperform public markets. We identify three innovations that enable individuals to invest in private equity: the proliferation of funds with low minimum commitments, pooling capital via advisors, and leveraging advisors’ networks to access fund managers. Our findings demonstrate how advisors and access to private equity funds can enhance household portfolio returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Risk-Adjusting the Returns to Private Debt Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Isil Erel (Ohio State University), Thomas Flanagan (Ohio State University), Michael Weisbach (Ohio State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=1023316" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">プライベート・デット・ファンドは、プライベート・キャピタル市場で最も急成長している分野である。我々は、キャッシュフロー・ベースの手法を適用して、リスク・プロファイルを模倣した複製ポートフォリオを形成し、そのリスク調整後リターンを評価する。エクイティとデットの両要因を考慮すると、典型的なプライベート・デット・ファンドは、投資家に対して取るに足らない異常リターンを生み出している。しかし、グロス・オブ・フィーの異常リターンはプラスであり、デット・ベンチマークのみを使用した場合も、ファンドがエクイティ・リスクを含むため、プラスの異常リターンにつながる。プライベート・デット・ファンドの貸出金利は、ファンドの手数料とリスクを相殺するのに十分高いが、手数料と投資家のリスク調整後要求収益率の両方を上回るほど高くないようである。</p>
+        <p class="abstract-text en">Private debt funds are the fastest growing segment of the private capital market. We evaluate their risk-adjusted returns, applying cash-flow-based methods to form a replicating portfolio that mimics their risk profiles. Accounting for both equity and debt factors, a typical private debt fund produces an insignificant abnormal return to its investors. However, gross-of-fee abnormal returns are positive, and using only debt benchmarks also leads to positive abnormal returns as funds contain equity risks. The rates at which private debt funds lend appear to be high enough to offset the funds’ fees and risks, but not high enough to exceed both their fees and investors' risk-adjusted required rates of return.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

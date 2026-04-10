@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Dynamics, Volatility, Tail Risk</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link active">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Return Dynamics, Volatility, Tail Risk</h1>        <div class="paper-card">
+            <div class="paper-title">Creative Destruction, Stock Return Volatility, and the Number of Listed Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sohnke Bartram (University of Warwick), Gregory Brown (University of North Carolina-Chapel Hill), Rene Stulz (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=141428" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">平均的な特異的ボラティリティと企業の特異的ボラティリティは、上場企業数が多いほど上昇する。業界の平均的な特質的ボラティリティは、その業界の上場企業数が増加するにつれて上昇する。我々は、特異的ボラティリティと上場企業数の関係を、シュンペーター的創造的破壊によって説明する。シュンペーター的創造的破壊は、上場企業数が増加するにつれて増加することを示す。しかし、非上場企業数が特異変動性に与える影響については、全体でも産業レベルでも一貫した証拠はなく、上場企業が経済のダイナミズムにおいて独自の役割を果たしていることが示唆される。</p>
+        <p class="abstract-text en">Average idiosyncratic volatility and firm idiosyncratic volatility increase with the number of listed firms. Average industry idiosyncratic volatility increases with the number of listed firms in the industry. We explain the relation between idiosyncratic volatility and the number of listed firms through Schumpeterian creative destruction. We show that Schumpeterian creative destruction increases as the number of listed firms increases. However, there is no consistent evidence of an incremental effect of the number of non-listed firms on idiosyncratic volatility either in the aggregate or at the industry level, suggesting that listed firms play a unique role in the dynamism of the economy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Equity Premium Events</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ben Knox (Federal Reserve Board), Mehrdad Samadi (Rutgers University), Juan m. Londono (Federal Reserve Board), Annette Vissing-Jorgensen (Federal Reserve Board)</div>
+            <a href="https://afajof.org/management/viewp.php?n=151844" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、どの日が「エクイティ・プレミアム・イベント」、すなわち日次の株式期間構造に比してエクイティ・プレミアムが著しく上昇するイベントであるかを決定する手法を開発した。そのために、最近入手可能な日次のS&P 500オプションの満期と、オプションの事前インプライド・エク イティ・プレミアムのフォワード・アナログを使用する。データ主導のアプローチを用い、どのようなイベントであるかにこだわることなく、有意にプライシングされるイベントを特定する。様々な個別イベントが株式プレミアムの有意な上昇と関連している。マクロ経済リリースの中では、FOMC、消費者物価指数、非農業部門雇用者数が最大の異常エクイティ・プレミアで、2022年6月から2023年6月にかけて大幅に上昇する。しかし、マクロ経済指標の発表日に上昇したエクイティ・プレミアが期待リターン全体に占める割合は、実現超過リターンを用いた過去の推計と比較するとかなり小さい。政治イベントは、本サンプルで最大のエクイティ・プレミアムの日のいくつかを説明するが、その頻度が低いため、エクイティ・プレミアム全体への寄与は小さい。発表の種類や時間によってエクイティ・プレミアムが大きく異なることを理解するために、あるマクロ経済指標の発表に対するエクイティ・プレミアムを、ニュースの分散と、発表されたニュースに対する株式市場とSDFの感応度に起因する構成要素に分解する資産価格の枠組みを提案する。</p>
+        <p class="abstract-text en">We develop a methodology to determine which days are ``equity premium events'': events with significantly elevated equity premia relative to the daily equity term structure. To do so, we use recently available daily S&P 500 option expirations and forward analogs of option-implied ex ante measures of the equity premium. We use a data-driven approach to identify events that are significantly priced without taking a stance on what those events are. A variety of individual events are associated with significantly elevated equity premia. Among macroeconomic releases, FOMC, CPI, and nonfarm payrolls have the largest abnormal equity premia, which increase substantially between June 2022 and June 2023. However, the elevated equity premia on macroeconomic release days account for a significantly smaller share of total expected returns compared to previous estimates using realized excess returns. Political events explain some of the largest equity premium days in our sample, but they contribute less to total equity premium due to their lower frequency. To provide intuition for the significant variation in equity premia across announcement types and time, we propose an asset pricing framework that decomposes the equity premium for a given macroeconomic release into components due to news variance and the sensitivities of the stock market and the SDF to the news released.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Parameter Learning, Tail Risks, and Risk Premia Decomposition</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mykola Babiak (Lancaster University), Roman Kozhan (University of Warwick)</div>
+            <a href="https://afajof.org/management/viewp.php?n=172256" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">市場リターンの状態空間におけるエクイティ・プレミアムと分散プレミアムの分解を検証する。経験的には、低いが悲惨でないリターンが両リスク・プレミアムの主要な要因である一方、レフト・テール・リターンが分散プレミアムにより強い影響を与えることを示す。理論的には、2状態レジーム・スイッチング生産性成長における不確実な移行確率を持つ生産経済を提案する。パラメータの不確実性を合理的にプライシングすることは、インデックス・オプション価格、株式リターン、分散、マクロ経済量の顕著な特徴を同時に捉えながら、新しい分解を説明するために極めて重要である。直観的には、信念の合理的な価格付けはショックの影響を増幅し、経済に物理的なテールリスクを発生させる。</p>
+        <p class="abstract-text en">We examine the decomposition of equity and variance premiums on the state space of market returns. Empirically, we show that low but non-disastrous returns are the primary drivers of both risk premia, while left-tail returns have a stronger influence on the variance premium. Theoretically, we propose a production economy with uncertain transition probabilities in two-state regime-switching productivity growth. Rationally pricing parameter uncertainty is crucial for explaining novel decompositions while simultaneously capturing salient features of index option prices, equity returns, variance, and macroeconomic quantities. Intuitively, rational pricing of beliefs amplifies the impact of shocks, generating physical tail risks in the economy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Seeking Gamma: Lessons from the Meme Frenzy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gulnara Zaynutdinova (West Virginia University), Cuyler Strong (Wayne State University), Ahmed Baig (Boise State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=183232" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2021年1月、ゲームストップ（GME）の株価は劇的な急騰を見せ、数週間のうちに約20ドルから500ドル超まで上昇した。この出来事は「ミーム熱狂」と呼ばれ、メディアの大きな注目を集め、規制当局の監視の対象となり、空売りやオプション取引を含む市場構造や慣行に関する激しい議論を巻き起こした。当初は、空売り筋がポジションをカバーするために殺到する「ショート・スクイーズ」と説明されたが、証券取引委員会（SEC）は、ほとんどの空売りポジションが決済された後も価格の上昇が持続していることを観察し、この説明に疑問を呈した。
+
+オプション取引の増加により、マーケットメーカーがデルタヘッジ目的で株を買わざるを得なくなり、価格上昇が持続するという「ガンマ・スクイーズ」という別の説明も提案された。しかし、SECの評価では、プット・オプションの取引量が増加し、マーケット・メーカーがコール・オプションを買うよりもコール・オプションを買っていることを指摘し、ガンマ・スクイーズの説明を否定した。重要なのは、SECの分析がデータの制約から2021年1月のみに焦点を当て、それ以前の期間はほとんど調査されていないことです。
+
+本研究は、GameStop やその他のミーム銘柄におけるガンマ・スクイーズ のダイナミクスが、2020 年秋というかなり早い時期に出現していたことを 示す新たな実証的証拠を提供することで、この見落としに対処するものである。OptionMetrics と CRSP の 2019 年から 2023 年までの包括的なデータを用いて、ガンマ・スクイーズを体系的に識別するための、頑健で定量的な指標-ネット・デルタ・ボリュームとネット・デルタ・オープン・インタレスト-を開発し、紹介する。我々の発見は、これらのスクイーズが2021年1月の熱狂のはるか前にミーム銘柄で発生し、より広範な銘柄群に共通していたことを確認した。
+
+ミーム銘柄にとどまらず、米国株式全体で 641 件のガンマ・スクイーズを体系的に特定し、定量化しました。その結果、ガンマ・スクイーズが発生した翌月の平均累積異常リターン は 5%を超えるなど、経済的に意味のある影響が確認された。さらに、ガンマ・スクイーズは短期ボラティリティの上昇にも寄与す るものの、ビッド・アスク・スプレッドの縮小に反映されるように、一般的に市 場の質を高めることが分かった。
+
+本稿は、ガンマ・スクイーズの定義を明確にし、正確な指標（ネット・デルタ・ ボリュームとネット・デルタ・オープン・インタレスト）を開発し、ガンマ・スクイーズ の広範な市場普及と影響を定量化することで、この文献に大きく貢献し ています。我々の発見は、規制当局、市場の実務家、そしてオプションに起因する市場の歪みの意味を理解し、それに対処しようとする学者にとって極めて重要な洞察を提供するものである。</p>
+        <p class="abstract-text en">In January 2021, GameStop (GME) experienced a dramatic surge in share price, rising from approximately $20 to over $500 within weeks. This event, labeled the 'meme frenzy,' attracted significant media attention, regulatory scrutiny, and sparked intense debates about market structure and practices, including short selling and options trading. While initially explained as a 'short squeeze,' wherein short sellers rush to cover positions, the Securities and Exchange Commission (SEC) questioned this narrative, observing sustained price elevations even after most short positions had closed.
+
+An alternative explanation proposed was a 'gamma squeeze,' driven by increased options trading that forces market makers to buy shares for delta-hedging purposes, thus perpetuating price rises. However, the SEC's assessment discounted the gamma squeeze explanation, citing higher volumes of put options and noting market makers buying rather than writing call options. Crucially, the SEC's analysis focused solely on January 2021, constrained by data limitations, leaving earlier periods largely unexplored.
+
+This study addresses this oversight by providing new empirical evidence demonstrating that gamma squeeze dynamics in GameStop and other meme stocks emerged significantly earlier, as early as Fall 2020. Using comprehensive data from OptionMetrics and CRSP covering 2019-2023, we develop and introduce robust, quantitative metrics—Net Delta Volume and Net Delta Open Interest—to systematically identify gamma squeezes. Our findings confirm that these squeezes occurred in meme stocks well before the January 2021 frenzy and were common across a broader set of stocks.
+
+Extending beyond meme stocks, we systematically identify and quantify 641 gamma squeeze events across U.S. equities. Our results indicate economically meaningful impacts, with an average cumulative abnormal return of over 5% in the month following the initiation of a gamma squeeze. Furthermore, we find that gamma squeezes generally enhance market quality, reflected by tighter bid-ask spreads, though they also contribute to heightened short-term volatility.
+
+This paper contributes significantly to the literature by clearly defining gamma squeezes, developing precise metrics (Net Delta Volume and Net Delta Open Interest), and quantifying their broader market prevalence and effects. Our findings offer crucial insights for regulators, market practitioners, and academics seeking to understand and address the implications of option-driven market distortions.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

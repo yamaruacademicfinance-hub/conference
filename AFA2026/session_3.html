@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Income</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link active">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Fixed Income</h1>        <div class="paper-card">
+            <div class="paper-title">The Pre-FOMC Drift and the Secular Decline in Long-Term Interest Rates</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jun Pan (Shanghai Jiao Tong University), Qing Peng (Shanghai Jiao Tong University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=156548" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">FOMC発表前日の米国長期国債のリターンはプラスで有意であった。
+FOMC発表前日の米国長期国債のリターンがプラスであったことを記録した。
+プレミアムに起因する。ほとんどがFOMC発表当日に実現する米国株式のFOMC前ドリフトとは異なり、長期債のFOMC前ドリフトはより早い時期に発生する。FOMC発表前日の10年債利回りは0.68bpsの大幅な低下となり、Hillenbrand (2021)によって記録された金利の経年的低下に大きく寄与している。これは、FOMC前の長期債のプライシングが、目標金利に関する金融政策の決定ではなく、リスク・プレミアム・チャネルによって支配されていることを示している。Fisherら(2022)の事前予測マクロ注目指数(MAI)を用いて、FOMC前の不確実性の高まりをさらに捉える。失業率に関する中央値以上のMAIを条件とすると、FOMC前の10年物利回りの低下は1.50bpsと大幅に増加し、その後のFOMC前の株式のドリフトを予測する。さらに、FOMC前の10年債利回りの低下とFOMC委員会における反対意見の比率との間に強い正の関係があることを発見した。</p>
+        <p class="abstract-text en">We document positive and significant returns on long-term U.S. Treasury bonds on
+the day before the FOMC announcements and attribute this pre-FOMC drift to the
+premium for heightened uncertainty. Unlike the pre-FOMC drift in U.S. equity, which is realized mostly on the day of the FOMC announcement, the pre-FOMC drift in long-term bond occurs earlier. On the day before the FOMC announcement, the 10-year bond yield drops by a significant 0.68 bps and contributes importantly to the secular decline in interest rates documented by Hillenbrand (2021). Unique to the day before the FOMC is a severe disconnect between the long- and short-term yields – an indication that the pre-FOMC pricing of long-term bonds is dominated by the risk-premium channel, not the monetary-policy decision on the target rate. We further capture the pre-FOMC heightened uncertainty using the ex-ante Macro Attention Index (MAI) of Fisher et al. (2022). Conditioning on above-median MAI on unemployment rates, the pre-FOMC reduction in 10-year yield increase significantly to 1.50 bps and is predictive of the subsequent pre-FOMC drift in equity. We further find a strong and positive relation between the pre-FOMC reduction in 10-year yield and the ratio of dissent among the FOMC committee.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy the Yield Curve and the Repo Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ruggero Jappelli (University of Warwick), Loriana Pelizzon (Goethe University Frankfurt), Marti Subrahmanyam (New York University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=152908" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、イールド・カーブとレポ市場を統合したモデルを提案する。このモデルでは、債券は投資機会として、またローンの担保として機能する。プリファード・ハビタット投資家と裁定者は、レポ市場において、下向きの債券需要と上向きの担保供給を生み出す。
+イールド・カーブに関するこれまでの文献は、マネー市場を一意的で外生的なショート金利の確率的挙動によって要約している。このような制約は、需要と供給の力が債券市場における価格と、担保付きマネー市場における債券に関連するレポ金利の両方に影響を与えるという認識の高まりとは相反するものである。本稿は、この文献のギャップを埋める最初の試みである。
+このモデルは、裁定者のレポ市場における需要を内生化することによって、2つの重要な結果を生み出す。これにより、優先居住地投資家からの債券需要に対応することが可能となる。
+第一に、レポ市場での借入コストが相対的に高い債券の存在が裁定取引を制限し、その結果、債券需要が確率的割引係数やイールド・カーブの傾きに与える影響を抑制することを示す。第二に、相対的に借入コストの高い債券の存在は、同一のキャッシュフローを持つ債券間に相対的な価格異常を生じさせる。量的政策の文脈では、これら2つの効果により、デュレーション抽出チャネルは弱くなり、資産購入の局所的供給効果は強くなる。このように、本稿は量的政策のデュレーション抽出効果とローカルな供給効果の間の一般的なトレードオフを明らかにしている。
+取引される資産と経済主体は両市場において同じであるため、学者や政策立案者は債券市場とレポ市場を組み合わせて考えるべきである。</p>
+        <p class="abstract-text en">In this paper, we propose a model that integrates the yield curve with the repo market, in which bonds serve both as investment opportunities and as collateral for loans. Preferred-habitat investors and arbitrageurs generate downward-sloping demand for bonds and upward-sloping supply of collateral in the repo market. 
+Previous literature on the yield curve summarizes the money market by the stochastic behavior of a unique, exogenous short interest rate. Such a restriction is at odds with the growing recognition that demand and supply forces affect both the prices in the bond market and the repo rates associated with bonds in the secured money market. Our paper is a first attempt to fill this gap in the literature.
+The model generates two key outcomes by endogenizing arbitrageurs' demand in the repo market, which is directly tied to their supply in the cash bond market. This allows them to accommodate the bond demand from preferred-habitat investors.
+First, we show that the presence of bonds that are relatively costly to borrow on the repo market limits the arbitrage activity and thus hinders the transmission of bond demand on the stochastic discount factor and the slope of the yield curve. Second, the presence of relatively costly bonds to borrow creates relative price anomalies between bonds with identical cash flows. In the context of quantitative policies, these two effects result in a weaker duration extraction channel and a stronger local supply effect of asset purchases. Thus, the paper uncovers a general trade-off between the duration extraction and the local supply effects of quantitative policies. 
+Academics and policymakers should consider the bond and the repo markets in combination with each other, since traded assets and economic agents are the same in both markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Upgrading Credit Pricing and Risk Assessment through Embeddings</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xavier Gabaix (Harvard University), Ralph Koijen (University of Chicago), Robert Richmond (New York University), Motohiro Yogo (Princeton University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=178780" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">信用格付は債券市場の中心的存在であり、投資信託のベンチマークや保険会社のリスクベース資本規制を定義している。信用格付は企業信用スプレッドの変動の大部分を説明しているが、企業間の変動は驚くほど大きい。資産価格理論では、均衡債券価格は信用格付だけでなく、投資家がポートフォリオを形成するために利用するすべての情報に依存する。我々は、投資信託や保険会社が保有する米国社債から、企業エンベッディングと呼ばれるこの情報の高次元表現を抽出した。大まかな信用格付けカテゴリー内では、会社エンベッディングは信用スプレッドと信用スプレッドのボラティリティを、信用格付けやデフォルトまでの距離よりもよく説明する。したがって、ファーム・エンベッディングは、債券市場によりタイムリーで正確な情報を提供するために、信用格付を補強する（そして最終的には信用格付に取って代わる）ことができる。格付けシステムの改善が保険会社のリスクベース資本規制に与える潜在的な影響について説明する。</p>
+        <p class="abstract-text en">Credit ratings are central in fixed income markets, defining mutual fund benchmarks and risk-based capital regulation of insurance companies. Credit ratings explain a large share of the variation in corporate credit spreads, but a surprising amount of variation remains across firms. Asset pricing theory implies that equilibrium bond prices depend not only on credit ratings but all information that investors use to form their portfolios. We extract a high dimensional representation of this information, called firm embeddings, from US corporate bond holdings of mutual funds and insurance companies. Within broad credit rating categories, firm embeddings explain credit spreads and the volatility of credit spreads better than credit ratings and the distance to default. Therefore, firm embeddings can augment (and eventually replace) credit ratings to provide more timely and accurate information for fixed income markets. We illustrate the potential impact of an improved rating system on the risk-based capital regulation of insurance companies.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A Preferred-Habitat Model with a Corporate Sector</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Filippo Cavaleri (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=174356" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">国債と社債の利回りの期間構造モデルにおいて、金利リスク、信用リスク、債券量の相互作用を研究している。理論の中核は、債券ポートフォリオを通じた信用リスクプレミアとデュレーションリスクプレミアとの間の内生的な関係である。デフォルト確率へのショックは、金利リスク価格への影響を通じて国債利回りに伝播する。信用リスク・プレミアの金利依存性は、金融政策の長期国債利回りと企業利回りへの伝達の強さに影響する。信用リスク・プレミアとデュレーション・リスク・プレミアは、デフォルト率の上昇が信用スプレッドに与える影響を増幅する。国債供給量の減少は、安全チャネルを通じて信用リスクの価格を上昇させることで、企業利回りに悪影響を与える可能性がある。量的緩和の影響は非対称であり、どの資産を購入するかによって異なる。</p>
+        <p class="abstract-text en">I study the interplay of interest rate risk, credit risk, and bond quantities in a term structure model of Treasury and corporate bond yields. The core of the theory is an endogenous connection between credit and duration risk premia through bond portfolios. Shocks to default probabilities propagate to Treasury yields through their impact on the price of interest rate risk. The dependence of credit risk premia on interest rates affects the strength of monetary policy transmission to both long term Treasury and corporate yields. The credit and the duration risk premia amplify the effect of an in- crease in default rates on credit spreads. A decline in Treasury supply can adversely impact corporate yields by raising the price of credit risk through a safety channel. The impact of quantitative easing is asymmetric and depends on which assets are purchased.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

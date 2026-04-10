@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Risk Management</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link active">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Corporate Risk Management</h1>        <div class="paper-card">
+            <div class="paper-title">Corporate Hedging, Contract Rights, and Basis Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yuri Tserlukevich (Arizona State University), Ilona Babenko (Arizona State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=164136" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ヘッジ契約は、信用格下げ、契約条項違反、倒産など、企業の債務不履行が発生した場合、カウンターパーティが解除することができる。この権利はしばしば行使される。我々のモデルは、解約権はヘッジ・コストを削減するものの、解約権を行使する取引相手が企業に課される外部性を考慮しないため、企業価値を低下させる可能性があることを示している。その結果、企業は、特に高い倒産コストに直面している場合にはヘッジを減らし、清算に入る可能性が高くなる。詳細なヘッジ・データを用いて、モデルの予測を確認し、金融危機の際にヘッジが少ないことの説明を行う。</p>
+        <p class="abstract-text en">A hedging contract can be terminated by a counterparty following a firm's event of default, such as a credit downgrade, covenant violation, or bankruptcy. This right is often exercised. Our model shows that although the termination right reduces hedging costs, it can reduce firm value because the counterparty exercising it does not consider the externality imposed on the firm. Consequently, firms hedge less, especially when facing high bankruptcy costs, and are more likely to enter liquidation. Using detailed hedging data, we confirm the model's predictions and provide an explanation for low hedging during financial distress.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Leasing as a Corporate Risk Management Mechanism</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Weiwei Hu (Peking University), Kai Li (Peking University), Chenjie Xu (Shanghai University of Finance and Economics)</div>
+            <a href="https://afajof.org/management/viewp.php?n=175532" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、従来の資金調達の役割を超えて、企業のリスク管理の重要なメカニズムとしてリースを取り上げる。
+の重要なリスク管理メカニズムであることを明らかにする。
+資金的に制約のある企業は、担保競争により、しばしば資金調達とヘッジのトレードオフに直面する。
+担保競争によるトレードオフに直面することが多い。
+企業リスク管理のパラドックス」と呼ばれる課題である（Rampini and Viswanathan, 2010, 2013）。リース契約は、貸手が債権者と保険提供者の両方の役割を
+リース契約は、貸手が債権者と保険提供者の両方の役割を果たすため、より担保効率の高いヘッジ・ソリューションを提供する。
+この点は、これまでの文献では見過ごされてきた。我々は、ダイナミック
+エージェンシー・ベースのモデルを構築し、資金調達とヘッジにおけるリースの二重の役割を探る。使用方法
+準自然実験として、米国の反キャラクタリゼーション法の時差的実施を用いている。
+を準自然的な実験として用い、資本価値の変動が大きく、したがってヘッジの必要性が強い企業ほど、資金調達条件が改善した場合でもリースを行う傾向が強いことを実証的に示した。
+この証拠は、我々の理論的枠組みを強く支持するものである。この証拠は、我々の理論的枠組みを強く支持している。</p>
+        <p class="abstract-text en">This paper highlights leasing as a key corporate risk management mechanism
+for hedging capital valuation risks, extending beyond its traditional financing role.
+Financially constrained firms often face a trade-off between financing and hedging
+due to collateral competition, a challenge known as the ”corporate risk management
+paradox” (Rampini and Viswanathan, 2010, 2013). Leasing contracts, where the lessor
+serves as both creditor and insurance provider, offer a more collateral-efficient hedging
+solution—an aspect previously overlooked in the literature. We develop a dynamic
+agency-based model to explore leasing’s dual role in financing and hedging. Using
+the staggered implementation of U.S. anti-recharacterization laws as a quasi-natural
+experiment, our empirical findings show that firms with greater capital value volatil�ity—and thus stronger hedging needs—are more likely to lease, even when financing
+conditions improve. This evidence strongly supports our theoretical framework.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Firms Hedge Human Capital?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Christina Brinkmann (Boston University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=166460" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、企業特有の人的資本への依存によって引き起こされる企業の労働力ため込みが、他の事業リスクのヘッジにどのように影響するかを研究している。ドイツの短時間労働に関する行政データを活用し、マッチングされた雇用者-被雇用者データおよび企業の財務情報と組み合わせて、企業レベルのため込み労働の尺度を開発した。需要の不確実性と、コストをかけてヘッジできる無関係な価格リスクをめぐる不確実性を特徴とする定型化されたモデルにおいて、仮説に基づくリスク・トレードオフを定式化する。経験的には、労働力をため込んでいる企業は、キャッシュフロー（CF）と需要の変動との間に大きなコモブメントを示し、ため込まれた労働力が生産能力の増加として機能することのアップサイドの可能性を示している。しかし、労働力のため込みは、CF全体のボラティリティの上昇には結びつかない。代わりに、特定の価格リスクの1つである外国為替（FX）リスクの低減に結びつく。FXリスクは、特に、モデルによって示唆された労働力溜め込みの原動力である特異的需要リスクと企業固有の人的資本への依存に敏感な、小規模でグローバルな輸出企業にとって、CFのボラティリティに大きく寄与する可能性がある。労働力の買いだめを企業固有の人的資本のプロキシで計測したところ、企業は労働力の買いだめが大きいほど為替リスクをヘッジすることがわかった。これらの結果は、労働市場の硬直性と制度との関連において、企業がリスクを引き受ける意思について新たな視点を提供するものである。</p>
+        <p class="abstract-text en">I study how firms' labor hoarding, driven by their reliance on firm-specific human capital, affects their hedging of other business risks. Leveraging German administrative data on short-time work, combined with matched employer-employee data and firm financial information, I develop a firm-level measure of hoarded labor. I formalize the hypothesized risk trade-off in a stylized model featuring demand uncertainty and uncertainty around an unrelated price risk that can be hedged at a cost. Empirically, labor-hoarding firms exhibit larger comovements of their cash flows (CF) with demand fluctuations, illustrating the upside potential of hoarded labor functioning as a capacity increase. However, labor hoarding is not linked to higher overall CF volatility; instead, it is linked to reduced foreign-exchange (FX) risk as one specific price risk. FX risk can substantially contribute to CF volatility, especially for smaller, globally exporting firms that are sensitive to the driving forces of labor hoarding suggested by the model: idiosyncratic demand risk and reliance on firm-specific human capital. I instrument hoarded labor with proxies for firm-specific human capital and find that firms hedge their FX risk more in response to greater labor hoarding. These findings offer a new perspective on firms' willingness to assume risk in the context of labor market rigidities and institutions.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetary and Fiscal Shocks</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link active">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Monetary and Fiscal Shocks</h1>        <div class="paper-card">
+            <div class="paper-title">The Fed and the Wall Street Put</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jan Harren (University of Münster), Mete Kilic (University of Southern California), Zhao Zhang (International Monetary Fund)</div>
+            <a href="https://afajof.org/management/viewp.php?n=147448" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">S&P500指数オプション市場における連邦公開市場委員会（FOMC）発表前後の金融仲介者の取引行動について、日中データを用いて研究する。プロプライエタリー・トレーディング会社は、FOMCの日には、他の日とは対照的にオプションのネット売り手であり、その取引活動は発表のかなり前の午前中に集中している。  自己勘定取引会社による午前中のオプション売りが大きければ大きいほど、その日の後半により緩和的な金融政策ショックと、その後の政策発表後のオプション価格の下落が予測され、午前中の取引が利益を生むことになる。金融政策ショックを3つの要素に分解し、これらの結果に対する潜在的な説明を評価する。我々の分析は、一部の金融機関が、FRBが予測する将 来の政策行動に関する情報優位性を保持している可能性を 示唆している。</p>
+        <p class="abstract-text en">We study the trading behavior of financial intermediaries around Federal Open Market Committee (FOMC) announcements in the S&P 500 index options market using intraday data. Proprietary trading firms are net sellers of options on FOMC days, in contrast to other days, with their trading activity concentrated in the morning, well before the  announcement.  Larger option sales by proprietary trading firms in the morning  predict both a more accommodative monetary policy shock later in the day and a subsequent decline in option prices after the policy announcement, rendering morning trades profitable. We decompose monetary policy shocks into three components and evaluate potential explanations for these findings. Our analyses suggest that some financial institutions may hold an informational advantage regarding the Fed’s projected future policy actions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Effects of Monetary Policy on Macroeconomic Expectations: High-Frequency Evidence from Traded Event Contracts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Renxuan Wang (China Europe International Business School), Yanbin Wu (University of Florida), Eric Swanson (University of California-Irvine)</div>
+            <a href="https://afajof.org/management/viewp.php?n=171024" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米連邦準備制度理事会（FRB）が利上げを行った場合、標準的なマクロ経済モデルやVARは、生産高、雇用、インフレ率が今後数四半期にわたって低下すると予測する。  しかし、月次頻度の専門的なマクロ経済予測データは、こうしたイベントに対してポジティブな反応を示すことが多く、こうした不可解な反応を説明するものは何かという議論につながっている。  われわれは、CFTCの認可を受けた米国のイベント取引所および予測市場であるKalshiで取引されているマクロ経済イベント契約から、この疑問に関する新しい高頻度データを入手した。  これらの高頻度イベント契約によって、Kalshi市場が示唆するマクロ経済期待に対する金融政策やその他のアナウンスの影響を分離し、推定することができる。  我々の結果は、金融政策からマクロ経済への標準的な伝達経路と一致しており、「Fed情報効果」の役割はほとんどない。</p>
+        <p class="abstract-text en">When the Federal Reserve raises interest rates, standard macroeconomic models and VARs predict that output, employment, and inflation should fall over the next several quarters.  However, monthly-frequency professional macroeconomic forecast data often respond positively to these events, leading to a debate about what could explain these puzzling responses.  We bring to bear new high-frequency data on this question from macroeconomic event contracts traded on Kalshi, a CFTC-licensed, U.S.-based event trading exchange and prediction market.  These high-frequency event contracts allow us to isolate and estimate the effects of monetary policy and other announcements on the Kalshi market-implied macroeconomic expectations.  Our results are consistent with standard transmission channels from monetary policy to the macroeconomy, with little or no role for a ``Fed Information Effect''.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Effect of Fiscal Policy Shocks on Asset Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Courtney Wiegand (New York University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=171388" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">財政政策は重要な政策手段として台頭してきたが、金融政策に比べてよく理解されていない。  その理由の一つは、高頻度の財政政策ショックがないことである。  本稿では、そのようなショックを構築し、資産価格への影響を分析する。  毎年、議会は予算決議プロセスを通じて、強制力のある、将来を見据えた財政赤字目標を設定する。  このプロセスが展開される過程で財政赤字目標が変更されるのを追跡することで、投資家が受け取る財政赤字ニュースの日付と規模を特定する。これらのニュース・ショックはマクロ経済ニュースや専門家の予測からは予測できないが、実現した財政赤字と予測修正を予測する。財政政策ショックは期間構造全体にわたって利回りに影響を与え ることが分かる。累積赤字対GDP比を5年間で1％上昇させるニュースショッ クは、2年物利回りを2bps、10年物利回りを2.3bps上昇させる。  ショックの3分の2は実質利回りに、3分の1はブレーク・イーブン・インフレ 率に影響を与える。  赤字国債のニュース・ショックは推定ターム・プレミアムを増加させ、国債利便性利回りを低下させるが、これは赤字国債の増加が国債のリスクを高め、その特別性を低下させることを示唆している。株式市場への影響は、割引率効果とキャッシュフローニュース効果の組み合わせである。  金融政策がゼロ下限の制約を受けると、キャッシュフロー・ニュース効果が支配的になり、株式市場は上昇する。  クロス・セクションでは、成長に敏感な産業が有意にポジティブな反応を示している。  これらの結果は、金融政策の制約がない場合には、金融政策によって相殺される比較的緩やかな成長チャネル（財政乗数）を示唆している。</p>
+        <p class="abstract-text en">Fiscal policy has emerged as an important policy lever, but is less well understood than monetary policy.  One reason is the lack of high-frequency fiscal policy shocks.  In this paper, I construct such shocks and analyze their effects on asset prices.  Each year, Congress sets enforceable, forward-looking deficit targets through the budget resolution process.  By tracking innovations in these targets as the process unfolds, I identify the dates and magnitudes of deficit news that investors receive. These news shocks are unpredictable by macroeconomic news and professional forecasts, yet they predict realized deficits and forecast revisions. I find that fiscal policy shocks impact yields across the term structure; A news shock that increases the cumulative deficit-to-GDP ratio by 1% over 5 years raises 2-year yields by 2 bps and 10-year yields by 2.3 bps.  Two-thirds of the response is on real yields and one-third on breakeven inflation.  Deficit news shocks also increase the estimated term premium and reduce the Treasury convenience yield, suggesting that higher deficits make Treasuries riskier and reduce their specialness. The impact on the stock market is a combination of a discount rate effect and a cash flow news effect.  When monetary policy is constrained by the zero lower bound, the cash flow news effect dominates and the stock market rises.  In the cross section, growth-sensitive industries exhibit significantly positive responses.  These findings point to a relatively moderate growth channel (a fiscal multiplier) that is offset by monetary policy when not constrained.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

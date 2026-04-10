@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equity Issuance and Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link active">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link ">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Equity Issuance and Markets</h1>        <div class="paper-card">
+            <div class="paper-title">The Silicon Divide: High-Technology IPOs and the Widening Socioeconomic Gap</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Wenchuan Zhao (University of Oxford)</div>
+            <a href="https://afajof.org/management/viewp.php?n=153048" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ハイテク企業のIPOは、異なるスキルを持つ労働者間の不平等を拡大させ、地域近隣の高級化をもたらす。空間的因果推論と撤退したIPOを反事実として用いることで、現職労働者にはプラスの賃金効果があるが、主に住宅価格と賃料の上昇による低スキル労働者の移動が実証されている。実証分析では、縮小形の証拠と構造推定を組み合わせて、起業活動、流動性ショック、スキルに偏った技術変化という3つの異なるメカニズムを評価する。起業チャネルを支持する証拠は限られているが、流動性ショックとスキルに依存した技術的ショックのチャネルを強く支持している。ベンチャーキャピタルが支援するIPOは、通常、より大きな富の効果を生み出し、より強い厚生格差を生み出す。さらに、IPO本社の近くにある既存企業は、特許の生産量と価値の増加を示しており、知識の波及が大きいことを示唆している。同定上の課題に対処するため、IPOイベントの時差を利用した動的差分検定を採用し、未観測の時間的・空間的ダイナミクスを吸収するために包括的固定効果を導入した。私の同定戦略では、IPO効果を根本的な立地選好から分離するために、撤退したIPO発行者を反事実として用いている。ハイテクIPOによってもたらされた過剰流動性と集積の両方が差異に寄与している。さらに、離散選択空間均衡モデルを開発し、高スキル労働者と低スキル労働者の厚生変化が乖離し、平均的なIPOが5年後に周辺の高スキル労働者の生産性を21.7％向上させることを実証する。</p>
+        <p class="abstract-text en">High-technology IPOs lead to greater inequality among workers with different skills and gentrification in local neighborhoods. Using spatial causal inference and withdrawn IPOs as counterfactuals, I document positive wage effects for incumbent workers but displacement of low-skilled workers, mainly due to rising housing prices and rents. The empirical analysis combines reduced-form evidence and structural estimation to evaluate three distinct mechanisms: entrepreneurial activity, liquidity shocks, and skill-biased technological changes. While I find limited support for the entrepreneurial channel, the evidence strongly supports both the liquidity and skill-biased technological shock channels. VC-backed IPOs, which typically generate larger wealth effects, produce stronger welfare differentials. Moreover, incumbent firms near IPO headquarters demonstrate increased patent output and value, suggesting substantial knowledge spillovers. To address identification challenges, I employ dynamic difference-in-differences tests, leverage the staggered nature of IPO events, and implement comprehensive fixed effects to absorb unobserved temporal and spatial dynamics. My identification strategy uses withdrawn IPO issuers as counterfactuals to isolate the IPO effect from underlying location preferences. Both excess liquidity and agglomeration brought by high-technology IPOs contribute to the differentials. Further, I develop a discrete-choice spatial equilibrium model that demonstrates that welfare changes diverge for high- and low-skilled workers, with an average IPO increasing the productivity of surrounding high-skilled workers by 21.7% after five years.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The (Going) Public Option: Equity Market Financing in the Hospital Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Cyrus Aghamolla (Rice University), Jash Jain (Indian School of Business), Richard Thakor (University of Minnesota)</div>
+            <a href="https://afajof.org/management/viewp.php?n=155652" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">病院セクターにおける株式公開による資金調達の役割を検証する。病院システムによる株式公開市場への移行は、株式公開後、システムの各病院の収益性、純利益、純患者収入の劇的かつ持続的な増加をもたらすことがわかった。収益性を重視するあまり、医療の質が低下することはなく、むしろ収益の増加は、病院の収容能力と設備の拡張を伴い、より多くの患者を受け入れ、サービスの提供を増やすことを可能にする。  さらに、最近の公的システムは、調達した資本を利用して、すでにシステ ムが所有している病院と地理的に近接した病院の買収を加速させている ことも示している。地域的な市場力が高まることで、保険会社との交渉力が強化され、保険会社はより高い償還率を要求できるようになるため、病院サービスの価格が上昇するのである。 これらの結果は、公的株式市場へのアクセスが医療の状況にどのような影響を与えるかについての理解を深めるものである。</p>
+        <p class="abstract-text en">We examine the role of public equity financing in the hospital sector. We find that the transition to public equity markets by hospital systems leads to dramatic and persistent increases in profitability, net income, and net patient revenues for the system's individual hospitals following the initial public offering. This focus on profitability does not result in a reduction in care quality, but instead the increase in revenues  is accompanied by expansions in both capacity and equipment, allowing hospitals to accommodate more patients and increase service offerings.  The results additionally show that recently public systems use the raised capital to accelerate acquisitions of hospitals located in close geographic proximity to hospitals already owned by the system. The expanded network of the system can help to explain the large observed increase in profits after going public---greater regional market power  enhances the system's bargaining posture with insurers, allowing them to demand higher reimbursement rates, thereby driving up prices for hospital services.	These results improve our understanding of how access to public equity markets influences the healthcare landscape.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy and Corporate Investment: The Equity Financing Channel</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mehdi Beyhaghi (Federal Reserve Board), Murray Frank (University of Minnesota), Ping Mclemore (Federal Reserve Bank of Richmond), Ali Sanati (American University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=183344" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米連邦準備制度理事会（FRB）の管理データを用いて、金融政策ショックに対する公的企業と民間企業の反応に顕著な違いがあることを発見した。予想外の政策金利の上昇を受けて、民間企業は負債、株式、実物資産を減少させる。公的企業は負債を減らすが、その影響を相殺するために株式を増やし、結果として実質資産に変化はない。このように、エクイティの使い方の違いによって、金融政策ショックに対する実質的な反応が分かれることになる。我々は、政策影響の違いを説明するために構造モデルを開発した。このモデルは、民間企業では株式発行コストが高く、公開企業では投資調整コストが高いという組み合わせが、金融政策への反応の違いをもたらしていることを示唆している。</p>
+        <p class="abstract-text en">Using the Federal Reserve administrative data, we find a stark difference between the responses of public and private firms to monetary policy shocks. Following an unexpected rise in the policy interest rate, private firms decrease their debt, equity, and real assets. Public firms decrease their debt, but raise equity to offset the impact, resulting in no change in their real assets. Thus, the difference in the use of equity leads to diverging real responses to monetary policy shocks. We develop a structural model to explain the differences in the policy impacts. The model suggests that the combination of higher equity issuance costs at private firms and greater investment adjustment costs at public firms drives the differences in monetary policy responses.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financing Small Investments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pierre Chaigneau (Queen's University (Kingston), Alex Edmans (London Business School), Daniel Gottlieb (London School of Economics and Political Science)</div>
+            <a href="https://afajof.org/management/viewp.php?n=184016" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ほとんどの資金調達理論では、特に必要資金が小さい場合には、外部からの資金調達は負債の形をとるべきであると予測されている。我々は、標準的なモラルハザードモデルを用いて、リスクを回避する起業家は、十分に低い資金需要を満たすために負債を利用しないことが最適であることを示す。負債による資金調達は、起業家が会社の全リスクを負担することになる。負債による資金調達は、努力インセンティブを最大化する一方で、調達額が小さい場合には、この利益は二次的なものとなる。このことは、資金ニーズが小さい新興企業に対する株式ベースの資金調達の利用を合理化し、発展途上国における非債務型資金調達の利用拡大を示唆している。</p>
+        <p class="abstract-text en">Most financing theories predict that external funding should take the form of debt, especially when the funding requirement is small. We show, in a standard moral hazard model, that a risk-averse entrepreneur will optimally not use debt to meet a sufficiently low funding need. Debt financing causes the entrepreneur to bear the firm's entire risk; while it also maximizes effort incentives, this benefit is second-order if the amount raised is small. This rationalizes the use of equity-based funding for start-ups with small funding needs, and suggests a greater use of non-debt financing in developing countries.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

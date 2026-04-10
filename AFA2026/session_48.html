@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labor Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2026 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Fixed Income</a><a href="session_12.html" class="session-link ">Options and Derivatives</a><a href="session_13.html" class="session-link ">Pricing under Heterogeneous Information and Disagreement</a><a href="session_19.html" class="session-link ">Return Dynamics, Volatility, Tail Risk</a><a href="session_29.html" class="session-link ">Cross-section of Returns</a><a href="session_41.html" class="session-link ">Information Frictions: Cause and Consequence of Mispricing</a><a href="session_44.html" class="session-link ">Characteristics, Risk, and Returns</a><a href="session_49.html" class="session-link ">Preferences, Demand, and Asset Prices</a><a href="session_57.html" class="session-link ">Recent Advances in Asset Pricing: Theory Meets Data</a><a href="session_61.html" class="session-link ">Market Microstructure</a><a href="session_65.html" class="session-link ">Trading, Liquidity & Market Dynamics</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Effects of Corporate Board Mandates</a><a href="session_9.html" class="session-link ">Equity Issuance and Markets</a><a href="session_15.html" class="session-link ">Capital Structure</a><a href="session_16.html" class="session-link ">Corporate Finance and Government Policies in the 21st Century</a><a href="session_22.html" class="session-link ">Decision-making of Entrepreneurs and VCs</a><a href="session_25.html" class="session-link ">New Topics in Corporate Investment</a><a href="session_27.html" class="session-link ">Technological Innovation, Labor Dynamics, and Firm Responses</a><a href="session_32.html" class="session-link ">Private Equity/Private Credit</a><a href="session_34.html" class="session-link ">Who is Monitoring Managers?</a><a href="session_35.html" class="session-link ">Active and Passive Owners: Lending, Asset Prices, and Corporate Policy</a><a href="session_37.html" class="session-link ">Corporate Finance: Theory</a><a href="session_38.html" class="session-link ">Corporate Risk Management</a><a href="session_42.html" class="session-link ">Value Creation by Mergers and Acquisitions</a><a href="session_43.html" class="session-link ">Bankruptcy and Distress</a><a href="session_46.html" class="session-link ">Corporate Governance: Investor Monitoring and Voting</a><a href="session_48.html" class="session-link active">Labor Finance</a><a href="session_51.html" class="session-link ">Corporate Disclosure</a><a href="session_52.html" class="session-link ">Finance and Industrial Organization</a><a href="session_59.html" class="session-link ">Behavioral Corporate Finance: Navigating Complexity in Theory and Practice</a><a href="session_60.html" class="session-link ">Corporate Decisions,  Supply Chains, and Remote Work</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Insurance Shocks</a><a href="session_14.html" class="session-link ">Banking in the 21st Century</a><a href="session_18.html" class="session-link ">Financial Intermediaries During Times of Stress</a><a href="session_21.html" class="session-link ">Asset Management, Portfolio Choice, and Asset Allocation</a><a href="session_26.html" class="session-link ">Regulation of Financial Institutions</a><a href="session_40.html" class="session-link ">Geopolitics of Banking</a><a href="session_56.html" class="session-link ">Mutual Funds: Performance and Flows</a><a href="session_58.html" class="session-link ">Bank Credit Lines</a><a href="session_64.html" class="session-link ">New Perspectives on Banking and Credit</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Real Estate and Housing Finance</a><a href="session_11.html" class="session-link ">New Developments in Household Finance</a><a href="session_17.html" class="session-link ">Drivers of Household Portfolio Choice</a><a href="session_47.html" class="session-link ">Household Financial Products</a><a href="session_62.html" class="session-link ">Mortgage Lock-In (AREUEA-AFA Joint Session)</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Inflation Drivers and Dynamics in Financial Markets</a><a href="session_24.html" class="session-link ">International Finance</a><a href="session_31.html" class="session-link ">Modern International Finance: Technology, Intangibles and the Digital Economy</a><a href="session_50.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_55.html" class="session-link ">Monetary and Fiscal Shocks</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and AI <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Crypto in (Real) Financial Market</a><a href="session_5.html" class="session-link ">Investor Beliefs and Behavior</a><a href="session_7.html" class="session-link ">Behavioral Finance: Predictable Stock Returns</a><a href="session_20.html" class="session-link ">Social Influence and Networks</a><a href="session_28.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_30.html" class="session-link ">Generative AI and Machine Learning</a><a href="session_39.html" class="session-link ">Errors in Financial Decisions of Humans and AI Models</a><a href="session_54.html" class="session-link ">Market Structure of Blockchain and DeFi</a></div><button class="accordion-btn">Climate, Sustainable, and Demographic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Climate Risk, Insurance and Financial Adaptation</a><a href="session_23.html" class="session-link ">Finance and Gender</a><a href="session_33.html" class="session-link ">Sustainable Capital: Investor Preferences and Firm Decisions</a><a href="session_36.html" class="session-link ">Climate Finance</a><a href="session_45.html" class="session-link ">Climate Risk and Asset Pricing</a><a href="session_53.html" class="session-link ">Finance and Race</a><a href="session_63.html" class="session-link ">Nature and Biodiversity Finance</a></div></div><div class="main-content"><h1>Labor Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Thy Bust, My Boom: Micro Evidence on Small Firms' Tech Evolution after Dot Com Bubble Burst</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: John Jianqiu Bai (Northeastern University), Chen Li (University of Massachusetts), Wenting Ma (University of Massachusetts)</div>
+            <a href="https://afajof.org/management/viewp.php?n=147336" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究では、ハイテク企業の大量解雇が非テクノロジー企業に与える影響を調査する。
+米国国勢調査のミクロレベルのデータを用いて、ハイテク企業のレイオフの影響を受けた地域の非テクノロジー企業は、雇用が大幅に増加したことを明らかにした。
+特に従業員数50人未満の小規模企業において顕著であった、
+特に従業員数50人未満の小規模企業で顕著であった。この雇用
+の長期的な収益と生産性の向上につながっている。
+この雇用成長は、離職した高スキル労働者の雇用に成功し、新技術の導入という課題を克服した小規模企業の一部において、長期的な収益と生産性の向上をもたらす。
+新技術の採用という難題を乗り切ることができる。我々の知見は、ハイテク産業における大量解雇が
+ハイテク産業における大量解雇は、労働市場を再構築するだけでなく、非ハイテク産業の中小企業にもプラスの波及効果をもたらすことを示唆している。
+主に技術関連の知識の移転を通じて、非技術系の小規模企業にもプラスの波及効果をもたらすことを示唆している。
+技術関連知識の移転を通じてである。これらの結果は、極めて重要でありながら見過ごされがちな外部性を浮き彫りにしている、
+ハイテク産業の破壊は、伝統的に技術革新や成長の鈍化が指摘されてきた地域においても、技術革新や成長を促す触媒として機能する。
+ハイテクセクターのディスラプションは、従来あまりダイナミックでなかったセクターの技術革新と成長の触媒として機能する。</p>
+        <p class="abstract-text en">This study investigates the impact of mass tech layoffs on non-tech firms.
+Using micro-level data from the U.S. Census, we find that non-tech firms
+in regions affected by tech layoffs experienced significant employment growth,
+particularly among small firms with fewer than 50 employees. This employment
+growth drives long-term gains in revenue and productivity for a subset of
+small firms that successfully hire displaced high-skill workers and navigate
+the challenges of adopting new technologies. Our findings suggest that mass
+layoffs in high-tech industries not only reshape the labor market but also
+generate positive spillover effects for small non-tech firms, primarily through
+the transfer of technology-related knowledge. These results highlight a crucial,
+yet often overlooked, externality: tech sector disruptions can serve as a catalyst
+for technology changes and growth in traditionally less dynamic sectors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Arbitraging Labor Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Minrui Gong (University of Mannheim), Ernst Maug (University of Mannheim), Christoph Schneider (University of Münster)</div>
+            <a href="https://afajof.org/management/viewp.php?n=157444" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、同一国内の複数の場所で事業を展開する企業グループ（BG）やコングロマリットの存在について、新たな理論的根拠を構築する：それは、地域の労働市場を裁定するためである。他の地域にある同じグループの企業が、その地域の労働市場においてより魅力的な従業員へのアクセスを提供できる場合、BG企業の成長はより小さくなることを示す。逆に、BG企業がグループ内の他の企業にそのようなアクセスを提供すれば、BG企業はより速く成長する。魅力は、労働コスト、労働供給、企業と地元労働力との間の労働適合性として測定される。地域の労働条件は、一般的な集積経済と同様に、企業グループ企業の立地決定にとって重要である。BG企業間の従業員の内部流動は、雇用成長率の変動のごく一部を占めるに過ぎない。つまり、企業グループは、雇用を移動させることはあっても、従業員を移動させることはほとんどないのである。このように、企業グループは地域の労働市場を裁定しているのである。</p>
+        <p class="abstract-text en">In this paper we develop a new rationale for the existence of business groups (BGs) and conglomerates that operate in multiple locations within the same country: They arbitrage local labor markets. We show that BG firms grow less if firms of the same group in other locations can offer more attractive access to employees in their local labor market. On the flip side BG firms grow faster if they offer such access to other firms in the group. Attractiveness is measured as labor costs, labor supply, and labor fit between the firm and the local labor force. Local labor conditions are of similar importance for location decisions of business group firms as general agglomeration economies. Internal flows of employees between BG firms account for only a small portion of the variation in employment growth rates. We conclude that business groups predominantly move jobs, but not employees, between their locations. As such, they arbitrage local labor markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Task Efficiency and Signaling in the Age of GenAI: Effort Reallocation and Firm Value Effects</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Shiwei Ye (Erasmus University Rotterdam)</div>
+            <a href="https://afajof.org/management/viewp.php?n=161392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、AIが支援するタスクのコストとシグナリング価値に影響を与えることで、Generative AI（GenAI）がどのように努力配分と企業価値を再形成するかを研究する。米国の上場企業にリンクされたオープンソースプロジェクトの開発者レベルのデータと、GitHub Copilotのローンチをショックとして用い、GenAIがコーディング作業の生産性を向上させる一方で、経験の浅い開発者にとってはそのような作業のシグナリング価値を低下させることを発見した。上級開発者はコーディング作業の効率化の恩恵を受けるが、AIが支援する環境では貢献が見えにくい若手開発者は、より効果的な能力のシグナルとして、より価値の高いプロジェクトを作成する。このようなシグナリング・インセンティブの変化は、プロジェクトや言語の選択、雇用の流動性、昇進率、企業レベルの成果に反映される。AIにさらされた若手イノベーターが多い企業では、新規プロジェクトによる価値創造が大きくなる一方、シニアチームを擁する非イノベーティブ企業では、効率性の向上が見られる。この調査結果は、生産性向上ツールとしてのGenAIの役割と、労働市場のシグナル伝達を再形成する力としてのGenAIの役割の両方について新たな光を当てている。</p>
+        <p class="abstract-text en">In this paper, I study how Generative AI (GenAI) reshapes effort allocation and firm value by influencing the costs and signaling value of AI-assisted tasks. Using developer-level data from open-source projects linked to U.S. public firms and the launch of GitHub Copilot as a shock, I find that GenAI increases productivity in coding tasks but reduces the signaling value of such work for less-established developers. While senior developers benefit from increased efficiency in coding tasks, junior developers, whose contributions are less visible in an AI-assisted environment, create more-valuable projects as a more effective signal of ability. These changes in signaling incentives are reflected in selection of projects and languages, job mobility, promotion rates, and firm-level outcomes. Firms with more junior innovators exposed to AI see greater value creation from new projects, while non-innovative firms with senior teams capture efficiency gains. The findings shed new lights on the dual role of GenAI as both a productivity tool and a force reshaping labor market signaling.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">AI Personality Extraction from Faces: Labor Market Implications</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Marius Guenzel (University of Pennsylvania), Shimon Kogan (Massachusetts Institute of Technology), Marina Niessner (Indiana University), Kelly Shue (Yale University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=142128" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">人的資本（認知スキルと性格特性を含む）は、労働市場で成功するために不可欠であるが、性格の要素を大規模に測定することは依然として困難である。人工知能の進歩と包括的なLinkedInのマイクロデータを活用して、96,000人のMBA卒業生の顔画像から性格特性ビッグ5を抽出し、この斬新な「写真ビッグ5」が学校のランク、報酬、職歴、業界選択、転職、キャリアアップを予測することを実証した。トップクラスのMBAプログラムの管理記録を用いて、フォトビッグ5は、GPAや標準化されたテストの得点のような認知的尺度とはわずかな相関しか示さないが、労働成果については同等の増加した予測力を提供することがわかった。伝統的な調査ベースの性格測定とは異なり、フォトビッグ5は容易にアクセスでき、操作の影響を受けにくい可能性があるため、学術研究や採用プロセスで広く採用するのに適している。しかし、労働市場のスクリーニングに使用する場合、統計的差別や個人の自律性に関する倫理的な懸念が生じる。</p>
+        <p class="abstract-text en">Human capital---encompassing cognitive skills and personality traits---is critical for labor market success, yet the personality component remains difficult to measure at scale. Leveraging advances in artificial intelligence and comprehensive LinkedIn microdata, we extract the Big 5 personality traits from facial images of 96,000 MBA graduates, and demonstrate that this novel ``Photo Big 5'' predicts school rank, compensation, job seniority, industry choice, job transitions, and career advancement. Using administrative records from top-tier MBA programs, we find that the Photo Big 5 exhibits only modest correlations with cognitive measures like GPA and standardized test scores, yet offers comparable incremental predictive power for labor outcomes. Unlike traditional survey-based personality measures, the Photo Big 5 is readily accessible and potentially less susceptible to manipulation, making it suitable for wide adoption in academic research and hiring processes. However, its use in labor market screening raises ethical concerns regarding statistical discrimination and individual autonomy.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

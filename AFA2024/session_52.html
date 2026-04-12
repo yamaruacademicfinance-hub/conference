@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Cross-section of Returns (Conditional)</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link active">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Cross-section of Returns (Conditional)</h1>        <div class="paper-card">
+            <div class="paper-title">Complexity in Factor Pricing Models</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Antoine Didisheim (University of Lausanne and Swiss Finance Institute), Shikun Ke (Yale University), Bryan Kelly (Yale University), Semyon Malamud (Swiss Federal Institute of Technology Lausanne)</div>
+            <a href="https://afajof.org/management/viewp.php?n=14840" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機械学習による資産価格モデルの挙動を理論的に特徴付ける。  SDFシャープレシオと平均プライシング誤差の観点から、期待されるサンプル外モデル性能は、モデルのパラメータ化（または「複雑性」）において向上することを証明する。  我々の結果は、（期待される標本外パフォーマンスにおいて）最良の資産価格モデルは、非常に多くのファクター（訓練オブザベーションまたはベース資産の数より多い）を持つことを予測する。  我々の実証結果は、株式リターンのクロス・セクションにおいて、理論的に予測された「複雑さの美徳」を検証し、最良のモデルは何万もの因子を組み合わせていることを発見した。また、実現可能なHansen-Jagannathan（HJ）境界を導出した：実現可能なポートフォリオ戦略によって達成可能な最大シャープレシオである。実現不可能なHJ境界は、我々が特徴付ける複雑性のくさびにより、達成可能な最大シャープレシオを大幅に過大評価する。</p>
+        <p class="abstract-text en">We theoretically characterize the behavior of machine learning asset pricing models.  We prove that expected out-of-sample model performance -- in terms of SDF Sharpe ratio and average pricing errors -- is improving in model parameterization (or ``complexity'').  Our results predict that the best asset pricing models (in terms of expected out-of-sample performance) have an extremely large number of factors (more than the number of training observations or base assets).  Our empirical findings verify the theoretically predicted ``virtue of complexity'' in the cross-section of stock returns and find that the best model combines tens of thousands of factors. We also derive the feasible Hansen-Jagannathan (HJ) bound: The maximal Sharpe ratio achievable by a feasible portfolio strategy. The infeasible HJ bound massively overstates the achievable maximal Sharpe ratio due to a complexity wedge that we characterize.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Factor Multiverse: The Role of Interest Rates in Factor Return Measurement and Discovery</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jules Van binsbergen (University of Pennsylvania), Liang Ma (San Diego State University), Michael Schwert (AQR Capital Management)</div>
+            <a href="https://afajof.org/management/viewp.php?n=17696" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、デュレーションを一致させた国債戦略を上回るファクター・パフォーマンスを測定する代替的な超過リターンの定義を用いてファクター・ズーを研究している。我々のアプローチは、投資家が固定キャッシュフローのカウンターファクチュアルと比較して、リスクのあるキャッシュフローの流れに投資することで受け取った実現リターンプレミアムを定量化するものである。我々は、これまでの文献で報告されているリターン・プレミアムとは大幅に異なるリターン・プレミアムを文書化した。さらに、我々のアプローチでは、一般的に使用されている資産価格決定要因間の相関構造が大きく異なっている。最後に、発見された153のアノマリーと未発見の1,395の潜在的なアノマリーのサンプルを用いて、我々の超過リターンの定義が異なる資産価格アノマリーを発見したであろうことを発見し、使用した超過リターンの定義とサンプル期間に対するファクター発見プロセスの感応度を浮き彫りにした。</p>
+        <p class="abstract-text en">We study the factor zoo using an alternative excess return definition that measures factor performance in excess of a duration-matched government bond strategy. Our approach quantifies the realized return premium that investors have received for investing in a stream of risky cash flows relative to a fixed cash flow counterfactual. We document substantially different return premia than the ones previously reported in the literature. Further, our approach results in a materially different correlation structure between commonly used asset pricing factors. Finally, using a sample of 153 discovered and 1,395 potential undiscovered anomalies, we find that our excess return definition would have resulted in the discovery of different asset pricing anomalies highlighting the sensitivity of the factor discovery process to the excess return definition and sample period used.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Dissecting Anomalies in Conditional Asset Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Valentina Raponi (IESE Business School), Paolo Zaffaroni (Imperial College (London University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=33348" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">アノマリーの経済的有意性を検証する推論手法を開発した、
+アノマリーのプレミアが時間的に変化する場合、条件付き資産価格モデルに有効である。我々のベースライン
+この方法論は、2パス推定量の局所的なバージョンに基づいており、そのための限界分布理論を確立する。
+限界分布理論を確立する。クロスセクションR2基準に基づく検定手順を提案する。
+米国の個別株リターンのデータセットを用いて我々の手法を説明する。その結果
+時間変動の存在が統計的にも経済的にも有意であることを示す。</p>
+        <p class="abstract-text en">We develop an inferential methodology to test for the economic significance of anomalies,
+valid for conditional asset pricing models, when anomalies' premia vary over time. Our baseline
+methodology is based on a local version of the two-pass estimator for which we establish the
+limiting distribution theory. We propose a testing procedure based on cross-sectional R2 criterion.
+We illustrate our methodology using a dataset of U.S. individual stock returns. We show
+that the presence of time-variation appears to be statistically and economically significant.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Equity Factors and Firms' Perceived Cost of Capital</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Niels Gormsen (University of Chicago), Kilian Huber (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=47292" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業が認識する資本コストと、金融市場から得られる期待リターンの尺度が示唆する資本コストとの間に大きなくさびがあることを記録している。認識資本コストは、市場要因、規模要因、価値要因といった伝統的な要因を反映している一方で、資産価格決定で研究されているほとんどのリスク要因とは無関係である。知覚資本コストに有意に反映されるファクターは、ファクター・ズーに含まれる全ファクターの10％未満であり、半数以上のファクターが誤った符号で反映されている。投資ベースの要因については、投資率が高い企業ほど認識資本コストが高いことが判明したが、これは投資CAPMと矛盾しており、生産ベースの資産価格決定パラダイムに挑戦するものである。これは投資CAPMと矛盾しており、生産に基づく資産価格決定パラダイムに挑戦するものである。また、企業の認識資本コストと、文献で用いられている「インプライド・資本コスト」の測定値との間に大きな楔があることも示している。</p>
+        <p class="abstract-text en">We document large wedges between firms' perceived cost of capital and the cost of capital implied by measures of expected returns from financial markets. While the perceived cost of capital reflects traditional factors such as the market, size, and value factors, it is unrelated to most risk factors studied in asset pricing. Less than 10% of all factors in the factor zoo are significantly reflected in the perceived cost of capital, and more than half the factors are reflected with the wrong sign. As to investment-based factors, we find that firms with higher investment rates have higher perceived cost of capital, which is inconsistent with the investment CAPM and challenges the production-based asset pricing paradigm. We also document substantial wedges between firms' perceived cost of capital and  measures of the ``implied cost of capital' used in the literature.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Intermediation: General</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link active">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Financial Intermediation: General</h1>        <div class="paper-card">
+            <div class="paper-title">Is Asset Demand Elasticity Set at the Household or Intermediary Level?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ehsan Azarmsa (University of Chicago), Carter Davis (Indiana University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=53424" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、家計が異質な仲介者の間で資金を配分する2層の需要システムを開発し、推計する。総需要弾力性には、仲介機関内（仲介機関レベル）と仲介機関間（家計レベル）の成分がある。仲介者間弾力性は仲介者内弾力性に比べてごくわずかであり、総需要弾力性は主に仲介者レベルで設定されることを示唆している。オープンエンド型ファンドでも仲介者間の構成 要素は低く、投資家の不注意が需要弾力性の低さに寄与しているこ とが示唆される。すなわち、家計は中間レベルの摩擦によって誘発されるミスプライスを排除するために十分な再配分を行わないということである。</p>
+        <p class="abstract-text en">We develop and estimate a two-layer demand system in which households allocate funds among heterogeneous intermediaries. The aggregate demand elasticity has a within-intermediary (intermediary-level) and a cross-intermediary (household-level) component. The cross-intermediary component is negligible compared to the within-intermediary component, suggesting that the aggregate demand elasticity is primarily set at the intermediary-level. The cross-intermediary component is low even for open-ended funds, suggesting that investor inattention contributes to the low demand elasticity. Our results support the central premise of intermediary asset pricing models: households do not reallocate enough to eliminate mispricings induced by intermediary-level frictions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Fragility in Bond Mutual Funds:  The Role of Investor Base</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nolwenn Allaire (European Central Bank), Johannes Breckenfelder (European Central Bank), Marie Hoerova (European Central Bank)</div>
+            <a href="https://afajof.org/management/viewp.php?n=40348" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">債券投資信託は、流動性の低い資産のポートフォリオを投資家のために流動性の高い株式へと変換する。このような投資家の4分の1以上が他のオープンエンド型投資信託であることを、ユーロ圏の投資家の保有に関する新規の証券別データを用いて明らかにする。さらに、2020年3月の前代未聞の「現金争奪戦」において、ファンド株式の償還に最も傾いていたのは、まさにこうしたファンドの所有者であったことを示す。平均して、ファンドの保有比率が高いファンド株式は、家計の保有比率が高いファンド株式と比べて2倍以上の資金流出に直面した。このギャップは、ファンド・ポートフォリオの時系列変化によるものではない。むしろ、我々の調査結果は、ノンバンクの仲介部門における脆弱性の重要な原因として、機関間のクロスオーナーシップを指摘している。</p>
+        <p class="abstract-text en">Bond mutual funds transform a portfolio of illiquid assets into liquid shares for their investors. We document that more than a quarter of these investors are other open-ended mutual funds using novel, security-by-security data on investor holdings in the Euro area. We further show that it is precisely these fund owners that were the most inclined to redeem fund shares during the unprecedented “dash for cash” in March 2020. On average, fund shares with higher fund ownership faced more than double the outflows compared to fund-shares with higher household ownership. This gap is not driven by time-varying differences in fund portfolios. Rather, our findings point to the cross-ownership between institutions as an important source of fragility in the non-bank intermediary sector.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Arbitraging Covered Interest Rate Parity Deviations and Bank Lending</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Lorena Keller (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=4480" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">CIP（カバー金利平価）の乖離が新興国における銀行貸出に影響を与える新たなチャネルを提案し、検証する。CIPの乖離が発生すると、銀行はその裁定取引を試みる。そのためには、銀行は特定の通貨で借り入れを行う必要がある。この通貨が不足すると、銀行は裁定取引に必要な資金を調達するために貸出から経営資源をシフトさせる。すると、裁定に必要な通貨での銀行貸出は減少する。私は、ペルーの銀行がCIPの乖離を裁定する能力の違いを利用してこのチャネルを検証し、提案されたチャネルを支持する証拠を発見した。</p>
+        <p class="abstract-text en">I propose and test a new channel through which covered interest rate parity (CIP) deviations can affect bank lending in emerging economies. I argue that when there are CIP deviations, banks attempt to arbitrage them. This requires banks to borrow in a particular currency. When this currency is scarce, banks shift resources away from lending to fund their arbitrage activities. Then, bank lending in the currency required to arbitrage decreases. I test this channel by exploiting differences in the abilities of Peruvian banks to arbitrage CIP deviations and find evidence that supports the proposed channel.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">“ Glossy Green ” Banks: The Disconnect Between Environmental Disclosures and Lending Activities</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mariassunta Giannetti (Stockholm School of Economics), Martina Jasova (Barnard College), Maria Loumioti (University of Texas), Caterina Mendicino (European Central Bank)</div>
+            <a href="https://afajof.org/management/viewp.php?n=15260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行の環境情報開示と融資活動の関係を研究する。銀行の投資家向け報告書の内容分析を用いて、環境をテーマとした情報開示のプロキシを作成した。ユーロ圏の信用登録簿から得られたきめ細かな融資レベルのデータを活用し、環境に関する開示が充実している銀行は、茶色の借り手への融資が多く、グリーン産業の企業への融資は多くないことを示す。これらの結果は、銀行が褐色の借り手の環境配慮型技術への移行に融資することによってもたらされたものではない。その代わりに、銀行は茶色い産業の最も弱い借り手、特に自己資本比率が低い借り手に融資している。我々の結果は、銀行が気候変動に関する目標や信用を過度に強調する一方で、汚染を引き起こす借り手との関係を継続していることを示唆している。</p>
+        <p class="abstract-text en">We study the relation between banks’ environmental disclosures and lending activities. We create a proxy for environmental-themed disclosures using content analysis on banks’ investor reports. Taking advantage of granular loan-level data from a euro-area credit registry, we show that banks with extensive environmental disclosures lend more to brown borrowers and do not provide more credit to firms in green industries. These results are not driven by banks’ financing of brown borrowers’ transition to greener technologies. Instead, banks lend to the weakest borrowers in brown industries, especially if they have low capital adequacy. Our results suggest that banks overemphasize their climate goals and credentials while continuing their relationships with polluting borrowers.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

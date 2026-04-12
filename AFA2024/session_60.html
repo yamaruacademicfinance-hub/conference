@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Cryptoassets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link active">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Cryptoassets</h1>        <div class="paper-card">
+            <div class="paper-title">The End of the Crypto-Diversification Myth</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Antoine Didisheim (University of Lausanne and Swiss Finance Institute), Luciano Somoza (University of Lausanne and Swiss Finance Institute), Martina Fraschini (University of Luxembourg)</div>
+            <a href="https://afajof.org/management/viewp.php?n=46788" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2020年3月以降、暗号通貨と株式は高い正の相関を示している。明らかなファンダメンタル要因なしに、我々は個人投資家による取引フローがこの相関を促進する可能性があることを理論的に示す。取引口座と暗号通貨ウォレットを提供する銀行から入手した投資家レベルの保有銘柄に関する独自のデータセットを用いて、個人投資家は株式と暗号通貨を同時に同じ方向に取引する傾向があり、このような行動が2020年3月に出現したことを示す。暗号通貨トレーダーが好む銘柄は、特にクロスアセットのリテール取引量が多い場合に、ビットコインとの強い相関を示す示唆的な証拠を提供する。</p>
+        <p class="abstract-text en">Cryptocurrencies and equities have exhibited a high and positive correlation since March 2020. Without obvious fundamental drivers, we show theoretically that trading flows by retail investors can drive this correlation. With a unique dataset of investor-level holdings from a bank offering trading accounts and cryptocurrency wallets, we show that retail investors tend to trade equities and cryptocurrencies simultaneously in the same direction and that this behavior emerged in March 2020. We provide suggestive evidence showing that stocks preferred by crypto-traders exhibit a stronger correlation with Bitcoin, especially when the cross-asset retail volume is high.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Need for Fees at a DEX: How Increases in Fees Can Increase DEX Trading Volume</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Joel Hasbrouck (New York University), Thomas Rivera (McGill University), Fahad Saleh (Wake Forest University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=43204" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">分散型取引所（DEX）における内生的な取引と流動性の提供をモデル化し、DEXの取引手数料を増加させることでDEXの取引量が増加することを実証する。DEXは機械的な価格決定ルールを採用しており、DEXが手数料収入を投資家に提供することによってのみ獲得する在庫によって、価格への影響が減少する。その結果、DEXの手数料を引き上げれば、在庫を増やす動機付けとなり、価格インパクトが減少する。さらに、価格インパクトの低減は手数料の上昇を相殺するため、高い取引手数料を支払っているにもかかわらず、限界的なDEXトレーダーの取引コストは低下する。その結果、取引コストの低下によりDEXへの取引活動が活発化し、取引量が増加する。</p>
+        <p class="abstract-text en">We model endogenous trading and liquidity provision at a decentralized exchange (DEX) and demonstrate that increasing DEX trading fees can increase DEX trading volume. DEXs employ a mechanical pricing rule whereby price impacts decrease with inventory which DEXs acquire only by offering fee revenues to investors. Consequently, higher DEX fees can incentivize higher inventory, thereby reducing price impacts. Moreover, the price impact reduction can offset the fee increase so that the trading costs for marginal DEX traders decline despite paying higher trading fees. In turn, lower trading costs drive trading activity to the DEX, generating an increase in trading volume.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Trust in DeFi: An Empirical Study of the Decentralized Exchange</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jianlei Han (Macquarie University), Shiyang Huang), Zhuo Zhong (University of Melbourne)</div>
+            <a href="https://afajof.org/management/viewp.php?n=53732" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、分散型暗号通貨取引所が暗号通貨の価値に関するコンセンサスを明らかにするのに役立つという実証的証拠を提供する。バイナンス（最大の中央集権型暗号通貨取引所）の投資家が、バイナンスとユニスワップ（最大の分散型暗号通貨取引所）の価格に反応してどのように取引を行うかを検証することで、ユニスワップのユーザーベースの増加が、バイナンスの投資家の取引をユニスワップの価格に誘導することを発見した。特に、Binanceが "ウォッシュ・トレーディング "を示す場合、または投資家が "ウォッシュ・トレーディング "に対してより懸念を持っている場合、その効果はより顕著になる。バイナンスのユーザーベースがバイナンスの投資家の取引に影響を与えることは見いだせない。イールドファーミング」プログラムの開始を準自然実験として用い、Uniswapのユーザーベースがバイナンスの投資家の取引に与える因果的影響を立証する。我々の結果は、ブロックチェーンとスマートコントラクトに基づいて構築された分散型取引所であるUniswapが、暗号通貨の価値のコンセンサスを集約する能力において投資家の信頼を得ることができることを示唆している。我々の発見は、ブロックチェーンとスマートコントラクトを活用した分散型インフラが、信頼できる中央当事者、例えば中央集権的な取引所によって引き受けられる取引構造が実現不可能であるか、取得するにはコストがかかりすぎる場合に、取引を組織化するための代替ソリューションを提供する可能性があることに光を当てている。</p>
+        <p class="abstract-text en">We provide empirical evidence that the decentralized cryptocurrency exchange helps reveal the consensus on the value of the cryptocurrency. By examining how investors on Binance (the largest centralized cryptocurrency exchange) trade in response to prices on Binance and Uniswap (the largest decentralized cryptocurrency exchange), we find the increase in the Uniswap userbase induces Binance investor trading towards the Uniswap price. In particular, the effect gets more pronounced when Binance exhibits “wash trading” or when investors have more concerns about “wash trading.” We do not find Binance userbase affecting Binance investor trading. Using the launch of the “yield-farming” program as a quasi-natural experiment, we establish the causal impact of Uniswap userbase on Binance investor trading. Our results suggest that Uniswap, a decentralized exchange built on blockchain and smart contracts, can gain investors’ trust in its ability to aggregate the consensus of the cryptocurrency’s value. Our findings shed light that the blockchain and smart contracts powered decentralized infrastructure has the potential to provide an alternative solution to organize trading, when the trading structure underwritten by a credible central party, e.g., a centralized exchange, is not feasible or too costly to obtain.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Price Discovery on Decentralized Exchanges</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Agostino Capponi (Columbia University), Ruizhe Jia (Columbia University), Shihao Yu (Columbia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=36652" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">集中型取引所とは対照的に、分散型取引所（DEX）は注文を離散時間で処理し、執行の優先順位を決定するためにトレーダーに優先手数料の入札を要求する。我々は構造的ベクトル自己回帰モデルを採用し、優先手数料がDEX取引の私的情報を明らかにし、価格発見に寄与している証拠を提供する。高手数料のDEX取引フローに1標準偏差のショックが加わると、4.27～8.16ベーシス・ポイントの永続的な価格インパクトが生じる。我々は、情報通のトレーダーが高い手数料を入札するのは、執行リスクを低減するためだけでなく、互いに競争するためでもあることを示す。イーサリアムのメンプール注文のユニークなデータセットを用いて、インフォームド・トレーダーは主にジャンプ入札戦略に従ってDEXで競争しているという仮説を支持する。</p>
+        <p class="abstract-text en">In contrast to centralized exchanges, decentralized exchanges (DEXs) process orders in discrete time and require traders to bid a priority fee to determine the execution priority. We employ a structural vector-autoregressive model to provide evidence that the priority fee reveals the private information of a DEX trade, contributing to price discovery. A one-standard deviation shock in the high-fee DEX trade flow leads to a permanent price impact between 4.27 and 8.16 basis points. We show that informed traders bid high fees not only to reduce execution risk but also to compete with each other. Using a unique dataset of Ethereum mempool orders, we lend support to the hypothesis that informed traders primarily compete on DEXs following a jump-bidding strategy.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

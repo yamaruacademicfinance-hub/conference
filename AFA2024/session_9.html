@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: ETFs</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link active">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: ETFs</h1>        <div class="paper-card">
+            <div class="paper-title">Portfolio Trading in Corporate Bond Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jeff Meli (Barclays), Zornitsa Todorova (Barclays)</div>
+            <a href="https://afajof.org/management/viewp.php?n=6916" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">社債市場における最近のイノベーションであるポートフォリオ取引は、バスケット債を単一のリスクとして単一のマーケットメイカーと取引するものである。
+債券のバスケットを単一のリスクとして単一のマーケット・メーカーと取引するものである。独自のデータセットを用いて
+TRACEでポートフォリオ取引を識別するアルゴリズムを開発した。我々は
+ポートフォリオ取引は、2018年初頭には投資適格社債の取引量全体の0%であったが、現在では0%を超えていると推定している。
+2021年には7％を超えると推定している。ポートフォリオは、流動性の低い債券の流動性を
+このプロトコルは極めてコスト効率が高い。我々は、ポートフォリオ
+取引は約定コストを40%以上削減し、その最大のメリットは流動性が最も低い債
+流動性の最も低い債券に最大の利益がもたらされる。ETFエコシステムからの波及により、マーケットメイカーはポートフォリオ取引の結果として蓄積される流動性の低い債券の在庫をオフロードすることができ、ポートフォリオ取引の価格決定とヘッジの両方が可能になるという証拠を示す。
+また、ポートフォリオ取引の価格決定とヘッジの両方を行うことができる。</p>
+        <p class="abstract-text en">Portfolio trading, a recent innovation in the corporate bond market, involves trading a basket
+of bonds as a single piece of risk with a single market-maker. Using a proprietary dataset of
+portfolio inquiries, we develop an algorithm to identify portfolio trades in TRACE. We
+estimate that portfolio trading has increased from 0% of total investment grade corporate bond
+volumes at the beginning of 2018 to over 7% in 2021. Portfolios are designed to generate
+liquidity in illiquid bonds, and the protocol is remarkably cost effective. We show that portfolio
+trading reduces execution costs by over 40%, with the largest benefits accruing to the least
+liquid bonds. We provide evidence that spill-overs from the ETF ecosystem allow market-makers to offload the inventory of illiquid bonds which accumulates as a result of portfolio
+trading and to both price and hedge portfolio trades.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Limits to Diversification: Passive Investing and Market Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lily Fang (INSEAD), Hao Jiang (Michigan State University), Zheng Sun (University of California-Irvine), Lu Zheng (University of California-Irvine), Ximing Yin (Hunan University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=12656" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">Campbell et al. (2001)は、1962年から1997年の間に銘柄間の相関が低下したことを報告している。このパターンは 1997 年以降に逆転し、1998 年から 2020 年にかけては銘柄間の相関がそれまでの水準から約 2 倍になった。我々は、パッシブ投資の台頭が銘柄間の相関を高め、ひいては市場のボラティリティを高めたという仮説を立て、その証拠を示す。ある銘柄がパッシブ（インデックスやETF）ファンドによってどの程度保有されているかによって、その銘柄のベータ値や他の銘柄との相関が強く予測されることを発見した。2001年の9.11、2008年9月のリーマン・ショック、2020年3月のコビッドショックという3つの市場ショックについて差分分析を行った結果、パッシブ保有比率の高い銘柄は市場ボラティリティにより大きく寄与することが分かった。我々の結果は、一般的な機関投資家による一般的な保有に包含されるものではなく、収益相関の増加によっても説明されない。パッシブ投資の増加は、銘柄間の相関を高め、市場ボラティリティを上昇させる可能性があり、分散投資というパッシブ投資の利点は限定的であると結論付けている。</p>
+        <p class="abstract-text en">Campbell et al. (2001) documents that between 1962 and 1997 correlation among stocks dropped. This pattern reversed post 1997: correlation among stocks roughly doubled in 1998-2020 from previous levels. We hypothesize and provide evidence that the rise of passive investing contributed to higher correlations among stocks and in turn higher market volatility. We find that the degree to which a stock is held by passive (index and ETF) funds strongly predicts its beta and correlation with other stocks. Difference-in-difference analyses around three market shocks – 9/11 in 2001, Lehman collapse in Sep 2008, and Covid shock in March 2020 – show that stocks with high passive holdings contributed more to market volatility. Our results are not subsumed under common holdings by institutions in general and are not explained by increases in earnings correlations. We conclude that the rise of passive investing could lead to higher correlation among stocks and higher market volatility, limiting its own benefit of diversification.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Passive Investors in Primary Bond Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Caitlin Dannhauser (Villanova University), Michele Dathan (Federal Reserve Board of Governors)</div>
+            <a href="https://afajof.org/management/viewp.php?n=54376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、パッシブ投資家が証券のプライマリー市場に参加していることを初めて証明した。
+パッシブETFとインデックス投信は、公募日に新発の米国社債を購入している。
+パッシブETFとインデックス投信は、これらの債券がまだベンチマーク・インデックスに追加されていないにもかかわらず、公募日に米国新発債を購入している。さらに
+パッシブ・ファンドは、魅力的でない公募債に高い配分を受けることを示す：
+パッシブ・ファンドは、より低いアンダープライスの債券（コールド・オファリングを含む）、発行体の債券と株式が1年間で
+パッシブ・ファンドは、より魅力的でない商品、すなわち、アンダープライス の低い債券（コールド・オファリングを含む）、債券と株式が1年単位でアンダ ーパフォームしている発行体の債券、コベナンツの少ない債券への配分が高いことを示す。アロケーション
+パッシブ・ファンドへのアンダーパフォーム債券の配分は、引受会社とファンド・ファミリーの双方によって決定される。</p>
+        <p class="abstract-text en">We provide the first evidence that passive investors participate in the primary market for
+securities: passive ETFs and index mutual funds buy new issue U.S. corporate bonds on the
+offer date, despite the fact that these bonds are not yet added to their benchmark index. Furthermore,
+we show that passive funds receive higher allocations in less attractive offerings:
+bonds with lower underpricing (including cold offerings), bonds from issuers whose debt and
+equity underperform in a one-year horizon, and bonds with fewer covenants. The allocation
+of underperforming bonds to passive funds is driven by both underwriters and fund families.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Passive Investing and the Rise of Mega-Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hao Jiang (Michigan State University), Dimitrios Vayanos (London School of Economics), Lu Zheng (University of California-Irvine)</div>
+            <a href="https://afajof.org/management/viewp.php?n=54684" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、パッシブ投資が資産価格にどのような影響を与えるかを研究している。パッシブ・ファンドへの資金流入は、経済大企業の株価を不均衡に上昇させる。
+パッシブ・ファンドへの資金流入は、経済大企業の株価を不均衡に上昇させる。
+パッシブファンドへの資金流入は、経済大企業の株価を不均衡に上昇させる。パッシブ・フローはまた、最大企業のリターンのボラティリティを最も上昇させる。
+パッシブ・フローは、投資家がアクティブからパッシブへ完全に転換した場合でも、株式市場全体を上昇させる。
+パッシブ・フローは、最大企業のリターンのボラティリティを最も上昇させる。このような効果は、システマティック・リスクと大企業の特 異的リスクの再価格付けによって生じる。
+パッシブ投資は、大企業のシステマティック・リスクと特 異的リスクの再価格決定によって生じる。我々は、パッシブ投資によって、1996年に米国の50大企業が米国株式市場よりも30％上昇したと推定している。
+上昇させたと推定している。</p>
+        <p class="abstract-text en">We study how passive investing affects asset prices. Flows into passive funds raise disproportionately
+the stock prices of the economy’s largest firms—even when the indices tracked by the
+funds include all firms. Passive flows also raise the largest firms’ return volatility the most, and
+raise the aggregate stock market even when they are entirely due to investors switching from
+active to passive. These effects arise because of the re-pricing of systematic and large firms’
+idiosyncratic risk. We estimate that passive investing caused the 50 largest US firms to rise 30%
+more than the US stock market over 1996–2020.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

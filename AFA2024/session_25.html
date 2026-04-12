@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Contracts and Incentives</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link active">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Corporate Finance: Contracts and Incentives</h1>        <div class="paper-card">
+            <div class="paper-title">When Is (Performance-Sensitive) Debt Optimal?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pierre Chaigneau (Queen's University), Alex Edmans (London Business School), Daniel Gottlieb)</div>
+            <a href="https://afajof.org/management/viewp.php?n=12040" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">既存の債務理論では、契約可能なパフォーマンス指標（「アウトプット」）は1つであると考えられている。現実には、他のパフォーマンス・シグナルも利用可能である。シグナルが十分にポジティブであれば、アウトプットが低くてもマネジャーは支払いを受けられるはずである。この論文では、追加的なシグナルの下でも負債が最適な契約であることを示す--追加的なシグナルは、契約上の負債返済に影響するだけで、契約の形態には影響しない--。しかし、いくつかの有益なシグナルは、負債契約では使用されない。我々は、契約上の債務返済がどのように貴重なシグナルに依存すべきかを示し、パフォーマンス感応型債務の理論を提供する。</p>
+        <p class="abstract-text en">Existing theories of debt consider a single contractible performance measure ('output'). In reality, other performance signals are available. It may seem that debt is no longer optimal: if the signals are sufficiently positive, the manager should receive a payment even if output is low. This paper shows that debt remains the optimal contract under additional signals -- they only affect the contractual debt repayment, but not the form of the contract. However, some informative signals will not be used in debt contracts. We show how the contractual debt repayment should depend on valuable signals, providing a theory of performance-sensitive debt.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Household Debt Overhang and Human Capital Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gustavo Manso (University of California-Berkeley), Alejandro Rivera (University of Texas-Dallas), Hui Wang (University of Texas-Dallas), Han Xia (University of Texas-Dallas)</div>
+            <a href="https://afajof.org/management/viewp.php?n=16856" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">労働所得とは異なり、人的資本は個人から切り離せないものであり、債務不履行時に債権が発生することはない。
+債権者に帰属しない。その結果、人的資本投資は労働供給よりも「債務超過」に強いはずである。
+債務超過」に対しては、労働供給よりも強いはずである。我々は、この重要な違いを示すダイナミック・モデルを開発した。
+モデルを構築する。その結果、労働供給と人的資本投資の両方が、レバレッジにおいてこぶ型になることがわかった。
+であるのに対して、人的資本投資はレバレッジが高まるにつれて、あまり積極的でなくなる。これは
+これは特に人的資本の減価率が低い場合に顕著である。重要なのは
+技能の習得は、家計が将来労働力を供給すると予想される場合にのみ価値があるからである。
+負債超過によって労働供給がより減少すると予想される場合、それがバックプロパゲー
+技能習得の減少に逆伝播する。個人を特定できるデータを用いて、我々は実証的にこのモデルを支持する。
+モデルを支持する。</p>
+        <p class="abstract-text en">Unlike labor income, human capital is inseparable from individuals and does not accrue
+to creditors at default. As a consequence, human capital investment should be more resilient
+to “debt overhang” than labor supply. We develop a dynamic model displaying this important
+difference. We find that while both labor supply and human capital investment are hump-shaped
+in leverage, human capital investment tails off less aggressively as leverage builds up. This is
+especially the case when human capital depreciation rates are lower. Importantly, because
+skills acquisition is only valuable when households expects to supply labor in the future, the
+anticipated greater reduction in labor supply due to debt overhang back-propagates into a
+reduction in skills acquisition ex ante. Using individually identifiable data, we provide empirical
+support for the model.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monitoring with Small Stakes: Evidence from Leveraged Loans</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sheila Jiang (University of Florida), Shohini Kundu (University of California-Los Angeles), Douglas Xu (University of Florida)</div>
+            <a href="https://afajof.org/management/viewp.php?n=37436" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">債権者の効果的なモニタリングが必要とされる企業向け融資のリスクセグメントへの機関投資家の参入が拡大していることは、銀行がオリジネーションにおいて十分に大きな出資比率を維持することが適切なモニタリング・インセンティブを提供する鍵であるという従来の常識に疑問を投げかけている。我々は、少額出資によるモニタリングのパズルを説明し、レバレッジドローン市場における分割支配権契約の設計を合理化する新しいメカニズムを提案する。我々は、債権者がコストの高いモニタリングを行うためのインセンティブを提供する2つの源泉を概念化する。スキン・イン・ザ・ゲームに代わるものとして、レント・エクストラクションに基づくメカニズムは、モニタリングのインセンティブを提供し、レバレッジド・ローンへの機関投資家の参加を促進する上で重要な役割を果たす。我々は、再交渉の摩擦を外生的に減少させることを意味する税制の成立を自然実験として用い、我々の理論的枠組みの主要なチャネルを実証的に特定する。再交渉の摩擦が少ない環境は、分割支配構造に関連する既存ローンのパフォーマンスをより向上させ、分割支配契約としてアレンジされた新規発行ローンの契約特性に、分割支配契約でない契約と比較して影響を与えることを発見した。我々の分析と知見は、債権者の集中的な監視を必要とする貸出市場において、非監視型機関投資家の参加が増加していることについて、重要な政策的示唆を与えるものである。</p>
+        <p class="abstract-text en">The growing participation of institutional investors in the risky segment of corporate lending, which requires effective creditor monitoring poses a challenge to the conventional wisdom that banks’ retention of sufficiently large stakes in their originations is key to the provision of adequate monitoring incentives. We propose a new mechanism that provides an explanation behind the monitoring with small stakes puzzle and rationalizes the design of split control contracts in the leveraged loan market. We conceptualize two sources of incentive provision for creditors to conduct costly monitoring: skin in the game and rent extraction from renegotiation. As an alternative to skin in the game, the rent extraction-based mechanism plays a critical role in the provision of monitoring incentives and facilitating the participation of institutional investors in leveraged lending. We use the passage of a tax policy as a natural experiment that implies an exogenous reduction in renegotiation frictions to empirically identify the key channel of our theoretical framework. We find that a less frictional renegotiation environment leads to greater improvements in the performance of existing loans associated with the split control structure, and impacts the contractual features of newly issued loans that are arranged as split control deals relative to non-split control deals. Our analysis and findings provide important policy implications regarding the increasing participation of non-monitoring institutional investors in lending markets that require intensive creditors monitoring.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

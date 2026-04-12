@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Market Mispricing and Limits to Arbitrage</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link active">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Market Mispricing and Limits to Arbitrage</h1>        <div class="paper-card">
+            <div class="paper-title">Decomposing Deviations from Covered-Interest Parity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tobias Moskowitz (Yale University), Chase Ross (Federal Reserve Board of Governors), Sharon Ross (Office of Financial Research (OFR)), Kaushik Vasudevan (Yale University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=24584" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ベースとして知られる銀行仲介の裁定スプレッドは、同じ資産クラス内で符号と大きさにかなりの横断的なばらつきを示す。この異質性は、金融仲介の一般的な理論にとってパズルである。我々は、1日平均11兆ドルを超える銀行の外国為替ポジションに関する秘密監督データを用いて、為替市場におけるCIP（Covered-Interest Parity）ベースについて研究した。CIPの乖離が最も大きい通貨・満期市場において、銀行は最も多くのドルを貸し付けていることを示す。この結果は、銀行セクターが通貨や満期固有のドル借入需要を満たすために限界費用が増加していることと整合的である。この限界費用をさらに分解してみると、2つの要因の重要性が浮き彫りになった：(1)銀行がそれぞれ特定の市場に特化し、集中的なカウンターパーティーリスクに直面しているセグメンテーション、(2)外貨安全資産の利用可能性が限られているため、裁定取引を実行するために銀行がよりリスクの高い証券を保有する必要がある担保の希少性。我々の結果は、金融仲介機関が資産価格に与える影響を理解する上で、市場の細分化と安全資産の供給という2つの側面が重要であるという新しい実証的証拠を提供するものである。</p>
+        <p class="abstract-text en">Bank-intermediated arbitrage spreads, known as bases, exhibit substantial cross-sectional variation in sign and magnitude within the same asset class. This heterogeneity is a puzzle for prevailing theories of financial intermediation. We use confidential supervisory data on banks' foreign exchange positions---covering more than $11 trillion daily on average---to study Covered-Interest Parity (CIP) bases in currency markets. We show that banks lend the most dollars in the currency and maturity markets that exhibit the largest CIP deviations. This result is consistent with the banking sector facing increasing marginal costs to meet currency- and maturity-specific demand for dollar borrowing. Further decomposing these marginal costs, our evidence highlights the importance of two sources: (1) segmentation, with banks each specializing in particular markets and facing concentrated counterparty risk, and (2) collateral scarcity, with the limited availability of foreign currency safe assets requiring banks to hold riskier securities to execute arbitrage trades. Our results provide novel empirical evidence that two dimensions---market segmentation and safe-asset supply---are important for understanding the impact of financial intermediaries on asset prices.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Non-Fundamental Flows and Foreign Exchange Rates</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Felipe Aldunate (Pontificia Universidad Catolica de Chile), Zhi Da (University of Notre Dame), Borja Larrain (Pontificia Universidad Catolica de Chile), Clemens Sialm (University of Texas-Austin)</div>
+            <a href="https://afajof.org/management/viewp.php?n=9100" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">チリの年金制度では、国際証券への配分が高いため、情報に基づかない資金フローが頻繁に発生し、為替市場で大きな取引が行われている。こうしたファンダメンタルズ以外のフローは、0.81という比較的低い価格弾力性を持つと推定されるチリ・ペソに大きな影響を与える。銀行セクターによるヘッジは、通貨フォワード市場に価格圧力を伝播させ、カバー金利平価の違反をもたらす。取引データと銀行のバランスシート・データを用いて、規制要件と銀行のリスク負担制約が裁定取引の限界を生み出していることを確認する。</p>
+        <p class="abstract-text en">Frequent, yet uninformed, fund flows in Chilean pension plans generate substantial trading in currency markets due to the high allocation to international securities. These non-fundamental flows have a significant impact on the Chilean peso, which is estimated to have a relatively low price elasticity of 0.81. Hedging by the banking sector propagates the price pressure to currency forward markets and results in violations of the covered interest rate parity. Using trading data and bank balance sheet data, we confirm that regulatory requirements and banks' risk bearing constraints create limits of arbitrage.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Why is Asset Demand Inelastic?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Carter Davis (Indiana University), Mahyar Kargar (University of Illinois), Jiacui Li (University of Utah)</div>
+            <a href="https://afajof.org/management/viewp.php?n=26824" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">多くの摩擦のない資産価格モデルでは、投資家の需要曲線は事実上フラットである。これとは対照的に、Koijen and Yogo (2019)は驚くほど非弾力的な需要を推定している。本論文では、この矛盾の原因を明らかにし、値動きが短期的な割引率の変化と完全に関連していないのであれば、個別銘柄の需要弾力性の推定値が低くても不可解ではないことを示す。標準的なポートフォリオ選択のフレームワークでは、需要弾力性は主に、期待リターンが価格変動に対応して投資家のポートフォリオのウェイトにどのような影響を与えるかによって決まることを示す。  ほとんどの理論モデルが想定しているように）価格が翌期の割引率によってのみ下落する場合、需要弾力性は高くなることを示す。しかし、（経験則に基づく弾力性の推計が示すように）価格変動が完全に次期の期待リターンに左右されないとすれば、需要は非弾力的となる。非弾力的な需要推計と一致するように、我々は異なる水平期間において弱い反転やモメンタムの証拠を発見した。</p>
+        <p class="abstract-text en">In many frictionless asset-pricing models, investor demand curves are virtually flat. Koijen and Yogo (2019), in contrast, estimate surprisingly inelastic demand. In this paper, we identify the source of this discrepancy and show that low demand elasticity estimates for individual stocks are not puzzling if price movements are not entirely associated with short-term discount rate changes. In a standard portfolio choice framework, we show that the demand elasticity is primarily determined by how expected returns impact investor portfolio weights in response to price movements.  If prices only drop due to next-period discount rates (as most theoretical models assume), we show that demand elasticity will be high. But, if price movements are not entirely driven by next-period expected returns (as empirical estimates of elasticity measure), demand will be inelastic. Consistent with inelastic demand estimates, we find evidence of weak reversals or momentum at different horizons.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

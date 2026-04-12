@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Intermediation: Monetary Policy Transmission</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link active">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Financial Intermediation: Monetary Policy Transmission</h1>        <div class="paper-card">
+            <div class="paper-title">Heterogeneous Intermediaries and Bond Characteristics in the Transmission of Monetary Policy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Federic Holm-Hadulla (European Central Bank), Matteo Leombroni (Stanford University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=19376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、金融政策の社債市場への伝達について研究する。中央銀行による社債購入が信用スプレッド・ショックを引き起こすのに対し、国債購入は主にタームスプレッド・ショックを引き起こすことを示す。異なる仲介機関が保有する債券の利回りは、2つのショックに対して不均質に反応する。このような結果を、複数のリスク要因を持つ債券市場のモデルを用いて説明する。保険会社や年金基金は、長期負債に見合うように金利リスク・エクスポージャーの高い資産を選択する。投資信託部門はその代わりに信用リスクを伴う証券を吸収する。さまざまな政策手段がリスク要因の市場価格にさまざまな影響を与え、それによってリスクが仲介部門全体、ひいてはそこに投資する家計全体に再分配される。</p>
+        <p class="abstract-text en">This paper studies the transmission of monetary policy to the corporate bond market. We show that corporate bond purchases by the central bank give rise to credit spread shocks, whereas government bond purchases mainly cause term spread shocks. The yields of bonds held by different intermediaries respond heterogeneously to the two shocks because intermediaries systematically select into different types of bonds. We explain these findings through the lens of a model of the fixed-income market with multiple risk factors. Insurance companies and pension funds select into assets with high interest-rate risk exposure to match their long-duration liabilities. The mutual fund sector instead absorbs securities that carry credit risk. Different policy tools affect the market prices of risk factors in a differential manner, thereby redistributing risks across intermediary sectors and ultimately across the households investing in them.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Stop Believing in Reserves</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sriya Anbil (Federal Reserve Board of Governors), Alyssa Anderson (Federal Reserve Board of Governors), Ethan Cohen (Federal Reserve Board of Governors), Romina Ruprecht (Federal Reserve Board of Governors)</div>
+            <a href="https://afajof.org/management/viewp.php?n=7672" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">連邦準備制度理事会（FRB）が金利を引き上げて金融引き締めを行う場合、金融政策の預金チャネルはよく理解されている。シャドーバンクは
+預金は銀行からシャドーバンクに流れる。
+は銀行からシャドーバンクに流れる。しかし
+FRBのバランスシートを通じた引き締めの預金効果は、それほど明確ではない。銀行の準備需要と貸出、預金市場
+銀行の準備需要と貸出、預金市場、現先（レポ）市場の構造モデルを用いて、次のことを示す。
+FRBがバランスシートの規模を縮小して金融引き締めを行った場合、預金はシャドウバンクにも流入することを示す。
+バランスシートの規模を縮小する。そして、シャドウバンクはこれらの預金をレポ市場で貸し出し
+をレポ市場で貸し出す。対照的に、FRB の
+バランスシートが大きく、FRB が金利を引き締めている場合、シャドウバンクは新たな預金をFRB に投資するのではなく、FRB に投資する。
+に投資する。我々は、FRB のバランスシートの大きさが
+FRBのバランスシートの規模は、一般的に考えられているように、銀行の準備金需要によってのみ制約されるのではなく、シャドウバンクが新規預金をレポ市場ではなくFRBに投資することによっても制約されることを示す。
+によってだけでなく、レポ市場のキャパシティによっても制約される。
+したがって、潤沢な準備の金融政策の枠組みは、シャドウバンクによる資金需要も考慮しなければならない。
+したがって、潤沢な準備金の金融政策の枠組みは、シャドウバンクによる資金需要も考慮しなければならない。</p>
+        <p class="abstract-text en">The deposit channel of monetary policy is well understood when the Federal Reserve (Fed) tightens monetary policy by raising interest rates. Shadow banks increase
+their investment yields in response to rising interest rates more than banks, so deposits
+flow from banks to shadow banks. However, the deposit effects of tightening through
+the Fed’s balance sheet are not as clear. Using a structural model of bank reserve
+demand and lending, the deposit market, and the repurchase (repo) market, we show
+that deposits also flow to shadow banks when the Fed tightens monetary policy by
+reducing the size of its balance sheet. Then, shadow banks lend out these deposits
+in the repo market to meet increased funding demand. In contrast, when the Fed’s
+balance sheet is large and the Fed tightens through interest rates, shadow banks invest
+their new deposits at the Fed rather than in the repo market. We show that the size
+of the Fed’s balance sheet is constrained not only by banks’ demand for reserves, as
+is typically considered, but also by the capacity of the repo market, and therefore, an
+ample reserves monetary policy framework must also consider the demand for money
+by shadow banks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Lending by Servicing: Monetary Policy Transmission through Shadow Banks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Isha Agarwal (University of British Columbia), Malin Hu), Raluca Roman (Federal Reserve Bank of Philadelphia), Keling Zheng (University of British Columbia)</div>
+            <a href="https://afajof.org/management/viewp.php?n=24808" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国の住宅ローン市場におけるシャドウバンクのシェアが拡大しているにもかかわらず、そのオリジネーション業務とサービシング業務との相互作用、および金融政策への影響については十分に理解されていない。我々は、住宅ローン市場におけるシャドーバンクを通じた金融政策伝達の新たなチャネルとして、モーゲージ・サービシング・チャネルを提案し、検証する。金融引き締め局面では、モーゲージ・サービシング・ライツ（MSR）がヘッジとして機能し、シャドウバンクによる住宅ローン貸出への金融政策の伝達を弱めることを実証する。金利上昇は期限前償還リスクを低減させ、MSRの担保価値を高め、シャドウバンクが住宅ローンを組成するための資金をより多く受け取ることを可能にする。この効果は、事前の自己資本比率が低く、ポートフォリオのリスクが高いシャドウバンクほど強い。低所得者やマイノリティの借り手は、モーゲージ・サービシング・チャネルからより多くの恩恵を受ける。</p>
+        <p class="abstract-text en">Despite the growing share of shadow banks in the U.S. mortgage market, the interaction between their origination and servicing business and its implications for monetary policy transmission are not well understood. We propose and test a novel channel of monetary policy transmission through shadow banks in the mortgage market, the mortgage servicing channel. We document that, during periods of monetary tightening, mortgage servicing rights (MSRs) act as a hedge and weaken the transmission of monetary policy to mortgage lending by shadow banks. Higher interest rates reduce prepayment risk, increasing the collateral value of MSRs and allowing shadow banks to receive more funding to originate mortgages. This effect is stronger for shadow banks with ex ante low capital ratios and riskier portfolios. Low-income and minority borrowers benefit more from the mortgage servicing channel.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance and Climate Transition</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link active">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Finance and Climate Transition</h1>        <div class="paper-card">
+            <div class="paper-title">Incentives to Decarbonize and Innovate: The Role of Net Zero Commitments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Viral Acharya (New York University), Robert Engle (New York University), Olivier Wang (New York University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=27552" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、政府と企業による「ネット・ゼロ」炭素公約の価値を理解するために、炭素排出とグリーン・イノベーションのモデルを研究している。このモデルは、炭素のストックによるコストという形の環境外部性と、グリーン・イノベーションにおける技術的外部性の両方を特徴としている。炭素税とイノベーション補助金のような2つのピグー的手段が利用可能な場合、政府も企業もコミットすることなく社会的最適を分散化することができる。しかし、イノベーション補助金が制約されるか、あるいは存在しない場合、政府はグリーンイノベーションを誘発するために、ピグー的水準を超える炭素税にコミットすることが最適である。このようなコミットメントは、政府がイノベーションが起こった後に、事後的に低い炭素税に乖離することを望むという意味で拘束力がある。次に、企業のコミットメントの役割を分析する。まず、小さな原子論的企業は、均衡に影響を与えるには小さすぎるため、コミットするインセンティブを持たないことを示す。しかし、大企業は、技術的外部性が強い場合には、スタッケルベルグ・リーダーとして行動し、低排出強度を約束することが最適であると考える。彼らのコミットメントは、他の企業による技術革新を促進し、最終的には、クリーン技術への移行にかかる自社のコストを削減する。</p>
+        <p class="abstract-text en">We study a model of carbon emissions and green innovation to understand the value of “Net Zero” carbon commitments by governments and firms. The model features both an environmental externality in the form of a cost due to the stock of carbon, and a technological externality in green innovation. When two Pigouvian instruments such as carbon taxes and innovation subsidies are available, the social optimum can be decentralized without commitment by governments nor firms. However, when in- novation subsidies are constrained or absent, it is optimal for governments to commit to carbon taxes above and beyond the Pigouvian level in order to induce green inno- vation. These commitments are binding in the sense that governments would like to deviate ex post to a lower carbon tax once innovation has taken place. We then ana- lyze the role of firm commitments. We first show that small atomistic firms have no incentives to commit because they are too small to affect the equilibrium. Large firms, however, may find it optimal to act as Stackelberg leaders and commit to a low emission intensity when the technological externality is strong. Their commitments spur more innovation by other firms, which ultimately reduces their own cost of transitioning to clean technology.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Does Climate Change Adaptation Matter? Evidence from the City on the Water</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matteo Benetton (University of California-Berkeley), Simone Emiliozzi (Bank of Italy), Elisa Guglielminetti (Bank of Italy), Michele Loberto), Alessandro Mistretta (Bank of Italy)</div>
+            <a href="https://afajof.org/management/viewp.php?n=39676" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、ベネチア市を高潮から守るために建設された防潮堤の運用を利用し、気候変動適応のための公共インフラ投資が住宅価値に反映されることを実証する。防潮堤の活性化閾値以上の物件では、洪水リスクと予想される損害が恒久的に減少し、それが価格上昇に反映される。差分法ヘドニックデザインを用いて、防潮堤がヴェネツィアの住宅ストックの価値を4.5％上昇させたことを示す。</p>
+        <p class="abstract-text en">This paper exploits the operation of a sea wall built to protect the city of Venice from increasingly high tides to provide evidence on the capitalization of public infrastructure investment in climate change adaptation into housing values. Properties above the sea wall activation threshold experience a permanent reduction in flood risk and expected damages, which are reflected in higher prices. Using a difference-in-differences hedonic design we show that the sea wall led to a 4.5% increase in the value of the residential housing stock in Venice, which is a lower bound on the total welfare gains generated by the infrastructure.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Decarbonizing Institutional Investor Portfolios:  Helping to Green the Planet or Just Greening Your Portfolio?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vaska Atta-Darkua (University of Virginia), Simon Glossner (Federal Reserve Board of Governors), Philipp Krueger (Swiss Finance Institute - University of Geneva), Pedro Matos)</div>
+            <a href="https://afajof.org/management/viewp.php?n=43540" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、気候変動に配慮する機関投資家、すなわち気候変動関連の投資家イニシアティブに参加する機関投資家が、その株式ポートフォリオを脱炭素化しているかどうか、またどのように脱炭素化しているかを研究している。脱炭素化は、炭素排出量の少ない企業へのポートフォリオのウェイト変更、または投資先企業への排出量削減の働きかけによって達成される可能性がある。私たちの分析によれば、気候変動に配慮する機関投資家、特に炭素排出量価格制度を導入している国に拠点を置く投資家が、ポートフォリオのグリーン化を図るためには、ポートフォリオのリ・ウェイトが主流となっている。機関投資家はまた、特に2015年のパリ協定以降、エンゲージメントに依存している。さらに、気候変動に配慮する投資家が、気候変動特許を開発する企業に資本を配分している証拠はないが、よりグリーンな収益を生み出す企業に資本を配分している。全体として、我々の分析は、投資家主導のイニシアティブが、企業の炭素排出量を削減し、「地球に優しい」経済への移行に必要な気候変動への対策を講じる上で有効であるかどうか疑問視している。</p>
+        <p class="abstract-text en">We study whether and how climate-conscious institutional investors, i.e., institutions that join climate related investor initiatives, are decarbonizing their equity portfolios. Decarbonization could be achieved by re-weighting portfolios towards lower carbon emitting firms or targeted engagements with portfolio companies to reduce emissions. Our analysis suggests that portfolio re-weighting is the predominant strategy used by climate-conscious institutions to green their portfolios, in particular by investors based in countries with carbon emissions pricing schemes. Institutions also rely on engagement, particularly following the 2015 Paris Agreement. Furthermore, we find no evidence that climate conscious investors allocate capital towards firms developing climate patents, but they do re-weight towards firms generating more green revenues. Overall, our analysis raises doubts about the effectiveness of investor-led initiatives in reducing corporate carbon emissions and helping take necessary action to tackle climate change for an all-economy transition to “green the planet”.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financing the Adoption of Clean Technology</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrea Lanteri (Duke University), Adriano Rampini (Duke University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=18060" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">資金調達制約を受ける異質な企業によるクリーン技術の採用を分析する。異質な資本財を用いた投資モデルを構築し、これらの資本財は、関連するエネルギー必要量と年数が異なる。均衡において、よりクリーンで新しい資本は、より大きな頭金を必要とすることを示す。したがって、財政的制約のある中小企業は、制約のない大企業よりも、より汚く古い資本に最適に投資する。このモデルは、商業船隊のデータを用いて我々が実証した技術導入のパターンと一致している。大企業は、よりクリーンな新技術に投資し、よりエネルギー効率の高い傾向のある新しい資本を運用することで、より高いエネルギー効率で事業を行う。このような技術導入の均衡パターンは、環境政策が重要な分配的帰結をもたらすことを示唆している。</p>
+        <p class="abstract-text en">We analyze the adoption of clean technology by heterogeneous firms subject to financing constraints. We develop a model of investment with heterogeneous capital goods, which differ in their associated energy needs and in their age. We show that, in equilibrium, cleaner and newer capital requires a larger down payment. Therefore, financially constrained, smaller firms optimally invest in dirtier and older capital than unconstrained, larger firms. The model is consistent with the empirical patterns of technology adoption we document using data on commercial shipping fleets. Larger firms operate with higher energy efficiency, by investing in cleaner new technologies and operating newer capital, which tends to be more energy efficient. This equilibrium pattern of technology adoption implies that environmental policy has important distributional consequences.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

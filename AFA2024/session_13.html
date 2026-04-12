@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Frictions and Market Power</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link active">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Market Frictions and Market Power</h1>        <div class="paper-card">
+            <div class="paper-title">The Retail Execution Quality Landscape</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Anne Dyhrberg (Wilfrid Laurier University), Andriy Shkilko (Wilfrid Laurier University), Ingrid Werner (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=13580" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">市場オブザーバーは、リテール・ブローカーがリテール注文をホールセラーにルーティングする慣行を批判し、リテール・フローは取引所で執行されるべきであると主張している。包括的なデータを用いて、ホールセラーと取引所の両方が、リテール注文にとって有益な特性を持っていることを示す。ホールセ ーラーは大幅な（最低価格を大幅に上回る）価格改善をもたらし、取引 所はより低い流動性コスト（実現スプレッド）を提供する。バランスとしては、価格の改善が優位を占めており、ホールセーラーの仲介により、個人投資家は毎月10億ドル近くを節約している。リテール注文フローの市場には、ホールセール業者の市場支配力と矛盾する4つの特徴がある。第一に、リテールブローカーは、より低い流動性コストを提供するホールセラーに、より多くの注文フローで報いる。第二に、最大手のホールセラー2社が最も低い流動性コストを課している。第三に、ホールセラーの新規参入もリテールブローカーのバーゲニングパワー の増大も、ホールセラーが課す流動性コストを低下させない。第四に、流動性コストの断面差は、在庫コストのプロキシによって左右 される。</p>
+        <p class="abstract-text en">Market observers criticize the practice of retail brokers routing retail orders to wholesalers and argue that retail flow should execute on exchanges. Using comprehensive data, we show that both wholesalers and exchanges have characteristics beneficial for retail orders. Wholesalers provide substantial (significantly beyond de minimis) price improvement, while exchanges offer lower liquidity costs (realized spreads). On balance, price improvement dominates, and wholesaler intermediation saves retail investors close to a billion dollars per month. Four characteristics of the market for retail order flow are inconsistent with wholesaler market power. First, retail brokers reward wholesalers that offer lower liquidity costs with more order flow. Second, the largest two wholesalers charge the lowest liquidity costs. Third, neither a new wholesaler entry nor an increase in retail broker bargaining power reduces liquidity costs charged by wholesalers. Fourth, cross-sectional differences in liquidity costs are driven by proxies for inventory costs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Competing for Dark Trades</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Paul Irvine (Texas Christian University), Egle Karmaziene (Vrije Universiteit Amsterdam)</div>
+            <a href="https://afajof.org/management/viewp.php?n=13524" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ダークプールでの取引は、取引所メカニズムとして重要であるため、検討が必要である。2021年1月、公開証券取引所以外での取引は米国株式取引量全体の47.2%に達し、前年の39.9%から増加した。バイサイドの投資家は、ダーク取引所の方が情報リークや取引コストが低いため、ダーク取引所を好む（Menkveld et al.しかし、トレーダーはダークプール間で代替しているのだろうか？
+我々は、取引所の利用可能性がダークトレーディングの進化にどのように影響するかを評価する。我々は、最も著名なプラットフォームにおけるダークトレーディングの規制制限がダークトレーディングの活動に有害な影響を与えることを示す。年間のダーク取引は、半年間の規制期間中に50％以上減少した。投資家が特定のダークプールと粘着的な関係にあることと一致して、我々の結果はダークプール間の代替が著しく低いことを示唆している。また、支配的なプラットフォームのダーク取引を制限しても、ダーク取引からライト取引への移行にはつながらず、トレーダーは他の透明性の低い市場に回帰することも示している。取引禁止に関連する取引量の減少の12%は、システミック・インターナイザーに移行している。我々の調査結果は、欧州の規制がダークトレーダーをライト市場に誘導できていないことと整合的である。</p>
+        <p class="abstract-text en">Trading at dark pools demands examination due to its importance as an exchange mechanism. In January 2021, trading outside public stock exchanges reached 47.2% of total U.S. equity trading volume, up from 39.9% a year earlier. Buy-side investors favor dark to lit trading venues due to their lower information leakage and trading costs (Menkveld et al., 2017), even though these venues are slower and less likely to match buyers with sellers. But do traders substitute across the dark pools?
+We evaluate how the availability of trading venues affects the evolution of dark trading. We show that a regulatory restriction of dark trading at the most prominent platform has a detrimental effect on dark trading activity. Annual dark trading decreases by more than 50% over the half-a-year restriction period. Consistent with investors' sticky relationships with specific dark pools, our results suggest that substitution across dark pools is remarkably low. We also show that restricting dark trading on a dominant platform does not lead to migration from dark to lit markets, traders revert to the other less transparent markets. 12% of the decrease in ban-related trading volume migrates to the systemic internalizers. Our findings are consistent with the European regulation failing to guide dark traders to lit markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Market Power in the Securities Lending Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Shuaiyu Chen (Purdue University), Ron Kaniel (University of Rochester), Christian Opp (University of Rochester)</div>
+            <a href="https://afajof.org/management/viewp.php?n=51744" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、株式証券貸付市場における市場支配力の存在を文書化し、それが様々な投資家グループやバリュエーションに与える影響を評価する。我々の分析では、株式のクロスセクションにおいて、高い市場集中、非競争的な手数料、低い在庫利用率が明らかになった。この証拠に触発され、我々は動的非対称情報モデルを開発・推計し、証券貸し手と空売り手の双方にとっての現在の市場構造の利点を明らかにする。その結果、貸株料収入は貸株者の株式評価を大型株、低手数料銘柄で1.5％、小型株で最大25％、ナノキャップ銘柄では100％以上押し上げることがわかった。我々のモデルはさらに、株式のクロスセクションの異なるセグメントを空売りすることによるアルファの分布を推定し、手数料が空売り人の利益を約60％減少させることを示している。</p>
+        <p class="abstract-text en">We document the presence of market power in the equity securities lending market and evaluate its impact on different investor groups and valuations. Our analysis reveals high market concentration, non-competitive fees, and low inventory utilization in the cross-section of stocks. Motivated by this evidence, we develop and estimate a dynamic asymmetric-information model that sheds light on the benefits of this current market structure for both security lenders and short sellers. We find that lending fee income raises shares lenders’ equity valuations by 1.5% for large-cap, low-fee stocks, by up to 25% for small-cap stocks, and by even more than 100% for nano-cap stocks. Our model further yields estimates of the distribution of alphas from shorting different segments of the cross-section of stocks, indicating that fees reduce short sellers’ profits by about 60%.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">When A Market Is Not Legally Defined As A Market: Evidence From Two Types of Dark Trading</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yunus Topbas (Peking University), Mao Ye (Cornell University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=46340" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">取引所外プラットフォームでの取引は、一般にダーク・トレーディングと呼ばれる。ただし、ダーク・トレーディングにはATS（代替取引システム）とNon-ATSがあり、それぞれ異なる規制が適用される。非ATSとは異なり、ATSは法的にマーケットプレイスとして分類されるため、注文の執行方法についてはあらかじめ決められた非裁量的な方法に従わなければならない。本研究では、2つの外生的な透明性ショックを検証し、ATSとNon-ATSの間の法的区別が、市場の質に大きな経済的格差をもたらす可能性があることを示す。具体的には、ATSは一般的にNon-ATSに比べて市場の質が劣ることが分かる。さらに、透明性は、約定スピードを除き、市場の質の格差を拡大する。透明性はATSとNon-ATSの両方で約定スピードの向上につながる。しかし、ATSでは他の市場品質指標を著しく低下させる一方、Non-ATSでは著しく向上させる。我々の結果は、リテール取引の識別における(Boehmer, Jones, Zhang, & Zhang, 2021)の手法(BJZZ)の精度をめぐる現在進行中の議論に洞察を与え、BJZZの発見とその批判との間の不一致を部分的に解明する。さらに、本論文は、注文執行情報の開示を強化することを目的とした最近のSEC提案と密接に関連しており、それによって重要な政策的意味を持つ。</p>
+        <p class="abstract-text en">Trading on off-exchange platforms as a whole is commonly referred to as dark trading. However, it encompasses ATSs (alternative trading systems) and Non-ATSs, each of which is subject to different regulations. Unlike Non-ATSs, ATSs are legally classified as market places and therefore must adhere to predetermined non-discretionary methods for executing orders. In this study, we examine two exogenous transparency shocks and show that legal distinctions between ATSs and Non-ATSs can result in significant economic disparities in their market quality. Specifically, we find that ATSs generally demonstrate inferior market quality compared to Non-ATSs. Moreover, transparency magnifies these disparities in market quality, except for execution speeds. Transparency leads to improved execution speeds on both ATSs and Non-ATSs. However, it notably diminishes other market quality metrics on ATSs, while remarkably enhancing them on Non-ATSs. Our results provide insight into an ongoing debate surrounding the accuracy of (Boehmer, Jones, Zhang, & Zhang, 2021)’s (BJZZ) method in identifying retail trades, partially elucidating the disparities between BJZZ’s findings and its critiques. Additionally, our paper is closely tied to a recent SEC proposal aimed at enhancing the disclosure of order execution information, thereby carrying significant policy implications.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

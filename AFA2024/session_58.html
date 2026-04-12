@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Topics: Finance and Gender</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link active">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Special Topics: Finance and Gender</h1>        <div class="paper-card">
+            <div class="paper-title">Diversity, Equity, and Inclusion</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alex Edmans (London Business School), Caroline Flammer (Columbia University), Simon Glossner (Federal Reserve Board of Governors)</div>
+            <a href="https://afajof.org/management/viewp.php?n=28924" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、「働きがいのある会社ベスト100」リスト作成に使用された調査回答を用いて、ダイバーシティ、エクイティ、インクルージョン（DEI）を測定する。総合ランキングのみが公表されているが、我々は、最終的に100位以内に入ったかどうかにかかわらず、リストに応募したすべての企業について、58の設問に関する機密データを入手した。その中からDEIに関連する13の質問を抽出し、その回答を集計してDEI指標を作成する。この変数は、DEIポリシーがあるかどうかといった表面的な指標とは対照的に、250人の従業員の回答から得られる、実際のDEIの「草の根」指標である。DEIは、役員室や上級管理職、従業員における性別や民族の多様性との相関は低い。このことは、DEIが、従来の人口統計学的多様性の指標に欠けていた付加的な側面を捉えていることを示唆しており、人口統計学的多様性に「多様性を加えてかき混ぜる」アプローチは、DEIを増加させる可能性が低いことを示唆している。
+
+多変量回帰では、上級管理職に占める女性の割合はDEIと正の相関がある。しかし、一般的な職場慣行（事業所内保育や柔軟な勤務体系など）や職場の成果（自発的な離職など）はDEIと無関係であり、DEIは従業員満足度を向上させる一般的な取り組みでは改善できず、より的を絞った政策が必要であることを示唆している。
+
+また、DEIは小規模成長企業ほど高く、これはDEIを向上させるインセンティブや能力が高いこと、そして財務体質の強い企業であることと整合的である。後者の関連性は、他の無形資産とは異なり、DEIを直接資金調達するために現金が必要であるためであろう。私たちのDEI指標は、従業員の給与、労働条件、アメニティ（これは他の調査項目で表現されている）など、財政投資を必要とする要素ではなく、態度を捉えている。その代わり、強い財務実績があれば、企業は短期的な圧力に集中する必要から解放され、代わりにDEIのような長期的な課題に取り組むことができる。
+
+DEIは、収益性、売上成長率、労働生産性など、財務業績の8つの指標のうち7つと正の相関があり、DEIが従業員のモチベーションとエンゲージメントを高めることと一致している。株式市場がDEIを部分的に評価していることは、トービンのQやその他の比率との正の相関によって証明されている。DEIは特許数および将来の特許被引用数とは相関がないが、我々の詳細なデータにより、従業員の職種別に回答を集計することができる。その結果、研究開発職のような専門職のDEI認識は、特許の量と質の両方と有意な相関があることがわかった。しかし、DEIと将来の株式リターンとの間には関連は見られなかった。</p>
+        <p class="abstract-text en">This paper measures diversity, equity, and inclusion (DEI) using survey responses used to compile the 100 Best Companies to Work For list. While only the overall ranking is public, we obtain confidential data on the 58 constituent questions, for all companies that applied to the list regardless of whether they eventually made the top 100. We identify 13 questions as being related to DEI, and aggregate the responses to form our DEI measure. This variable is a “grass-roots” indicator of actual DEI, as perceived by the responses of 250 employees in a company, in contrast to more superficial measures such as whether a company has a DEI policy. It has low correlation with gender and ethnic diversity in the boardroom, in senior management, and within the workforce. This suggests that that DEI captures additional dimensions missing from traditional measures of demographic diversity, and that an “add diversity and stir” approach to demographic diversity is unlikely to increase DEI. 
+
+In multivariate regressions, the percentage of women in senior management is positively associated with DEI. However, general workplace practices (such as on-site childcare and flexible working schedules) and workplace outcomes (such as voluntary turnover) are unrelated to DEI, suggesting that DEI cannot be improved by generic initiatives to improve employee satisfaction; instead, it requires more targeted policies. 
+
+DEI is also higher in small growth firms, consistent with their greater incentives and ability to improve DEI, and firms with high financial strength. The relevance of the latter is unlikely to be because cash is needed to directly finance DEI, unlike for other intangible assets. Our DEI measure does not capture factors such as employee pay, working conditions, and amenities (which are represented by other survey questions) that require financial investment, but attitudes. Instead, strong financial performance frees a company from having to focus on short-term pressures and instead allows it to address longer-term challenges such as DEI.
+
+DEI is positively associated with seven out of eight measures of financial performance, such as profitability, sales growth, and labor productivity, consistent with DEI increasing employee motivation and engagement. The stock market partially values DEI, as evidenced by its positive correlation with Tobin’s Q and other ratios; however, this incorporation is incomplete as documented by positive future earnings surprises. While DEI is uncorrelated with both the number of patents and future patent citations, our granular data allows us to disaggregate the responses by employee job category. We find that DEI perceptions among professional workers, such as R&D employees, are significantly correlated with both the quantity and quality of patents. However, we find no link between DEI and future stock returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Gender, Competition, and Performance: International Evidence</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kai Li (University of British Columbia), Rachel Peng (University of Dayton), Rui Shen (Chinese University of Hong Kong-Shenzhen), Gabriel Wong (Cardiff University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=13244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、2004年～2019年の間に42カ国から18,269名の株式アナリストを手作業で収集したサンプルを用いて、競争下におけるパフォーマンスの男女差が国によって異なるかどうか、またどのように異なるかを研究している。まず、女性アナリストは男性アナリストよりも予測精度が低いことを示す。しかし、個人主義的な国では、予測精度に男女差はない。さらに、女性アナリストは入社時のスキルが高く、集団主義的な国のアナリストと比較して、個人主義的な国の男性アナリストよりも、パフォーマンスが低い場合に退社する可能性が高いことを示す。競争の下でのパフォーマンスにおける性差は、個人主義的な国々では減衰していると結論づける。</p>
+        <p class="abstract-text en">We study whether and how gender differences in performance under competition vary across countries using a hand-collected sample of 18,269 equity analysts from 42 countries over the period 20042019. We first show that female analysts exhibit worse forecast accuracy than male analysts. However, in individualistic countries, there is no gender difference in forecast accuracy. We further show that female analysts are more skilled upon entry and are more likely to drop out when underperforming than male analysts in individualistic countries compared to peers in collectivistic countries. We conclude that gender differences in performance under competition are attenuated in individualistic countries.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Value of Skill Signals for Women's Careers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexandra Niessen-ruenzi (University of Mannheim), Leah Zimmerer (University of Mannheim)</div>
+            <a href="https://afajof.org/management/viewp.php?n=18928" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">観察可能なスキルのシグナルは、女性のキャリアアップにとって男性よりも重要であることを示す。高学歴と職業経験のシグナルは、男性取締役が指導的地位に就く確率を5.9％、報酬を6.8％（291,000ドル）増加させる。これらのシグナルを持つ女性取締役は、指導的地位に就く確率が12.9％高く、報酬は21.1％（856,500ドル）高い。これらの結果は、スクリーニング差別のモデルと一致する。つまり、女性は、雇用主が指導的地位に就くための観察不能な資格を判断することがより困難であるという事実を補うために、より多くの観察可能なスキルシグナルを提供する必要があるということである。このチャンネルを裏付けるように、（主に）男性雇用者と女性候補者の間の情報の非対称性が大きい場合、我々の結果はより強くなることがわかった。
+の採用である。</p>
+        <p class="abstract-text en">We show that observable skill signals are more important for women's career advancement than for men's. Signals of higher education and professional experience increase male directors' probability to enter a leadership position by 5.9%, and their compensation by 6.8% ($291,000). Female directors with these signals are 12.9% more likely to enter a leadership position, and their compensation is 21.1% ($856,500) higher. These results are in line with models of screening discrimination, in which women need to provide more observable skill signals to make up for the fact that employers find it more difficult to judge their unobservable qualification for a leadership position. Supporting this channel, we find that our results are stronger if information asymmetries between (mostly) male employers and female candidates are larger: successions after the sudden death of a CEO, successions in firms with all-male nomination committees, and outside
+hires.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inventor Gender and Patent Undercitation: Evidence from Causal Text Estimation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yael Hochberg (Rice University), Ali Kakhbod (University of California-Berkeley), Peiyao Li (University of California-Berkeley), Kunal Sachdeva (Rice University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=25088" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">テキストデータから因果関係を特定する最先端の機械学習技術を導入し、女性が特許の質に比して引用件数が少ないことを実証した。女性の発明者が主導した特許と同等の特許では、男性の発明者が主導した特許の方が27%多く引用されている。このような効果は、企業のイノベーションにおいてより大きくなる。特に男性の主発明者は、女性の主発明者がいる特許を過小評価する傾向があるが、特許審査官は男女ともに平等であるように見える。女性が作成した特許が過小評価されることは、経済における才能の配分に影響を与える可能性が高い。</p>
+        <p class="abstract-text en">Implementing a state-of-the-art machine learning technique for causal identification from text data, we document that women are under-cited relative to the quality of their patents. For the equivalent patent with a lead female inventor, a patent with a male lead inventor would have received 27% more citations. These effects are magnified for corporate innovations. Male lead inventors in particular tend to undercite patents with female lead inventors, while patent examiners of both genders appear to be more even-handed. The under-recognition of female-authored patents likely has implications for the allocation of talent in the economy.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

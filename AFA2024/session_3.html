@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Compensation and Agency</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link active">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Corporate Finance: Compensation and Agency</h1>        <div class="paper-card">
+            <div class="paper-title">Firms with Benefits? Nonwage Compensation and Implications for Firms and Labor Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Paige Ouimet (University of North Carolina-Chapel Hill), Geoffrey Tate (University of Maryland)</div>
+            <a href="https://afajof.org/management/viewp.php?n=8876" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">賃金以外の手当の重要性はますます高まっており、現在では総報酬の30％を占めている（Bureau of Labor Statistics, 2021）。健康保険、退職金、休職手当に関する行政データを用いて、企業内変動が手当の総変動に占める割合が賃金よりも大幅に低いことを明らかにした。また、非賃金給付の企業間変動が賃金よりも極めて大きいことも明らかにした。このようなパターンは、無差別規制、公平性への懸念、多すぎる、あるいは複雑な制度を管理することによる高い管理負担の結果である可能性があると論じている。このメカニズムと一致するように、我々は、職業、賃金、州、産業を統制した上で、企業内の関連性のない部門に高賃金労働者が存在すること、および高給与の地域労働市場で雇用された労働者が同僚の給付を正に予測することを示す。このダイナミックスは、従業員の離職に影響を与える。その結果、特に低賃金労働者において、高手当が総報酬に占める割合が高く、離職率を低下させることが分かった。また、賃金以外の福利厚生が手厚い企業は、福利厚生が手厚い企業よりも低賃金労働者への依存を減らしているという証拠も見つかっており、福利厚生提供の制約が企業間の人的資本の分配に影響を及ぼしていることが示唆される。さらに、福利厚生が相対的に手厚い企業ほど市場評価比率が低い傾向があり、これは企業内でより均等な非賃金福利厚生を提供することに関連するコストの存在と整合的である。</p>
+        <p class="abstract-text en">Nonwage benefits have become increasingly important and now represent 30% of total compensation (Bureau of Labor Statistics, 2021). Using administrative data on health insurance, retirement, and leave benefits, we find within-firm variation accounts for a dramatically lower percentage of total variation in benefits than in wages. We also document sharply higher between-firm variation in nonwage benefits than in wages. We argue that this pattern can be a consequence of nondiscrimination regulations, fairness concerns and the high administrative burden of managing too many or complex plans. Consistent with this mechanism, we show that the presence of high-wage workers in unrelated divisions of a firm as well as workers hired in high-benefit local labor markets positively predicts their colleagues’ benefits, controlling for occupation, wages, state, and industry. This dynamic has implications for employee turnover. We find that the resulting high benefits reduce employee departures, particularly among low-wage workers, for whom the benefits comprise a larger percentage of total compensation. We also find evidence that firms with more generous nonwage benefits reduce their reliance on low-wage workers more than low-benefit peers, suggesting that constraints on the provision of benefits affect the distribution of human capital across firms. Moreover, firms with relatively more generous benefits tend to have lower market valuation ratios, consistent with the existence of costs associated with providing more equal non-wage benefits within a firm.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Competition and Executive Compensation: Evidence from Pharmaceutical Breakthrough Designations</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jon Garfinkel (University of Iowa), Mosab Hammoudeh (University of New Orleans), Steve Irlbeck (University of New Hampshire), Erik Lie (University of Iowa)</div>
+            <a href="https://afajof.org/management/viewp.php?n=30184" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">製薬セクターにおける競争ショックが役員報酬とイノベーションに与える影響を検証する。製薬セクターは、イノベーションが最も重要であり、競争空間への周期的なショックが一般的であるため、Arrow（1962）とManso（2011）の共同理論を検証するのに理想的である。有望な治療法の承認を促進するブレークスルー・セラピー指定（BTD）は、ライバル企業の報酬構造にとって外生的な重要な競争上のショックである。我々は、製薬企業がBTDを受けると、ライバル企業は翌年のオプション付与によるリスクインセンティブ報酬を増加させることで反応することを発見した。この効果は、様々な計量経済学的仕様やライバル企業の識別方法に対してロバストである。さらに、観察された効果は、最も影響を受けたライバル企業（すなわち、BTDに対して最悪の株価反応を示したライバル企業）において、また、他の経営幹部と比較してCEOにおいて最も顕著である。また、ライバル企業がよりリスクの高いイノベーションに経営資源をシフトすることで、役員ストックオプションの増加に対応しているかどうかも検証した。その結果、影響を受けたライバル企業は新薬の開発を加速させ、新技術を用いた新薬プロジェクトをより多く開始し、開発期間の長いプロジェクトをより多く引き受ける傾向があることが示唆された。全体として、我々の結果は、(i)競争圧力に直面する企業は最適なイノベーションを強化し、(ii)ストックオプションは経営陣にそのようなイノベーションを行うよう促すという理論モデルを裏付けている。</p>
+        <p class="abstract-text en">We examine the effect of competitive shocks on executive compensation and innovation in the pharmaceutical sector. The pharmaceutical sector is ideal for testing the joint theories of Arrow (1962) and Manso (2011) because innovation is paramount and periodic shocks to the competition space are common. Breakthrough therapy designations (BTDs), which expedite the approval of promising therapies, represent significant competitive shocks that are exogenous to rival firms' compensation structures. We find that when a pharmaceutical firm receives a BTD, rival firms respond by increasing risk-incentive pay via option grants in the subsequent year. This effect is robust to various econometric specifications and various ways of identifying rival firms. Furthermore, the observed effect is most pronounced for the most afflicted rivals (i.e., the rivals that exhibit the worst stock price reaction to the BTD) and for CEOs relative to other executives. We also examine if rival firms respond to the increase in executive stock options by shifting resources to riskier innovation. The evidence suggests that afflicted rivals escalate the developments of new drugs, initiate more drug projects using new technologies, and are more inclined to take on projects with lengthy development times. Overall, our results corroborate theoretical models wherein (i) firms facing competitive pressures optimally intensify innovation, and (ii) stock options encourage executives to undertake such innovation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Process Intangibles and Agency Frictions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hui Chen (Massachusetts Institute of Technology), Ali Kakhbod (University of California-Berkeley), Maziar Kazemi (Arizona State University), Hao Xing (Boston University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=50988" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">無形資本は、新しい財やサービスを創造するために使われることもあれば（製品無形資産）、企業の効率を改善するために使われることもある（プロセス無形資産）。我々は、役員報酬と熟練労働者報酬が企業のプロセス強度（プロセス無形資産に相当する無形資産の割合）に応じて増加するという新たな経験的事実を報告し、研究する。我々は、この事実を、報酬に対するプロセス強度の直接効果と間接効果を明らかにした最適契約による動的プリンシパル・エージェント・モデルで合理化する。直接効果は水準効果であり、工程強度が高ければ高いほど、サボりへの見返りが増加する。間接的効果は傾き効果であり、プロセスの無形資産と物理的資本投資の間の補完性が高ければ高いほど、プロセスの強度がどのレベルであっても、エージェントの企業に対するホールドアップ・パワーが増大する。これらの効果をデータで検証する。重要なことは、これらの効果が役員報酬と高度なスキルを持つ革新的な従業員の賃金に存在することである。ベースライン仕様では、プロセス集約度が1標準偏差上昇すると、同業他社と比較して、役員報酬は8％上昇し、熟練労働者の賃金は3％上昇する。</p>
+        <p class="abstract-text en">Intangible capital can be used to create new goods and services (product intangibles) or to improve the efficiency of the firm (process intangibles). We report and study a new empirical fact: Executive and skilled labor pay is increasing in firm process intensity (the fraction of intangibles corresponding to process intangibles). We rationalize this fact in a dynamic principal-agent model, with the optimal contract uncovering process intensity's direct and indirect effect on compensation. The direct effect is a level effect: Higher process intensity increases the returns to shirking. The indirect effect is a slope effect: Higher complementarity between process intangibles and physical capital investment increases the agent's hold-up power over the firm for any level of process intensity. We verify these effects in the data. Importantly, we show that these effects are present in executive compensation and in the wages of highly skilled innovative employees, which we can measure using proprietary granular vacancy posting data from a labor-market data firm. In our baseline specification, a one standard deviation increase in process intensity is associated with an 8% increase in executive pay and a 3% increase in skilled labor wages relative to industry peers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">ESG-linked Pay Around the World —Trends, Determinants, and Outcomes</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sonali Hazarika (CUNY-Baruch College), Aditya Kashikar (University of Massachusetts-Boston), Lin Peng (CUNY-Baruch College), Ailsa Roell (Columbia University), Yao Shen (CUNY-Baruch College)</div>
+            <a href="https://afajof.org/management/viewp.php?n=52220" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">59カ国の時価総額の85％を占める主要企業を対象に、ESG連動報酬に関する大規模なグローバル調査を実施した。その結果、採掘産業や公益産業の企業、個人主義や女性性を重視し、株主保護が強く、民事法体系の国、大企業や資産利益率の高い企業ほど、ESG連動報酬の採用率が高いことがわかった。採用された企業は、将来の社会的・財務的パフォーマンスが向上する。企業のESG情報開示を義務付ける規制ショックを利用し、ESG連動報酬の業績への効果が因果関係にある可能性が高いことを示し、その経路として従業員満足度を示唆する。</p>
+        <p class="abstract-text en">We conduct a large-scale global study of ESG-linked pay for major firms that make up 85% of the market capitalization across 59 countries. We find that the pay adoption is higher for firms in extractive and utility industries, in countries that value individualism and femininity, have stronger shareholder protections, and are of civil legal origin, and for large firms or firms with high return to assets. The adopters experience better future social and financial performances. Exploiting a regulatory shock that mandates corporate ESG disclosure, we show that the effect of ESG-linked pay on performances is likely causal and suggest employee satisfaction as a channel.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

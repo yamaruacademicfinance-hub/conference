@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Mergers and Acquisitions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link active">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Corporate Finance: Mergers and Acquisitions</h1>        <div class="paper-card">
+            <div class="paper-title">The Incentives of SPAC Sponsors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Felix Feng (University of Washington), Thomas Nohel (Loyola University Chicago), Xuan Tian (Tsinghua University), Wenyu Wang (Indiana University), Wu Yufeng (University of Illinois)</div>
+            <a href="https://afajof.org/management/viewp.php?n=25228" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">特別目的取得会社（SPAC）の市場は近年爆発的に拡大しているが、その不安定なパフォーマンスは、このユニークなビジネスモデル、特にSPACスポンサーのインセンティブがSPAC株主の厚生に与える影響に疑問を投げかけている。本稿では、SPACスポンサーのインセンティブとSPAC投資家の厚生への影響を定量的に研究する。スポンサーの譲歩、アーンアウト、償還などの豊富な情報を持つ手収集のデータセットを用いて、スポンサー、ターゲット、投資家の間の戦略的相互作用を特徴とする構造モデルを推定する。エージェンシー・コストは広く浸透しているようで、エージェンシー・コンフリクトの程度で分類したディールでは、リターンの五分位幅は19％に達する。スポンサーがより多くアーンアウトを行うことと、情報の透明性を向上させることは、それぞれ投資家の厚生を大幅に改善するが、ワラントの発行を抑制することは小幅な改善にとどまる。</p>
+        <p class="abstract-text en">The market of Special Purpose Acquisition Companies (SPACs) has exploded in recent years, yet its volatile performance calls into question the implications of this unique business model and particularly the incentives of the SPAC sponsors on the welfare of SPAC shareholders. This paper quantitatively studies the incentives of the SPAC sponsors and their impact on SPAC investor welfare. We estimate a structural model featuring the strategic interactions between sponsors, targets, and investors using a hand-collected dataset with rich information such as sponsor concessions, earnouts, redemptions, etc. Agency costs appear pervasive: the inter-quintile range of returns reaches 19% for deals sorted on the extent of agency conflict. Tying more of the sponsor’s promote to earnouts and improving information transparency each significantly improve investors’ welfare, while curtailing the issuance of warrants yields only modest improvement.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Negotiation, auction, or negotiauction?! Evidence from the field</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tingting Liu (Iowa State University), Micah Officer (Loyola Marymount University), Danni Tu (Southern Illinois University Carbondale)</div>
+            <a href="https://afajof.org/management/viewp.php?n=36876" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、総額2兆4,000億ドルを超える322件のM&A交渉の包括的な全体像を提供する、手作業で収集された豊富なデータセットを用いて、広範な理論的交渉とオークションの文献を現実の実務に結びつける。本格的なオークションは企業売却の一般的な方法ではなく、サンプル案件の約75％が売却プロセスの最終段階で買い手1社との交渉に切り替わっていることが分かった。さらに
+サンプルの大半は、プロセスが進むにつれてディールの性質（交渉またはオークション）が変化する流動的なディールプロセスである。ほとんどの開始入札者はターゲットに対してより高い評価を持っており、最終的に落札者となる。合併当事者が提示価格について合意に達するまでには、平均して2～3カ月を要するが、その遅れは情報の非対称性、評価の不確実性、潜在的な外部オプションに関係している。ほとんどの入札者は
+しかし、最終的なプレミアムは、入札者によるオファーの数にかかわらず、ほぼ同じである。ターゲット企業の約半数は交渉中にカウンターオファーを出すが、ほとんどの場合、ターゲット企業と入札者は価格差を折半する。我々が実証的に示したパターンは、オークション理論の多くが基づいているいくつかの一般的な仮定を覆すものである。我々の発見は、オークションと交渉の間に内在する相互関連性を考慮した理論のさらなる発展を求めるものである。
+交渉の間の本質的な相互関係を考慮した理論のさらなる発展を求めるものである。</p>
+        <p class="abstract-text en">We connect the extensive theoretical negotiation and auction literature to real-world practice using a rich, hand-collected data set offering a comprehensive picture of high-stake merger and acquisition (M&A) negotiations for 322 deals that aggregate more than $2.4 trillion in deal value. We find that a full-scale auction is not a common way to sell a firm, and about 75% of our sample deals switch to negotiating with only one buyer in the final stage of the sale process. Moreover,
+the majority of our sample involves a fluid deal process that changes the nature of the deal (negotiation or auction) as the process proceeds. Most initiating bidders have higher valuations for the target and are the eventual winning bidders. On average, it takes two to three months for the merging parties to reach an agreement on offer prices, and the delay is related to information asymmetry, valuation uncertainty, and potential outside options. Most bidders experiment with
+offers, but the final premiums are largely similar regardless of the number of offers made by the bidder. About half of the target firms make counteroffers during negotiation; most of the time, the target and the bidder split the price differences. The empirical patterns we document challenge some common assumptions on which much of auction theory is based. Our findings call for further developments in theories that consider the inherent interconnectedness between auctions and
+negotiations as in the real world.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Specialized Investments and Firms’ Boundaries: Evidence from Textual Analysis of Patents</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jan Bena (University of British Columbia), Isil Erel (Ohio State University), Daisy Wang (Ohio State University), Michael Weisbach (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=40740" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">二国間契約によって企業に専門的な投資を行わせることは、潜在的なホールドアップ問題のために困難である。このような契約の難しさは、買収の重要な理由であると長い間議論されてきた。このような動機がどの程度買収につながるかを評価するために、買収の前後で対象企業の同じリード発明者が出願した特許のテキスト分析を行った。その結果、買収完了後、買収対象企業の発明者の特許は、買収企業の発明者の特許よりも22%から33%特定性が高くなることがわかった。このパターンは、専門的な投資を必要とする可能性が高い垂直的買収でより強くなる一方、発表されたが完了しなかった買収では特許の特異性に変化は見られない。全体として、専門的投資を動機付ける上での契約問題が買収の動機になり得るという実証的証拠を提供するものである。</p>
+        <p class="abstract-text en">Inducing firms to make specialized investments through bilateral contracts can be challenging because of potential hold-up problems. Such contracting difficulties have long been argued to be an important reason for acquisitions. To evaluate the extent to which this motivation leads to acquisitions, we perform a textual analysis of the patents filed by the same lead inventors of the target firms before and after the acquisitions. We find that patents of inventors from target firms become 22% to 33% more specific to those of acquirers’ inventors following completed acquisitions. This pattern is stronger for vertical acquisitions that are likely to require specialized investments, while there is no change in the specificity of patents for acquisitions that are announced but not consummated. Overall, we provide empirical evidence that contracting issues in motivating specialized investment can be a motive for acquisitions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Identifying the Real Effects of the M&A Market on Target Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Elizabeth Berger (University of Houston), David De Angelis (University of Houston), Gustavo Grullon)</div>
+            <a href="https://afajof.org/management/viewp.php?n=42756" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿は、M&A市場がターゲット企業の企業政策に及ぼす影響について因果関係を示す証拠を提供する。独占禁止法規制のしきい値を用いて買収確率と企業規模を関連付けることで、企業が意図的に企業規模を縮小して買収提案を引き出す証拠を発見した。これは、資産の増加を抑制し、余剰資金がある場合には配当を増やすことによって行われる。トリートメント効果は、市場価値をコントロールし、合併によってキャッシュアウトするインセンティブが高い企業ほど強い。我々の結果は、独占禁止法の適用除外が、成長を制限する逆インセンティブを生み出す可能性があることを明らかにしている。</p>
+        <p class="abstract-text en">This paper provides causal evidence of the effects of the M&A market on target firms' corporate policies. Using antitrust regulatory thresholds to link the probability of a takeover to the size of the firm, we find evidence that firms intentionally reduce their size to elicit a takeover bid. They do so by limiting asset growth and increasing their payouts when they have excess cash. The treatment effect is stronger among firms with greater control over their market value and  incentives to cash out via a merger. Our results reveal that antitrust exemptions can create perverse incentives that limit growth.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

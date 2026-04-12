@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Bankruptcy and Distress</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link active">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Corporate Finance: Bankruptcy and Distress</h1>        <div class="paper-card">
+            <div class="paper-title">The Cost of Intermediary Market Power for Distressed Borrowers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Winston Dou (University of Pennsylvania), Wei Wang (Queens University), Wenyu Wang (Indiana University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=14084" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">不良債権企業向けローン市場では、少数の専門金融機関がローンの大部分に融資している。信用リスクと流動性リスクの要素を取り除いた後でも、超高利回りのスプレッドが広がっている。借り手は資金調達を切実に必要としているが、資金調達の選択肢は限られており、一方、専門的な貸し手は参加を抑制されたシンジケーション関係を繰り返している。我々は、戦略的競争、内生的談合能力、内生的参加、潜在的異質性を考慮した動的ゲーム理論モデルを開発し、推計した。レンダーの市場パワーはリスク調整後イールドスプレッドの74～92％を占め、かなりの部分が談合に起因する。小規模な借り手ほどレンダーのマーケットパワーの影響を受けやすい。重要なことは、談合が完全に禁止された場合、専門的な貸し手と不良債権を抱えた借り手の両方がより不利になることであり、強力な反トラスト政策が効率性を阻害する可能性があることを示唆している。</p>
+        <p class="abstract-text en">In the loan markets for distressed corporate borrowers, a few specialized lenders finance a large fraction of loans. Ultra-high yield spreads prevail even after removing the credit and liquidity-risk component. Borrowers are in desperate need of financing but face limited funding options, while specialized lenders have repeated syndication relations with restrained participation. We develop and estimate a dynamic game-theoretic model, accounting for strategic competition, endogenous collusion capacity, endogenous participation, and latent heterogeneity. Lender market power accounts for 74 - 92% of the risk-adjusted yield spreads, with a significant fraction attributable to collusion. Smaller borrowers are more susceptible to lender market power. Importantly, both specialized lenders and distressed borrowers would be worse off if collusion is completely prohibited, suggesting that vigorous antitrust policies can be efficiency retarding.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Resolving Financial Distress Where Property Rights are not Clearly Defined: The Case of China</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Julian Franks (London Business School), Meng Miao (Renmin University of China), Oren Sussman (University of Oxford)</div>
+            <a href="https://afajof.org/management/viewp.php?n=18340" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">財産権が粗雑に定義され、執行が不十分な債務市場を研究するために、財政難に陥った中国企業のデータを使用する。特定を助けるために、あるビジネスフレンドリーな省が、担保として差し入れられた資産の管理と執行に関する新しいガイドラインを発表した出来事を利用する。破産法や財産権の包括的な改革というわけではないが、初歩的とはいえ既存の契約上の権利を執行するよう裁判所に指示することで、新ガイドラインは事実上、借り手に大きな影響を与えた。具体的には、優先権のある債務者については、債権者間の優先権が強化されたことにより、有担保債権者からの融資が大幅に増加し、搾取的な高利貸しからの融資が減少した。また、優先権の強化は、債権者による早期返済の要求を抑制し、債権者の暴走をなくすため、経営難に陥った企業が生き残る可能性を高め、私的な高利貸しによる暴力的な取り立てを恐れて経営者が逃げ出す確率を低下させた。無担保の借り手や、改革の管轄外にいる借り手の対照群では、同様の結果は観察されなかった。これらの変化は、財産権とその執行に関する断片的な改革が、いかに経済結果に大きな影響を与えるかを示している。われわれの分析と結果は、私有財産の全面的な制度が経済発展の前提であるという見解に疑問を投げかけるものである。</p>
+        <p class="abstract-text en">We use data on financially distressed Chinese companies in order to study a debt market where property rights are crudely defined and poorly enforced. To help with identification we use an event where a business-friendly province published new guidelines regarding the administration and enforcement of assets pledged as collateral. Although by no means a comprehensive reform of bankruptcy law or property rights, by instructing courts to enforce existing, albeit rudimentary, contractual rights the new guidelines virtually have significant impacts over borrowers. In particular, we find that for those titled borrowers, due to better enforced priority among creditors, are associated with significant increase in loan from secured creditors and decrease in loan from exploitative loan sharks, leading to debt concentration toward senior creditors. The better enforced priority also discouraged creditors from demanding early repayment and therefore eliminated creditor runs, increasing the likelihood of financially distressed companies surviving and reducing the probability of owners fleeing due to fear of violent collection by private loan sharks. We did not observe similar results in the control group of untitled borrowers or among borrowers located outside the jurisdiction of the reform. These changes illustrate how piecemeal reforms of property rights and their enforcement may have a significant impact on economic outcomes. Our analysis and results challenge the view that a fully fledged system of private property is a precondition for economic development.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">After the Storm: Direct and Spillover Benefits from Disaster Loans to Small Businesses</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sabrina Howell (New York University), Benjamin Collier (Temple University), Lea Rendell (University of Maryland)</div>
+            <a href="https://afajof.org/management/viewp.php?n=42000" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">自然災害の頻度と深刻さが増すにつれ、災害後の復旧を支援するための効率的で効果的な政策を特定することが新たに求められている。このような制度として世界的に最大かつ最も長く実施されているのが、米国の災害融資制度であり、災害後に物理的な損傷を修復するための融資を企業に提供している。このような迅速な資本注入は、企業の存続と成長を促進し、地域社会にも影響を与える可能性がある。しかし、借金が増えることはあまり意味がないかもしれない：融資は企業リスクを増大させ、金利負担を伴い、撤退すべき「ゾンビ」企業を下支えする可能性がある。我々は、2004年から2020年にかけての金融的・実質的アウトカムと結びついた包括的な行政データを用いて、災害融資の因果効果を評価した。災害融資を受けると、企業撤退の可能性が減少し、雇用と収益が増加する。融資は、延滞や倒産を減らすと同時に、SBA以外の民間の追加的な信用を引き出す。融資は、より制約が大きく、より脆弱な人々を抱える企業や地域にとって、より有用である。最後に、企業の参入マージンには正の波及効果が見られるが、近隣の既存企業には負の波及効果が見られることが示唆される。全体として、融資は受益企業に大きな利益をもたらし、地域経済にも利益をもたらしているようである。</p>
+        <p class="abstract-text en">The increasing frequency and severity of natural disasters creates new imperatives to identify efficient and effective policies to aid recovery in the aftermath. One of the largest and longest running such programs globally is the U.S. disaster loan program, which offers businesses loans to repair physical damage following a disaster. This rapid injection of capital could catalyze firm survival and growth, with implications for the local community. However, more debt might not be helpful: The loans increase firm risk and come with an interest burden, could prop up ``zombie'' firms that should exit,  and may crowd out private capital. We evaluate the causal effect of disaster loans using comprehensive administrative data tied to both financial and real outcomes between 2004 and 2020. Receiving a disaster loan has strong and persistent positive effects, reducing the chances of firm exit and increasing employment and revenue. The loans unlock additional, non-SBA private credit while also reducing delinquency and bankruptcy. The loans are more useful for firms and places that are more constrained and have more vulnerable populations. Finally, we find  evidence of positive spillovers on the firm entry margin, but suggestive evidence of negative spillovers on incumbent neighbor firms. Overall, the loans appear to strongly benefit recipient firms and likely benefit the local economy as well.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

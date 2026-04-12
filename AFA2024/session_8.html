@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Behavioral</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link active">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Behavioral</h1>        <div class="paper-card">
+            <div class="paper-title">Investor Memory and Biased Beliefs: Evidence from the Field</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhengyang Jiang (Northwestern University), Hongqi Liu (Chinese University of Hong Kong-Shenzhen), Cameron Peng (London School of Economics and Political Science), Hongjun Yan (DePaul University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=22372" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、個人投資家の大規模な代表サンプルを調査し、株式市場への投資とリターン期待に関する記憶を引き出した。次に、調査データと取引に関する行政データを統合し、投資家が現在の手がかりと類似した過去の経験を選択的に想起することによって期待を形成するというモデルを検証する。我々の分析は、投資家の記憶に関する新しい定型的事実を明らかにするだけでなく、金融市場における信念形成の重要なメカニズムとして類似性に基づく想起を支持するものである。市場の変動は投資家の想起に影響を与える。プラスの市場リターンは、投資家が市場上昇のエピソードを想起する手がかりとなり、自らのパフォーマンスをよりポジティブに想起する。想起された経験は、投資家間の信念のばらつきのかなりの部分を説明し、説明力において実際の経験に勝る。また、想起された経験が、期待される将来のリターンに対する最近のリターンの説明力を弱め、記憶に基づくリターン外挿の基礎となることを示す。</p>
+        <p class="abstract-text en">We survey a large representative sample of retail investors to elicit their memories of stock market investment and return expectations. We then merge the survey data with administrative data of transactions to test a model in which investors form expectations by selectively recalling past experiences similar to the present cue. Our analysis not only uncovers new stylized facts about investor memory, but also provides support for similarity-based recall as a key mechanism of belief formation in financial markets. Market fluctuations affect investors’ recall: positive market returns cue investors to retrieve episodes of rising markets and recall own performances more positively. Recalled experiences explain a sizable fraction of cross-investor variation in beliefs and dominate actual experiences in explanatory power. We also show that recalled experiences can drive out the explanatory power of recent returns for expected future returns, ruling in a memory-based foundation for return extrapolation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Cryptocurrency Participation Puzzle</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ran Duchin (Boston College), David Solomon (Boston College), Jun Tu (Singapore Management University), Xi Wang)</div>
+            <a href="https://afajof.org/management/viewp.php?n=23912" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">暗号通貨のポートフォリオ・ウェイトをゼロにすることは、ベイズ・ ポートフォリオ理論の枠組みでは驚くほど難しい。10年分の事前データがあれば、株式投資家が暗号通貨を購入しな いためには、平均リターンについて非常に悲観的な事前分布が必要である。暗号通貨を絶対に購入しない場合、ほとんどのプリオー ルは暗号通貨をショートすることを意味する。最適なウェイトは一般的に小さく、自明でなく（1-5% の大きさ）、頻繁にプラスで、滑らかである。暗号通貨から得られる確実性等価利益は国際分散投資と同等であり、サイズの異常性を上回る。コスト（保管、手数料）が年間21-39%を超えないと、取引は抑止されない。</p>
+        <p class="abstract-text en">Ongoing zero portfolio weights in cryptocurrency are surprisingly difficult to generate in a Bayesian portfolio theory framework. With ten years of prior data, equity investors would need very pessimistic priors on mean returns to never buy cryptocurrency: -10.6% per month for Bitcoin, and -19.6% for a diversified cryptocurrency portfolio. Most priors that involve never purchasing cryptocurrency imply shorting it. Optimal weights are generally small, non-trivial (1-5% magnitude), frequently positive, and smooth. The certainty equivalent gains from cryptocurrency are comparable to international diversification and exceed the size anomaly. Costs (storage, fees) would need to exceed 21-39% per year to deter trading.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Consumption out of Fictitious Capital Gains and Selective Inattention</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Benjamin Loos (University of New South Wales), Steffen Meyer (University of Southern Denmark (Danish Finance Institute), Michaela Pagel (Columbia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=54348" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">個人投資家の取引における行動バイアスは消費に影響するか？我々は、オンライン・ポートフォリオの購入価格表示を変更した
+投資家のオンライン・ポートフォリオの購入価格表示を変更した自然実験を利用する。その結果
+投資家は「架空の」キャピタルゲインを容易に売却し、消費する。
+すなわち、新しい購入価格に基づいて表示されたキャピタル・ゲインが、実際の購入価格に基づいて表示されたキャピタル・ロスであることを発見した。投資家は選択的不注意である。
+架空の利益が大きく、実際の損失が小さい場合には、架空の勝者をより多く売却する。
+投資家は、架空の利益が大きく、実際の損失が小さいときには、架空の勝者をより多く売却し、実際の購入価格が非常に顕著であるときにも売却する。
+架空の勝者を実際の勝者と同じように扱う。</p>
+        <p class="abstract-text en">Do retail investors’ behavioral biases in trading affect their consumption? We exploit a natural
+experiment that changed the displayed purchase prices in investors’ online portfolios. We find that
+investors readily sell and consume “fictitious” capital gains: displayed capital gains based on the new
+purchase prices that are truly capital losses based on the actual purchase prices. We argue that investors
+are selectively inattentive: they sell more fictitious winners when fictitious gains are larger and actual
+losses are smaller, they sell them even when actual purchase prices are very salient, but they notice
+fictitious losers, treating them the same as actual winners.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Cross-section of Subjective Expectations: Understanding Prices and Anomalies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ricardo De la O (University of Southern California), Xiao Han), Sean Myers (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=46424" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">調査による予測を用いると、主観的な利益成長期待と株価成長期待が株価収益率のクロスセクション変動の90％以上を占めていることが分かる。これは、期待収益成長率が期待株価成長率よりも変動が大きく、PERとの相関が高いことが主な原因である。予想キャスターが常に高PER企業の利益成長を過大評価しているため、予想利益成長の誤差はPERのクロスセクション変動の36～43％を占めている。市場全体に関するこれまでの知見とは対照的に、クロスセクションにおいては、予測者は高PER銘柄の株価成長率が低くなることを正しく予測しているが、その関係の大きさは控えめである。22のアノマリー特性を用いて、アノマリー・ポートフォリオの実現価格成長率を分解した結果、期待される価格成長率の役割はわずかであることが分かった。その代わりに、アノマリー・ポートフォリオの実現価格成長率は、期待収益成長率の誤差によって大きく説明される。</p>
+        <p class="abstract-text en">Using survey forecasts, we find that subjective expectations of earnings growth and price growth account for over 90% of cross-sectional variation in stock price-earnings ratios. This is largely due to expected earnings growth, which is more volatile and more correlated with P/E ratios than expected price growth. Due to forecasters consistently overestimating the earnings growth of high P/E firms, errors in expected earnings growth account for 36-43% of all cross-sectional variation in P/E ratios. In contrast to previous findings for the aggregate market, in the cross-section forecasters correctly expect lower price growth for high P/E stocks but understate the magnitude of the relationship. Using 22 anomaly characteristics, we decompose realized price growth on anomaly portfolios and find that expected price growth plays only a minor role. Instead, realized price growth for anomaly portfolios is largely explained by errors in expected earnings growth.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Finance: Labor Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link active">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Corporate Finance: Labor Finance</h1>        <div class="paper-card">
+            <div class="paper-title">What Drives Finance Professors' Wages?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Claire Celerier (University of Toronto), Boris Vallee (Harvard University), Alexey Vasilenko (University of Toronto)</div>
+            <a href="https://afajof.org/management/viewp.php?n=9436" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">1980年代以降、金融業界は他業界に比べて著しく高い賃金を支払ってきた。このような高い賃金格差は、学術界を含む社会に重要な波及効果をもたらす可能性がある。全分野の国公立大学教員8万人の賃金、論文、社会的属性を網羅した広範なデータセットを活用することで、金融業界の終身雇用教員の賃金が他分野より50％高いことを示す。このプレミアムは2010年から2018年にかけて増加傾向にあり（42％から57％）、トップ校ほど高く、金融業界で観察されるプレミアムの大きさに匹敵する。そして、ファイナンス教員の賃金は、他の分野に比べて学生の将来の報酬に対する感応度が有意に高いことを示し、このことは、アカデミック・プレミアムが産業界からのスピルオーバーによってもたらされていることを示唆している。金融教員一人当たりの大学収入（授業料、寄付金、教員一人当たりの学生数の割合の増加による）が高いことと、金融教員の交渉力が高いことが、このスピルオーバー効果をもたらしている。したがって、学部生は他の分野よりも金融業界の方が良い外部選択肢から利益を得ることができ、大学は博士号候補者を惹きつけるためにアカデミック・キャリアで高い賃金を提供することになる。しかし、引用、トップ出版、h-indexといった分野内のパフォーマンスで測定される個人の才能へのリターンは、ファイナンスの学界では他の分野より有意に高いわけではない。</p>
+        <p class="abstract-text en">From the 1980s onward, the finance industry has been paying significantly higher wages relative to other industries. Such a high pay differential may have important spillover effects on society, including on academia. By exploiting an extensive dataset covering wages, publications and socio-demographics for 80,000 public-university faculty from all fields, we show that tenure-faculty in finance earn wages that are 50% higher than in other fields. This premium has been increasing over the 2010-2018 period -- from 42% to 57% --, is higher in top schools, and is comparable in magnitude to the one observed in the finance industry. We then show that finance-faculty wages are significantly more sensitive to students' future compensation than in other fields, which suggests that the academic premium results from a spillover from the industry. Higher university revenues per finance faculty -- resulting from higher tuitions, donations and ratio of students per faculty -- combined with a higher bargaining power for finance faculty are driving this spillover effect. Hence, undergraduate students benefit from better outside options in the finance industry than in other fields, leading universities to offer high wages in academic carriers to attract PhD candidates. However, returns to individual talent, as measured by within field performance in terms of citation, top publications or h-index, are not significantly higher in finance academia than in other fields.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Pay, Productivity and Management</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Melanie Wallskog (Duke University), Nicholas Bloom (Stanford University), Scott Ohlmacher (Federal Reserve Board of Governors), Cristina Tello-Trillo)</div>
+            <a href="https://afajof.org/management/viewp.php?n=15848" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">国勢調査の雇用者・被雇用者の所得データと、企業の雇用・売上高データを組み合わせたところ、4つの重要な結果が得られた。第一に、生産性の高い企業の従業員は、所得分布のすべてのパーセンタイルにおいて給与が高い。第二に、この関係の大きさは労働者によって大きく異なり、収益生産性に対する賃金の弾力性は、中央値で7％であったものが、最上位では15％と倍増している。生産性が高い企業ほど企業内不平等が高いことを意味する。このような大きさの違いは、生産性を市場環境で調整した場合にも同様の結果が得られ、因果関係があるように見える。第三に、これらのパターンは、より生産性の高い企業が経営トップに対してより積極的な業績連動型報酬制度を採用していることと整合的である。生産性の高い企業の経営トップは給与の変動性が高く、企業の経営慣行（インセンティブの使用を含む）と労働者の給与の間に同様の関係があることが分かる。最後に、これらの結果は、生産性の上昇が企業内不平等の上昇の一部を占める可能性を示唆しているが、その割合は緩やかである。その代わりに、株式市場全体のリターンの上昇が不平等上昇のより大きな割合を占める可能性があり、これは経営者が企業の業績よりもマクロ経済の状況に基づいて給与を受け取るようになっていることと整合的である。</p>
+        <p class="abstract-text en">Combining confidential Census matched employer-employee earnings data and firm employment and sales data, we find four key results. First, employees at more productive firms have higher pay across all percentiles of the earnings distribution. Second, the magnitude of this relationship varies substantially across workers, with the elasticity of pay on revenue productivity doubling from 7% for the median paid employee to 15% for the top paid employee; this means that more productive firms have higher within-firm inequality. These different magnitudes appear causal, with similar results when we instrument productivity with market conditions, and are particularly strong at large publicly-traded firms. Third, these patterns are consistent with more productive firms adopting more aggressive performance-based pay schemes for top executives: top workers at more productive firms have higher pay volatility, and we find similar relationships between a firm’s management practices (which include use of incentives) and workers’ pay. Finally, these results imply that rising productivity can account for a share of rising within-firm inequality, but this share is modest. Instead, rising returns in the aggregate stock market can account for a larger share of rising inequality, consistent with managers increasingly being paid based on the state of the macroeconomy rather than their firms’ performance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Too Many Managers: The Strategic Use of Titles to Avoid Overtime Payments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lauren Cohen (Harvard University), Umit Gurun (University of Texas-Dallas), N. Bugra Ozel (University of Texas-Dallas)</div>
+            <a href="https://afajof.org/management/viewp.php?n=26152" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、「管理職」と呼ばれ、あらかじめ定義された基準額以上の給与を支給されている従業員に対して、残業代の支払いを回避することを可能にする連邦法を悪用することで、企業が残業代の支払いを回避していることを示す広範な証拠を発見した。我々は、管理職の肩書きを持つ給与職のリストが、連邦法規制の閾値付近でほぼ5倍に増加していることを示す。その中には、「第一印象担当取締役」のような管理職のリストも含まれるが、それ以外の職務は非管理職従業員（この場合はフロント・アシスタント）と同等である。時間外労働の回避は、企業の交渉力が強く、従業員の権利が弱いほど顕著である。さらに、財務的な制約がある企業や、その地域に労働力の外部選択肢が乏しい場合には、より顕著である。また、低賃金産業で、時間外労働違反に対してより多くの罰則が課される職種ほど、より強い結果が得られる。この結果は、職種を利用した時間外労働の回避が、場所や時間を超えて広く行われ、現在に至るまで持続していることを示唆している。さらに、回避される賃金は相当なものであり、サンプル期間中に採用された戦略的「マネージャー」1人当たり、企業はおよそ13.5％の残業代を回避していると推定される。</p>
+        <p class="abstract-text en">We find widespread evidence of firms appearing to avoid paying overtime wages by exploiting a federal law that allows them to do so for employees termed as “managers” and paid a salary above a pre-defined dollar threshold. We show that listings for salaried positions with managerial titles exhibit an almost five-fold increase around the federal regulatory threshold, including the listing of managerial positions such as “Directors of First Impression,” whose jobs are otherwise equivalent to non-managerial employees (in this case, a front desk assistant). Overtime avoidance is more pronounced when firms have stronger bargaining power and employees have weaker rights. Moreover, it is more pronounced for firms with financial constraints and when there are weaker labor outside options in the region. We find stronger results for occupations in low-wage industries that are penalized more often for overtime violations. Our results suggest broad usage of overtime avoidance using job titles across locations and over time, persisting through the present day. Moreover, the wages avoided are substantial - we estimate that firms avoid roughly 13.5% in overtime expenses for each strategic “manager” hired during our sample period.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How Do Health Insurance Costs Affect Firm Labor Composition and Technology Investment?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Janet Gao (Georgetown University), Shan Ge (New York University), Lawrence Schmidt (Massachusetts Institute of Technology), Cristina Tello-Trillo)</div>
+            <a href="https://afajof.org/management/viewp.php?n=27356" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">雇用者負担の医療保険は労働コストの重要な構成要素である。我々は、健康保険料が企業の雇用（雇用量と雇用構成）および技術投資決定に及ぼす因果効果を検証する。内生性の懸念に対処するため、保険会社の損害の特質的変動を用いて保険料を調整する。国勢調査のミクロデータを用いて、保険料の引き上げ後、企業は雇用を減らすことを示す。高スキルの同僚に比べ、低スキルの労働者は解雇される可能性が高く、ショック後2年間は失業状態が続く。企業はまた、潜在的に労働力を代替するために、情報技術への投資を増やす。</p>
+        <p class="abstract-text en">Employer-sponsored healthcare insurance is a significant component of labor costs. We examine the causal effect of health insurance premiums on firms’ employment, both in terms of quantity and composition, and their technology investment decisions. To address endogeneity concerns, we instrument for insurance premiums using idiosyncratic variation in insurers' losses, which is plausibly exogenous to their customers who are employers. Using Census micro data, we show that following an increase in premiums, firms reduce employment. Relative to higher-skilled coworkers, lower-skilled workers are more likely to be laid off and remain unemployed for two years following the shock. Firms also invest more in information technology, potentially to substitute for labor.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

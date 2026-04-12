@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link active">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Household Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Salient Attributes and Household Demand for Security Designs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Petra Vokata (Ohio State University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=6244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">複雑な証券の新しいデータベースを用いて、証券設計の顕著な属性が家計の投資決定をどのように歪めるかを研究する。私は、銀行が非標準的な（細則的な）条件を追加して、広告上のヘッドライン・リターンを人為的に増加させていることを示した---この現象を私は「エンハンスメント」と呼んでいる。エンハンスメントはヘッドラインリターンを平均11％ポイント増加させるが、実現リターンは増加させない。他のすべての商品属性を柔軟にコントロールし、識別のためにエンハンスメントの構造化コストに対する高頻度のショックを使用することで、需要がエンハンスメントに対して非常に弾力的であることを発見した。エンハンスメントは投資家にとってコストであり、1標準偏差の低下は10億ドル以上の手数料の節約を意味する。</p>
+        <p class="abstract-text en">Using a novel database of complex securities, I study how salient attributes of security design distort household investment decisions. I show banks add non-standard (fine-print) conditions to artificially increase advertised headline returns---a phenomenon I term 'enhancement.' Enhancement increases headline returns by 11 percentage points, on average, but does not increase realized returns. Flexibly controlling for all other product attributes and using high-frequency shocks to structuring costs of enhancement for identification,  I find demand is highly elastic to enhancement. Enhancement is costly to investors: a one standard deviation decrease implies savings of more than $1 billion in fees.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Mortgage Lock-In, Mobility, and Labor Reallocation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Julia Fonseca (University of Illinois), Lu Liu (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=38584" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">住宅ローン金利の上昇がモビリティと労働再配置に与える影響を研究する。
+個人レベルの信用記録データと住宅ローン組成時期のばらつきを用いて、購入時に固定された住宅ローン金利と現在の市場金利の差（Δr）として測定される住宅ローンロックインが1 p.p.上昇すると、移動率が0.68 p.p.、すなわち9％低下することを示す。この関係が非線形であることを示す。Δrが十分に高くなると、家計が引っ越さずに借り換えるという選択肢が十分に魅力的になり、引っ越し確率はもはやΔrに依存しなくなる。最後に、住宅ローンのロックインは、MSAレベルの賃金上昇率として測定された雇用機会に対する家計のショックに対する反応性を減衰させ、シフト・シェアのインストルメントで計測されることを発見した。MSAレベルの賃金上昇に対するMSA内の移動率の反応性は、ロックインが大きい（Δrが中央値以下）世帯の方が、ロックインが小さい世帯よりも半分大きい。長期固定金利住宅ローンによる金融引き締めが住宅市場と労働市場に及ぼす意図せざる結果を浮き彫りにし、住宅ローンのロックイン効果の因果関係を推定する。</p>
+        <p class="abstract-text en">We study the impact of rising mortgage rates on mobility and labor reallocation.
+Using individual-level credit record data and variation in the timing of mortgage origination, we show that a 1 p.p. rise in mortgage lock-in, measured as the difference between the mortgage rate locked in at purchase and the current market rate (Δr), reduces moving rates by 0.68 p.p, or 9%. We show that this relationship is nonlinear: once Δr is high enough, households’ alternative of refinancing without moving becomes attractive enough that moving probabilities no longer depend on Δr. Lastly, we find that mortgage lock-in attenuates household responsiveness to shocks to employment opportunities, measured as MSA-level wage growth and instrumented with a shift-share instrument. The responsiveness of within-MSA moving rates to MSA-level wage growth is half as large for households who are more locked in (below-median Δr) than for those who are less locked in. We provide causal estimates of mortgage lock-in effects, highlighting unintended consequences of monetary tightening with long-term fixed-rate mortgages on housing and labor markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Choosing Pension Fund Investment Consultants</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Aleksandar Andonov (University of Amsterdam), Matteo Bonetti (De Nederlandsche Bank), Irina Stefanescu (Federal Reserve Board of Governors)</div>
+            <a href="https://afajof.org/management/viewp.php?n=47096" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">年金基金は、目標とする資産配分方針の策定、投資マネジャーの監視・選定、運用成績のベンチマーキングにおいて、投資コンサルタントのアドバイザリー・サービスに依存している。年金基金は、特に不動産、プライベート・エクイティ、ヘッジファンドなどのオルタナティブ資産に特化したコンサルタントを採用することで、投資コンサルタントの数を年々増やしている。我々は、コンサルタントの雇用と解雇の根底にある要因を探り、これらの決定が加入者の最善の利益のために行われているかどうかを検証する。年金基金が投資コンサルタントに依存する理由として、(a)投資に関する専門知識が乏しい、(b)資産運用会社へのアクセスが限られている、(c)責任転嫁、という3つの潜在的な動機を検証する。(b)資産運用会社へのアクセス制限、(c)責任転嫁である。投資に関する専門知識が乏しいという仮説とは対照的に、初めて投資コンサルタントを雇う年金基金は、すでにその資産クラスで投資を行っていることが分かった。限定的アクセス仮説と同様に、専門の投資コンサルタントを雇った年金基金は、応募の多いプライベート・エクイティ・ファンドに投資する傾向が高く、実績のない初めてのファンドに投資する傾向が低いことが分かった。しかし、専門のコンサルタントを雇ったからといって、プライベート・エクイティ市場における年金基金のパフォーマンスが向上するわけではない。責任転嫁仮説に沿うと、政治的な理事を持つ大規模な年金基金は投資コンサルタントをより多く雇用していることが分かった。コンサルタントの入れ替わりは過去のパフォーマンスと強く関連していることが分かったが、コンサルタントの入れ替わり後にパフォーマンスが改善し、年金基金が長期的に投資コンサルタントの増員から利益を得ていることを示す証拠は弱い。</p>
+        <p class="abstract-text en">Pension funds rely on the advisory services of investment consultants for designing target asset allocation policy, monitoring and selecting investment managers, and benchmarking performance. Pension funds have increased the number of investment consultants over time, particularly by hiring specialized consultants in alternative assets, such as real assets, private equity and hedge funds. We explore the factors underlying the hiring and firing of consultants and examine whether these decisions are made in the best interests of participants. We examine three potential motivations of why pension funds rely on investment consultants: (a) poor investment expertise; (b) limited access to asset managers; and (c) responsibility shifting. In contrast with the poor investment expertise hypothesis, we find that pension funds that hire specialized investment consultants for the first time already made investments in that asset class. In line with the limited access hypothesis, we find that pension funds that hire specialized investment consultants are more likely to invest in oversubscribed private equity funds and less likely to invest in first-time funds without track record. However, using a specialized consultant does not improve pension fund performance in private markets. In line the responsibility shifting hypothesis, we find that large pension funds with political board members hire more investment consultants. While we find that the turnover of consultants is strongly linked to past performance, there is only weak evidence that performance improves subsequent to a consultant replacement and that pension fund benefit from the increased the number of investment consultants over time.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

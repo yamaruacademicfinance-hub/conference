@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Belief Formation and Market Efficiency</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link active">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Belief Formation and Market Efficiency</h1>        <div class="paper-card">
+            <div class="paper-title">Which Expectation?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Juhani Linnainmaa (Dartmouth College), Yingguang Zhang (Peking University), Guofu Zhou (Washington University in St. Louis)</div>
+            <a href="https://afajof.org/management/viewp.php?n=47124" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、資産価格決定における2つの期待に関する理論を検証する。すなわち、投資家は資産を評価する際に、キャッシュフローの水準とキャッシュフローの成長について別々に主観的な信念を形成する。この2つの信念のバイアスが、明確なミスプライシングを生み出す。123のアノマリーとアナリストの業績予想期間構造データを用いて、2つの信念が分離可能であることを示す強力な証拠を発見し、アノマリーのクロスセクションにおける重要性を定量化した。(2) アノマリー・ポートフォリオは通常、どちらか一方の信念のバイアスを捕捉するが、両方は捕捉しない。(3) アルファが大きい（小さい）アノマリーは、2つのバイア スが互いに増幅（相殺）していることが多い。(4) 成長バイアスを捉えたアノマリーは、より持続的なアルファを獲得し、より強いファクターモメンタムを示すが、これらのアルファは最近の期間でより低下する。(5) アノマリー・リターンの最初の2つの主成分は、基本的に成長バイアス・ファクターと水準バイアス・ファクターである。(6) この2つのバイアスは、アノマリーのCAPMからの乖離のクロスセクション変動の約50%を説明する。(7) 最近におけるアルファの減衰は、アナリストの予測精度の向上と一致する。</p>
+        <p class="abstract-text en">We test a theory of two-expectations in asset pricing: investors separately form subjective beliefs on the cash flow level and cash flow growth when valuing assets. Biases in the two beliefs create distinct mispricing. Using 123 anomalies and analysts' earnings forecast term structure data, we find strong evidence for the separability of the two beliefs and quantify their importance for the cross-section of anomalies: (1) Forecast errors in the cash flow level and cash flow growth are uncorrelated. (2) Anomaly portfolios typically capture biases in one belief or the other, but not both. (3) Anomalies with large (small) alphas often have the two biases amplifying (offsetting) each other. (4) Anomalies that capture the growth bias earn more persistent alphas and exhibit stronger factor momentum, but these alphas decline more in recent periods. (5) The first two principal components of anomaly returns are essentially a growth bias factor and a level bias factor. (6) The two biases explain about 50% of the cross-sectional variation in the anomalies' deviation from the CAPM. (7) The alpha decay in recent periods coincides with analysts' improved forecast accuracy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Extrapolating Long-Term Cash Flow Expectations from Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lawrence Jin (Cornell University), Jiacui Li (University of Utah)</div>
+            <a href="https://afajof.org/management/viewp.php?n=16688" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">この論文では、株価の動きを合理化するために、株式アナリストが長期的な収益に関する予測を修正する傾向があることを明らかにする。さらに、こうした株価に左右される信念の変化は、その後元に戻る傾向がある。これらの結果は、株価リターンとアナリストの業績予想が示唆する主観的評価の変化との間に高い相関関係が観察されるのは、部分的には、株価から信念への逆因果を反映していることを示している。このチャネルを推計したところ、株式レベルの相関の約3分の1、市場レベルの相関の約半分を占めていることが分かった。アナリスト予想が投資家の信念の優れた代用品であると仮定すると、このチャネルは非弾力的な需要と過剰な価格変動の可能なミクロファウンデーションを提供する。</p>
+        <p class="abstract-text en">This paper documents that equity analysts tend to revise their forecasts about long-term earnings— earnings beyond two years—to rationalize stock price movements, even when the price movements are driven by shocks identified by economists as not cash flow-related. Moreover, these price-driven changes in beliefs tend to revert subsequently. These findings indicate that the observed high correlation between stock returns and changes in subjective valuation implied by analysts’ earnings forecasts reflects, in part, reverse causality from prices to beliefs. We estimate this channel and find that it accounts for approximately one-third of the stock-level correlation and for approximately half of the market-level correlation. Assuming that analyst forecasts are a good proxy of investor beliefs, this channel provides a possible microfoundation for inelastic demand and excess price volatility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Subjective Risk and Risk Premia of Institutional Investors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Spencer Couts (University of Southern California), Andrei Goncalves), Johnathan Loudis (University of Notre Dame)</div>
+            <a href="https://afajof.org/management/viewp.php?n=19992" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">1988年から2022年までの資産運用会社や機関投資家のコンサルタントの長期資本市場想定を用い、15資産クラスのリスクとリスクプレミアに関するこれらの機関の主観的見解について、3つの定型化された事実を提供する。第一に、アセットクラス・リターンの主観的分布は1要因構造によってよく説明され、この単一のリスク要因によって、典型的な機関投資家のアセットクラス・リターンの主観的変動の約65%が説明される。第二に、主観的リスク・プレミアの変動の80％以上は、主観的ミスプライシングではなく、主観的リスク補償の変動によるものである。第三に、主観的リスクとリスク・プレミアは、機関投資家間よりも資産クラス間で大きく異なる。我々の発見は、リスクとリターンのトレードオフを認識しながら同質的な信念を持つ機関投資家のモデルは、リスクとリターンのトレードオフを無視しながら異質的な信念を持つ機関投資家のモデルよりもデータをよく記述することを示唆している。</p>
+        <p class="abstract-text en">We use the long-term Capital Market Assumptions of asset managers and institutional investors' consultants from 1988 to 2022 to provide three stylized facts about the subjective views of these institutions on the risk and risk premia of 15 assets classes. First, the subjective distribution of asset class returns is well described by a 1-factor structure, with this single risk factor explaining around 65% of the subjective variability in asset class returns for the typical institution. Second, more than 80% of the variability in subjective risk premia is due to variability in subjective risk compensation as opposed to subjective mispricing. And third, subjective risk and risk premia vary much more across asset classes than across institutions. Our findings jointly imply that a model with institutions that have homogeneous beliefs while perceiving a risk-return trade-off describes the data better than a model with institutions that have heterogeneous beliefs while ignoring risk-return tradeoffs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Conservative Holdings, Aggressive Trades: Ambiguity, Learning, and Equilibrium Flows</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Thomas Dangl (Technische Universitaet Wien), Lorenzo Garlappi (University of British Columbia), Alex Weissensteiner)</div>
+            <a href="https://afajof.org/management/viewp.php?n=18508" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、エージェントが経済のファンダメンタルズを駆動するパラメータについて学習し、その推定値に対する信頼度が異なる均衡資産価格モデルを提案する。まず、エージェントがパラメータの不確実性を嫌う場合、ファンダメンタルズのボラティリティに関する学習がポートフォリオ・フローに一次的な影響を与えることを示す：不確実性を嫌うエージェントは、保守的なポートフォリオを保有しているにもかかわらず、不確実性が高い時期にはリスク資産の保有を増加させる。不確実性を回避するエージェントは、保守的なポートフォリオを保有しているにもかかわらず、不確実性が高い時期にリスク資産の保有を増加させる。これらの予測は、配当サプライズ前後に観測された個人投資家や機関投資家のポートフォリオ・フローと整合的である。我々のモデルは、選好の異質性とファンダメンタルズのボラティリティに関する学習が、経済結果に関するニュースの後のポートフォリオ・フローとリスク・プレミアの均衡ダイナミクスを理解するための重要なチャネルであることを強調している。</p>
+        <p class="abstract-text en">We propose an equilibrium asset pricing model in which agents learn about the parameters that drive economic fundamentals and have different confidence in their estimates. We first show that, when agents are averse to parameter uncertainty, learning about the volatility of fundamentals has a first-order effect on portfolio flows: uncertainty-averse agents increase their risky asset holdings in periods of high uncertainty, despite holding conservative portfolios. We then show that subjective risk premia increase following both unexpected good and bad news. These predictions are consistent with observed portfolio flows of retail and institutional investors around dividend surprises. Our model highlights that heterogeneity of preferences and learning about volatility of fundamentals are key channels for understanding the equilibrium dynamics of portfolio flows and risk premia following news about economic outcomes.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

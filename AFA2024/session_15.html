@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxes, Regulation, and Politics</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link active">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Taxes, Regulation, and Politics</h1>        <div class="paper-card">
+            <div class="paper-title">Connections over Competence: The Impact of Political Ties on Sell-Side Research Quality</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kaizhao Guo (University of Glasgow), Yanghua Shi (University of Mannheim), Jingshu Wen (University of Oxford)</div>
+            <a href="https://afajof.org/management/viewp.php?n=24388" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">汚職が社会的に効率的かどうかについては、学術的な議論がある。本稿では、中国の国有企業（SOE）において、政治的コネクションを持つ金融アナリストの腐敗した採用が存在するかどうか、また、そのような腐敗がもたらす結果について調査する。A株ヘルスケア・アナリストの業界知識に関するテキスト尺度を用いて、政治的コネクションを持つアナリストは、実力ベースの採用と比較してリサーチの質が低いことを発見した。加えて、政治的コネクションを持つアナリストは、他のアナリストを盗用し、顕著なニュースに追随する傾向があり、投資家は彼らの推奨するリサーチに従って平均12.01%の損失を被る。政治的コネクションのあるアナリストを採用する見返りとして、SOE証券会社の取締役は中国の証券監督当局から昇進する傾向がある。中国の反腐敗キャンペーンが金融セクターに及んだ後、国有企業証券会社のアナリストの多くは政治的つながりを失い、トップダウンの監視が厳しくなったことで、レント・シーキングが減少したと考えられる。この外生的ショックの後、我々の差分検定は、地方SOEのリサーチの質が向上し、地方SOEが最も重点的にカバーしている企業の情報効率が非SOE証券会社に比べて上昇することを示している。汚職は単に官僚に資源を再分配するだけという見方に反して、我々の結果は、政治的につながりのあるアナリストの汚職的雇用が雇用機会の配分を歪め、金融市場の効率を低下させ、投資家に実質的なコストを課す可能性を示唆している。</p>
+        <p class="abstract-text en">There is academic debate on whether corruption is socially efficient. In this paper, we investigate whether there is corrupt hiring of politically connected financial analysts at China’s state-owned enterprises (SOEs), and the consequences of such corruption. Using a textual measure of A-share healthcare analysts’ industry knowledge, we find that politically connected analysts have lower research quality compared with merit-based hires. In addition, politically connected analysts tend to plagiarize other analysts and follow salient news, and investors lose 12.01% on average following their research recommendations. In return for hiring politically connected analysts, directors at SOE brokerages tend to be promoted by China’s securities regulators. After China’s anti-corruption campaign reached the financial sector, many analysts at SOE brokerages lost their political ties and the stricter top-down monitoring is likely to reduce rent seeking. After this exogenous shock, our difference-in-differences tests show that research quality improves at local SOEs and informational efficiency increases for firms most intensely covered by local SOEs relative to non-SOE brokerages. Contrary to the view that corruption merely redistributes resources to bureaucrats, our results suggest that corrupt hiring of politically connected analysts may distort the allocation of employment opportunities, reduce financial market efficiency and impose real costs on investors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Closing the Revolving Door</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Joseph Kalmenovitz (University of Rochester), Siddharth Vij (University of Georgia), Kairong Xiao (Columbia University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=40656" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">規制当局は、規制対象企業で働くために政府の職を離れることができる。2,300万人の連邦政府職員に関する詳細な給与データを用いて、我々は回転ドアのインセンティブに関する因果関係の証拠を初めて明らかにした。連邦政府職員の基本給がある閾値を超えると、その職員の社外オプションの価値が下がるという事実を利用した。その結果、閾値のすぐ下には、社外オプションの価値を維持しようとする意図的な努力と一致するような、従業員の著しい束化が見られた。この効果は、規制権限が広く、選挙で選ばれた公務員による監督も最小限であり、高給業界との交流が頻繁な省庁に集中している。これらの機関では、32％の規制当局者が回転ドアのインセンティブに反応し、閾値以下にとどまるために潜在賃金の5％を犠牲にしている。規制の掌握の理論と一致するように、回転ドアの規制当局は、より少ないルールと、より低いコンプライアンス・コストのルールを発行することがわかった。この結果を用いて構造モデルのキャリブレーションを行った結果、規制の期間を2倍にすれば、連邦政府におけるインセンティブの歪みは2.7％減少するが、その代償として公的部門への労働供給は緩やかに減少することが示された。これらの結果を組み合わせることで、政府における回転ドアの経済的意味合いに新たな光を当てることができる。</p>
+        <p class="abstract-text en">Regulators can leave their government position for a job in a regulated firm. Using granular payroll data on 23 million federal employees, we uncover the first causal evidence of revolving door incentives. We exploit the fact that post-employment restrictions on federal employees, which reduce the value of their outside option, trigger when the employee's base salary exceeds a threshold. We document significant bunching of employees just below the threshold, consistent with a deliberate effort to preserve the value of their outside option. The effect is concentrated among agencies with broad regulatory powers, minimal supervision by elected officials, and frequent interactions with high-paying industries. In those agencies, 32% of the regulators respond to revolving door incentives and sacrifice 5% of their wage potential to stay below the threshold. Consistent with theories of regulatory capture, we find that revolving regulators issue fewer rules and rules with lower costs of compliance. Using our findings to calibrate a structural model, we show that doubling the duration of the restriction will reduce the incentive distortion in the federal government by 2.7%, at the cost of modest decline in labor supply to the public sector. Combined, our results shed new light on the economic implications of the revolving door in the government.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Corporate Taxes and Retail Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Scott Baker (Northwestern University), Stephen (Teng) Sun (City University of Hong Kong), Constantine Yannelis (University of Chicago)</div>
+            <a href="https://afajof.org/management/viewp.php?n=39312" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">法人税が高くなると、株主への支払いが減少するか、賃金が低下するか、製品価格が上昇するはずである。我々は、連動する調査データと行政データを用いて、バーコードレベルの製品価格に対する法人税の影響を研究する。我々の実証的戦略は、生産地と販売地の二項対立を利用し、交絡する地域需要ショックから解放された推定値を提供する。その結果、法人税が価格に与える影響は有意であり、税引き後弾力性は0.24であった。個人所得税や完全な売上配分の対象となる企業については、価格への影響はないことがわかった。法人税が消費者に及ぼす影響は約半分であり、政策立案者が使用しているモデルは、法人税が消費者に及ぼす影響を大幅に過小評価している可能性があることを示唆している。パススルーは、高所得世帯が購入する商品、高価格商品、競争の少ない市場で購入される商品ほど大きい。</p>
+        <p class="abstract-text en">Higher corporate taxes must result in lower payments to shareholders, lower wages, or higher product prices. We study the impact of corporate taxes on barcode-level product prices using linked survey and administrative data. Our empirical strategy exploits the dichotomy between the location of production and the location of sales, providing estimates free from confounding local demand shocks. We find significant effects of corporate taxes on prices with a net-of-tax elasticity of 0.24. We find null effects on prices for firms subject to personal income taxes or to full sales apportionment. Approximately half of corporate tax incidence falls on consumers, suggesting that models used by policymakers may significantly underestimate the incidence of corporate taxes on consumers. Pass-through is larger for products purchased by high-income households, higher priced goods, and in less competitive markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Regulatory Policy Enforcement and Corporate Performance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jon Garfinkel (University of Iowa), Dain Donelson (University of Iowa), Sepehr Roudini (University of Iowa)</div>
+            <a href="https://afajof.org/management/viewp.php?n=23380" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">民間産業に対する政府の影響力は大きいと考えられている。しかし、その影響力の経路や、影響の一貫性さえも不明である。先行研究では、主に法律や政党に基づいてこの影響力の問題にアプローチしているが、その結果、結果は明らかにまちまちである。われわれはこの問題に異なるアプローチをしている。ごく最近まで、多くの政治的仕事が行政機関によって行われているという現実を、文献はほとんど無視してきた。さらに、規制当局を調査した最近の文献は、もっぱら企業の反応に焦点を当てている。これとは対照的に、我々は監督官庁の視点から政策執行の広範な尺度を構築する。すなわち、行動、予算変数、（連邦規則集からの）規制の冗長性など、6つの機関視点の変数を構築する。この6つの変数を探索的因子分析で組み合わせ、潜在的なEnforcement Index変数を求める。この指標を4つの主要機関（EPA、FDA、OSHA、SEC）の規制を受ける企業に適用したところ、規制執行の強化は企業の業績低下と関連することがわかった。また、（論理的には）規制当局への企業露出度が高いほど、この関係が強まることも分かった。エンフォースメントの影響には、省庁をまたがる大きな異質性がある。我々は、この関係を促進する最も可能性の高いチャネルは、資産（の）効率性チャネルとは対照的に、コストチャネルであることを文書化する。また、企業のパフォーマンスへの影響において、エージェンシー間の異質性を示すことで、6つのエージェンシー変数を研究することの重要性を強調する。我々の結果は、CFRに関連する企業の表明された懸念に厳密に焦点を当てた最近の知見とほぼ直交している。また、より詳細なエンフォースメントのレベルでは、（Violation Trackerによる）企業特有の違反が、企業業績の悪化と関連していることもわかった。我々は、企業自身の情報開示を通じて表明された規制に対する企業の関心にかかわらず、経営陣によるエンフォースメントが規制コストの重要な要因であると結論付けている。</p>
+        <p class="abstract-text en">Government influence on private industry is thought to be substantial. However, the channels of that influence and even the consistency of an effect, are unclear. Prior studies primarily approach the question of this influence based on legislation or political parties, and this has led to decidedly mixed results. We approach the problem differently. We recognize that until very recently, the literature largely ignored the reality that much political work is done by executive agencies. Moreover, the recent literature that does examine regulatory agencies focuses exclusively on firm responses. In contrast, we build a broad measure of policy enforcement from the regulatory agency perspective. That is, we construct six agency-perspective variables, including actions, budget variables, and regulation-verbiage (from the Code of Federal Regulations). We combine the six measures in exploratory factor analysis to obtain a latent Enforcement Index variable. Applying this measure to firms exposed to four major agencies (EPA, FDA, OSHA and SEC), we find stronger regulatory enforcement is associated with lower firm operating performance. We also (logically) find that greater firm exposure to the agency strengthens the relationship. There is significant cross-agency heterogeneity in enforcement’s influence. We document that the channel most likely driving the relationship is a cost channel, as opposed to an asset-(in)efficiency channel. We also highlight the importance of studying six agency variables, by showing heterogeneity across them in the influence on firm performance. Our results are largely orthogonal to recent findings that focus strictly on CFR-related firm-expressed-concerns. At a more granular enforcement level, we also find that firm-specific violations imposed (from Violation Tracker) are associated with weaker firm performance. We conclude that executive-branch enforcement is an important contributor to the cost of regulation, regardless of firm attention to it as expressed through their own disclosures.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

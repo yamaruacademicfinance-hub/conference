@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link active">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Macro Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Who Bears the Cost of Aggregate Fluctuations and Why?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Maarten Meeuwis), Dimitris Papanikolaou (Northwestern University), Lawrence Schmidt (University of Chicago), Jonathan Rothbaum)</div>
+            <a href="https://afajof.org/management/viewp.php?n=28420" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">景気循環は通常、企業のキャッシュフローの低下と割引率の上昇と関連している。我々は、この2つの要素が労働所得の伸びに与える影響が大きく異なることを示す。割引率の上昇は、所得分布の底辺に位置する労働者の所得減少につながり、こうした減少は主に離職によって引き起こされる。これとは対照的に、キャッシュフロー（または生産性）の低下は、所得分布の上位に位置する労働者の所得減少をもたらし、その影響の大部分はインテンシブ・マージンからもたらされる。我々は、これらの事実を定量的に再現する労働市場探索の均衡モデルを構築した。このモデルは、失業率の変動における割引率の役割、労働者の総所得の低水準の循環性の要因、景気変動と金融政策の再分配効果に関して、いくつかの示唆を与えている。これらの含意はデータと一致している。</p>
+        <p class="abstract-text en">Business cycles are typically associated with lower firm cashflows and higher discount rates. We show that these two components have very different implications for labor income growth. Higher discount rates lead to lower worker earnings for workers at the bottom of the income distribution; these declines are primarily driven by job separations. By contrast, lower cashflow (or productivity) news is followed by declines in earnings for workers in the top of the income distribution, with most of the effect coming from the intensive margin. We build an equilibrium model of labor market search that quantitatively replicates these facts. The model has several implications regarding the role of discount rates in generating unemployment fluctuations; the drivers of the low level of cyclicality of aggregate worker earnings; and the redistributive effects of business cycle fluctuations and monetary policy. These implications are consistent with the data.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy and Financial Stability</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Joao Gomes (University of Pennsylvania), Sergey Sarkisyan (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=40628" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融情勢の悪化に金融政策はどう対応すべきか？我々は
+金融仲介機関とスティッキーな長期企業レバレッジを持つダイナミックなニューケインジアンモデルを開発し、推計する。
+と粘着性のある長期的な企業レバレッジを持つダイナミックなニューケインジアンモデルを構築し、信用状況の変動に積極的に対応することで
+マクロ変動に伴う総消費と総生産の損失を軽減するのに役立つことを示す。
+マクロの変動に伴う総消費と生産の損失を軽減するのに役立つことを示す。信用スプレッドを含む（信頼できる）金融政策ルールは
+信用スプレッドを含む（信頼できる）金融政策ルールは、このように厚生を改善し、時には明示的なインフレ・ターゲットの必要性を排除することさえある。
+明示的なインフレ・ターゲットの必要性がなくなることさえある。</p>
+        <p class="abstract-text en">How should monetary policy respond to deteriorating financial conditions? We
+develop and estimate a dynamic new Keynesian model with financial intermediaries
+and sticky long-term corporate leverage to show that active response to movements
+in credit conditions helps to mitigate losses in aggregate consumption and output
+associated with macro fluctuations. A (credible) monetary policy rule that includes
+credit spreads is thus welfare-improving, sometimes even obviating the need for
+explicit inflation targeting.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Long-Term Bond Supply, Term Premium, and the Duration of Corporate Investment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Antoine Hubert de Fraisse (HEC - Paris)</div>
+            <a href="https://afajof.org/management/viewp.php?n=42056" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">長期債供給へのショックは企業投資のデュレーションに影響を与える。
+米国国債の満期構成におけるもっともらしい外生的変動を用いる、
+長期債の供給が増加すると、企業の資金調達コストは長期的に上昇し、長期投資のクラウディングアウトにつながる。
+長期投資のクラウディングアウトにつながる。このクラウディング・アウトは
+このクラウディングアウトは、キャッシュフローに基づく資本の再分配を通じて発生する。
+このクラウディングアウトは、キャッシュフローの期間に基づいて資本が再分配されることによって発生する。また
+投資期間の変化は、企業債務の満期の変化に対応する。
+また、このような投資期間の変化が、企業債務の満期の変化に対応することも示した。これらの結果は、長期債の純供給に影響を与える政策の重要な実質的効果を明らかにするものである。
+中央銀行による量的緩和など、長期債の純供給に影響を与える政策の重要な実質的効果を明らかにした。</p>
+        <p class="abstract-text en">Shocks to the supply of long-term bonds affect the duration of corporate investment.
+Using plausibly exogenous variation in the maturity structure of US government debt,
+I find that a higher supply of long-term bonds increases firms’ financing costs at long
+horizons leading to a crowding-out of long-duration investment. I show that this
+crowding out occurs through a redistribution of capital on the basis of cash-flow
+duration, both across firms and within firm across projects. I also show that these
+changes in the duration of investment map into changes in the maturity of corporate
+debt. These results identify important real effects of policies which affect the net
+supply of long-term bonds, such as quantitative easing by central banks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Asset Pricing with Optimal Under-Diversification</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vadim Elenev (Johns Hopkins University), Tim Landvoigt (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=53396" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">生産に基づく資産価格モデルを用いて、未分散のポートフォリオの原因とその意味を研究する。分散不足は、経営努力には株式保有が必要であり、投資家は集中保有から私的利益を得るために生じる。両者の理由から、家計は特異的なショックを持つ単一の企業にポジションを取る。このモデルは、このような保険不可能なショックや、株式発行コストや借入制約に直面する企業にもかかわらず、扱いやすい集約を特徴としている。リターンとポートフォリオに関するデータをマッチングさせると、限界的な投資家はポートフォリオの45％を単一の企業で保有するのが最適であり、総生産の4％を占める経営努力にインセンティブを与えることが分かる。投資家は3％ポイントの超過リターンに相当するコントロール利益を得ており、データで観察された未分散保有の低リターンを合理化している。完全分散投資の反実仮想の世界では、リスクフリーレートが上昇し、完全に分散・集中された資産のリスクプレミアムは低下し、資本蓄積は減少するが、消費と厚生が上昇する。稀な災害を負荷とする分散されていない企業リスクへの時間変動エクスポージャーは、株式プレミアムの水準の約40％、ボラティリティの約20％を説明することができる。家計は、他のすべての条件が同じであれば、すべての特異的企業リスクを分散させるために消費の4.5％を支払うことを望むだろう。家計は企業の選択におけるポートフォリオの集中の影響を十分に内部化していないため、分散を減少させる的を絞った補助金は、経営努力を増加させ、金融摩擦を減少させることによって厚生を改善する。</p>
+        <p class="abstract-text en">We study sources and implications of undiversified portfolios in a production-based asset pricing model. Under-diversification arises because managerial effort requires equity stakes, and because investors gain private benefits from concentrated holdings. For both reasons, households take positions in a single firm with idiosyncratic shocks. The model features tractable aggregation despite these uninsurable shocks and firms that face equity issuance costs and borrowing constraints. Matching data on returns and portfolios, we find that the marginal investor optimally holds 45% of their portfolio in a single firm, incentivizing managerial effort that accounts for 4% of aggregate output. Investors derive control benefits equivalent to 3% points of excess return, rationalizing low observed returns on undiversified holdings in the data. A counterfactual world of full diversification would feature higher risk free rates, lower risk premiums on fully diversified and concentrated assets, less capital accumulation, yet higher consumption and welfare. Time-varying exposure to undiversified firm risk that loads on rare disasters can explain approximately 40% of the level and 20% of the volatility of the equity premium. Households would be willing to pay 4.5% of consumption to diversify all idiosyncratic firm risk, all else equal. Since households do not fully internalize effects of their portfolio concentration on firm choices, a targeted subsidy that decreases diversification improves welfare by increasing managerial effort and reducing financial frictions.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

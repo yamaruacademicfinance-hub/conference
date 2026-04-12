@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Volatility, Tail Risk</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link active">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link ">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>Asset Pricing: Volatility, Tail Risk</h1>        <div class="paper-card">
+            <div class="paper-title">Realized Illiquidity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Demetrio Lacava (Luiss Guido Carli University), Angelo Ranaldo (University of St. Gallen), Paolo Santucci de Magistris (Luiss Guido Carli University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=31640" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">実現非流動性とは、Amihud (2002) によって提案された一般的な価格インパク ト指標を改良した、実現ボラティリティと取引量の比率です。我々は、価格ボラティリティσ(t)と市場流動性l(t)の両方が連続時間の確率過程に従うという理論的基礎を提供する。実現非流動性は、統合流動性の逆数、すなわち単位期間（例えば 1 日）にわたる l(t)の積分の正確な測定値であることを証明する。包括的な計量経済学的分析により、ジャンプ、クラスタリング、レバレッジ効果など、実現非流動性の主な分布特性と動的特性を明らかにし、それらが株式と通貨のリターンの時系列を説明するのに役立つことを実証する。</p>
+        <p class="abstract-text en">Realized illiquidity is the ratio between realized volatility and trading volume refining the popular price impact measure proposed by Amihud (2002). We provide its theoretical foundation in which both price volatility, sigma(t), and market liquidity, l(t), follow stochastic processes in continuous time. We prove that the realized illiquidity is a precise measurement of the inverse of integrated liquidity, that is, the integral of l(t) over periods of unit length (e.g., a day). A comprehensive econometric analysis highlights the main distributional and dynamic properties of the realized illiquidity, including jumps, clustering, and leverage effects, and demonstrate that they help explain the time series of stock and currency returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Tail Risk and Asset Prices in the Short-Term</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Caio Almeida (Princeton University), Gustavo Freire (Erasmus School of Economics), Rene Garcia (Université de Montreal), Rodrigo Hizmeri (University of Liverpool)</div>
+            <a href="https://afajof.org/management/viewp.php?n=45696" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">高頻度の株式リターンとリスク中立化を組み合わせ、企業のクロスセクションにおいて投資家が認識するテールリスクの日次共通成分を抽出する。我々のテールリスク指標は、ショート・ホリゾンにおけるエクイティ・プレミアムと分散リスク・プレミアムを有意に予測する。さらに、テールリスクへの最近のエクスポージャーで銘柄を分類して構築したロング・ショート・ポートフォリオは、標準的なファクター・モデルに関して異常リターンを生み出し、モメンタム・アノマリーを説明するのに役立つ。リスク中立化による投資家の選好を組み入れることは、我々の知見の基本である。</p>
+        <p class="abstract-text en">We combine high-frequency stock returns with risk-neutralization to extract the daily common component of tail risks perceived by investors in the cross-section of firms. Our tail risk measure significantly predicts the equity premium and variance risk premium at short-horizons. Furthermore, a long-short portfolio built by sorting stocks on their recent exposure to tail risk generates abnormal returns with respect to standard factor models and helps explain the momentum anomaly. Incorporating investors' preferences via risk-neutralization is fundamental to our findings.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The "Hairy" Premium</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ljubica Georgievska (University of California-Los Angeles), Anthony Saunders (New York University), Zhaneta Tancheva (BI Norwegian Business School), Pasquale Della corte (Imperial College (London University)</div>
+            <a href="https://afajof.org/management/viewp.php?n=50176" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究では、市場が一貫してスポット金利の軌跡を過大評価する傾向があり、収益機会につながることを示す。この現象を定量化するために、「ヘアリー」プレミアムと呼ばれる新しい指標を導入する。例えば、10年先まで見通した場合、「ヘアリー」プレミアムは、固定金利負債にアクセスするために金利を支払う借り手と、固定金利資産にアクセスするために金利を受け取る投資家にとって、最大で年率4.75％、最小でマイナス1％以外の範囲となる。変動利付債を選択する家計や企業などの借り手は、少なくとも収支が均衡するごく稀な金融引き締めサイクル時を除き、固定利付債を選択する借り手よりも一般的に貯蓄性が高く、時価変動率も低い。逆に、固定金利資産を選択する銀行などの投資家は、「ヘアリー」プレミアムを獲得することによって、より良いリターンを得る。ただし、「ヘアリー」プレミアムが圧迫され、大幅な時価評価損のリスクがある急激な金融引き締めサイクルの直前は例外である。また、リスクとリターンの大きさの非対称性についても明らかにした。変動債が正しい選択であれば、その利益は大きいが、変動債が間違った選択であれば、損失は小さく、借入期間が長ければ長いほど、変動金利が借り手の資金を節約する可能性が高くなる。この研究結果は、最近の大手SVB銀行の破綻とその後の救済に特に関連しており、その主な原因は、「ヘアリー」プレミアムと、変動金利負債で賄われる固定金利資産への投資による中間時価変動効果を無視したことにある。</p>
+        <p class="abstract-text en">In this study, we show that the market tends to consistently overestimate the trajectory of spot interest rates, leading to profitable opportunities. We introduce a new metric called the “Hairy” premium to quantify this phenomenon. For a 10-year horizon, for instance, the “Hairy” premium can range between a maximum of 4.75% and a minimum of non-negative 1% per annum for borrowers who pay it to access fixed-rate debts or investors who receive it to access fixed-rate assets. Borrowers, such as households and corporations who opt for floating-rate debt, generally save more money and face lower mark-to-market volatility than those who choose fixed-rate debt, except during very rare monetary tightening cycles when they are at least breaking even. Conversely, investors, such as banks, who choose fixed-rate assets, receive better returns by earning the “Hairy” premium, except for just before sharp monetary policy tightening cycles when the “Hairy” premium is squeezed and there is a risk of significant mark-to-market loss. We also reveal an asymmetric risk-reward profile in terms of magnitudes: if floating debt is the right choice, the benefit is significant; however, if floating debt is the wrong choice, the loss is small and the longer the term of the debt, the more likely it is that floating interest rates will save money for borrowers. The findings in the study are particularly relevant to the recent collapse and subsequent rescue of the major SVB Bank, which was primarily caused by ignoring the “Hairy” premium and the interim mark-to-market volatility effect from investing in fixed-rate assets financed by floating-rate liabilities.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

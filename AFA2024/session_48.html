@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG, Regulation, and Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2024 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Derivatives</a><a href="session_9.html" class="session-link ">Asset Pricing: ETFs</a><a href="session_23.html" class="session-link ">Asset Pricing: Safe Asset and Government Debt</a><a href="session_28.html" class="session-link ">Predictability in a Characteristic-Rich World</a><a href="session_36.html" class="session-link ">Origins of Risk Factors and Anomalies</a><a href="session_37.html" class="session-link ">Asset Pricing: Machine Learning</a><a href="session_38.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_45.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_46.html" class="session-link ">Asset Pricing: Volatility, Tail Risk</a><a href="session_51.html" class="session-link ">Asset Pricing: Credit Risk</a><a href="session_52.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_62.html" class="session-link ">Asset Pricing: Market Risk Factors</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Compensation and Agency</a><a href="session_17.html" class="session-link ">Corporate Finance: Innovation and Adaptation</a><a href="session_24.html" class="session-link ">Corporate Finance:  New Valuation Factors</a><a href="session_25.html" class="session-link ">Corporate Finance: Contracts and Incentives</a><a href="session_31.html" class="session-link ">Corporate Finance: Capital Structure and Payout Policy</a><a href="session_32.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_39.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_42.html" class="session-link ">Raising Funds for Private Firms</a><a href="session_53.html" class="session-link ">Corporate Finance: CEOs</a><a href="session_63.html" class="session-link ">Corporate Finance: Corporate Governance (Shareholder Monitoring/Voting)</a><a href="session_65.html" class="session-link ">Financing Cycles and Financial Flexibility</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_10.html" class="session-link ">Financial Intermediation: General</a><a href="session_26.html" class="session-link ">Financial Intermediation: Bank Competition</a><a href="session_27.html" class="session-link ">Financial Intermediation: Banking - General</a><a href="session_33.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_41.html" class="session-link ">Financial Intermediation and Crises</a><a href="session_64.html" class="session-link ">Financial Intermediation: Bank Lending</a></div><button class="accordion-btn">Market Microstructure, Information, and Liquidity <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_13.html" class="session-link ">Market Frictions and Market Power</a><a href="session_21.html" class="session-link ">Information in Credit Markets</a><a href="session_35.html" class="session-link ">Mutual Fund Flows</a><a href="session_44.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_47.html" class="session-link ">Corporate Bond Markets</a><a href="session_56.html" class="session-link ">Mutual Funds and Hedge Funds</a><a href="session_66.html" class="session-link ">Trading in Financial Markets</a></div><button class="accordion-btn">Sustainable Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Sustainability and Finance</a><a href="session_19.html" class="session-link ">Finance and Climate Transition</a><a href="session_22.html" class="session-link ">Asset Pricing: ESG and Sustainable Finance</a><a href="session_34.html" class="session-link ">Is Sustainable Investing Sustainable?</a><a href="session_48.html" class="session-link active">ESG, Regulation, and Markets</a></div><button class="accordion-btn">Household, Behavioral, and Social Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Household Finance</a><a href="session_8.html" class="session-link ">Asset Pricing: Behavioral</a><a href="session_11.html" class="session-link ">Homophily and Finance</a><a href="session_16.html" class="session-link ">Asset Pricing: Preferences and Expectations</a><a href="session_30.html" class="session-link ">Asset Pricing: Household Finance</a><a href="session_40.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_54.html" class="session-link ">Housing Finance</a><a href="session_58.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_59.html" class="session-link ">Special Topics: Social Influence and Networks</a></div><button class="accordion-btn">Macro, Regulation, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Special Topics: Digital Currencies</a><a href="session_12.html" class="session-link ">Macro Finance</a><a href="session_14.html" class="session-link ">Risk Management</a><a href="session_15.html" class="session-link ">Taxes, Regulation, and Politics</a><a href="session_18.html" class="session-link ">Corporate Finance: Labor Finance</a><a href="session_20.html" class="session-link ">FinTech and the Industrial Organization of the Financial Sector</a><a href="session_29.html" class="session-link ">Special Topics: Finance, Development, and Growth</a><a href="session_49.html" class="session-link ">Financial Regulation</a><a href="session_50.html" class="session-link ">Investment with Changing and Uncertain Incentives</a><a href="session_55.html" class="session-link ">Industrial Organization and Finance</a><a href="session_57.html" class="session-link ">Regulation, Private Equity, and Entrepreneurship</a><a href="session_60.html" class="session-link ">Asset Pricing: Cryptoassets</a><a href="session_61.html" class="session-link ">Asset Pricing: Inflation and Monetary Policy</a></div></div><div class="main-content"><h1>ESG, Regulation, and Markets</h1>        <div class="paper-card">
+            <div class="paper-title">Sustainable Finance Under Regulation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexandr Kopytov (University of Hong Kong), Shiyang Huang)</div>
+            <a href="https://afajof.org/management/viewp.php?n=19096" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">人間の活動が気候変動の一因であることはよく知られており、したがって、企業は気候変動を緩和するために排出量を削減する必要がある。この課題に対応するため、金融市場では社会的責任投資が飛躍的に増加している。しかし、排出は外部性であるため、投資家の行動だけではこの問題を完全に解決することは難しい。したがって、政府の介入が必要である。  気候変動に対処するための民間アプローチと公的アプローチの共存は、根本的に重要な問題を提起している：社会的関心の高い投資家は、環境規制に対してどのように反応するのか？そのような投資家が存在する場合の最適な規制とは何か？
+
+この目的のために、社会的責任投資家の存在下における最適な環境規制を分析するモデルを構築する。投資家はポートフォリオの持続可能性を重視するが、汚染外部性を完全に解決することはできない。公害税やクリーン企業への補助金などの規制は、ダーティー企業の規模を縮小させるが、同時に企業の株主構成も再編成する。規制の下では、ダーティ・ファームの株主は平均的に汚染株を保有することを嫌うようになり、したがってこれらの企業はグリーン・テクノロジーを採用する意欲が低下する。我々は、規制が厳しくなるにつれて汚染が増加する可能性があることを示す。最適な規制は必ずしも外部性を完全に是正するとは限らず、ピグービアンのベンチマークから乖離する可能性がある。</p>
+        <p class="abstract-text en">It is well acknowledged that human activities contribute to climate change and, hence, firms need to reduce their emissions to mitigate it. In response to this challenge, there has been a dramatic increase in socially responsible investing in financial markets. However, emissions are externalities, and so actions of investors alone are unlikely to fully resolve this issue. Therefore, government interventions are necessary.  The co-existence of the private and public approaches to address climate change raises fundamentally important questions: How do socially-concerned investors respond to environmental regulations? What is the optimal regulation in the presence of such investors?
+
+To this end, we build a model analyzing optimal environmental regulation in the presence of socially responsible investors. Investors care about sustainability of their portfolios but cannot fully resolve the pollution externality. Regulations, such as pollution tax and subsidies to clean firms, reduce dirty firms' size but also reshape firms' shareholder compositions. Under the regulations, dirty firms' shareholders become on average less averse to holding polluting shares and hence these firms are less willing to adopt green technologies. We show that pollution can increase with regulation stringency. Optimal regulations do not always fully correct the externality and can deviate from the Pigouvian benchmark.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Why Divest? The Political and Informational Roles of Institutions in Asset Stranding</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Murray Carlson (University of British Columbia), Adlai Fisher (University of British Columbia), Ali Lazrak (University of British Columbia)</div>
+            <a href="https://afajof.org/management/viewp.php?n=41608" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、政治的チャネルと金融価格の両方を通じて有害資産の座礁を促進するステークホルダー主導の機関売却をモデル化する。我々は2つの新しいメカニズムを導入する。第一に、制度的分割は利害関係者の資産エクスポージャーを弱め、ストランディングのための政治的条件を改善する。第二に、制度的な資産売却は、市民の選好、環境への害、経済的便益に関する情報を金融市場や政治参加者に伝達する。これらのチャネルは、有害資産の切り離しを促進し、資産価格を低下させ、ストランド確率を上昇させる。分割への支持は、超多数派による分割要件の下で、また、制度が世界外の厚生を内部化する場合に増加する。我々は、情報、資産売却、価格、座礁の間の均衡的相互作用を、動的な合理的期待ゲームにおいて詳述する。</p>
+        <p class="abstract-text en">We model stakeholder-driven institutional divestiture that promotes stranding of harmful assets through both a political channel and financial prices. We introduce two novel mechanisms. First, institutional divestiture weakens stakeholders' asset exposures, improving political conditions for stranding. Second, institutional divestiture credibly communicates information about citizen preferences, environmental harm, and economic benefits to financial markets and political participants. These channels drive harmful-asset divestiture, which reduces the asset price and raises its strand probability. Support for divestiture increases under supermajority strand requirements, and when institutions internalize rest-of-world welfare. We detail the equilibrium interactions between information, divestiture, prices, and stranding in a dynamic, rational-expectations game.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Reducing Carbon Using Regulatory and Financial Market Tools</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Federica Zeni (World Bank), Adelina Barbalau (University of Alberta), Franklin Allen (University of Pennsylvania)</div>
+            <a href="https://afajof.org/management/viewp.php?n=16548" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、炭素排出の価格付けと削減のための規制と資本市場のツールの相互作用を研究する。標準的な起業家と環境志向の起業家が汚染技術と非汚染技術を採用し、後者は前者よりも収益性が低いという線形モデルを提示する。炭素税は、標準的な起業家が汚染技術を採用する自由放任経済を是正することができるが、十分な政治的支援が必要である。炭素条項付き証券は、標準的な企業家が非汚染技術を採用するための代替的な価格インセンティブを提供するが、規制手段を完全に代替するには十分な資金が必要である。炭素税に対する政治的支持がない場合、炭素条項付証券は厚生を改善するのみであるが、炭素税に対する何らかの支持が存在する場合はそうではない。我々は、環境選好の連続分布と凸型排出削減コストを許容するようにモデルを一般化する。この拡張モデルによって、1つの経済における規制と資本市場のツールの共存が合理化され、これら2つのツールの組み合わせが厚生を向上させる条件を理解することができる。これらの次元を理解することは、各国が地球温暖化に寄与した度合いとそれに対応する能力の異質性を考慮した形で、炭素政策をグローバルに考える上で重要な足がかりとなる。</p>
+        <p class="abstract-text en">This paper studies the interaction of regulatory and capital market tools for pricing and reducing carbon emissions. We present a linear model in which standard and environmentally-oriented entrepreneurs can adopt polluting and non-polluting technologies, with the latter being less profitable than the former. A carbon tax can correct the laissez-faire economy in which the polluting technology is adopted by standard entrepreneurs, but requires sufficient political support. Carbon-contingent securities provide an alternative price incentive for standard entrepreneurs to adopt the non-polluting technology, but require sufficient funds to fully substitute the regulatory tool. Absent political support for the tax, carbon-contingent securities can only improve welfare, but the same is not true when some support for a carbon tax exists. We generalize the model to allow for a continuous distribution of environmental preferences and convex emissions abatement costs. The extended model rationalizes the co-existence of regulatory and capital market tools within one economy, and allows us to understand the conditions under which combining these two tools can enhance welfare. Understanding these dimensions is an important stepping stone in thinking about carbon policies globally, in a manner that accounts for the heterogeneity in the degree to which countries have contributed to global warming and their ability to respond to it.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

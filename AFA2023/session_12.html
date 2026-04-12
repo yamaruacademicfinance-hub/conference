@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Intermediation: Financial Crises</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link active">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Financial Intermediation: Financial Crises</h1>        <div class="paper-card">
+            <div class="paper-title">Bad News Bankers: Underwriter Reputation and Contagion in Pre-1914 Sovereign Debt Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Sasha Indarte; University of Pennsylvania)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=647" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、1869年から1914年にかけての国債の発行とデフォルトに関する新しい国債レベルのデータを用いて、借り手を監視する銀行の評判を経由した伝染経路を定量化する。ソブリン債を引き受けた英国のマーチャント・バンクは、ソブリンに対する監視と影響力を行使する動機付けを、レピュテーションに対する懸念から行っていた。デフォルトは、その銀行が質の高い債券を発行し、支援する意欲や能力が低下していることを投資家に示し、その銀行の他の債券が将来的にパフォーマンスを低下させる可能性を示唆するものであった。このような評判に基づく伝染と整合的に、デフォルトした債券とそうでない債券の間の移動は、引受人が同じであれば6倍大きくなることが分かった。引受人が同じであることの因果関係を分離するために、引受人の国によるばらつきを利用した。引受人が監視のために評判を築くというダイナミックなゲームからの予測を検証したところ、富の効果などの代替説明とは対照的に、評判がメカニズムであることを裏付けるさらなる証拠を見出した。これらの結果は、危機を監視し介入する仲介者の評判が、借り手のファンダメンタルズとは無関係に強力な伝染の原因となり得ることを強調するものである。</p>
+        <p class="abstract-text en">This paper uses new bond level data on sovereign borrowing and defaults during 1869 1914 to quantify a channel of contagion via banks' reputation for monitoring borrowers. Concerns over reputation incentivized Britain's merchant banks (who underwrote sovereign bonds) to monitor and exert influence over sovereigns. Default signaled to investors that a bank was less willing or able to write and support quality issues, indicating that its other bonds may underperform in the future. Consistent with reputation based contagion, I find that comovement between defaulting and non defaulting bonds is six times larger when the bonds share an underwriter. To isolate the causal effect of a shared underwriter, I exploit within country variation in bonds' underwriters. Testing predictions from a dynamic game where underwriters build a reputation for monitoring, I find further evidence supporting reputation as the mechanism - as opposed to alternative explanations such as wealth effects. These findings highlight that the reputation of intermediaries that monitor and intervene in crises can be a powerful source of contagion unrelated to a borrower's fundamentals.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Firm Quality Dynamics and the Slippery Slope of Credit Intervention</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wenhao Li; University of Southern California), Ye Li; Ohio State University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=101" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">危機が発生すると、質の低い企業は質の高い企業よりも大きな資金不足に直面し、投資も少なくなる。公的流動性支援は全体の生産能力を維持するが、企業の質に対する危機の浄化効果を減衰させる。量と質のトレードオフが、最適な介入の規模を決定する。政策の歪みは自己増殖する。質の下降バイアスは，将来の危機においてより大きな規模の介入を必要とする．質の低い企業が流動性支援に期待し、危機前に過剰投資することで、歪みは増幅される。最後に、予防的貯蓄の利回りが低く、企業が自己保険に加入しないような低金利環境では、最適な介入はより大きく、歪曲効果はより強くなる。</p>
+        <p class="abstract-text en">In crises, low quality firms face greater financial shortfalls and invest less than high quality firms. Public liquidity support preserves the overall production capacity but dampens the cleansing effects of crises on firm quality. The trade off between quantity and quality determines the optimal size of intervention. Policy distortions are self perpetuating: A downward bias in quality necessitates interventions of greater scales in future crises. Distortions are amplified by low quality firms expectations of liquidity support and overinvestment pre crisis. Finally, the optimal intervention is larger and distortionary effects stronger in a low interest rate environment where low yields on precautionary savings discourage firms from self insurance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Large Banks and the Credit Cycle</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matthew Baron; Cornell University), Moritz Schularick; University of Bonn), Kaspar Zimmermann; Leibniz Institute for Financial Research SAFE)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=555" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文は、1870年以降、先進17カ国における11,000行以上の商業銀行の年次バランスシートを新たに編集したデータセットを研究するものである。この新しいデータは、近代金融史を通じて、信用循環と金融不安に対して大銀行が中心的な役割を果たしていることを明らかにしている。大銀行は、好況時に資産増加の不均衡な割合を占め、不況時にはより多くのリスクを取り、より多くの融資を縮小し、より大きな損失を被る。しかし、大銀行は業績が悪いにもかかわらず、危機の際に破綻する可能性は低く、市場シェアを拡大する傾向さえある。我々の発見は、大きすぎて潰せない金融機関による過剰なリスクテイクの理論と整合的であり、銀行部門の集中と金融の脆弱性がいかにお互いを補強し合っているかを示している。</p>
+        <p class="abstract-text en">This paper studies a newly compiled data set of annual balance sheets of more than 11,000 commercial bank across 17 advanced economies since 1870. The new data expose the central role of large banks for credit cycles and financial instability throughout modern financial history. Large banks account for a disproportionate share of asset growth during credit booms, take more risks, contract lending more in the bust, and suffer higher losses. Yet despite their worse performance, large banks are less likely to fail during crises and even tend to gain market share. Our findings are consistent with theories of excessive risk taking by too big to fail institutions and demonstrate how banking sector concentration and financial fragility can reinforce one another.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

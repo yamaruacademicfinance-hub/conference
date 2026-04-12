@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetary Policy: Inflation, Bubbles and Financial Stability</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link active">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Monetary Policy: Inflation, Bubbles and Financial Stability</h1>        <div class="paper-card">
+            <div class="paper-title">Financial Vulnerability and Monetary Policy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tobias Adrian; International Monetary Fund), Fernando Duarte; Brown University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=102" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、金融の脆弱性を特徴とするミクロファウンドのNew Keynesianモデルを提示する。金融仲介者のバリュー・アット・リスク制約が、リスク価格の変動をもたらし、それがアウトプットの時間的に変化する条件付きモーメントを発生させる。金融緩和の時代、つまりリスクの価格が低いときには、成長は高く、リスクは低くなる傾向があります。金融政策は、貯蓄の時間間代替を通じて、また、バリュー・アット・リスク制約の厳しさに関連するリスクの価格設定を通じて、直接的にアウトプットに影響を与える。最適な金融政策ルールは、アウトプットギャップ、インフレ率、自然利回りに加えて、常に金融の脆弱性に依存する。古典的なテイラールールは、脆弱性を考慮した最適金利ルールに比べて、アウトプット・ギャップの目標値であるゼロからの乖離を悪化させることが示される。このモデルは、金融の脆弱性を考慮した最適な金融政策のためのミクロ的な基盤を提供するものである。</p>
+        <p class="abstract-text en">We present a microfounded New Keynesian model that features financial vulnerability. Financial intermediaries' occasionally binding value at risk constraints give rise to variation in the pricing of risk that generates time varying conditional moments of output. The conditional mean and volatility of the output gap are negatively related: during times of easy financial conditions - when the price of risk is low - growth tends to be high, and risk tends to be low. Monetary policy affects output directly via the intertemporal substitution of savings, and also via the pricing of risk that relates to the tightness of the value at risk constraints. The optimal monetary policy rule always depends on financial vulnerability in addition to the output gap, inflation, and the natural rate. We show that a classic Taylor rule exacerbates deviations of the output gap from its target value of zero relative to an optimal interest rate rule that includes vulnerability. The model provides a microfoundation for optimal monetary policy that takes financial vulnerability into account.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy Uncertainty and Asset Price Bubbles</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ulas Alkan; ASU), Sreedhar Bharath; Arizona State University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1321" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融政策の不確実性（MPU）が資産価格バブルの予測に与える影響を検証する。1926年2019年の米国データを用いると、金融政策の不確実性が大きいと産業レベルのリターンがバブルになる可能性が高くなることがわかる。この関係は、FEDが金融政策の透明性を高めたことに付随して、時間の経過とともに大きさが弱まっている。MPUを組み込んだ機械学習モデルは、リアルタイムでバブルを予測する能力において、組み込んでいないモデルより優れている。</p>
+        <p class="abstract-text en">We examine the impact of monetary policy uncertainty (MPU) in predicting asset price bubbles. Using US data from 1926 2019, we find that greater monetary policy uncertainty leads to a greater likelihood of bubbles in industry level returns. This relationship has weakened in magnitude over time, concomitant with the FED's increased transparency of its monetary policy. Machine learning models that incorporate MPU outperform ones that don't in their ability to predict bubbles in real time.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Measuring Firm-Level Inflation Exposure: A Deep Learning Approach</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sudheer Chava; Georgia Institute of Technology), Wendi Du; Georgia Institute of Technology), Agam Shah; Georgia Institute of Technology), Linghang Zeng; Babson College)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1705" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業の決算説明電話のトランスクリプトに深層学習のアプローチを適用することで、企業レベルのインフレ・エクスポージャーの新しい指標を開発した。我々の手法は、価格変動を議論する文章を特定するだけでなく、価格上昇と価格低下、投入価格と生産価格を区別する。時系列で集計すると、我々のテキストベースのインフレ指標は、標準的なインフレ指標と強い相関がある。我々の指標とPPIの前年比伸び率との相関は0.75であり、我々の手法がインフレ関連情報を捉えていることを裏付けている。このリアルタイム・インフレ指標は、公式なインフレ率発表の前触れとなり得る。クロスセクションにおいて、インフレ・エクスポージャーが高い企業は、決算発表に対して強いネガティブな株価反応を示している。この反応は、ほぼ完全に投入価格上昇に関する議論に起因している。企業の事前的な市場パワーが、このネガティブな市場反応を減衰させる。また、決算説明会後、企業の株式リターンは負のドリフトを示し、投資家が企業レベルのインフレ・エクスポージャーを完全に株価に反映させるのに時間がかかることが示唆された。</p>
+        <p class="abstract-text en">We develop a novel measure of firm level inflation exposure by applying a deep learning approach to firms' earnings conference call transcripts. Our methodology not only identifies sentences that discuss price changes, but also differentiates price increases from price decreases, and input prices from output prices. In aggregate time series, our text based inflation measure strongly correlates with standard inflation measures. The correlation between our measure and year over year PPI growth is 0.75, supporting that our methodology captures inflation related information. This real time inflation measure can be a harbinger of the official inflation release. In the cross section, firms that have higher inflation exposure experience a strong negative stock reaction to earnings calls. This reaction is almost entirely driven by discussions on input price increases. Firms' ex ante market power attenuates the negative market reaction. We also observe a negative drift in the firm's stock return after the earnings call, suggesting that it takes time for investors to fully incorporate firm level inflation exposure into stock prices.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Whatever It Takes? The Impact of Conditional Policy Promises</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Valentin Haddad; University of California (Los Angeles), Alan Moreira; University of Rochester), Tyler Muir; University of California (Los Angeles)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1679" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">経済救済措置の発表には、状況が悪化した場合により強力な介入を行うという暗黙の約束が含まれていることが多い。我々は、オプション市場のデータを用いて、条件付き政策約束を特定し、その影響を定量化する方法を提案し、実施した。COVID19危機の際に連邦準備制度理事会が社債購入を導入した際、市場は暴落シナリオでは中央値のケースに比べて5倍以上の価格支持を期待した。このように、悪い状態での介入規模を大幅に拡大するという暗黙の約束が、この発表に対する市場の反応の半分を説明する。さらに、社債の買い入れを停止した後も、社債の価格とテールリスクの挙動は大きく歪んだままであることを記録した。我々は、いくつかの政策発表において、条件付約束の影響が広範に及んでいることを確認した。米国の量的緩和、日銀の資産買い入れ、2008年の危機におけるTARP、そしてFOMCの発表など、いくつかの政策発表において、条件付き約束の影響が広まっていることを確認した。</p>
+        <p class="abstract-text en">The announcement of an economic rescue tool often comes with implicit promises of more intense intervention if conditions worsen. We propose and implement a method to identify conditional policy promises and quantify their impact using data from options markets. When the Federal Reserve introduced corporate bond purchases during the COVID 19 crisis, markets expected five times more price support in crash scenarios relative to the median case. This implicit promise to significantly expand the size of the intervention in bad states explains half of the market response to the announcement. Furthermore, we document that the behavior of the price and tail risk of corporate bonds remains substantially distorted even after purchases have ceased. We confirm the pervasive influence of conditional promises across several policy announcements: U.S. quantitative easing, Bank of Japan asset purchases, TARP during the 2008 crisis, and FOMC releases.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

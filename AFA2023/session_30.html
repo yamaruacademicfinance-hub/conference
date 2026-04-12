@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Portfolio Choice and Asset Allocation</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link active">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Asset Pricing: Portfolio Choice and Asset Allocation</h1>        <div class="paper-card">
+            <div class="paper-title">Capital Commitment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Elise Gourier; Essec Business School), Ludovic Phalippou; Oxford University), Mark Westerfield; University of Washington)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1483" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">プライベート・エクイティ（PE）ファンドは、10兆円を超える資金が投資家に割り当てられ、そのほとんどが投資家の要求に応じて資金を提供することを義務付けている。我々は、新しい動的ポートフォリオ配分モデルを用いて、事前コミットメントが投資家のポートフォリオと厚生に大きな影響を与えることを示し、その効果を定量的に示した。投資家はプライベート・エクイティへの配分が少なく、タイミングの不確実性や限られた売買可能性などの他の摩擦を排除するよりも、コミットメントの量を調整するために大きなプレミアムを支払うことを望むと考えられる。直感に反するかもしれないが、コミットメント・リスク・プレミアムは流通市場の流動性が高まると増加し、投資が多くのファンドに分散されたとしても消失することはない。</p>
+        <p class="abstract-text en">Over ten trillion dollars are allocated to private market funds that require outside investors to commit to transferring capital on demand; most of these funds are Private Equity (PE). We show within a novel dynamic portfolio allocation model that ex ante commitment has large effects on investors' portfolios and welfare, and we quantify those effects. Investors are under allocated to PE and are willing to pay a larger premium to adjust the quantity committed than to eliminate other frictions, like timing uncertainty and limited tradability. Perhaps counter intuitively, commitment risk premiums increase with secondary market liquidity and they do not disappear even if investments are spread over many funds.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Optimal Allocation to Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nicola Giommetti; Copenhagen Business School), Morten Sorensen; Dartmouth College)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1535" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、株式、債券、プライベート・エクイティ（PE）ファンドに投資する投資家（LP）のポートフォリオ問題を研究する。LPはPEファンドに繰り返し資金を投入する。この資本は徐々にしか拠出されず、最終的にはLPに払い戻されるため、LPは未拠出のコミットメントのための流動性バッファーを保持する必要がある。PE投資はよりリスクが高いにもかかわらず、リスク回避度が単調に低下することはない。むしろ、直感的なヒューリスティックを備えた2つの質的に異なる投資戦略が存在する。我々は、PE組合持分の流通市場を導入し、この市場における最適な取引とLPの最適な投資への示唆を研究している。</p>
+        <p class="abstract-text en">We study the portfolio problem of an investor (LP) that invests in stocks, bonds, and private equity (PE) funds. The LP repeatedly commits capital to PE funds. This capital is only gradually contributed and eventually distributed back to the LP, requiring the LP to hold a liquidity buffer for its uncalled commitments. Despite being riskier, PE investments are not monotonically declining in risk aversion. Instead, there are two qualitatively different investment strategies with intuitive heuristics. We introduce a secondary market for PE partnership interests to study optimal trading in this market and implications for the LP's optimal investments.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">What Drives Investors' Portfolio Choices? Separating Risk Preferences from Frictions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Taha Choukhmane; Massachusetts Institute of Technology), Tim de Silva; Massachusetts Institute of Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1712" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ポートフォリオ選択におけるリスク選好と摩擦の役割を個別に明らかにする。株式市場への参加のライフサイクルのような標準的なクロスセクションのモーメントでは、この2つを区別することはできない。エージェントは、標準的でない選好（例えば、損失回避）や選択に影響を与える摩擦（例えば、参加コスト）のために参加しないことを選択する可能性がある。我々は、401(k)プランのデフォルト資産配分のバリエーションを用いてこの識別問題を克服し、摩擦がなければ、95%の投資家がライフサイクルにわたって減少する株式シェアを持つ株式市場への参加を好むと推定する。この変化を利用して、ライフサイクル・ポートフォリオ選択モデルを構造的に推定したところ、相対的リスク回避度が3.6であることが整合的であることが分かった。この推定値は、ライフサイクル・ポートフォリオ選択の文献にあるほとんどの推定値よりも著しく低く、選択の摩擦がリスク選好の同定をいかに妨げているかを浮き彫りにしている。</p>
+        <p class="abstract-text en">We separately identify the role of risk preferences and frictions in portfolio choice. Standard cross sectional moments, such as the life cycle of participation in the stock market, cannot distinguish between the two: agents may choose not to participate because of non standard preferences (e.g. loss aversion) or frictions impacting their choices (e.g. participation costs). We overcome this identification problem by using variation in the default asset allocation of 401(k) plans and estimate that, absent frictions, 95% of investors would prefer stock market participation with a stock share that declines over the life cycle, which differs markedly from their observed choices. We use this variation to structurally estimate a life cycle portfolio choice model and find the evidence consistent with a relative risk aversion of 3.6. This estimate is significantly lower than most estimates in the life cycle portfolio choice literature and highlights how choice frictions can hamper the identification of risk preferences.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

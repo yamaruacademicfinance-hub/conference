@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Behavioral Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link active">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Asset Pricing: Behavioral Finance</h1>        <div class="paper-card">
+            <div class="paper-title">CEO Stress, Aging, and Death</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mark Borgschulte; University of Illinois at Urbana-Champaign), Marius Guenzel; University of Pennsylvania), Canyao Liu; Yale University), Ulrike Malmendier; University of California (Berkeley)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1937" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、経営上のストレスが老化と死亡率に及ぼす長期的な影響を評価した。まず、大不況時に経営難のショックにさらされると、CEOに目に見える老化の兆候が現れることを示す。ニューラルネットワークに基づく機械学習技術をストレス前後の写真に適用し、いわゆる見かけの年齢が1歳上昇することを推定している。次に、1980年代以降のCEOのデータを用いて、経営破綻ショック後の平均余命は1.2年短く、買収防衛策によってCEOが市場規律から隔離された場合は2年長くなると推計された。この推定された健康コストは、他の既知の健康リスクと比較しても重要である。</p>
+        <p class="abstract-text en">We assess the long-term effects of managerial stress on aging and mortality. First, we show that exposure to distress shocks during the Great Recession produces visible signs of aging in CEOs. Applying neural-network based machine-learning techniques to pre- and post-distress pictures, we estimate an increase in their so-called apparent age by one year. Second, using data on CEOs since the 1980s, we estimate a 1.2-year decrease in life expectancy after an industry distress shock, but a two-year increase when anti-takeover laws insulate CEOs from market discipline. The estimated health costs are significant, also relative to other known health risks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Discontinued Positive Feedback Trading and the Decline of Return Predictability</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Itzhak Ben-David; Ohio State University), Jiacui Li; University of Utah), Andrea Rossi; University of Arizona), Yang Song; University of Washington)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=531" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、制度的摩擦によって生じる需要効果が、株式と投資信託のシステマティックなリターン予測パターンに影響を与えうるという証拠を提示する。同定はモーニングスターの格付けシステムの改革に依存しており、この改革が投資信託によるスタイルレベルのポジティブフィードバック取引に構造的なブレークを引き起こしたことを示す。その結果、株式のモメンタム関連要因、投資信託のパフォーマンスの持続性と「ダムマネー効果」は急激に低下した。提案したチャネルと一致して、リターン予測可能性の低下はイベント直後に起こり、米国市場とフィードバック・メカニズムに最もさらされた株式と投資信託に限定されていた。</p>
+        <p class="abstract-text en">We present evidence that demand effects generated by institutional frictions can influence systematic return predictability patterns in stocks and mutual funds. Identification relies on a reform to the Morningstar rating system, which we show caused a structural break in style level positive feedback trading by mutual funds. As a result, momentum related factors in stocks, as well as performance persistence and 'dumb money effect' in mutual funds, experienced a sharp decline. Consistent with the proposed channel, the decline in return predictability happened right after the event, and was limited to the U.S. market and to stocks and mutual funds most exposed to the feedback mechanism.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Memory Moves Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Constantin Charles; University of Southern California)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1938" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、人間の記憶の制約が金融市場の価格を歪める可能性があることを示す。どの企業が投資家の記憶と結びついているかを推定するために、私は企業の厳格な決算発表スケジュールを利用する。過去に2つの企業が同じ日に決算発表を行った場合、多くの投資家が同じ文脈で経験したため、両社は集合的な記憶の関連性を共有する。数ヵ月後、2社のうち1社だけが決算発表を行うと、この文脈が手がかりとなり、関連するもう1社の企業が想起される。そのような日には、関連する企業の株式の売買高が急激に増加することがわかった。この増加は、関連する企業の株価に一時的な価格上昇圧力をもたらすほど強い。次に、この記憶メカニズムについて新たな検証を行った。その結果、2社間の記憶の関連付けが行われている間に、他の企業によるより注意散漫な決算発表があった場合、その効果は弱まることがわかった。このような気が散る出来事は、手掛かりがあった当日の想起に干渉をもたらす。また、歴史的に決算発表のタイミングがずれている2社は、より弱い記憶連合を共有することがわかった。以上の結果から、人間の記憶に関する経済学的モデルが市場レベルで適用可能であることが示唆された。</p>
+        <p class="abstract-text en">I show that the constraints of human memory can distort prices in financial markets. To estimate which firms are associated in aggregate investor memory, I exploit firms’ rigid earnings announcement schedules. If two firms happened to announce earnings on the same day in the past, they share an aggregate memory association because they were experienced in the same context by many investors. Months later, when only one of the two firms announces earnings, this context is cued, and triggers the recall of the other, associated firm. On such days, I find that trading volume of the associated firm’s stock increases sharply. This increase is so strong that it leads to temporary price pressure in the associated firm’s stock. I then conduct novel tests of the memory mechanism. I find strong support, and consistent with theory, the effects weaken when there were more distracting earnings announcements by other firms during the encoding of a memory association between two firms. These distracting events lead to interference in recall on the day of the cue. I also find that two firms that historically announced with a timing gap between their earnings announcements share a weaker memory association. Over- all, my results suggest that economic models of human memory can be applied at the market level.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Retail Trading in Options and the Rise of the Big Three Wholesalers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Svetlana Bryzgalova; London Business School), Anna Pavlova; London Business School), Taisiya Sikorskaya; London Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1847" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、(i)個人投資家のオプション取引、(ii)米国のリテール証券会社が受け取るオプション取引に対する支払い（PFOF）の急増を記録している。PFOFは、いわゆるホールセラーやインターナイザー（リテール証券会社のためにオーダーフローを執行するマーケットメーカー）から発生する。新しい報告要件と取引レベルのデータを活用し、ホールセーラー取引を分離し、オプションにおける個人投資家の取引の新しい指標を提案する。その結果、個人投資家はより安価な週足オプションを選択し、その平均ビッド・アスク・スプレッドはなんと12.3%であり、全体では損失を出していることが分かった。また、個人投資家の流入は、最適でないコール・オプションの未行使の増加とも重なります。マーケットメーカー（および他の裁定者）は、いわゆる「配当プレー」取引を通じてこうした誤りを利用し、（実質的に）リスクなしの裁定利益を生み出している。不思議なことに、彼らはこの利益の50％を放棄し、オプションのライターにお金を残しているのです。我々の発見は、裁定取引参加者が非競争的に行動し、オプションのPFOFにおけるシェアが85％を超えたビッグ3の卸売業者が、リテール取引の拡大から不釣り合いに利益を得ているようだということを示唆しています。</p>
+        <p class="abstract-text en">This paper documents rapid increases in (i) retail investor trading in options and in (ii) payment for order flow (PFOF) for options transactions received by the U.S. retail brokerages. PFOF comes from so called wholesalers/internalizers - market makers who execute order flow for a retail brokerage. Exploiting new reporting requirements and transaction level data, we isolate wholesaler trades and propose a novel measure of retail investor trading in options. We find that retail traders prefer cheaper, weekly options, the average quoted bid ask spread for which is a whopping 12.3%, and lose money on aggregate. The inflow of retail investors also coincides with an increase in call options left suboptimally unexercised. Market makers (and other arbitrageurs) exploit these mistakes via the so called ‘dividend play' trades, producing (virtually) riskless arbitrage profits. Puzzlingly, they forgo 50% of these profits, leaving money on the table for option writers. Our findings suggest that the arbitrageurs behave noncompetitively and that the Big Three wholesalers, whose share in PFOF for options surpassed 85%, seem to benefit disproportionately from the growth in retail trading.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

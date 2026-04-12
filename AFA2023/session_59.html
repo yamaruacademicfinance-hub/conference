@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing: Tail Risk</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link active">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Asset Pricing: Tail Risk</h1>        <div class="paper-card">
+            <div class="paper-title">Cumulant Risk Premium</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Albert Kyle; University of Maryland), Karamfil Todorov; Bank for International Settlements)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=890" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々はシングルファクターモデルを研究し、一定のベータを持つ資産が高次のキュムラント（分布のモーメントと密接な関係がある）のリスクを測定するために使用できることを示す。因子リスクプレミアムを一次項：対数リスクプレミアム（LRP）と高次項：キュムラントリスクプレミアム（CRP）に分解し、物理的キュムラントとリスク中立キュムラントの差であることを明らかにする。我々は、CRPが任意のベータに対してゼロである場合にのみ標準的なCAPM式が成立することを示し、任意の分布に対して成立する一般的なCAPM式を導出した。我々のアプローチを実証的に説明するために、一定のベータを持ち、単一のファクターのみにエクスポージャーのある資産、すなわちレバレッジドETFを研究した。その結果、株式、債券、コモディティ、通貨、ボラティリティのすべての資産において、CRPがゼロと異なることを明らかにした。我々は、反対のベータを持つETFをショートする単純な戦略を開発することによって、偶数次CRP (CRPE)を定量化した。この戦略は1以上のシャープ比を得ることができ、リアルタイムでグローバル市場のストレスの簡単な尺度として使用することができる。</p>
+        <p class="abstract-text en">We study single factor models and show that assets with constant betas can be used to measure the risk of higher order cumulants (closely related to the moments of a distribution). We decompose the factor risk premium into a first order term: log risk premium (LRP), and a higher order term: cumulant risk premium (CRP), which is the difference between physical and risk neutral cumulants. We show that the standard CAPM formula holds only if the CRP is zero for any beta, and derive a general CAPM equation that holds for any distribution. To illustrate our approach empirically, we study assets with constant betas and exposure to a single factor only: leveraged ETFs. We show that the CRP is different from zero across all assets studied: equities, bonds, commodities, currencies and volatility. We quantify the even order CRP (CRPE) by developing a simple strategy of shorting ETFs with opposite betas. The strategy earns Sharpe ratios above one and can be used as a simple gauge of global market stress in real time.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Measuring Time-Varying Disaster Risk: An Empirical Analysis of Dark Matter in Asset Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matthew Baron; Cornell University), Wei Xiong; Princeton University), Zhijiang Ye; Princeton University)</div>
+            <a href="NA" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">災害リスクは金融における「ダークマター」であるという挑戦に立ち向かうために、我々は災害リスクの客観的な尺度を構築し、1870年から2021年の間に先進20カ国のサンプルにおいてGDPクラッシュの半分を予測することができる。この予測可能性にもかかわらず、予測された災害リスクの高さが、株式プレミアム、ボラティリティ、株価配当率、社債スプレッド、タームスプレッドの高さと関連していることを裏付ける証拠は見つからず、しばしば矛盾していることが分かった。この結果は、資産価格が反映する主観的な災害リスクは、客観的な災害リスクより2年遅れていることを示唆している。</p>
+        <p class="abstract-text en">To confront the challenge that disaster risk is 'dark matter' in finance, we construct an objective measure of disaster risk, which is able to predict half of GDP crashes in a sample of 20 advanced economies between 1870 and 2021. Despite this significant predictability, we find no supportive, and often contradictory, evidence of higher predicted disaster risk being associated with a higher equity premium, volatility, or dividend/price ratio of the equity market index; higher corporate bond spreads, or higher term spreads. Our results suggest that the subjective disaster risk mirrored by asset prices lags objective disaster risk by two years.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Sovereign Defaults and Currency Crashes: Insurance, Carry Trade, and Quanto</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Ljubica Georgievska; University of California (Los Angeles)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=411" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">通貨危機とソブリンデフォルトはどの程度関連しているのだろうか。通貨危機とソブリン・デフォルトの関連性はどの程度あるのだろうか？そこで、私は新しいアプローチを採用した。私は、FOM（far out of the money）為替オプションの価格から、稀な通貨暴落のリスク中立分布について学び、クレジット・デフォルト・スワップの価格から、ソブリン・デフォルトについて学ぶ。直感的には、これらのFOMオプションは、通貨暴落のテールリスクに対する市場の評価を反映している。その結果、FOMプットはソブリンリスクに対して保険をかけることができ、逆に、通貨暴落とソブリンデフォルトの間に強い関連性があることが分かった。この関係の力学は、通貨キャリートレードと、「クアントスプレッド」として知られる、ソブリンが自国通貨建て債務と外貨建て債務で異なる信用金利を支払う理由（通常は低い）という2つの広範な現象を説明するものである。しかし、私は、平穏な時期に、FOM為替オプションとソブリン・クレジット市場の間で分節化が起きていることを示唆する不可解な証拠を発見した。その結果、この2つの市場間の取引は、年間7.2倍を超える余裕のあるシャープ比を生み出しているが、危機時には2つの市場が1つであるかのように振る舞い始めるため、この値は消失する。</p>
+        <p class="abstract-text en">To what extent are currency crashes linked to sovereign defaults? Measuring their relationship is notoriously difficult because these are rare disaster events. I take a novel approach. I learn about the risk neutral distribution of rare currency crushes from prices of far out of the money (FOM) foreign exchange (FX) options and about sovereign defaults from prices of credit default swaps. Intuitively, these FOM options reflect the market's assessment of currency crash tail risks. I find that FOM puts can insure against sovereign credit risk, and vice versa, implying a strong link between currency crashes and sovereign defaults. The dynamics of this relationship explain two broad phenomena: the currency carry trade and why sovereigns pay different credit interest rates (usually lower) on local currency debt versus foreign currency otherwise equivalent debt, known as the 'quanto spread.' However, I find puzzling evidence suggestive of segmentation between FOM foreign exchange options and sovereign credit markets during tranquil times. As a result, trading between the two markets generates a generous annual Sharpe ratio in excess of 7.2, which vanishes during times of crisis because the two markets begin to behave as if they are one.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Case of the Disappearing Skewness</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Matthieu Gomez; Columbia University), Valentin Haddad; University of California (Los Angeles), Erik Loualiche; University of Minnesota)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1748" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業レベルのリターンに関するよく知られた観測は、リターンが正の歪みを持つということである。我々は、この正の歪度が20世紀末にかけて徐々に消失していることを示す。21世紀には、特異的なリターンの分布は対称的である。この変化の原因について、企業の全クロスセクションを用いて、説明の可能性を検討した。その結果、企業のリターンが非対称であることの標準的な根拠は、いずれもこの現象を説明することができないことがわかった。その代わりに、歪度の消滅はあらゆるタイプの企業で見られる。</p>
+        <p class="abstract-text en">A well known observation about firm level returns is that they are positively skewed. We show that this positive skewness has slowly disappeared towards the end of the 20th century. In the 21st century, the distribution of idiosyncratic returns is symmetric. Using the entire cross section of firms, we investigate possible explanations for the source of this change. This inquiry leaves us with a puzzle: none of the standard rationales behind the asymmetry of firm returns seem able to explain this phenomenon. Instead, the disappearance of skewness is present in firms of all types.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

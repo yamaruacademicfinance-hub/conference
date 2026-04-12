@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulation, Litigation and Politics</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link active">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Regulation, Litigation and Politics</h1>        <div class="paper-card">
+            <div class="paper-title">Does Litigation Risk Deter Insider Trading? Evidence from Universal Demand Laws</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Binay Adhikari; UTSA (Business Building)), Anup Agrawal; University of Alabama), Bina Sharma; Bellevue University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=824" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の各州がユニバーサル・デマンド法を時差的に採用していることを利用して、株主訴訟のリスクが日和見的インサイダー取引にどのように影響するかを研究している。株主が役員に対して派生的な訴訟を起こすことを難しくするUD法（例えば、Houston, Lin and Xie 2018; and Appel 2019参照）は、著しく収益性の高いインサイダー取引、特に売却につながる。この効果は、情報の非対称性が高い企業や制度的監視が低い企業でより大きく、より日和見的でリスクの高い売買のタイミングに由来している。この結果は、訴訟の脅威が減少することで、インサイダーがリスクテイクを増加させ、より収益性の高い取引を行うようになることを示唆している。</p>
+        <p class="abstract-text en">We exploit US states' staggered adoption of Universal Demand laws to study how the risk of shareholder lawsuits affects opportunistic insider trading. UD laws, which make it harder for shareholders to bring derivative lawsuits against directors and officers (see, e.g., Houston, Lin and Xie 2018; and Appel 2019), lead to significantly more profitable insider trades, especially sales. This effect is greater in firms with higher information asymmetry or lower institutional monitoring, and comes from more opportunistic and riskier timing of trades. Our findings suggest that a decrease in litigation threat emboldens insiders to increase risk taking and trade more profitably.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How Does Removing the Tax Benefits of Debt Affect Firms? Evidence from the 2017 US Tax Reform</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Ali Sanati; American University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=849" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">広範な努力にもかかわらず、負債の税制上の優遇措置が企業の意思決定に与える影響は未解決の問題である。2017年の米国税制改革は、その効果を直接推定する機会を創出するものである。この改革では、平均売上高が2500万ドル以下の中小企業を除くすべての企業について、負債の税制上の優位性を制限している。私は例外の閾値を回帰不連続デザインで使用し、負債の税制上のメリットの現在価値が縮小すると、企業の負債はほぼ1ドル単位で減少するが、株式による資金調達は影響を受けないことを示す。また、外部資金調達コストの上昇に伴い、被処分企業は投資や雇用を減少させる。この影響は、上場企業でも非上場企業でも同様である。新法は中小企業における負債の税効果を不当に低下させるが、この試算は大企業における効果の下限を提供する可能性があることを示唆している。全体として、資本コストに影響を与える税制優遇措置が、企業の財務・実体政策の形成に一次的な役割を果たしていることが実証された。</p>
+        <p class="abstract-text en">Despite extensive efforts, the impact of the tax benefits of debt on firm decisions is an open question. The 2017 US tax reform creates an opportunity to directly estimate the effects. The reform limits the tax advantage of debt for all firms except for small businesses with average sales below $25 million. I use the exception threshold in a regression discontinuity design and show that corporate debt declines nearly dollar for dollar as the present value of the tax benefits of debt shrinks, but equity financing is not affected. Treated firms decrease their investments and hiring, consistent with the rise in the cost of external financing. The effects are similar in public and private companies. Although the new law disproportionately reduces the tax benefits of debt in small firms, the evidence suggest that the estimates likely provide a lower bound for the effects in large companies. Overall, I document a first order role for tax incentives that affect the cost of capital in shaping corporate financial and real policies.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Impact of Money in Politics on Labor and Capital: Evidence from Citizens United v. FEC</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pat Akey; University of Toronto), Tania Babina; Columbia University), Greg Buchak; Stanford University), Ana-Maria Tenekedjieva; Federal Reserve Board of Governors)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1116" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業の政治的影響力の増大は、企業が資本を利し、労働を害する政策の制定を推し進めるという懸念を生んでいる。我々は、政治支出の禁止を違憲としたCitizens United v. FEC (2010)という驚くべき最高裁判決を用いて、企業の影響力が経済的結果に及ぼす影響を検証する。判決後の政治的・経済的成果を、事前に禁止されていた州（影響を受けた州）とそうでない州の差分無関心分析で比較した。影響を受けた州では政治支出が増加し、知事職の交代が顕著になった。しかし、意外なことに、労働者への支払いは増加し、資本への支払いや全体の生産量も増加することが確認された。賃金の上昇は、特に若い企業において顕著である。また、影響を受けた州では、労働法や消費者保護法の施行が減少するなど、よりビジネスに適した施行環境が整っている証拠も見出した。これらの知見を総合すると、企業の政治資金投入による政治的変化は、規制監視の減少を通じて経済生産の増加をもたらし、これらの経済的利益の一部は労働者に転嫁されることが示唆される。</p>
+        <p class="abstract-text en">The perceived increase in corporate political influence has raised concerns that corporations push to enact policies that benefit capital and harm labor. We examine the effect of corporate influence on economic outcomes using the surprise Supreme Court ruling in Citizens United v. FEC (2010), which rendered bans on political spending unconstitutional. We compare political and economic outcomes after the ruling in states that had pre existing bans (affected states) to those that did not in a difference indifference analysis. In affected states political spending increases, and governorships experience significant turnover. Surprisingly, however, payments to labor increase, and there is some evidence of increases in payments to capital and overall output. Wage increases occur particularly among young firms. We find evidence of a more businessfriendly enforcement environment: affected states enforce fewer labor and consumer protection laws. Together, our findings suggest that that the political changes from corporate money in politics result in increased economic output through less regulatory oversight, and that some of these economic gains are passed on to workers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Regulation and Politics of Share Repurchases: Theory and Evidence</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Subramanian Iyer; University of New Mexico), Ramesh Rao; Oklahoma State University), Emma Xu; University of New Mexico)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1932" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">自己株式取得は、政治家、規制当局、メディア、学者などから激しい批判を受けている。まず、このような批判が正当化されるかどうかを、現金配当と自社株買いの企業理論から検証する。また、買戻しに対する批判的な見方から得られる予測とデータが整合的であるかどうかを実証的に検証する。その結果、自社株買いが企業のレジリエンスを低下させることはないことがわかった。つまり、買戻しを行った企業は、買戻しを行わなかった企業よりも、投資ニーズを満たす十分なキャッシュ・リソースを持っていることが分かった。このことは、企業がネガティブな財務的ショックを受けた後にも当てはまる。また、買戻しを行った企業は、雇用率、従業員報酬、従業員満足度、環境コミットメントを低下させないことが示された。また、買戻しによって積立不足の年金債務が増加することは見いだせなかった。また、自社株買いがCEO報酬の上昇を伴うことも見いだせなかった。</p>
+        <p class="abstract-text en">Share repurchases have come under intense criticism from politicians, regulators, media, and academics. First, we examine whether such criticism is justified from the perspective of corporate theory of cash dividends and repurchases. We also test empirically whether the data is consistent with the predictions from the critical view of repurchases. Our results indicate that stock repurchases do not cause firms to become less resilient. We find quite the opposite, i.e., repurchasing firms have adequate cash resources to meet their needs for investments, even more so compared to non repurchasing firms. This holds even after the firms have experienced negative financial shocks. We document that repurchasing firms do not reduce hiring rate, employee compensation, employee satisfaction or environmental commitment. We do not find that repurchases lead to an increase in underfunded pension liabilities. Finally, we do not find that repurchases accompany higher CEO compensation.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

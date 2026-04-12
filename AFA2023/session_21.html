@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance During Covid</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_21.html" class="session-link active">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Finance During Covid</h1>        <div class="paper-card">
+            <div class="paper-title">Applications or Approvals: What Drives Racial Disparities in the Paycheck Protection Program?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sergey Chernenko; Purdue University), Nathan Kaplan; Federal Reserve Bank of New York), Asani Sarkar; Federal Reserve Bank of New York), David Scharfstein; Harvard University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1905" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2020年中小企業信用調査を用いて、給与保障プログラム（PPP）融資の申請と承認における人種間格差を調査した。観察可能な特性を条件とすると，黒人およびヒスパニック系企業は，白人企業よりもPPPを申請する確率が4.2％および3.9％低い。また、申請条件として、黒人企業は銀行に申請する確率が10.7％低く、フィンテックに申請する確率が7.8％高い。このような銀行からフィンテックへの選別は、人種的な偏りのある郡で顕著に強くなっている。黒人の経営する企業は、観察的に類似した白人の経営する企業と比較して、銀行とフィンテックにおける平均的な承認格差が似ており、銀行から承認される可能性は7.4％低く、フィンテックから承認される可能性は8.3％低くなっている。これは、人種偏見の強い県で銀行から拒否された黒人企業が、フィンテックでは承認されやすいという結果と一致する。このことは、人種偏見の強い県の銀行で拒否された黒人系企業が、フィンテックでは承認されやすくなっていることと矛盾しない。フィンテックにおける自動化は、申請と承認における人種的偏りを減らす可能性がある一方で、申請者が申請プロセスで必要とするサポートを提供するフィンテックの能力を低下させ、フィンテックにおける承認率の格差を拡大させる可能性がある。</p>
+        <p class="abstract-text en">We use the 2020 Small Business Credit Survey to study racial disparities in applications and approvals of Paycheck Protection Program (PPP) loans. Conditional on observable characteristics, Black- and Hispanic owned firms are 4.2% and 3.9% less likely than white owned firms to apply for PPP. Conditional on applying, Black owned firms are 10.7% less likely to apply to banks and 7.8% more likely to apply to fintechs. This sorting away from banks and towards fintechs is significantly stronger in more racially biased counties. Compared to observably similar white owned firms, Black owned firms face similar average approval disparities at banks and fintechs: they are 7.4% less likely to be approved by banks and 8.3% less likely to be approved by fintechs. Approval disparity increases with racial bias at banks but decreases at fintechs, consistent with Black owned firms that were rejected by banks in more racially biased counties being more likely to be approved by fintechs. The approval disparity at banks in less biased counties is smaller than at fintechs in the average county. While automation at fintechs may reduce racial bias in applications and approvals, it may also reduce the ability of fintechs to provide applicants the support they need in the application process, which could lead to greater disparity in approval rates at fintechs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Refinancing Inequality During the COVID-19 Pandemic</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sumit Agarwal; National University of Singapore), Souphala Chomsisengphet; Comptroller of the Currency), Hua Kiefer; FDIC), Leonard Kiefer; Freddie Mac), Paolina Medina; Texas A&M University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1733" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">COVID19パンデミック時の住宅ローン借り換えによる貯蓄の所得層別分布を調査した。2020年2月から6月にかけて、高所得者と低所得者の住宅ローン借り換えによる貯蓄額の差は、それ以前に比べて10倍となった。これは、高所得の借り手が、それ以外の同程度の低所得の借り手よりも借り換え活動を増やしたことと、借り換えを条件として、金利の改善をやや大きくとらえたことの2つの要因の結果であった。借り換えの不平等はCOVID 19の流行が深刻化するにつれて増加し，申し込みのプールにおいて低所得の借り手が十分に代表されていないことが特徴である。我々は，高所得者層とそれ以外の層の間で50億ドルの貯蓄の差が生じたと推定している．</p>
+        <p class="abstract-text en">We study the distribution of savings from mortgage refinancing across income groups during the COVID 19 pandemic. Between February and June 2020, the difference in savings from mortgage refinancing between high- and low income borrowers was ten times higher than before. This was the result of two factors: high income borrowers increased their refinancing activity more than otherwise comparable low income borrowers and, conditional on refinancing, they captured slightly larger improvements in interest rates. Refinancing inequality increases with the severity of the COVID 19 pandemic and is characterized by an under representation of low income borrowers in the pool of applications. We estimate a difference of $5 billion in savings between the top income quintile and the rest of the market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Resilience of the U.S. Corporate Bond Market During Financial Crises</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bo Becker; Stockholm School of Economics), Efraim Benmelech; Northwestern University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1386" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2020年のCovid 19のパンデミックによる急激な景気後退に対して、社債市場は驚くほど回復力があることがわかった。(1)景気後退の直後から債券の発行が増加し、対照的にシンジケートローンの発行は少なかったこと、(2)連邦準備制度の介入によって債券の発行が増加し、ローンの発行も増加したが、程度は低かったこと、(3)債券発行は大規模で収益性の高い投資適格セグメントに集中したことである。これらの結果を過去の危機や不況と比較したところ、同様のパターンが確認された。我々は、米国の債券市場は企業にとって重要かつ弾力的な資金調達源であると結論付けた。</p>
+        <p class="abstract-text en">Corporate bond markets proved remarkably resilient against a sharp contraction caused by the 2020 Covid 19 pandemic. We document three important findings: (1) bond issuance increased immediately when the contraction hit, whereas, in contrast, syndicated loan issuance was low; (2) Federal Reserve interventions increased bond issuance, while loan issuance also increased, but to a lesser degree; and (3) bond issuance was concentrated in the investment grade segment for large and profitable issuers. We compare these results to previous crises and recessions and document similar patterns. We conclude that the U.S. bond market is an important and resilient source of funding for corporations.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Value of Relationships with Value Investors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Maureen O'Hara; Cornell University), Andreas Rapp; Federal Reserve Board), Alex (Xing) Zhou; Federal Reserve Board)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1360" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、COVID19の金融危機において、バリュー投資家として行動した保険会社の役割を検証した。我々は、多くの機関投資家が売り圧力にさらされていた時期に、これらの「最後の砦の買い手」が社債のポジションを増やし、以前から取引関係のあったディーラーから買い増し（売り減らし）たことを明らかにした。このような取引行動は保険会社の規模にかかわらず見られ、特に小規模の保険会社で顕著であった。我々は、保険会社とディーラーの関係が相互に有益であったことを示す。保険会社との関係が強いディーラーは、即時性のために高い取引コストを請求することで利益を得ていた。保険会社は、危機後に発行される普通社債の割当をより多く受けることができ、利益を得た。私たちの研究は、ストレスの多い時期にバリュー・インベスターとの関係が重要であることを実証している。</p>
+        <p class="abstract-text en">We examine the role of insurance companies acting as value investors during the COVID 19 financial crisis. We show that these 'buyers of last resort' increased their corporate bond positions at a time when most institutional investors were under heavy selling pressure, buying more from (and selling less to) dealers with whom they had prior trading relationships. This trading behavior held across insurer size, and was particularly pronounced for small insurers. We show that insurerdealer relations were mutually beneficial: Dealers with stronger insurer relationships benefitted by charging higher transaction costs for immediacy. Insurers benefitted from receiving larger postcrisis allocations in primary bond issues. Our work demonstrates the value of relationships with value investors during times of stress.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

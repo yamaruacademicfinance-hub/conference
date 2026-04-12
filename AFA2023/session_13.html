@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance and Pension Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link active">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Insurance and Pension Funds</h1>        <div class="paper-card">
+            <div class="paper-title">Corporate Pension Risk Transfers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sven Klingler; BI Norwegian Business School), Michael Moran; Goldman Sachs Asset Management), Suresh Sundaresan; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1392" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">年金リスク移転（PRT）では、企業の確定給付型（DB）年金のスポンサーが生命保険会社から年金を購入し、年金債務を保険会社に取消不能な形で移転するものである。このようなPRTを行うかどうかの意思決定を実オプション行使問題としてモデル化し、企業が(i)年金関連コストが高く、(ii)株式市場投資が少なく、(iii)デフォルトリスクが低い場合、PRTを行う可能性が高いことを示す。実証的には、PRTに関する独自のデータセットを構築し、PRTを実施した企業とそれ以外の企業を比較し、我々のモデル予測が強く支持されることを見出した。</p>
+        <p class="abstract-text en">In a pension risk transfer (PRT), the sponsor of a corporate defined benefit (DB) pension plan purchases annuities from a life insurance company to irrevocably transfer its pension obligations to the insurer. We model the decision to conduct such a PRT as a real option exercise problem and show that a company is more likely to conduct a PRT if it has (i) higher pension related costs, (ii) lower stock market investments, and (iii) lower default risk. Empirically, we assemble a unique data set of PRTs, compare firms that conducted a PRT to other firms, and find strong support of our model predictions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Ex-Post Loss Sharing in Consumer Financial Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Alexandru Barbu; London Business School)</div>
+            <a href="NA" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">保険会社は、投資信託と長期にわたる最低収益保証を組み合わせた変額年金と呼ばれる消費者金融商品を販売しており、かなりの市場リスクを保持している。私は、変額年金に組み込まれた保証が、金融危機の後、深く金縛りにあったことを示す。しかし、過去10年間で、保険会社は消費者に変額年金をより手厚い商品と交換させることで、4290億ドル以上の変額年金を取り除いている。より手厚い保険が最も多く交換された。私は、保険市場における消費者搾取の構造モデルを構築し、消費者の不注意の程度と企業が直面するレピュテーション・コストを明らかにした。その結果、20%の消費者が重要な契約特性を無視した場合、保険会社は搾取されたドルあたり13セントのレピュテーション・コストを支払うことが分かった。また、受託者基準に移行すると、レピュテーション・コストはドルあたりさらに8セント上昇し、交換は半減する。</p>
+        <p class="abstract-text en">Insurance companies sell consumer financial products called variable annuities that combine mutual funds with minimum return guarantees over long horizons, retaining considerable market risk. I show that the guarantees embedded in variable annuities turned deeply in the money after the financial crisis. However, over the last decade, insurers removed more than $429 billion in variable annuities by having consumers exchange them into less generous products. The more generous policies were exchanged the most. I develop a structural model of consumer exploitation in insurance markets that pins down the degree of consumer inattention and the reputational costs faced by firms. I find that 20% of consumers neglect important contract characteristics, insurers pay 13 cents in reputational costs per dollar exploited, while moving to a fiduciary standard raises reputational costs by a further 8 cents per dollar and reduces exchanges by half.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Insurance Companies and the Growth of Corporate Loans' Securitization</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Fulvia Fringuellotti; Federal Reserve Bank of New York), Joao Santos; Federal Reserve Bank of New York)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1410" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、保険会社が危機後の期間に担保付ローン債務（CLO）への投資をほぼ非増加させ、2019年には保有総額が$125Bに達したことを示す。CLOの投資額の伸びはローンや社債の伸びを大きく上回っており、トリプルA格のトランシェよりも投資適格格のメザニン・トランシェが強く選好されたことが特徴的であった。我々は、これらの現象が利回り追求行動を反映していることを証明する。保険会社は、資本賦課の条件下で、より高い利回りの債券やCLOトランシェに重点的に投資している。CLOトランシェへの選好は、同格付けの債券に対するトランシェの高い利回りに由来し、2010年の資本規制改革後に増加し、2019年には保険会社が発行済みメザニントランシェの40%以上を保有することになった。その過程で、保険会社はCLO発行に不可欠なリスクの高いトランシェの需要を作り出した。</p>
+        <p class="abstract-text en">We show that insurance companies have almost nonupled their investments in collateralized loan obligations (CLOs) in the post crisis period, reaching total holdings of $125B in 2019. The growth in CLOs' investments has far outpaced that of loans and corporate bonds, and was characterized by a strong preference for mezzanine tranches rated investment grade over triple A rated tranches. We document that these phenomena reflect a search for yield behavior. Conditional on capital charges, insurance companies invest more heavily in bonds and CLO tranches with higher yields. Preferences for CLO tranches derived from tranches' higher yields relative to bonds with the same rating, and increased following the 2010 capital regulatory reform, resulting in insurance companies holding more than 40% of mezzanine tranches outstanding in 2019. In the process, insurance companies created the demand for the risky tranches that are critical to the CLO issuance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Economics of Lapsation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ralph Koijen; University of Chicago), Hae Kang Lee; University of South Carolina), Stijn Van Nieuwerburgh; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1499" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、生命保険業界における失効リスクの集計を研究している。生命保険会社による過去の失効率の報告を用いて、失効行動のカウンターシクリカリティを実証的に立証する。我々は2つの失効リスク要因を構築し、大手生命保険会社30社の失効率の一般的な変動の大部分を説明することができた。一つは信用スプレッドと雇用に相関する循環的な要因であり、もう一つは金利水準に相関するトレンド要因である。大手生命保険会社の新しい契約レベルのデータベースを用いて、契約と契約者の特徴に基づくリスク要因エクスポージャーの不均質性を検証した。若い契約者はより周期的な失効行動を示し、小規模な契約は失効傾向の影響をより強く受ける。生命保険契約のヘッジと評価への影響を探る。消滅リスクを無視した場合、消滅リスクの異なる契約者間で相互補助が発生し、生命保険契約の評価を誤ることになる。</p>
+        <p class="abstract-text en">We study aggregate lapsation risk in the life insurance sector. Using the regulatory reporting of historical lapse rates by life insurers, we empirically document the countercyclicality of lapsation behavior. We construct two lapsation risk factors that explain a large fraction of the common variation in lapse rates of the 30 largest life insurance companies. The first is a cyclical factor that correlates with credit spreads and employment, while the second factor is a trend factor that correlates with the level of interest rates. Using a novel policy level database from a large life insurer, we examine the heterogeneity in risk factor exposures based on policy and policyholder characteristics. Young policyholders display more cyclical lapsation behavior, while small policies are more exposed to the trend in lapsation. We explore the implications for hedging and valuation of life insurance contracts. Ignoring aggregate lapsation risk results in cross subsidization across policyholders with different lapsation risk, and in a misvaluation of life insurance policies.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Influence and Networks</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link active">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Social Influence and Networks</h1>        <div class="paper-card">
+            <div class="paper-title">Do Teams Alleviate or Exacerbate Behavioral Biases? Evidence from Extrapolation Bias in Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ricardo Barahona; Banco de Espana), Stefano Cassella; Tilburg University), Kristy Jansen; Tilburg University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1101" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">個人レベルで蔓延している行動バイアスをチームが減衰させるのか、それとも悪化させるのか、未解決の問題である。我々はミューチュアルファンド業界を実験室として、この疑問に答える。我々は、リターン外挿が個々のファンドマネジャーからチーム運用のファンドにどのように伝わるかに注目する。その結果、外挿バイアスがファンドの取引行動に与える影響を、チームが減衰させることがわかった。この減衰は、単独運用ファンドとチーム運用ファンドの投資経験、報酬、仕事量、投資スタイルの違いによるものではない。むしろ、チームメンバーの内面的な認知的反省を引き出すことが、チームの行動バイアスの低減に寄与している可能性がある。</p>
+        <p class="abstract-text en">Whether teams attenuate or exacerbate behavioral biases which are pervasive at the individual level is an open question. We answer this question using the mutual fund industry as a laboratory. We focus on how return extrapolation is transmitted from individual fund managers to the team managed funds they join. We show that teams attenuate the influence of extrapolation bias on funds' trading behavior. This attenuation is not due to differences in investment experience, compensation, workload, and investment styles between solo managed and team managed funds. Rather, the elicitation of team members' inner cognitive reflection can be responsible for teams' reduction in behavioral biases.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Hidden Alpha</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Manuel Ammann; University of St. Gallen), Alexander Cochardt; Harvard University and University of St. Gallen), Lauren Cohen; Harvard University), Stephan Heller; Harvard University and University of St. Gallen)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1185" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融エージェントの設定を用いて、他のすべてのネットワーク接続と比較して、隠れた接続の重要性を調査した。その結果、「隠れた」つながりは、投資信託と上場企業のユニバースにおいて、月平均135ベーシスポイント（年率16％以上のアルファ、t統計=3.54）ものファンドマネジャーに発生する最大かつ最も重要な異常リターンと関連することが分かった。これは、「見える」コネクションの取引を含む、他のすべての取引に平均して発生する重要でない異常リターンと相対的なものである。ファンド・マネジャーは、自分が関係している企業の役員をいつ保有し（そしていつ回避し）、正しくタイミングを計っているようであることから、隠れたコネクション・プレミアムは、内生的選択や親しみによって駆動されていないようである。さらに、コネクションが隠されていればいるほど、それを介した取引に関連する情報の価値は高くなる。この隠れたコネクション・プレミアムは、産業、スタイル、時代、企業の種類を問わず存在し、現在に至るまで強く、重要であり続けている。より広い意味で、我々の発見は、複雑なネットワークシステムにおけるショック伝播の本質を理解しようとするとき、ミッシングノードと隠れたエッジの重要性を強調するものである。</p>
+        <p class="abstract-text en">Using the setting of financial agents, we explore the importance of hidden connections relative to all other network connections. We find that hidden connections are those associated with the largest and most significant abnormal returns accruing to fund managers - on average 135 basis points per month (over 16% alpha per year, t stat = 3.54) across the universe of mutual funds and public firms. This is relative to insignificant abnormal returns accruing on average to all other trades, including those to trades of 'visible' connections. The hidden connection premium does not appear to be driven by endogenous selection or familiarity, as fund managers seem to be correctly timing when to hold (and when to avoid) the firm officers to whom they are tied. Further, the more hidden the connection is, the more valuable the information that appears to be associated with the trading across it. This hidden connection premium exists across industries, styles, time periods, and firm types; remaining strong and significant through the present day. More broadly, our findings highlight the importance of missing nodes and hidden edges when attempting to understand the true nature of shock propagation in complex network systems.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">It's Not Who You Know - It's Who Knows You: Employee Social Capital and Firm Performance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Duckki Cho; Peking University), Lyungmae Choi; City University of Hong Kong), Michael Hertzel; Arizona State University), Jessie Jiaxu Wang; Arizona State University (Board of Governors of the Federal Reserve System)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1852" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、従業員のネットワークに埋め込まれたソーシャルキャピタルが企業価値に寄与することを示し、そのメカニズムに関する証拠を提供する。個人レベルの新しいネットワークデータを用いて、従業員と外部ステークホルダーとのつながりから得られる企業のソーシャルキャピタルを測定する。コネクションの有向性から、コネクションの一方の当事者がより価値の高い接触者であるかどうかを識別することができる。その結果、従業員のソーシャルキャピタルが高い企業ほど業績が向上することがわかった。この正の効果は、主に従業員が他者から評価されていることに起因する。また、政府による規制の制定が、特定のセクターとのネットワーク形成に負のショックを与えたという因果関係を明らかにした。</p>
+        <p class="abstract-text en">We show that the social capital embedded in employees' networks contributes to firm value and provide evidence on the mechanisms. Using novel, individual level network data, we measure a firm's social capital derived from employees' connections with external stakeholders. The directed nature of connections allows for identifying whether one party in a connection is a more valued contact. Results show that firms with more employee social capital perform better; the positive effect stems primarily from employees being valued by others. We provide causal evidence exploiting the enactment of a government regulation that imparted a negative shock to networking with specific sectors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Economic Impact of Liquidity Crises: Evidence from the Russian Payment System</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Dmitry Livdan; University of California (Berkeley), Norman Schuerhoff; University of Lausanne), Vladimir Sokolov; Higher School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1255" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融システムにおける流動性危機は、企業間の財やサービスの支払いを混乱させ、貨幣を非流動化させる可能性がある。我々は、貨幣の非流動性が、企業による支払いアクセスの直接的な喪失と、初期ショックを増幅させる支払い外部性によって、経済活動に深刻な影響を与えることを理論的、実証的に示している。2004年のロシアの銀行パニックは、2つの中堅銀行の差し押さえに端を発する決済の混乱が経済に与える影響を研究するためのユニークな舞台を提供している。決済システムからの1億3300万件の取引を用いて、我々は企業間決済における持続的かつ非対称的な混乱を記録し、送金を行う企業の方が受金を行う企業よりも大きな打撃を与えることを示した。企業の自行/仕入先/顧客銀行を起点とする決済ショックは、生産高を2.5%/3.1%/7.0%減少させる。企業の固有ベクトル中心性の弾力性によって捉えられる真のレジリエンスは、上流企業/下流企業で4.1%/1.5%のショック・スルーを減衰させる。</p>
+        <p class="abstract-text en">Liquidity crises in the financial system can disrupt firm to firm payments for goods and services, rendering money illiquid. We show both theoretically and empirically that money illiquidity severely impairs economic activity through firms' direct loss of payment access and payment externalities that amplify the initial shock. The Russian banking panic of 2004 provides a unique setting to study the economic impact of payment disruptions originating from foreclosure of two mid sized banks. Using 133 million transactions from the payment system, we document persistent and asymmetric disruptions in firm to firm payments, hurting money sending firms more than moneyreceiving firms. Payment shocks originating at a firm's own/supplier/customer bank reduces output by 2.5%/3.1%/7.0%. Real resilience, as captured by the elasticity of a firm's eigenvector centrality, dampens shock pass through by 4.1%/1.5% for upstream/downstream firms.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Asset and Government Debt</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link active">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Safe Asset and Government Debt</h1>        <div class="paper-card">
+            <div class="paper-title">A p Theory of Government Debt and Taxes</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wei Jiang; Hong Kong University of Science and Technology), Thomas Sargent; New York University), Neng Wang; Columbia University), Jinqiang Yang; Shanghai University of Finance and Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1762" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">政府債務と税のp理論＊ Wei Jiang† Thomas J. Sargentfl Neng Wang§ Jinqiang Yang¶ July 16, 2022 税の歪みを伴う環境における最適な税と政府借入計画（Barro, 1979）は、限界pと呼ばれる政府債務返済の限界を局所的に突き止める。デフォルトへのオプションは政府の債務能力を決定し、その最適状態偶発リスク管理政策によってその債務はリスクフリーにされる。最適な債務GDP比のダイナミクスは、広く議論されている3つの力、1.)基礎赤字、2.)利払い、3.)によってのみ駆動されているわけではない。GDP成長率だけでなく、4.) ヘッジコストによっても左右される。ヘッジは、最近のr-gや債務の持続可能性の議論の中心である債務推移のダイナミクスと均衡債務能力を根本的に変える。我々はモデルをキャリブレーションし、債務GDP比率の推移のダイナミクス、均衡債務余力、米国が債務余力を獲得するまでの期間について、比較力学的に定量的な記述を行う。</p>
+        <p class="abstract-text en">A p Theory of Government Debt and Taxes∗  Wei Jiang†  Thomas J. Sargentfl  Neng Wang§  Jinqiang Yang¶  July 16, 2022  An optimal tax and government borrowing plan in a setting with tax distortions (Barro, 1979)  locally pin down the marginal cost of servicing government debt, called marginal p. An option to  default determines the government's debt capacity and its optimal state contingent risk management policies make its debt risk free. Optimal debt GDP ratio dynamics are driven not only by  three widely discussed forces, 1.) a primary deficit, 2.) interest payments, and 3.) GDP growth, but  also by 4.) hedging costs. Hedging fundamentally alters debt transition dynamics and equilibrium  debt capacity, which are at the center of the recent ‘r − g' and debt sustainability discussions. We  calibrate our model and make comparative dynamic quantitative statements about the debt GDP  ratio transition dynamics, equilibrium debt capacity, and how long it will take the US to attain  debt capacity.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Credit Crunches and the Great Stagflation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Itamar Drechsler; University of Pennsylvania), Alexi Savov; New York University), Philipp Schnabl; New York University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1936" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、1965年から1982年の大スタグフレーションを特徴づける4つの連続したスタグフレーション・サイクルに、深刻な信用収縮が寄与したことを示す。信用収縮は、銀行システムから大量の預金が流出した結果であり、インフレ率が上昇するたびにその傾向は強まった。このような預金流出は、FRBが銀行の預金金利に低い上限を課す政策によって、FRBファンドレートの預金へのパススルーを排除し、インフレ率の上昇とともに実質預金金利がますますマイナスになったことに起因している。信用は企業の生産のためのインプットであるから、クランチ時の信用コストの高さは、企業に値上げと生産と雇用の削減を強いる、すなわちスタグフレーションを引き起こしたのである。この理論と整合的に、預金と銀行信用の減少、製造業の受注残の蓄積とインフレ、そしてGDP成長率、雇用、インフレの減少の間に緊密な関係があることを見いだすことができる。次に、この理論を製造業の銀行融資依存度別にクロスセクションで検証したところ、信用収縮の際、金融依存度の高い企業ほど値上げや減産を行い、在庫を少なくし、従業員を少なくしていることが分かった。また、預金流出の影響を受けやすい地域にある銀行から融資を受けている企業についても、同様の結果が得られている。この結果は、信用収縮による供給ショックが大スタグフレーションの重要な要因であったことを示唆している。</p>
+        <p class="abstract-text en">We show that severe credit crunches contributed to the four successive stagflationary cycles that characterize the Great Stagflation of 1965 - 1982. The crunches were the result of large outflows of deposits from the banking system that intensified whenever inflation increased. These deposit outflows were due to the Fed's policy of imposing a low ceiling on bank deposit rates, which eliminated the passthrough of the Fed funds rate to deposits and caused real deposit rates to become increasingly negative as inflation rose. Since credit is an input to firms' production, the high cost of credit during the crunches forced firms to raise prices and cut output and employment, i.e., they led to stagflation. Consistent with this theory, we find a tight relationship between declines in deposits and bank credit, the buildup of unfilled manufacturing orders and inflation, and declines in GDP growth, employment and inflation. We then test the theory in the cross section of manufacturing industries sorted by their dependence on bank financing and find that during the credit crunches, more finance dependent firms raised prices and cut output more, held less inventory, and hired fewer employees. We similarly find these results for firms financed by banks located in areas that were more exposed to deposit outflows. Our findings imply that the supply shocks generated by the credit crunches were an important driver of the Great Stagflation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Measuring U.S. Fiscal Capacity using Discounted Cash Flow Analysis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhengyang Jiang; Northwestern University), Hanno Lustig; Stanford University), Stijn Van Nieuwerburgh; Columbia University), Mindy Xiaolan; University of Texas at Austin)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1395" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私たちは、割引キャッシュフロー法を用いて、その国の財政能力を測定しています。重要なことは、割引率にGDPリスクプレミアムが含まれていることである。この評価方法を、CBOが発表した2022年から2051年までの米国連邦政府の赤字と2051年の債務に関する予測に適用した。その結果、米国の現在の財政能力の上限は2021年のGDPの60％となり、観測された債務/GDP比を大幅に下回ることが分かった。予測黒字のバックロードのため、黒字債権のデュレーションは財務省のポートフォリオのデュレーションをはるかに超えている。このデュレーションのミスマッチは、金利上昇のリスクにさらされ、それが税収増や歳出減の必要性の引き金となる。黒字を前倒ししてこのリスクを減らすには、大規模な財政調整も必要だ。</p>
+        <p class="abstract-text en">We use discounted cash flow analysis to measure a country's fiscal capacity. Crucially, the discount rate includes a GDP risk premium. We apply our valuation method to the CBO's projections for the U.S. federal government's deficit between 2022 and 2051 and debt in 2051. We compute an upper bound on the U.S. current fiscal capacity equal to 60% of U.S. GDP in 2021, substantially below the observed debt/GDP ratio. Because of the backloading of projected surpluses, the duration of the surplus claim far exceeds the duration of the outstanding Treasury portfolio. This duration mismatch exposes the government to the risk of rising rates, which would trigger the need for higher tax revenue or lower spending. Reducing this risk by front loading the surpluses also requires major fiscal adjustment.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Risk-Free Rates and Convenience Yields Around the World</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: William Diamond; University of Pennsylvania), Peter Van Tassel; Federal Reserve Bank of New York)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1674" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、G10主要9通貨のインデックス・オプション価格に内包されるリスクフリー・レートを構築した。これらの金利を国債の利回りと比較することで、安全資産によって得られる利便性利回りの国際的な推計値を提供する。各国の平均利回りは、低金利の日本の-5bpから高金利のオーストラリアの61bpまで、各国の平均金利と高い相関があり、中金利の米国は34bpと中途半端であることがわかります。また、各国のオプション金利と米国のオプション金利から計算したCIP（Covered Interest Parity）偏差はマイナスであり、このマイナスCIP偏差は、利回り自体は緩やかであった2020年コービッド危機などの金融危機の時期に急激に大きくなった。このことから、米国のリスクフリー割引率は、世界の金融システムの中心的な地位にあるため、特に金融危機時に低くなるが、それに加えて米国の安全資産は、利便性利回りが異常に大きいわけではないと結論付けている。∗</p>
+        <p class="abstract-text en">This paper constructs risk free interest rates implicit in index option prices for 9 of the major G10 currencies. We compare these rates to the yields of government bonds to provide international estimates of the convenience yield earned by safe assets. Average convenience yields across countries are highly correlated with the average interest rate in each country, ranging from -5 basis points in low rate Japan to 61 basis points in high rate Australia, with the moderate rate US providing a middling 34 basis points. For each country, a covered interest parity (CIP) deviation constructed from its optionimplied rates and those of the US is negative, with these negative CIP deviations growing sharply in periods of financial distress, including the 2020 covid crisis when convenience yields themselves remained moderate. We conclude that risk free discount rates in the US are especially low due to its central position in the global financial system, particularly during financial crises, but that US safe assets do not earn an unusually large convenience yield in addition. ∗</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

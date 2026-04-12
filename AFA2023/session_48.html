@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Intermediation: FinTech-Bank Competition on Small Business Loans</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link active">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Financial Intermediation: FinTech-Bank Competition on Small Business Loans</h1>        <div class="paper-card">
+            <div class="paper-title">Can Open Banking Substitute Credit Bureaus?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Kumar Rishabh; University of Basel)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1093" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">オープンバンキングは信用情報機関の代わりになるのか？私は、決済フィンテック貸し手のレンズからこの問いにアプローチしています。私は、金融機関が財務情報と信用スコアを併用して借り手を審査・監視しているという事実から生じる識別問題を克服し、決済フットプリントと信用スコアの相対的な予測性能を識別できる設定を利用しています。カードスワイプレベルのデータと、独自に収集したクレジットスコアを用いて、機械学習アルゴリズムでデフォルトを予測したところ、ペイメントフットプリントがクレジットスコアよりも有意に高い予測性能を持つことが分かりました。クレジットスコアとペイメントフットプリントを組み合わせても、ペイメントフットプリントだけの予測性能に比べて、組み合わせたモデルの予測性能は向上しないため、ペイメントフットプリントがクレジットスコアを代替することがわかりました。これらの結果は、オープンバンキングがコストのかかる信用調査機関を代替できることを示唆している。解釈可能な機械学習技術を用いて、デフォルトを予測する最も重要なペイメント・フットプリント変数を特定する。さらに、早期警告として、融資実行後28日という早い段階で得られたペイメントフットプリントには、クレジットデフォルトを予測するための有用な情報が含まれていることを示す。</p>
+        <p class="abstract-text en">Can open banking substitute credit bureaus? I approach this question from the lens of a payment fintech lender. I utilize a setting that allows me to identify the relative predictive performance of payment footprints and credit scores, overcoming the identification problem that results from the fact that lenders screen and monitor borrowers using financial information and credit scores jointly. Using card swipe level data, and credit scores sourced independently, I predict defaults with machinelearning algorithms, and find that payment footprints have significantly higher predictive performance than credit scores. I find payment footprints substitute credit scores, as combining credit scores with payment footprints does not improve the predictive performance of the combined model over predictive performance of just payment footprints. These results imply that open banking can substitute the costly credit reporting institutions. Using interpretable machine learning techniques, I identify the most important payment footprint variables that predict default. Further, in an early warning exercise, I show that payment footprints obtained as early as 28 days after loan disbursal, contain useful information for predicting credit default.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Big Tech Lending Model</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wei Xiong; Princeton University), Guangli Lu; Chinese University of Hong Kong (Shenzhen), Lei Liu; Chinese Academy of Social Sciences)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=427" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ハイテク企業向け融資のサンプルと中国の従来型銀行融資のサンプルを比較することで、ハイテク融資モデルの鋭い特徴を明らかにした。ハイテク融資は規模が小さく、金利が大幅に高い傾向があり、借り手は債務の満期よりもずっと前にハイテク融資を返済し、借入頻度も高い傾向がある。こうした特徴は、より安価な代替クレジットにアクセスできる借り手に対して行われるハイテク・ローンでも変わらない。このモデルを通じて、ハイテク・ローンは、伝統的な銀行がサービスを提供していない、あるいは十分なサービスを受けていない借り手に対して、（COVID19後も）より厳しい逆選択や大きなリスクを負わずに、融資を促進することができる。我々の発見は、伝統的な銀行と競争して借り手のエコシステム外の活動に資金を供給するのではなく、エコシステム内の借り手の短期的な流動性ニーズに応えるという、ハイテクレンダーの抑制された優位性を浮き彫りにしている。</p>
+        <p class="abstract-text en">By comparing a sample of big tech business loans with a sample of conventional bank loans in China, we provide a sharp characterization of the big tech lending model: big tech loans tend to be smaller in size and have substantially higher interest rates, and borrowers tend to repay their big tech loans far before the debt matures and borrow more frequently. These characteristics remain even for the big tech loans made to borrowers with access to cheaper alternative credit. Through this model, big tech lending facilitates credit to borrowers unserved or underserved by traditional banks, without experiencing more severe adverse selection and incurring greater risks (even after COVID 19). Our findings highlight the restrained advantages of the big tech lender in serving the short term liquidity needs of borrowers in its ecosystem rather than competing with traditional banks to finance borrowers' activities outside its ecosystem.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Impact of Fintech Lending on Credit Access for U.S. Small Businesses</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Giulio Cornelli; Bank for International Settlements), Jon Frost; Bank for International Settlements), Leonardo Gambacorta; Bank for International Settlements), Julapa Jagtiani; Federal Reserve Bank of Philadelphia)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=402" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">中小企業向け融資（SBL）は、生産的な投資に資金を供給し、地域の経済成長を促進する上で重要な役割を担っています。近年、米国ではノンバンクがSBL市場でシェアを伸ばしており、特にコミュニティバンクとの相対的なシェアが拡大しています。ノンバンクの中でも、特にフィンテックレンダーは、オルタナティブデータを活用して独自の社内クレジットスコアリングを行うなど、活発な動きを見せている。我々は、中小企業向けフィンテック融資プラットフォーム（Funding CircleとLendingClub）の独自のローンレベルデータを使用して、プレパンデミック（2016年2019年）中に組成されたSBLの特性を探る。その結果、フィンテックSBLレンダーは、企業倒産申請件数が多い郵便番号や失業率が高い郵便番号でより多く融資していることが分かった。さらに、フィンテック・プラットフォームの内部信用スコアは、従来の信用スコアリングのアプローチよりも正確に将来の融資パフォーマンスを予測することができた。また、Y14Mローンレベルの銀行データを用いて、フィンテックSBLを従来の銀行のビジネスカードと信用アクセスや金利の面で比較しました。全体として、フィンテック金融機関は、より包括的な金融システムを構築する可能性があり、従来の金融機関を通じて融資を受ける可能性が低かった中小企業が融資を受けられるようになり、より低いコストで融資を受けられるようになります。</p>
+        <p class="abstract-text en">Small business lending (SBL) plays an important role in funding productive investment and fostering local economic growth. Recently, non bank lenders have gained market share in the SBL market in the U.S., especially relative to community banks. Among non banks, fintech lenders have become particularly active, leveraging alternative data for their own internal credit scoring. We use proprietary loan level data from small business fintech lending platforms (Funding Circle and LendingClub) to explore the characteristics of SBLs originated during pre pandemic (2016 2019). Our results show that fintech SBL lenders lent more in ZIP codes with higher business bankruptcy filings and those with higher unemployment rates. Moreover, fintech platforms' internal credit scores were able to predict future loan performance more accurately than the traditional approach to credit scoring. Using Y 14M loan level bank data, we also compare fintech SBL with traditional bank business cards in terms of credit access and interest rates. Overall, fintech lenders have a potential to create a more inclusive financial system, allowing small businesses that were less likely to receive credit through traditional lenders to access credit and to do so at a lower cost.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Role of FinTechs in Small Business Lending</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Paul Beaumont; McGill University), Huan Tang; London School of Economics), Eric Vansteenberghe; Paris School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1882" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">中小企業向け融資市場におけるFinTechレンダーの役割とは何か？フランスの行政データを用いて、新規に銀行融資を受ける類似企業と比較して、フィンテック融資を受けた中小企業は、新規融資後の銀行融資が20％増加することを示す。この効果は、担保の低い企業や、フィンテック・ローンが有形資産の取得に資金を提供する場合に、より顕著になる。これは、企業が無担保のFinTechローンを利用して資産を取得し、それを担保に銀行融資を受けていることと整合的である。また、企業が急な流動性ニーズを満たすためにFinTechローンを利用している証拠も見出された。一方、FinTechレンダーの審査能力が優れている証拠は見いだせなかった。</p>
+        <p class="abstract-text en">What is the role of FinTech lenders in small business lending markets? Using French administrative data, we show that, relative to similar firms taking new bank loans, SMEs that take a FinTech loan experience a 20% increase in bank credit after obtaining the new loan. The effect is more pronounced for low collateral firms and when the FinTech loan finances the acquisition of tangible assets. This is consistent with firms using uncollateralized FinTech loans to acquire assets that they can then pledge to obtain bank loans. We also find evidence that firms use FinTech loans to meet urgent liquidity needs. In contrast, we find no evidence of a superior screening ability of FinTech lenders.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

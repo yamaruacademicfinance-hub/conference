@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Topics in Monetary Policy Transmission</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link active">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>New Topics in Monetary Policy Transmission</h1>        <div class="paper-card">
+            <div class="paper-title">Liquidity, Liquidity Everywhere, Not a Drop to Use - Why Flooding Banks with Central Bank Reserves may not Expand Liquidity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Viral Acharya; New York University (CEPR (and NBER), Raghuram Rajan; University of Chicago)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=498" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">中央銀行のバランスシートの拡大は、商業銀行によって賄われる。これには、流動的な中央銀行の準備金を商業銀行が保有する他の資産に置き換えるだけでなく、準備金を調達するために発行される短期預金など、商業銀行の負債も同時に増加する。銀行は通常、保有する準備金に対して他の様々な債権も書き込んでいる。通常、中央銀行のバランスシートの拡大は、システムに対する将来の流動性の正味の供給力を高める。しかし、流動性に対する請求権が大量に行使されるようなストレスのある局面では、流動性への需要が準備金の利用可能性を大幅に上回る可能性がある。さらに、流動性の高い一部の商業銀行は、自らの見通しを高めるために準備金をため込み、流動性不足に大きく寄与する可能性がある。したがって、中央銀行のバランスシートの拡大は商業銀行のバランスシートを通じて行われるため、将来の流動性ストレスのエピソードを排除する必要はなく、むしろ悪化させる可能性さえある。このことは、中央銀行のバランスシートの拡大が経済活動に与えるプラスの効果も減殺する可能性がある。</p>
+        <p class="abstract-text en">Central bank balance sheet expansion is financed by commercial banks. It involves not just a substitution of liquid central bank reserves for other assets held by commercial banks, but also a counterpart increase in commercial bank liabilities, such as short term deposits issued to finance reserves. Banks typically also write a variety of other claims on reserve holdings. Normally, central bank balance sheet expansion will enhance the net future availability of liquidity to the system. However, in episodes of stress when a large fraction of claims on liquidity are exercised, the demand for liquidity can be significantly greater than the availability of reserves. Furthermore, some liquid commercial banks may hoard reserves to bolster their own prospects, contributing significantly to liquidity shortages. Therefore, because central bank balance sheet expansion operates through commercial bank balance sheets, it need not eliminate future episodes of liquidity stress, it may even exacerbate them. This may also attenuate any positive effects of central bank balance sheet expansion on economic activity.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy and Corporate Debt Maturity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrea Fabiani; Bank of Italy), Luigi Falasconi; University of Pennsylvania), Janko Heineken; University of Bonn)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1810" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">政策金利の引き下げは、企業債務の満期を長くすることを示す。1年のホライズンにおいて、1標準偏差（7.5bp）の拡大金利ショックは、長期債務の割合を50bp上昇させる。債券市場で活動する大企業がその調整を担っている。政策金利の引き下げは、利回りを求める投資家による長期債の需要を高め、制約のない大企業は債券の発行によって需要シフトに対応する。また、企業の債券発行の反応や投資信託の債券保有に関する実証的な証拠により、このメカニズムが検証された。</p>
+        <p class="abstract-text en">We show that a policy rate cut lengthens corporate debt maturity. Over a 1year horizon, a 1 standard deviation (7.5 basis points) expansionary interest rate shock raises the share of long term debt by 50 basis points. Large firms active in the bond market are responsible for the adjustment. A simple model combining moral hazard frictions and yield seeking investors explain the findings: a policy rate cut boosts demand for long term debt securities by yield seeking investors; large and unconstrained firms accommodate the demand shift by issuing bonds. Empirical evidence on the response of firms' bond issuance and on mutual funds' debt securities holdings validates the mechanism.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Monetary Policy and Fragility in Corporate Bond Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: John Chi-Fong Kuong; INSEAD), Jinyuan Zhang; INSEAD)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1935" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、異なる金融政策環境下での社債型投資信託のフローパターンを検証する。将来の金利が不確実な場合の資金流出モデルを構築し、新たな資金流出と金利の関係を明らかにした。その結果、（1）目標FF金利が上昇すると資金流出が増加する、（2）金融緩和的で不確実な金融政策環境下では資金流出-金利感応度が強くなる、（3）債券市場の流動性が高いとこうした金融政策によるフロー感応度が大きくなる、というモデルが予想される結果と整合的であることが実証的に明らかにされた。この結果は、社債ファンドの脆弱性が金融政策の意図せざる重要な帰結となる可能性を示唆している。</p>
+        <p class="abstract-text en">This paper examines flow patterns in corporate bond mutual funds under different monetary policy environments. We build a model of runs in funds with uncertain future interest rates, uncovering a novel outflow to interest rate relationship. Consistent with the model's predictions, we empirically find that (1) outflows from funds increase when the target Fed funds rate increases, (2) the outflowto interest rate sensitivity is stronger under more accommodative and uncertain monetary policy environments, and (3) these monetary policy induced flow sensitivities are greater when the bond market is more liquid. Our results suggest that fragility in corporate bond funds could be an important unintended consequence of monetary policy.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Money Markets and Bank Lending: Evidence from the Adoption of Tiering</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Carlo Altavilla; European Central Bank), Miguel Boucinha; European Central Bank), Lorenzo Burlon; European Central Bank), Mariassunta Giannetti; Stockholm School of Economics), Julian Schumacher; University of Mainz)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=487" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">マネーマーケットと銀行貸出。  ECBが導入した過剰準備金に対する報償制度である階層化制度を利用し、銀行貸出における金融市場へのアクセスの重要性を実証した。2段階制は、超過準備金を保有する銀行にとって正の富の効果をもたらし、未使用の減免措置を持つ銀行への流動性の再配分を促したことを示す。これは最終的に、金融市場の分断を減らし、金融政策の伝達メカニズムを強化することになった。  未使用の引当金を持つ銀行による金融市場へのアクセスの増加は、他の銀行よりもより多くの信用供与を行うインセンティブとなり、その中には、評価額が最も上昇した過剰流動性の銀行も含まれている。</p>
+        <p class="abstract-text en">Money Markets and Bank Lending:  Evidence from the Adoption of Tiering  Carlo Altavilla, Miguel Boucinha, Lorenzo Burlon,  Mariassunta Giannetti, Julian Schumacher*  March 2022  Exploiting the introduction of the ECB's tiering system for remunerating excess reserve holdings,  we document the importance of access to the money market for bank lending. We show that the  two tier system produced positive wealth effects for banks with excess reserves and encouraged a  reallocation of liquidity toward banks with unused exemptions. This ultimately decreased the  fragmentation in the money market and enhanced the monetary policy transmission mechanism.  The increased access to money market by banks with unused allowances incentivizes them to  extend more credit than other banks, including banks with excess liquidity whose valuations  increased the most.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

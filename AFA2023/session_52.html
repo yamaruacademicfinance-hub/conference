@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Governance in Public and Private Firms</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link ">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link active">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Corporate Governance in Public and Private Firms</h1>        <div class="paper-card">
+            <div class="paper-title">Conflicts in Private Family Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Janis Berzins; BI Norwegian Business School), Alminas Zaldokas; HKUST)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1036" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ノルウェーの世帯レベルのデータと家族関係の完全な構造を用いて、家族に複数の潜在的相続人がいる場合に、家族企業の所有権がどのように移転されるかを理解する。我々は、家族経営の会社を1人の相続人に遺すか、数人の相続人に遺すかの判断は、将来の家族間の対立の可能性に影響されると主張する。その結果、相続人の不和が予想される場合、相続人が一人になる可能性が高く、また、この考慮は、企業が一族の手に残る期間、投資額、成長率を規定することが分かった。我々は、創業者が過去に離婚や別居を経験している場合、相続人の不一致が起こりやすいという観察に基づき、同定戦略をとった。また、創業者の離婚は、創業者のいとことの離婚と同様に、社会的に受け入れられやすいと考えられる。</p>
+        <p class="abstract-text en">We use Norwegian household level data and full structures of family relationships to understand how family firm ownership is transferred when the family has multiple potential heirs. We argue that the decision on whether the family firm is bequeathed to one or a few heirs is influenced by the potential of future family conflicts. We find that anticipated heir disagreement is related to a higher likelihood of a single heir, and this consideration also defines how long the firms remain in the family's hands, their investment, and their growth. Our identification strategy is based on the observation that heir conflicts are more likely if a founder has experienced a divorce or a separation in the past. We instrument such founder's divorce with the divorces by the founder's first cousins that arguably make the founder's divorce more socially acceptable.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Directors Networks and Innovation Herding</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Felipe Cabezon; Virginia Tech), Gerard Hoberg; University of Southern California)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=980" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、重複取締役のネットワークが企業のイノベーション、競争、パフォーマンスに果たす役割を検証している。まず、クレイトン法にもかかわらず、重複取締役が競合企業ペアに驚くほど多く存在することを明らかにする。厳格なコントロールともっともらしい外生的なショックを加えたパネルデータ回帰を用いると、取締役の重複が多い市場の競合企業はイノベーションのヘルディングを行い、製品差別化の損失を経験し、最終的に業績が悪化することが分かった。この結果は、取締役が重複している企業ほど、同業他社への技術移転の規模が大きく、伝播速度が速いことを示している。この結果は、取締役が取締役会の垣根を越えて機密情報を漏洩することによって、取締役がより良いキャリアを実現できるにもかかわらず、漏洩を繰り返した結果、価値が破壊されるという、文献上新しいエージェンシーコンフリクトと最もよく一致するものであった。</p>
+        <p class="abstract-text en">This paper examines the role of overlapping board networks on firm innovation, competition, and performance. First, we document that, despite the Clayton Act, overlapping directors are surprisingly most prevalent among competitor firm pairs. Using panel data regressions with rigid controls and plausibly exogenous shocks, we find that competing firms in markets with dense director overlaps engage in innovation herding, experience losses in product differentiation, and ultimately perform poorly. We validate these findings using novel network propagation tests of individual technologies, which show that firms with overlapping directors experience larger and faster propagation of technology transfers to their product market peers. Our results are most consistent with an agency conflict that is new to the literature, as directors can realize better career outcomes by leaking sensitive information across boards, even though a consequence of repeated leakage can be value destruction.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Market For CEOs: Evidence From Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Paul Gompers; Harvard Business School), Steven Kaplan; University of Chicago), Vladimir Mukharlyamov; Georgetown University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=911" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">CEOの労働市場に関する研究の多くは、上場企業のCEOを研究する一方で、プライベート・エクイティが出資する企業のCEOの市場を無視してきた。我々は、2010年から2016年の間にプライベート・エクイティ企業によって買収された米国の大企業（企業価値10億ドル以上）のCEOの市場を調査することによって、このギャップを埋める。その結果、それらの企業の71％がプライベート・エクイティ所有下で新しいCEOを採用したことが分かった。新CEOのほぼ75％は外部採用で、67％は完全な部外者である。これらの結果は、公開企業を対象とした研究、特にCziraki and Jenter (2021)では、新CEOの72%が内部昇進、80%が内部昇進、元役員や取締役であるとし、著しく異なるものであった。社外CEOの69％の直近の経験は上場企業で、32％がS&P500企業である。社外採用者のほぼ50％がS&P500の企業で何らかの経験を積んでいる。サンプル中のバイアウトの中央値は、株式投資に対して2.5倍の利益を得ている。バイアウト時に社外CEOが任命された企業は特に好調であった。バイアウトのパフォーマンスとバイアウトの株式インセンティブに関する調査結果を用いて、バイアウトのCEOが期待できる報酬を推定したところ、その大きさは少なくとも上場企業のCEOと同程度であり、S&P500のCEOと同程度であることが分かった。全体として、我々の結果は、CEOの広範な市場は非常に活発であり、少なくともプライベート・エクイティが出資する投資先企業においては、企業固有の人的資本は比較的重要でないことを示唆している。さらに、報酬の結果は、上場企業の経営幹部が現実的な外部の選択肢を持っていることを示唆している。最後に、上場企業とプライベート・エクイティ投資先企業のCEOの結果がこれほど異なる理由として考えられることを考察します。</p>
+        <p class="abstract-text en">Most research on the CEO labor market has studied public company CEOs while ignoring the market for CEOs in private equity funded companies. We fill this gap by studying the market for CEOs among larger U.S. companies (enterprise value greater than $1 billion) purchased by private equity firms between 2010 and 2016. We find that 71% of those companies hired new CEOs under private equity ownership. Almost 75% of the new CEOs are external hires with 67% being complete outsiders. These results are strikingly different from studies that look at public companies, in particular, Cziraki and Jenter (2021) who find that 72% of new CEOs are internal promotions and 80% are internal promotions, former executives or board members. The most recent experience of 69% of the outside CEOs was at a public company with 32% at an S&P 500 company. Almost 50% of the external hires have some previous experience at an S&P 500 company. The median buyout in our sample earned 2.5 times on its equity investment. Companies with external CEOs appointed at the time of the buyout did particularly well. Using the performance of the buyouts and survey evidence on buyout equity incentives, we estimate the compensation buyout CEOs can expect and find that the magnitude is at least as high as for public company CEOs and comparable to that of S&P 500 CEOs. Overall, our results suggest that the broader market for CEOs is quite active and that, at least for private equity funded portfolio companies, firmspecific human capital is relatively unimportant. In addition, the compensation results indicate that public company executives have viable outside options. We conclude by discussing possible reasons that the public company and private equity portfolio company CEO results are so different.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Voting Premium</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Doron Levit; University of Washington), Nadya Malenko; University of Michigan), Ernst Maug; Universitat Mannheim)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=644" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、ブロック株主のガバナンスと議決権プレミアムに関する統一的な理論を構築した。買収や支配株主が存在しない場合に、どのように、そしてなぜ議決権プレミアムが発生するのかを説明する。モデルは、少数株主と競争市場で株式を取引する分散株主を想定している。取引後に株式を保有する株主は、株主総会で議案に投票する。均衡においては、ブロック株主が自ら支配を行使することよりも、誰が支配を行使するかに影響を与えたいという欲求から、議決権プレミアムが発生する可能性がある。我々は、議決権プレミアムが議決権行使の指標とは無関係であること、また、議決権プレミアムの実証的な指標は一般に議決権の経済価値を反映していないことを示す。最近の実証研究と一致するように、このモデルは、議決権の配分が重要である場合にも、無視できるほどの議決権プレミアムを生み出すことができる。また、このモデルは、いくつかの研究で報告されている負の議決権プレミアムも説明できる。これは、分散した株主がブロックホルダーの取引にフリーライドするために生じるものである。最後に、このモデルは、議決権付き株式と非議決権付き株式の流動性、議決権プレミアムと議決権価格の関係、ブロックホルダー間の支配権獲得競争、ブロックプレミアム、そしてより一般的な企業影響力に対して新しい示唆を与えてくれるものである。</p>
+        <p class="abstract-text en">This paper develops a unified theory of blockholder governance and the voting premium. It explains how and why a voting premium emerges in the absence of takeovers and controlling shareholders. The model features a minority blockholder and dispersed shareholders who trade shares in a competitive market. Those who own shares after trading vote on a proposal at a shareholder meeting. A voting premium can emerge in equilibrium from the blockholder's desire to influence who exercises control, rather than from exercising control himself. We show that the voting premium is unrelated to measures of voting power and that empirical measures of the voting premium generally do not reflect the economic value of voting rights. Consistent with recent empirical studies, the model can generate a negligible voting premium even when the allocation of voting rights is important. The model can also explain a negative voting premium, which has been documented in several studies. It arises because of free riding by dispersed shareholders on the blockholder's trades. Finally, the model has novel implications for the liquidity of voting vs. non voting shares, the relationship between the voting premium and the price of a vote, competition for control among blockholders, the block premium, and corporate influence more generally.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

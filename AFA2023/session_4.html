@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Assets and the SDF</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2023 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing and Factor Models <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Asset Pricing: Market and Funding Liquidity</a><a href="session_4.html" class="session-link active">Individual Assets and the SDF</a><a href="session_8.html" class="session-link ">Asset Pricing: International Finance</a><a href="session_9.html" class="session-link ">Asset Pricing: Market Microstructure</a><a href="session_17.html" class="session-link ">Asset Pricing: Market Mispricing and Limits to Arbitrage</a><a href="session_24.html" class="session-link ">Asset Pricing: Cross-section of Returns (Conditional)</a><a href="session_30.html" class="session-link ">Asset Pricing: Portfolio Choice and Asset Allocation</a><a href="session_39.html" class="session-link ">Factor Models, Machine Learning, and Asset Pricing</a><a href="session_44.html" class="session-link ">Advances in Fixed Income</a><a href="session_45.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_51.html" class="session-link ">Asset Pricing: Derivatives and Commodities</a><a href="session_57.html" class="session-link ">Asset Pricing: Cross-section of Returns (Other)</a><a href="session_59.html" class="session-link ">Asset Pricing: Tail Risk</a></div><button class="accordion-btn">Corporate Finance and Investment <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">Corporate Finance: Mergers and Acquisitions</a><a href="session_19.html" class="session-link ">Corporate Finance: Bankruptcy and Distress</a><a href="session_22.html" class="session-link ">Private Equity/Venture Capital</a><a href="session_23.html" class="session-link ">Access to Capital Markets: Firm Entry and Growth</a><a href="session_32.html" class="session-link ">Corporate Investment and Financial Markets</a><a href="session_47.html" class="session-link ">Corporate Finance: Capital Structure</a><a href="session_52.html" class="session-link ">Corporate Governance in Public and Private Firms</a><a href="session_54.html" class="session-link ">Innovation, Acquisition and Firm Growth</a><a href="session_62.html" class="session-link ">Incentives and Contracts</a><a href="session_63.html" class="session-link ">Shareholder Monitoring and Voting</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Financial Intermediation: Macro Finance</a><a href="session_10.html" class="session-link ">Asset Pricing: Mutual Funds</a><a href="session_12.html" class="session-link ">Financial Intermediation: Financial Crises</a><a href="session_13.html" class="session-link ">Insurance and Pension Funds</a><a href="session_27.html" class="session-link ">Financial Intermediation: Bank Competition and Risk</a><a href="session_40.html" class="session-link ">Financial Intermediation</a><a href="session_42.html" class="session-link ">Mutual Fund Flows</a><a href="session_53.html" class="session-link ">Financial Intermediation: Bank Funding and Risk Management</a><a href="session_60.html" class="session-link ">ETFs</a><a href="session_61.html" class="session-link ">Financial Intermediation: Regulation</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_21.html" class="session-link ">Finance During Covid</a><a href="session_28.html" class="session-link ">Financial Intermediation: Monetary Policy Transmission</a><a href="session_35.html" class="session-link ">Safe Asset and Government Debt</a><a href="session_41.html" class="session-link ">Macro-Finance</a><a href="session_49.html" class="session-link ">Monetary Policy: Inflation, Bubbles and Financial Stability</a><a href="session_55.html" class="session-link ">New Topics in Monetary Policy Transmission</a></div><button class="accordion-btn">Behavioral and Household Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Learning in and from Financial Markets</a><a href="session_16.html" class="session-link ">Asset Pricing: Behavioral Finance</a><a href="session_18.html" class="session-link ">Asset Pricing: Real Estate and Housing Finance</a><a href="session_25.html" class="session-link ">Asset Pricing: Investor Behavior</a><a href="session_34.html" class="session-link ">Impacts of Intermediaries in Household Finance</a><a href="session_36.html" class="session-link ">Social Influence and Networks</a><a href="session_46.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_50.html" class="session-link ">Asset Pricing: Belief Formation and Market Efficiency</a><a href="session_58.html" class="session-link ">Asset Pricing: Household Finance</a></div><button class="accordion-btn">Sustainable Finance and Social Impact <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">The Real Effects of ESG Investment</a><a href="session_15.html" class="session-link ">Special Topics: Finance and Gender</a><a href="session_26.html" class="session-link ">Climate Finance</a><a href="session_31.html" class="session-link ">Corporate Finance: ESG - Theory</a><a href="session_43.html" class="session-link ">Special Topics: Finance and Race</a><a href="session_56.html" class="session-link ">Sustainable Finance and Asset Prices</a></div><button class="accordion-btn">FinTech and Organizational Economics <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Corporate Culture, Firm-Worker Matching and Firm Performance</a><a href="session_5.html" class="session-link ">Innovations and Challenges in DeFi</a><a href="session_14.html" class="session-link ">Regulation, Litigation and Politics</a><a href="session_20.html" class="session-link ">Corporate Finance: Networks and Firm Productivity</a><a href="session_29.html" class="session-link ">Financial Technology and its Social Value</a><a href="session_33.html" class="session-link ">Economics of Information Technology</a><a href="session_37.html" class="session-link ">Corporate Finance: Labor and Finance</a><a href="session_38.html" class="session-link ">Corporate Finance: Transparency and Regulation</a><a href="session_48.html" class="session-link ">Financial Intermediation: FinTech-Bank Competition on Small Business Loans</a></div></div><div class="main-content"><h1>Individual Assets and the SDF</h1>        <div class="paper-card">
+            <div class="paper-title">Three Common Factors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Elena Andreou; University of Cyprus), Patrick Gagliardini; Universit`a della Svizzera italiana), Eric Ghysels; University of North Carolina-Chapel Hill), Mirco Rubin; EDHEC Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1118" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ヒント：これらはFama French 3ファクターではなく、Fama French 5ファクターにすら及ばない。より重要なのは、標準的な資産価格モデルと比較して、サンプル外の優れた価格設定パフォーマンスを特徴としていることである。これらのファクターの何が「共通」なのだろうか？我々は、個別銘柄とソートされたポートフォリオの間に共通するファクター空間を特定する。これは、時間的に変化するベータやソートの特性によって影響を受けることはない。</p>
+        <p class="abstract-text en">Hint: these are not the Fama French 3 factors and they are not even spanned by the Fama French 5 factors. More importantly, they feature superior out of sample pricing performance compared to standard asset pricing models. What is 'common' about these factors? We identify the factor space common between individual stocks and sorted portfolios - neither affected by time varying betas nor by the sorting characteristics.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Time Series Variation in the Factor Zoo</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hendrik Bessembinder; Arizona State University), Aaron Burt; University of Oklahoma), Christopher Hrdlicka; University of Washington)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1583" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ファクター動物園」の動物の数に驚く必要があるのか？CAPMや3～6因子モデルがリターンのクロスセクションを説明する能力は時間とともに大きく変化し、広範な因子のセットを提供する。我々は、過去に特定された205のファクターについて研究し、原著者によって研究された期間の前、間、後に、それらの重要性における時間変化を記録している。統計的に有意なファクターの数、およびファクターから得られる主成分の数は、個別銘柄のCAPMアルファの断面的なばらつきに伴って変化する。有意な因子の数は、上場企業数と強い相関があり、機関投資家の保有比率、不況指標、金利、企業特性の多様性の指標とも関係がある。この結果から、有意な説明力を持つファクターの数が多いことは、投資家構成、上場企業の種類、競争条件の変化など、経済環境の複雑さを反映していることが示唆される。</p>
+        <p class="abstract-text en">Should we be surprised at the number of 'animals' in the 'Factor Zoo'? The ability of the CAPM as well as workhorse three- to six factor models to explain the cross section of returns varies substantially over time, providing scope for a broad set of factors. We study 205 previously identified factors, documenting time variation in their significance, prior to, during, and after the periods studied by the original authors. The number of statistically significant factors, as well as the number of principal components obtained from them, varies with the cross sectional dispersion in individual stock CAPM alphas. The number of significant factors is strongly related to the number of publicly listed firms, and is also related to institutional ownership, recession indicators, interest rates, and measures of diversity in firm characteristics. On balance, our results suggest that the large number of factors with significant explanatory power reflects the complexity of the economic environment, including changes in investor composition, the types of firms listed, and competitive conditions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Testing Asset Pricing Models on Individual Stocks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Charles Clarke; University of Kentucky), Morteza Momeni; University of Kentucky)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1541" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">この論文では、ソートされたポートフォリオではなく、個別銘柄をテスト資産として、資産価格モデルを検証している。ソートされたポートフォリオには、研究者が事前に信頼できる期待リターンの予測要因を知っていなければならないという厳しい制約がある。我々は、適切なサイズのテストを生成する方法を示し、我々のテストがかなりのテストパワーを持つことを検証する。CAPMが母集団を記述する場合のシミュレーションでは、我々のテストは（正しく）Fama and French（2015）の6因子モデルを97.5％の確率で棄却し、我々のテスト（誤って）CAPMを5％未満で棄却した。我々は、いくつかの代表的なファクターモデルに我々のテストを適用し、テストされた11のモデルのうち9つのモデルを拒否します。Kellyら（2019）のインストルメンテッド・ファクター・モデルが最も成功したものとして際立っている。</p>
+        <p class="abstract-text en">This paper tests asset pricing models using individual stocks as test assets, rather than sorted portfolios. Sorted portfolios have the severe limitation that the researcher must know, in advance, reliable predictors of expected returns. We show how to generate appropriately sized tests and verify that our tests have considerable test power. In simulations when the CAPM describes the population, our tests (correctly) reject the Fama and French (2015) six factor model 97.5% of the time, while our tests (incorrectly) reject the CAPM less than 5%. We apply our tests to several leading factor models and reject nine of the eleven models tested. The instrumented factor model of Kelly et al. (2019) stands out as the most successful.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">When do Cross-sectional Asset Pricing Factors Span the Stochastic Discount Factor?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Serhiy Kozak; University of Maryland), Stefan Nagel; University of Chicago)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2023&paper_id=1928" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">rT *AQa_cart) aaq, qcCINne "ag クロスセクションの資産価格係数はいつra)がie jq, Yas D* stochastic discount factorにまたがるのか？  Serhiy Kozak' Stefan Nagel* University of Maryland University of Chicago, NBER, CEPR, and CESIfo April 11, 2022 期待リターンが資産特性に対して線形であるとき、個別銘柄を価格決定する確率的割引係数（SDF）はGLSクロスセクション回帰勾配因子による因子モデルとして表すことが可能である。ソート、特性加重、OLSクロスセクション回帰勾配を用いて、個別銘柄を特性ベースのファクターポートフォリオに集約し、発見的に構築したファクターは、株式リターンの共分散行列が特定の構造を持っていない限り、このSDFに跨ることはない。このような条件は、多数の特性を同時に使用することで満たされる可能性が高くなります。  ヒューリスティック・ファクター・リターンの値付けされていない成分をヘッジする方法は、これらの条件を部分的に緩和することができる。また、大きな共分散行列を反転させることなく、特性数よりも小さな因子数まで次元を下げることが可能であるための条件も示している。これらの条件の下で、計装化主成分分析法と投影主成分分析法は、ある種のポートフォリオに対する単純なPCAとして実装することが可能である。  Nagel はシカゴ大学ブース・ビジネススクールの Fama-Miller Center および Center for Research in Security Prices から資金援助を受けていることを感謝する email: sekozak@umd.edu email: stefan nagel@chicagobooth.edu</p>
+        <p class="abstract-text en">rT *AQa_cart) aaq, qcCINne “ag  When do cross-sectional asset pricing factors span the  ra) are ie jq, Yas D*  stochastic discount factor?  Serhiy Kozak' Stefan Nagel*  University of Maryland University of Chicago,  NBER, CEPR, and CESIfo  April 11, 2022  When expected returns are linear in asset characteristics, the stochastic discount factor (SDF) that  prices individual stocks can be represented as a factor model with GLS cross-sectional regression slope  factors. Factors constructed heuristically by aggregating individual stocks into characteristics-based  factor portfolios using sorting, characteristics-weighting, or OLS cross-sectional regression slopes do  not span this SDF unless the covariance matrix of stock returns has a specific structure. These con-  ditions are more likely satisfied when researchers use large numbers of characteristics simultaneously.  Methods to hedge unpriced components of heuristic factor returns allow partial relaxation of these  conditions. We also show the conditions that must hold for dimension reduction to a number of factors  smaller than the number of characteristics to be possible without having to invert a large covariance  matrix. Under these conditions, instrumented and projected principal components analysis methods  can be implemented as simple PCA on certain portfolio sorts.  Nagel gratefully acknowledges financial support from the Fama-Miller Center and the Center for Research in  Security Prices at the University of Chicago Booth School of Business  e-mail: sekozak@umd.edu  email: stefan nagel@chicagobooth.edu</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

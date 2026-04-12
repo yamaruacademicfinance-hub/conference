@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What are ESG Disclosures Doing?</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link active">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>What are ESG Disclosures Doing?</h1>        <div class="paper-card">
+            <div class="paper-title">Mismeasuring Risk: The Welfare Effects of Climate Risk Information</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Philip Mulder (U.S. Department of the Treasury)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=897344" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">急速に改善されたデータとモデルにより、住宅所有者は災害リスクに関するより多くの情報を得ることができる一方、最もリスクの高い住宅の保険料が上昇する。本論文では、不動産市場におけるリスクベースの災害保険料設定が気候変動による損害に与える影響について研究する。行政の洪水保険契約データと、物件レベルでの洪水保険需要、短期的・長期的なリスク認識、客観的な洪水リスクのすべてを測定する新しい調査により、結果を推定した。リスク情報の効果を明らかにするために、私は、高リスクの住宅が低リスクと誤分類される原因となった古い洪水地図によって生じた変動を用いている。その結果、洪水リスク評価は、保険会社だけでなく、住宅所有者にとっても貴重な情報を提供することがわかった。高リスクの住宅を低リスクと誤認することで、所有者は現在および将来の洪水リスクを過小評価し、リスク低減のための適応への投資を減らし、保険料が大幅に安いにもかかわらず洪水保険の加入を減らしてしまう。これらの推定値を、動的リスクと内生的なリスク信念と適応を持つ十分統計モデルに組み込むと、米国で氾濫原の外にある推定600万戸の高リスク住宅を特定し、価格を設定することで、気候による損害を1380億ドル削減できることがわかった。</p>
+        <p class="abstract-text en">Rapidly improving data and models are giving homeowners more information about their disaster risk while also increasing insurance premiums for the highest risk homes. In this paper, I study the effect of risk-based disaster insurance pricing on climate damages in real estate markets. I estimate my results with administrative flood insurance policy data and a novel survey measuring flood insurance demand, short-run and long-run risk perceptions, and objective flood risk all at the property level. To identify the effects of risk information, I use variation created by outdated flood maps that caused high-risk homes to be misclassified as low-risk. My findings show that flood risk rating provides valuable information not only for insurers, but also for homeowners. Misclassifying high-risk homes as low-risk causes owners to underestimate their current and future flood risk, invest less in risk-reducing adaptation, and buy less flood insurance despite having substantially lower premiums. Embedding these estimates in a sufficient statistics model with dynamic risk and endogenous risk beliefs and adaptation, I find that identifying and pricing the estimated six million high-risk homes outside the floodplain in the U.S. would reduce climate damages by $138 billion.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Diversity Washing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrew Baker (University of California-Berkeley), David Larcker (Stanford University), Charles McClure (University of Chicago), Durgesh Saraph (Jump Trading LLC), Edward Watts (Yale University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=895020" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の上場企業が従業員の多様性へのコミットメントに関する自発的な開示を日和見的に利用しているかどうかについて、大規模なサンプルによる証拠を提供する。また、従業員の性別や人種の多様性を保証するよりも、多様性について議論する企業を「ダイバーシティ・ウォッシャー」と分類した。ダイバーシティウォッシャー企業は、環境・社会・ガバナンス（ESG）評価機関から優れたスコアを得ており、ESGを重視する機関投資家から投資を集めていることがわかった。このような結果は、ダイバーシティ洗浄企業が差別違反を犯す可能性が高く、そのために多額の罰金を支払っているにもかかわらず、発生している。本研究は、従業員の多様性、公平性、包摂という重要な社会的側面において、選択的なESG開示がもたらす結果を明らかにするものである。</p>
+        <p class="abstract-text en">We provide large sample evidence on whether U.S. publicly traded corporations opportunistically use voluntary disclosures about their commitments to employee diversity. We document significant discrepancies between companies' disclosed commitments and their hiring practices and classify firms that discuss diversity more than their actual employee gender and racial diversity warrants as 'diversity washers.' We find diversitywashing firms obtain superior scores from environmental, social, and governance (ESG) rating organizations and attract investment from institutional investors with an ESG focus. These outcomes occur even though diversity washing firms are more likely to incur discrimination violations and pay larger fines for these actions. Our study highlights the consequences of selective ESG disclosures on an important social dimension of employee diversity, equity, and inclusion.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Climate-related Disclosure Commitment of the Lenders, Credit Rationing, and Borrower Environmental Performance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Iftekhar Hasan (Fordham University), Haekwon Lee (University of Sydney), Buhui Qiu (University of Sydney), Anthony Saunders (New York University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=855008" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">気候関連財務情報開示タスクフォース（TCFD）のメンバーになった貸出業者をもっともらしい外生的ショックとして用い、貸出業者の気候関連情報開示へのコミットメントが借り手企業の環境パフォーマンスに影響を与えるか、どのように影響するかを検証する。その結果、TCFDに加盟している金融機関の顧客企業は、対照企業に比べて、TCFDの開始後に環境パフォーマンスを大幅に向上させることがわかった。その効果は、汚染企業ほど強い。さらに、TCFD加盟金融機関は、高いローンスプレッドを請求し、汚染企業への新規融資の件数と金額を減らすことで、借り手の環境パフォーマンスに影響を与える。最後に、TCFD加盟レンダーの汚染企業顧客は、その後、財務制約が厳しくなる。</p>
+        <p class="abstract-text en">Using lenders becoming members of the Task Force on Climate Related Financial Disclosures (TCFD) as a plausible exogeneous shock, we examine whether and how lenders' commitment to transparent climate related disclosures affects borrower firms' environmental performance. We find that client firms of TCFD member lenders, relative to control firms, significantly improve their environmental performance after the TCFD launch. The effects are stronger for polluting firms. Moreover, TCFD member lenders influence their borrowers' environmental performance via charging higher loan spread and reducing the number and amount of new loans issued to polluting firms. Finally, polluting clients of TCFD member lenders experience tightened financial constraints subsequently.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banks and Credit Supply</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_14.html" class="session-link active">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Banks and Credit Supply</h1>        <div class="paper-card">
+            <div class="paper-title">Bank Funding Risk, Reference Rates, and Credit Supply</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zachry Wang (Stanford University), Darrell Duffie (Stanford University), Stephan Luck (Federal Reserve Bank of New York), Harry Cooperman (Stanford University), Yilin (David) Yang (City University of Hong Kong)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=883288" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行の資金調達市場がストレスを受けると、プレコミット型リボルビング・クレジット・ラインが大量に引き出される傾向があり、銀行にとって重要な資金調達リスクとなる。最近まで、銀行はクレジットラインの支払利息をロンドン銀行間取引金利（LIBOR）のようなリスクに敏感な参照金利にリンクさせることによって、この資金調達リスクを軽減してきた。我々は、ストレス市場における資金調達に関連する銀行株主の負債オーバーハングコストによって、クレジットラインを提供するインセンティブが減衰することを示す。しかし、次のような場合、クレジット供給への悪影響は軽減される：(1)2020年3月のCOVIDショック時に大手銀行で発生したように、引出しは同じ銀行に預けられると予想されること、(2)リボルバーは信用に敏感な参照レートにリンクされており、ストレス市場で借入枠を多く引き出す借り手のインセンティブを低減すること。LIBORがリスクフリーの代替参照レートに置き換わることで、リボ払いの供給がどのような影響を受けるかを試算しています。JEL：G00、G01、G02、G20、G21、E4、E43</p>
+        <p class="abstract-text en">Pre committed revolving credit lines tend to be drawn heavily when bank funding markets are stressed, presenting an important funding risk to banks. Until recently, banks have mitigated this funding risk by linking the interest paid on lines to risksensitive reference rates such as the London Interbank Offered Rate (LIBOR). We show that incentives to provide credit lines are dampened by the debt overhang cost to bank shareholders associated with funding stressed market drawdowns. However, the associated adverse effect on credit supply is attenuated if: (1) drawdowns are expected be left on deposit at the same bank, which occurred at the largest banks during the COVID shock of March 2020, and (2) revolvers are linked to creditsensitive reference rates that reduce borrower incentives to draw more heavily on their lines during stressed markets. We estimate how the replacement of LIBOR with risk free alternative reference rates will affect the supply of revolving credit. JEL: G00, G01, G02, G20, G21, E4, E43</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Credit Tightening, Trade Credit, and Misallocation on Supply Chains</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wenya Wang (Shanghai University of Finance and Economics), Chenyu Shan (Shanghai University of Finance and Economics), Min Min (Shanghai University of Finance and Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=861896" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">銀行の信用供給が減少した場合、大口顧客は小規模なサプライヤーに貿易信用を求めるかもしれない。このような貿易信用の流れの方向性とその実際の結果については、あまり調査されていない。中国の銀行が受け入れた商業手形（サプライヤーへの貿易信用支払い）の取引レベルのデータセットを用いて、2011年から2015年にかけての預貸率規制による信用収縮が、銀行が手形の受け入れを融資に代える動機となっていることがわかった。その結果、小規模で若く生産性の高いサプライヤーは、現金の支払いを減らし、大規模で生産性の低い顧客に資金を供給するために投資を削減した。銀行与信から取引与信への移行は、対になったサプライヤーと顧客の間の資本収益格差の拡大をもたらす。この結果は、銀行融資の引き締めがサプライチェーン上のミスアロケーションを引き起こす新たなチャネルを示唆している。</p>
+        <p class="abstract-text en">When bank credit supply declines, large customers may turn to their small suppliers for trade credit. This direction of trade credit flow and its real consequences are underexplored. Using a transaction level dataset of bank accepted commercial bills (as trade credit payments to suppliers) in China, we find that the 2011 - 2015 credit tightening under the loan to deposit ratio regulation motivates banks to substitute bill acceptance for loan. Consequently, smaller, younger, and more productive suppliers receive less cash payments and cut investments to finance their larger and less productive customers. The shift from bank credit to trade credit results in a widened capital return gap between paired suppliers and customers. Our results imply a new channel through which the bank credit tightening leads to misallocation on supply chains.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Collateral Channel and Bank Credit</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Arun Gupta (Federal Reserve Board of Governors), Horacio Sapriza (Federal Reserve Board of Governors), Vladimir Yankov (Federal Reserve Board of Governors)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=847644" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">不動産担保の差し入れを観察し、信用需給の状況をコントロールすることができる銀行企業の融資レベルの詳細データを用いて、担保チャネルの企業レベルおよび総計の効果を明らかにした。企業レベルでは、担保価値が1％上昇すると、信用の伸びは12bps上昇するが、MSAのクロスセクションにおいては、担保価値に対する信用の平均弾力性は7倍となる。我々の推計では、2013年から2019年までの雇用増加の37%は、銀行依存の借り手における借入制約の緩和に起因していることが示唆される。</p>
+        <p class="abstract-text en">We identify the firm level and aggregate effects of the collateral channel using detailed bank firm loan level data that allow us to observe the pledging of real estate collateral and to control for credit demand and supply conditions. At the firm level, a 1 percent increase in collateral values leads to a 12 bps higher credit growth, whereas, in the cross section of MSAs, the average elasticity of credit to collateral values is 7 times larger. Our estimates imply that as much as 37 percent of employment growth over the period from 2013 to 2019 can be attributed to the relaxation of borrowing constraints at bank dependent borrowers.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

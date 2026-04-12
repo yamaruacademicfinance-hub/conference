@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firms and Workers</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link active">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Firms and Workers</h1>        <div class="paper-card">
+            <div class="paper-title">When Values Align: Corporate Philanthropy and Employee Turnover</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Anthony Rice (Chinese University of Hong Kong), Christoph Schiller (Arizona State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=856604" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">企業の慈善活動が高技能者の従業員定着にどのような影響を与えるか、発明者の離職に焦点をあてて研究している。差分法IV設定において、大規模な自然災害を災害救援の需要に対するショックとして用い、企業の慈善活動の外生的変動を明らかにする。企業の慈善活動は発明家の離職率を有意に低下させ、離職率に対する貢献度の感度は-0.5であることが示された。この効果は、他のCSR活動とは異なり、事前に従業員との関係が弱い企業や、外部の選択肢が多く、社会的選好が強い発明家ほど顕著に現れる。この結果は、従業員と企業の価値観の一致が、従業員のコミットメントを高める可能性があることを示している。</p>
+        <p class="abstract-text en">We study how corporate philanthropy affects employee retention among high skilled employees, focusing on the turnover of inventors. In a difference in differences IV setting, we use large natural disasters as shocks to the demand for disaster relief to identify exogenous variation in corporate charitable giving. We show that corporate philanthropy significantly reduces inventor turnover with a contributions to turnover sensitivity of -0.5. The effect is distinct from other CSR activities, and more pronounced for firms with ex ante weaker employee relations and inventors with greater outside options and stronger pro social preferences. Our findings indicate that an alignment in values between employees and firms can increase employee commitment.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Anti-Poaching Agreements, Innovation, and Corporate Value: Evidence from the Technology Industry</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Daniel Ferrés (Universidad de Montevideo), Gaurav Kankanhalli (University of Pittsburgh), Pradeep Muthukrishnan (Tulane University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=880740" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米国司法省は2010年、シリコンバレーの大手テクノロジー企業数社に対し、反捕鯨協定を結んでいるとして反トラスト法違反の訴訟を開始した。このような状況の下で、労働市場の談合が企業の雇用、イノベーション、価値に与える影響について研究する。談合期間中、カルテル企業は、協定に参加していない同業他社に比べ、求人広告の掲載率が高いことが示された。職業レベルテストでは、企業の革新的な活動にとって重要な職務において、その効果が増幅されることが示された。カルテル企業は談合期間中、特に談合協定が適用された技術分野で優れた技術革新の成果を上げたが、協定の解消はこの傾向の逆転を伴っていた。反トラスト法違反の予期せぬ発表に関するイベント・スタディ・テストでは、負のリターン応答が示された。この結果は、労働市場における企業の反競争的行為と、企業のイノベーション、業績、市場評価との間に重要な関連性があることを明らかにした。. .</p>
+        <p class="abstract-text en">The U.S. Department of Justice initiated antitrust action in 2010 against several major Silicon Valley technology firms for engaging in anti poaching agreements. Under this setting, we study the impact of labor market collusion on corporate hiring, innovation, and value. During the collusive period, cartel firms displayed elevated job posting rates relative to comparable firms that were not party to these agreements. Occupationlevel tests show that the effects were amplified in job roles critical to the firms' innovative activity. Cartel firms produced superior innovation output over the collusive period, particularly in technology areas covered by the collusive agreements, while the dissolution of the agreements was accompanied by a reversal of this trend. Event study tests around the unanticipated announcement of the antitrust action show a negative returns response. Our results reveal important linkages between firms' anti competitive conduct in labor markets and their innovation, performance, and market valuations. . .</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Firm Investments in Artificial Intelligence Technologies and Changes in Workforce Composition</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tania Babina (Columbia University), Anastassia Fedyk (University of California-Berkeley), Alex He (University of Maryland), James Hodson (Institut Jožef Stefan)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=908852" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、AI技術の使用に関連する米国企業の労働力構成と組織のシフトを研究する。そのために、労働者の履歴書と求人票のデータセットを独自に組み合わせて、企業レベルのAI投資と、学歴、専門性、階層などの労働力構成の変数を測定する。高学歴労働者やSTEM労働者の初期シェアが高い企業ほど、AIへの投資が多いことを実証している。AIへの投資が進むにつれて、企業はより高学歴の労働者に移行する傾向があり、学部や大学院の学位を持つ労働者の割合が高くなり、STEM分野やITスキルに特化した労働者が多くなる。さらに、AIへの投資は、企業の階層構造の平坦化と関連しており、下級職の労働者のシェアが大幅に増加し、中間管理職や上級職の労働者のシェアが減少している。全体として、AI技術の採用は、企業の労働力の大幅な再編成と関連していることが浮き彫りになった。</p>
+        <p class="abstract-text en">We study the shifts in U.S. firms' workforce composition and organization associated with the use of AI technologies. To do so, we leverage a unique combination of worker resume and job postings datasets to measure firm level AI investments and workforce composition variables, such as educational attainment, specialization, and hierarchy. We document that firms with higher initial shares of highly educated workers and STEM workers invest more in AI. As firms invest in AI, they tend to transition to more educated workforces, with higher shares of workers with undergraduate and graduate degrees, and more specialization in STEM fields and IT skills. Furthermore, AI investments are associated with a flattening of the firms' hierarchical structure, with significant increases in the share of workers at the junior level and decreases in shares of workers in middle management and senior roles. Overall, our results highlight that adoption of AI technologies is associated with significant reorganization of firms' workforces.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funds</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link active">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Funds</h1>        <div class="paper-card">
+            <div class="paper-title">Equity Return Expectations and Portfolios: Evidence from Large Asset Managers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Magnus Dahlquist (Stockholm School of Economics), Markus Ibert (Copenhagen Business School)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=850640" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">大規模な資産運用会社の資本市場の仮定を収集し、主観的な株式プレミアム予想、株式バリュエーション、金融ポートフォリオの関係を再検討した。個人投資家の外挿的な期待とは対照的に、資産運用会社のエクイティ・プレミアム期待は反循環的であり、バリュエーションが低い（高い）時に高くなる（低くなる）。資産運用会社のポートフォリオには、資産運用会社の期待が反映されていることがわかった。米国株式プレミアムへの期待が大きい資産運用会社のアロケーションファンドは、米国株式への投資が大幅に増加している。期待値のポートフォリオへの反映は、投資マンデートによって抑制されるようであり、標準的なポートフォリオ選択モデルによって予測されるものよりも小さなものである。JEL：G00, G12, G23.</p>
+        <p class="abstract-text en">Collecting large asset managers' capital market assumptions, we revisit the relationships between subjective equity premium expectations, equity valuations, and financial portfolios. In contrast to the well documented extrapolative expectations of retail investors, asset managers' equity premium expectations are countercyclical: they are high (low) when valuations are low (high). We find that asset managers' portfolios reflect their expectations: allocation funds of asset managers with larger US equity premium expectations invest significantly more in US equities. The pass through of expectations to portfolios seems to be muted by investment mandates and is smaller than the one predicted by standard portfolio choice models. JEL: G00, G12, G23.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Machine-Learning the Skill of Mutual Fund Managers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ron Kaniel (University of Rochester), Zihan Lin (Stanford University), Markus Pelger (Stanford University), Stijn Van Nieuwerburgh (Columbia University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=888412" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機械学習を用いて、ファンドの特性によって、手数料の前後で、パフォーマンスの高い投資信託と低い投資信託を一貫して区別できることを示す。アウトパフォームは3年以上持続する。ファンドのモメンタムとファンドフローは、将来のリスク調整後ファンドパフォーマンスの最も重要な予測因子であり、ファンドが保有する銘柄の特性は予測因子ではない。予測可能なロングショートポートフォリオのリターンは、センチメントが高い期間の後に高くなる。ニューラルネットワークを用いた推定により、センチメントとファンドフローおよびファンドモメンタムとの間の新規かつ実質的な相互作用効果を明らかにすることができた。JEL：G11、G12、G17、G23、C45</p>
+        <p class="abstract-text en">We show, using machine learning, that fund characteristics can consistently differentiate high from low performing mutual funds, before and after fees. The outperformance persists for more than three years. Fund momentum and fund flow are the most important predictors of future risk adjusted fund performance, while characteristics of the stocks that funds hold are not predictive. Returns of predictive long short portfolios are higher following a period of high sentiment. Our estimation with neural networks enables us to uncover novel and substantial interaction effects between sentiment and both fund flow and fund momentum. JEL: G11, G12, G17, G23, C45</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Learning by Consuming</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Stephen Brown (Monash University), Lei Kong (University of Alabama), Yan Lu (University of Central Florida), Sugata Ray (University of Alabama)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=851704" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資信託の運用者は、自分が購入した自動車を製造している企業に投資しており、その投資の程度は消費経験に依存していることがわかった。親しみやすさはこれらのマネージャーの投資に影響を与えるが、個人投資家の行動を調べた先行研究とは異なり、親しみやすさはファンド投資家に高いリターンを生み出す。さらに、自分が消費したことのある自動車会社に投資するマネージャーは、配分の調整においてアナリストの推奨に反応しにくく、自動車のリコールの重大性を評価する能力が高いように見える。これらの結果は、マネジャーが消費体験から価値ある投資可能な情報を得ることを示唆している。</p>
+        <p class="abstract-text en">Mutual fund managers invest in companies manufacturing automobiles they have purchased, and we find that the extent of their investment depends on their consumption experience. While familiarity does influence investments made by these managers, unlike earlier studies which examined the behavior of retail investors, familiarity generates higher returns to fund investors. In addition, managers who invest in automobile companies whose products they have consumed are also less responsive to analyst recommendations in adjusting their allocations and appear better able to evaluate automobile recall severity. These results suggest that managers gain value relevant investible information from their consumption experiences.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

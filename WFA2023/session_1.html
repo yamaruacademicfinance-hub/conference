@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selling Securities</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link active">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Selling Securities</h1>        <div class="paper-card">
+            <div class="paper-title">Screening and Monitoring of Corporate Loans</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sebastian Gryglewicz (Erasmus University), Simon Mayer (HEC Paris), Erwan Morellec (École Polytechnique Fédérale de Lausanne)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=883988" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">レンダーはどの程度のローンを動的に保持すべきなのか、また保持はローンのパフォーマンスにどのように影響するのか。我々は、貸し手が投資家に売ることができるローンを組成するモデルでこれらの疑問を解決する。貸し手は、融資実行時のスクリーニングと融資実行後のモニタリングによってデフォルトリスクを低減するが、モラルハザードにさらされている。我々は、最適な貸し手と投資家の契約は、貸し手が時間の経過とともにローンの持分を売却し、オリジネーション後のローン売却を合理化することで実現できることを示し、このモデルを用いて、ローンの特性と初期保持、販売ダイナミクス、ローンパフォーマンスとを結びつける予測を作成する。</p>
+        <p class="abstract-text en">How much of a loan should a lender dynamically retain and how does retention affect loan performance? We address these questions in a model in which a lender originates loans that it can sell to investors. The lender reduces default risk through screening at origination and monitoring after origination, but is subject to moral hazard. We show that the optimal lender investor contract can be implemented by having the lender sell its stake in the loan over time, rationalizing loan sales after origination, and use the model to generate predictions linking loan characteristics to initial retention, sales dynamics, and loan performance.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A Model of Informed Intermediation in the Market for Going Public</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Aydogan Alti (University of Texas-Austin), Jonathan Cohn (University of Texas-Austin)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=891072" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、情報通の専門家が未公開企業を買収し、その株式を公開投資家に転売することによって、公開市場を仲介するモデルを提示する。公開市場によって取り込まれた情報は、専門家にとって転売価格リスクを生むため、彼らが支払う買収価格は、企業価値の信頼できるシグナルとして機能する。したがって、従来のIPOでは過小評価されることが予想される企業にとって、仲介売却は優れた選択肢となる。買収価格によるシグナル伝達が、専門家と売り手企業の間の剰余金の分配にどのような影響を与えるかを明らかにする。また、仲介販売とIPOの共存と、その結果生じる市場均衡の効率性を分析する。仲介販売に関する我々の分析は、特別目的買収会社（SPAC）のいくつかの設計上の特徴を合理化するのに役立つ。</p>
+        <p class="abstract-text en">We present a model in which informed experts intermediate in the market for going public by acquiring private firms and reselling their shares to public investors. Because information incorporated by the public market generates resale pricing risk for experts, the acquisition prices they pay act as credible signals of firm value. Accordingly, intermediated sales provide a superior alternative for firms that expect to be undervalued in traditional IPOs. We characterize how signaling via the acquisition price affects the sharing of the surplus between the experts and the selling firms. We also analyze the co existence of intermediated sales and IPOs and the efficiency of the resulting market equilibrium. Our analysis of intermediated sales helps rationalize several design features of Special Purpose Acquisition Companies (SPACs).</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Market Structure of Intermediation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Hongda Zhong (London School of Economics and Political Science)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=855064" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">良い製品を見つけるには、しばしばコストのかかる選別作業が必要です。熟練した仲介者は、多くの消費者を代表することができ、努力コストのスケールメリットを生み出すことができる。しかし、消費者はまだ熟練した仲介者を見つける必要があり、本来のスクリーニングの摩擦を作り出している。私は、仲介チェーンの長さ、セクターの大きさ、スキルの分布、各層における努力の選択に着目し、仲介市場の構造モデルを提供する。仲介部門が消費者よりスキルが低く、製品市場より品質が低い場合でも、効率的な仲介が起こりうる。さらに、仲介者が自分のスキルタイプを私的に知っている場合、短い（2層）チェーンは、異なるタイプが異なる層に自己選択することを可能にし、消費者がスクリーニングコストを無視して良い製品を受け取るという、第一ベストの結果に近似する。最後に、スキルの種類が不明で、仲介者の自己選択が有効でない場合、長いチェーンはファーストベストの効率を回復することができる。これらの結果は、ソーシャルメディア上のインフルエンサーの構造と資産運用業界を解明するものである。</p>
+        <p class="abstract-text en">Finding good products often requires costly screening effort. A skilled intermediary can represent many consumers, generating economies of scale in effort costs. However, consumers still need to find skilled intermediaries, re creating the original screening friction. I provide a model of intermediary market structure, focusing on the length of the intermediation chain, the sector size, skill distribution, and effort choice in each layer. Even when the intermediary sector is less skilled than consumers and has lower quality than the product market, efficient intermediation can occur. Furthermore, when intermediaries privately know their skill types, a short (two layer) chain allows different types to selfselect into different layers, approximating the first best outcome: consumers receive good products with negligible screening costs. Finally, when skill types are unknown, thereby rendering intermediaries' self selection ineffective, a long chain can restore first best efficiency. These results shed light on the structure of social media influencers and the asset management industry.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

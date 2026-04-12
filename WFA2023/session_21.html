@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Behavior</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link active">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Institutional Behavior</h1>        <div class="paper-card">
+            <div class="paper-title">ETFs, Anomalies and Market Efficiency</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ilias Filippou (Washington University-St. Louis), Songrun He (Washington University-St. Louis), Sophia Zhengzi Li (Rutgers University), Guofu Zhou (Washington University-St. Louis)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=882952" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ETF保有率が株式市場のアノマリーや市場の効率性に与える影響を調査した。その結果、ETF保有率が低い銘柄は高い銘柄と比較して、高いリターン、高いシャープレシオ、有意なアルファを示すことがわかった。また、高ETF保有銘柄は低ETF保有銘柄に比べて、より顕著な情報フローを示し、情報効率が高いためミスプライシングが減少することがわかった。また、規模、出来高、B to M、モメンタムの各項目で両者を比較したところ、同様の結果が得られた。この結果は、マッチング方法の違いや、Fama MacBeth回帰における様々なコントロールに対して頑健であった。ラッセル指数の再構成を用いて、ETFの保有がアノマリー・リターンを減衰させるという因果的な証拠を発見した。</p>
+        <p class="abstract-text en">We investigate the effect of ETF ownership on stock market anomalies and market efficiency. We find that low ETF ownership stocks exhibit higher returns, greater Sharpe ratios, and highly significant alphas in comparison to high ETF ownership stocks. We show that high ETF ownership stocks demonstrate more pronounced information flows than low ETF ownership stocks which reduces their mispricing as they are more informationally efficient. We find similar results when we match the two groups based on size, volume, book to market, and momentum. Our results are robust to different matching methods and to a wide array of controls in Fama MacBeth regressions. Using Russell index reconstitution, we find causal evidence that ETF ownership attenuates anomaly returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Institutional Investor Attention</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alan Kwan (University of Hong Kong), Yukun Liu (University of Rochester), Ben Matthies (University of Notre Dame)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=901824" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機関投資家の注目度を、日々のインターネットニュースの閲覧から研究する。ファンドの投資家に対する注目度は、全体的な注目度と企業固有の注目度の両方を測定し、ポートフォリオ配分の決定に反映させる。景気後退期には、ファンドの関心は企業固有のものから集合的なものへとシフトし、企業固有のものへの関心の断面的な分散が大きくなる。ニュースへの注目は、ポートフォリオ保有額と有意な正の相関があり、この関係は、より洗練されたファンドや注意力が低いファンドほど強い。また、ニュースへの注目は、ファンドや会社の効果によって大きく変動するものの、明確な習性を示している。最後に、洗練された投資家によるアテンションは将来の株式リターンを予測する。</p>
+        <p class="abstract-text en">We study institutional investor attention using daily internet news reading. We measure fund level attention to both aggregate and firm specific in formation an d re late it to portfolio allocation decisions. During economic downturns, funds shift their attention from firm specific ne ws toward ag gregate ne ws, an d th e cr oss sectional dispersion of attention to firm specific ne ws in creases. Fu nd at tention is si gnificantly and positively related to portfolio holdings, and this relationship is stronger for more sophisticated funds and those with limited attention capacity. Attention to news exhibits clear habitats with most variation driven by fund and firm e ffects. Lastly, attention by sophisticated investors predicts future stock returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Missing the Target? Retirement Expectations and Target Date Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Byeong-Je An (Nanyang Technological University), Kunal Sachdeva (Rice University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=865480" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">家計は老後の期待を形成する際に誤りを犯すのだろうか、もしそうなら、それは経済的に重要なのだろうか。30年近く家計を追跡したデータを用いて、回答者が長期的な労働参加率を系統的に過小評価していることを示す。これらの知見をもとに、投資と退職のライフサイクル・モデルを構築し、動的に矛盾する期待のコストを説明し、測定する。我々のモデルのキャリブレーションによれば、期待値の誤差は、数十年にわたって複合化した誤った配分をもたらし、回答者の中央値で22,216ドル以上の退職後の富、つまり確実性相当の富のおよそ12.17％を犠牲にすることになった。回答者のデータを用いた断面テストでは、リスク回避ではなく、富と健康が期待値の誤りを予測することが示唆された。</p>
+        <p class="abstract-text en">Do households make errors when forming retirement expectations, and if so, are they economically important? Using data that follows households for nearly three decades, we show that respondents systematically underestimate their long run labor participation. We use these insights to build a life cycle model of investment and retirement to illustrate and measure the costs of dynamically inconsistent expectations. Our model calibration suggests that errors in expectations lead to misallocations that compounded over decades, costing the median respondent over $22,216 in retirement wealth, or roughly 12.17% of certainty equivalent wealth. Cross sectional tests of respondent data suggest that wealth and health, but not risk aversion, predicts errors in expectations.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

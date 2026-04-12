@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venture Capital</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link active">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Venture Capital</h1>        <div class="paper-card">
+            <div class="paper-title">Catching Outliers: Committee Voting and the Limits of Consensus when Financing Innovation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrey Malenko (University of Michigan), Ramana Nanda (Imperial College London), Matt Rhodes-Kropf (Massachusetts Institute of Technology), Savitar Sundaresan (Imperial College London)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=869204" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、主要なVCの投資委員会が、アーリーステージへの投資を「支持」するパートナーが1人いれば十分投資できるという投票ルールを使用していることを記録している。このルールの理由は、「異常値を捕らえる」ためとされている。同じVCが、後期投資については、より従来型の「多数決」ルールを用いている。この証拠から、議決権を持つパートナーは、プロジェクトのさまざまな次元に関するシグナルを受け取り、スーパースター・プロジェクトは、他の次元では欠陥があっても、ある次元では秀でているというモデルがあることがわかる。この場合、アーリーステージ投資のように、プロジェクトの価値分布が十分にヘビーテールであれば、チャンピオンルールが最適であり、そうでなければ、よりコンセンサスが最適である。</p>
+        <p class="abstract-text en">We document that investment committees of major VCs use a voting rule where one partner ‘championing' an early stage investment is sufficient to invest. Their stated reason for this rule is to ‘catch outliers'. The same VCs use more a conventional ‘majority' rule for later stage investments. This evidence points to a model in which voting partners get signals about different project dimensions and superstar projects excel on some dimensions even if flawed on others. In this case, if the distribution of project values is sufficiently heavy tailed, as for early stage investments, a champions rule is optimal, while more consensus is optimal otherwise.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How Venture Capitalists and Startups Bet on Each Other: Evidence From an Experimental System</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mehran Ebrahimian (Stockholm School of Economics), Ye Zhang (Stockholm School of Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=883120" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の起業家金融業界におけるマッチング結果を説明するために、実際の米国のVCと新興企業を含む2つの対称的なインセンティブ付き履歴書評価（IRR）実験を利用して、ベンチャーキャピタル（VC）と新興企業間の交渉を伴う動的検索とマッチングモデルを採用する。参加者は、潜在的な協力者のプロファイルを無作為に評価し、優先的な協力パートナーシップの現実的な機会によってインセンティブを得ることができる。これらの実験的行動と現実のポートフォリオデータを構造推定の入力として用い、我々は、様々な人間的・非人間的特性が、スタートアップとVCの双方にとって、均衡継続値、マッチング可能性、マッチングによるペイオフに大きな影響を与えることを特定した。これらの特性には、新興企業の人的資産（学歴、起業経験など）と非人的資産（牽引力、ビジネスモデルなど）、そして投資家の人的資本（起業経験など）と組織資本（過去の財務実績、ファンド規模など）が含まれる。その結果、マッチングの総価値は増加するものの、相手方のタイプが魅力的になると、マッチングの総価値に占める新興企業/VCのペイオフの割合が大幅に減少することが分かった（0.65から0.35の範囲内）。結局のところ、魅力的な相手と魅力的でない相手との間で、スタートアップとVCがコラボレーションから期待されるペイオフがどのように変化するかを説明するのに、マッチングの尤度の変化が支配的な役割を果たすことがわかった。</p>
+        <p class="abstract-text en">We employ a dynamic search and matching model with bargaining between venture capitalists (VCs) and startups, utilizing two symmetric incentivized resume rating (IRR) experiments involving real US VCs and startups, to explain the matching outcome in the US entrepreneurial finance industry. Participants evaluate randomized profiles of potential collaborators, incentivized by the real opportunities for preferred cooperative partnerships. Using these experimental behaviors and real world portfolio data as inputs to our structural estimation, we identify a significant impact of various human and non human traits on equilibrium continuation values, matching likelihoods, and payoffs from matching for both startups and VCs. These traits include startups' human assets (i.e., educational background, entrepreneurial experiences) and non human assets (i.e., traction, business model), as well as investors' human capital (i.e., entrepreneurial experiences) and organizational capital (i.e., previous financial performance, fund size). Results show that, while the total value of matching increases, the share of a startup/VC's payoff in the total value of matching diminishes substantially (in the range of .65 to .35) when the counterparty type becomes more attractive. Ultimately, we find that variations in the matching likelihood play a dominant role in explaining how the expected payoff from collaboration varies for startups and VCs when dealing with attractive and unattractive counterparty types.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Invest Local or Remote? The Effects of COVID-19 Lockdowns on Venture Capital Investment around the World</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pengfei Han (Peking University), Chunrui Liu (University of International Business and Economics), Xuan Tian (Tsinghua University), Kexin Wang (Tsinghua University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=852152" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">COVID 19のパンデミックによって引き起こされたベンチャーキャピタル投資における「距離の死」を発見した：VCはCOVID 19の封鎖期間中、より遠くのスタートアップに投資し、そのような効果は経済が再開した後も続き、加速する。距離の死は、インターネットインフラが整備され、VCと起業家の間の情報の非対称性が低く、取引規模が小さい場合に顕著となる。パンデミックによって促進された遠隔通信技術の進歩や採用が、文書化された観察結果に寄与している。パンデミック後のVC業界では、地理的にローカルな市場への外部VCの参入がより活発になり、VC間の競争が激化し、VCの資金調達の地域的不平等が緩和された。</p>
+        <p class="abstract-text en">We find the 'death of distance' in venture capital investment caused by the COVID 19 pandemic: VCs invest in more distant startups during the COVID 19 lockdowns and such effects continue and accelerate after the economy reopens. The death of distance is more pronounced when there is better internet infrastructure, lower information asymmetry between VCs and entrepreneurs, and smaller deal size. The pandemicspurred advancement and adoption of remote communication technology contribute to the documented observations. The post pandemic VC industry witnesses more vibrant entry of outside VCs into geographically localized markets, intensified competition among VCs, and mitigated regional inequality of VC financing.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

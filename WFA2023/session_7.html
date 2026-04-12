@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demand Based Asset Pricing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2023 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link active">Demand Based Asset Pricing</a><a href="session_26.html" class="session-link ">The Cross-Section</a><a href="session_31.html" class="session-link ">What can we Learn from the Bond Markets?</a><a href="session_34.html" class="session-link ">Empirical Methods</a><a href="session_37.html" class="session-link ">Factors</a><a href="session_47.html" class="session-link ">Operating Characteristics and Returns</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Selling Securities</a><a href="session_4.html" class="session-link ">Politics and Finance</a><a href="session_5.html" class="session-link ">Venture Capital</a><a href="session_8.html" class="session-link ">Firms and Workers</a><a href="session_9.html" class="session-link ">Municipal Finance</a><a href="session_16.html" class="session-link ">Entrepreneurial Finance</a><a href="session_22.html" class="session-link ">Corporate Finance Theory</a><a href="session_33.html" class="session-link ">Deciding on Corporate Bonds</a><a href="session_35.html" class="session-link ">Dealing with Default</a><a href="session_42.html" class="session-link ">Determining Corporate Investment</a><a href="session_45.html" class="session-link ">Corporate Control</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Banks and Credit Supply</a><a href="session_20.html" class="session-link ">Bank Regulation</a><a href="session_21.html" class="session-link ">Institutional Behavior</a><a href="session_25.html" class="session-link ">Insurance Markets</a><a href="session_39.html" class="session-link ">Bank Crises and Regulation</a><a href="session_44.html" class="session-link ">Funds</a><a href="session_48.html" class="session-link ">Financial Regulation</a></div><button class="accordion-btn">Household Finance and Real Estate <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_18.html" class="session-link ">Consumer Credit</a><a href="session_23.html" class="session-link ">Real Estate Markets</a><a href="session_29.html" class="session-link ">Mortgages</a><a href="session_30.html" class="session-link ">Households and Credit Constraints</a><a href="session_38.html" class="session-link ">Pensions</a><a href="session_41.html" class="session-link ">Investor Portfolios</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Inflation</a><a href="session_6.html" class="session-link ">The International Financial System</a><a href="session_12.html" class="session-link ">Fiscal Policy</a><a href="session_15.html" class="session-link ">Monetary Policy</a><a href="session_24.html" class="session-link ">Macroeconomic Risk</a><a href="session_28.html" class="session-link ">Currency Risk</a><a href="session_32.html" class="session-link ">Exchange Rates</a></div><button class="accordion-btn">Market Microstructure, Information, and Trading <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_11.html" class="session-link ">OTC Markets</a><a href="session_13.html" class="session-link ">Expectations</a><a href="session_17.html" class="session-link ">Market Reactions to Information</a><a href="session_19.html" class="session-link ">Regulating Market Structure</a><a href="session_36.html" class="session-link ">Exchanges</a><a href="session_40.html" class="session-link ">Informed Trading</a><a href="session_43.html" class="session-link ">Network Impacts</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">What are ESG Disclosures Doing?</a><a href="session_10.html" class="session-link ">Who is Benefitting from ESG?</a><a href="session_27.html" class="session-link ">Modeling the Impacts of ESG</a><a href="session_46.html" class="session-link ">ESG Impacts: Empirical Evidence</a></div></div><div class="main-content"><h1>Demand Based Asset Pricing</h1>        <div class="paper-card">
+            <div class="paper-title">Asset Demand of U.S. Households</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xavier Gabaix (Harvard University), Ralph Koijen (University of Chicago), Federico Mainardi (University of Chicago), Sangmin Oh (University of Chicago), Motohiro Yogo (Princeton University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=853272" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私たちは、米国家計のポートフォリオ保有、フロー、リターンに関する新しい月次証券レベルデータを用いて、複数の資産クラスにわたる資産需要を理解しています。このデータは、超富裕層（UHNW）世帯を含む富裕層分布の幅広い世帯と、公的資産や民間資産を含む多くの資産クラスの保有をカバーしています。まず、家計のリバランス行動を要約する記述的モデルを構築する。その結果、富裕層でない家計は、市場の低迷期に流動性の高いリスク資産から現金にリバランスする一方、UHNWの家計はその時期にリスク資産を購入し、市場の変動を安定させる傾向があることがわかった。このパターンは、特に米国株式で顕著である。リスク資産クラス全体では、3つの要因がポートフォリオ・リバランスの変動の大部分を説明し、それらの要因は長期株式プレミアム、信用プレミアム、地方債のプレミアムを対象としている。次に、資産クラス間の需要曲線を推定するための新しいフレームワークを開発する。従来のモデルを特殊なケースとして入れ子にすることで、我々の枠組みは、資産価格の変動に対する資産需要の反応を緩やかにし、慣性を考慮するために容易に拡張することができる。我々の新しい資産需要曲線の推定器は、リターンの二次モーメントとポートフォリオのリバランスの変動を利用し、ある市場の全保有資産の一部しか観測できない場合にも利用できるものである。我々の予備的な結果は、資産需要弾力性が標準的な理論が示唆するものよりも小さく、富の分布の中で大きく変化し、様々なグループにおいて負の値を示し、正のフィードバック取引を示唆するものであることを示している。まとめると、我々のフレームワークとデータは、米国の家計の首尾一貫した姿を描き出し、富の分布や幅広い資産クラスにわたるリバランス行動を極めてユニークに捉えていると考えられるのである。</p>
+        <p class="abstract-text en">We use new monthly security level data on portfolio holdings, flows, and returns of U.S. households to understand asset demand across multiple asset classes. Our data cover a wide range of households across the wealth distribution - including ultra high net worth (UHNW) households - and holdings in many asset classes, including public and private assets. We first develop a descriptive model to summarize households' rebalancing behavior. We find that less wealthy households rebalance from liquid risky assets to cash during market downturns, while UHNW households tend to purchase risky assets during those periods and thus stabilize market fluctuations. This pattern is particularly pronounced for U.S. equities. Across risky asset classes, three factors explain most of the variation in portfolio rebalancing and those factors target the long term equity premium, the credit premium, and the premium on municipal bonds. Next, we develop a new framework to estimate demand curves across asset classes. While nesting traditional models as a special case, our framework allows for a muted response of asset demand to fluctuations in asset prices and easily extends to account for inertia. Our new estimator of asset demand curves exploits variation in second moments of returns and portfolio rebalancing, and can even be used when only a fraction of all holdings in a market can be observed. Our preliminary results indicate that asset demand elasticities are smaller than those implied by standard theories, vary significantly across the wealth distribution, and are negative for various groups, pointing to positive feedback trading. In sum, we think that our framework and data paint a coherent picture of U.S. households that captures, quite uniquely, their rebalancing behavior across the wealth distribution and across broad asset classes.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Making of Momentum: A Demand-System Perspective</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Paul Huebner (University of California-Los Angeles)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=878472" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資家の取引戦略のどのような特徴が均衡におけるモメンタムにつながるかを定量化するための枠組みを開発した。具体的には、アンダーリアクションを示す持続的な需要ショックと、投資家のホライズンによって減少する裁定活動の強度を示す需要弾力性の期間構造という2つの異なるチャンネルを区別する。私は、ダイナミックな取引の両側面を資産需要システムに導入し、ポートフォリオの保有量と価格の共同行動を使ってモデルを規律する。1999年から2020年までの米国株式市場における機関投資家の株式需要を推定した。弾力性の下向きの期間構造がモメンタムリターンを駆動する。平均して、投資家は長期的な価格変動よりも直近の価格変動に反応しやすく、これは直近の価格変動に特に敏感な機関投資家のグループによって引き起こされる行動である。これとは対照的に、需要ショックは平均回帰を示すため、逆転現象が発生する。このモデルは、モメンタムが最も強くなる場所も予測している：弾性率の期間構造が急減する銘柄は、年率7%の高いモメンタムリターンを示す。</p>
+        <p class="abstract-text en">I develop a framework to quantify which features of investors' trading strategies lead to momentum in equilibrium. Specifically, I distinguish two distinct channels: persistent demand shocks capturing underreaction or the term structure of demand elasticities, representing an intensity of arbitrage activity that decreases with investor horizon. I introduce both aspects of dynamic trading into an asset demand system and discipline the model using the joint behavior of portfolio holdings and prices. I estimate the demand for stocks of institutional investors in the U.S. stock market between 1999 and 2020. A downward sloping term structure of elasticities drives momentum returns. On average, investors are more responsive to recent price changes than long term price changes, a behavior driven by a group of institutions particularly sensitive to recent price changes. In contrast, demand shocks exhibit mean reversion and thus generate reversal. The model also predicts where momentum is the strongest: Stocks with steeply decreasing term structures of elasticities exhibit higher momentum returns by 7% per year.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Exit or Voice? Divestment, Activism, and Corporate Social Responsibility</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Victor Saint-Jean (Sciences Po)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=857248" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資家は、非責任会社をポートフォリオから除外すべきか、それとも投資して経営陣と関わるべきか。本論文では、こうした出口戦略とボイス戦略の相対的な有効性を評価し、それぞれの戦略が最も影響力を持つ条件を明らかにする。米国の投資信託のポートフォリオ保有状況とS関連株主提案への投票に基づく分類の枠組みを用いて、企業の反社会的行動を抑制することに関しては、一般的にボイスファンドがエグジットファンドよりも優れていることを示す。出口戦略は株価下落の脅威に依存し、CEOの富のパフォーマンス感応度が高い企業においてのみ効果的である。ボイス・ファンドは、取締役の再選を脅かすものであるため、一般的には、特に選挙が近づいているときに効果的である。これらの結果を総合すると、株主の要求があれば、リーダーシップのキャリアに関する懸念が社会的変化を促進することが示唆される。</p>
+        <p class="abstract-text en">Should investors screen out non responsible firms from their portfolio, or invest in them and engage with the management? This paper evaluates the relative effectiveness of these exit and voice strategies and uncovers the conditions under which each strategy is most impactful. Using a classification framework based on US mutual funds' portfolio holdings and votes on S related shareholder proposals, I show that voice funds generally do better than exit funds when it comes to curtailing firms' anti social behavior. The exit strategy relies on the threat of lower stock prices and is effective only at firms with high CEO wealth performance sensitivity. Voice funds threaten directors' reelection, and are thus more effective in general, especially when elections are approaching. Taken together, my results point to the career concerns of the leadership as driving pro social change when shareholders demand it.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

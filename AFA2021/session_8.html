@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Methods and Portfolios for the Cross Section</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link active">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>New Methods and Portfolios for the Cross Section</h1>        <div class="paper-card">
+            <div class="paper-title">Does Unobservable Heterogeneity Matter for Portfolio-Based Asset Pricing Tests?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Daniel Hoechle; University of Applied Sciences and Arts), Markus Schmid; University of St. Gallen), Heinz Zimmermann; University of Basel)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=232" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、実証的資産価格分析で広く用いられているポートフォリオ・ソートが、クロスセクショナル・リターンの予測可能性をソートの基となる企業特性に誤帰属させる傾向があることを明らかにした。このような誤判定は、ソート変数が企業間の観察不能な異質性を捕捉する企業固有の効果と相関している場合に生じる。我々は、標準的なポートフォリオ・ソートから得られる結果を再現できる、新しい企業レベルの回帰アプローチを提案する。さらに、我々の方法は、多変量の企業特性を扱い、企業固定効果を含む場合、クロスセクションのリターン予測性の誤帰属に対してロバストである。我々の実証結果は、ポートフォリオ・ソートが異常リターンの検出において限られた力しか持たないことを確認するものであった。また、企業間の観察不能な異質性をコントロールした場合、いくつかの特性ベースのファクターは予測力を失う。</p>
+        <p class="abstract-text en">We show that portfolio sorts, as widely used in empirical asset pricing, tend to misattribute cross sectional return predictability to the firm characteristic underlying the sort. Such misattribution arises if the sorting variable correlates with a firm specific effect capturing unobservable heterogeneity across firms. We propose a new, firm level regression approach that can reproduce the results from standard portfolio sorts. Besides, our method handles multivariate firm characteristics and, if firm fixed effects are included, is robust to misattributing cross sectional return predictability. Our empirical results confirm that portfolio sorts have limited power in detecting abnormal returns: Several characteristics based factors lose their predictive power when we control for unobservable heterogeneity across firms.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Forest through the Trees: Building Cross-Sections of Stock Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Svetlana Bryzgalova; London Business School), Markus Pelger; Stanford University), Jason Zhu; Stanford University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1400" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、資産リターンのクロスセクション、すなわち、与えられた銘柄特性のセットに含まれる複雑な情報を捕らえ、確率的割引係数（SDF）にまたがる基礎またはテスト資産の小集合を構築する方法を示す。我々は決定木を用いて従来のソートの概念を一般化し、SDFのロバストな回復のための新しいアプローチを導入し、内生的に最適なポートフォリオ分割をもたらす。これらの低次元価値加重ロングオンリー投資戦略は、分散性が高く、解釈が容易であり、同時に多くの特性を反映している。経験的に、従来から使われているポートフォリオのクロスセクションとその組み合わせ、特にデシルやロングショートアノマリーファクターは、モデル評価のハードルが低すぎるため、SDFの誤った構成要素として機能することを示す。従来のダブルソートやトリプルソートと同じ価格シグナルから構築された我々のクロスセクションは、主要な縮小形式資産価格モデルと比較して、サンプル外のシャープ比と価格誤差が著しく高い（最大で3倍）ことがわかります。</p>
+        <p class="abstract-text en">We show how to build a cross section of asset returns, that is, a small set of basis or test assets that capture complex information contained in a given set of stock characteristics and span the Stochastic Discount Factor (SDF). We use decision trees to generalize the concept of conventional sorting and introduce a new approach to the robust recovery of the SDF, which endogenously yields optimal portfolio splits. These low dimensional value weighted long only investment strategies are well diversified, easily interpretable, and reflect many characteristics at the same time. Empirically, we show that traditionally used cross sections of portfolios and their combinations, especially deciles and long short anomaly factors, present too low a hurdle for model evaluation and serve as the wrong building blocks for the SDF. Constructed from the same pricing signals as conventional double or triple sorts, our cross sections have significantly higher (up to a factor of three) out of sample Sharpe ratios and pricing errors relative to the leading reduced form asset pricing models.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Macroeconomic Content of Characteristics-Based Asset Pricing Models: A Machine Learning Analysis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Oleg Rytchkov; Temple University), Xun Zhong; Fordham University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1170" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は7つの特性ベースの資産価格モデルを検討し、それらの確率的割引係数（SDF）の非市場成分がマクロ経済ショックと関連しているかどうかを調査する。我々の分析では、120のマクロ経済変数の包括的なセットを用い、機械学習の手法を用いて、多数の説明変数によって引き起こされるオーバーフィッティングの問題を軽減している。その結果、マクロ経済ショックは非市場的なSDFの構成要素とは全く関係がないことが分かった。この結論は、理論的に動機づけられたいくつかのマクロ経済ショックにも及ぶものである。我々の結果は、特性ベースの資産価格モデルの経験的成功は、マクロ経済リスクよりもむしろ株式リターンにおける行動要因を特定する能力によって生み出されることを示唆している。</p>
+        <p class="abstract-text en">We consider seven characteristics based asset pricing models and explore whether the nonmarket components of their stochastic discount factors (SDFs) are associated with macroeconomic shocks. Our analysis involves a comprehensive set of 120 macroeconomic variables and uses machine learning techniques to mitigate the overfitting problem caused by a large number of explanatory variables. We find that macroeconomic shocks are totally unrelated to the nonmarket SDF components. This conclusion extends to several theory motivated macroeconomic shocks. Our results suggest that the empirical success of characteristics based asset pricing models is produced by their ability to identify behavioral factors in stock returns rather than macroeconomic risks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">New and Old Sorts: Implications for Asset Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Fahiz Baba-Yara; Nova School of Business and Economics), Martijn Boons; Tilburg University), Andrea Tamoni; Rutgers University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=252" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ポートフォリオ形成から5年後までの特性別ソート・ポートフォリオのリターンを研究している。56の特性ソートのうち、新ソートと旧ソートの同時期のリターンの間に大きな価格設定誤差があることがわかった（新ソートは企業の特性に関する最新の観測値を用いている）。これらの相対的な価格設定誤差は、既存の資産価格モデルによって把握されておらず、新ソートのリターンのみを用いた標準的なテストでは見落とされてきた。したがって、水平軸をまたぐ価格設定誤差は、資産価格モデルを検証するための新しく強力な情報を提供する。さらに、これらの価格設定誤差は、特性の市場ベータと強く関連しており、特性ソートされたポートフォリオにおける新旧銘柄間のリターンの差に関連していることを示す。</p>
+        <p class="abstract-text en">We study the returns to characteristic sorted portfolios up to five years after portfolio formation. Among a set of 56 characteristics, we find large pricing errors between the contemporaneous returns of new and old sorts, where new sorts use the most recent observations of firm characteristics. These relative pricing errors are not captured by existing asset pricing models and have been overlooked by standard tests using only returns to new sorts. Thus, pricing errors across horizons provide new and powerful information to test asset pricing models. Further, we show that these pricing errors are strongly related to a characteristic's market beta and connected to the difference in return between new and old stocks in the characteristic sorted portfolios.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

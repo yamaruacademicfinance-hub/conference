@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law and Corporate Governance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link active">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Law and Corporate Governance</h1>        <div class="paper-card">
+            <div class="paper-title">Do Shareholders Gain from Their Right to Sue? Evidence from Federal Judge Turnover</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Stefano Cassella; Tilburg University), Antonino Rizzo; Nova School of Business and Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=401" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株主が企業や経営者を証券取引法違反で訴える権利は、株式価値への影響が不明確な投資家保護メカニズムとして論議を呼んでいる。企業に対する外部株主の保護に関する裁判所のイデオロギーの外生的な変化を用いて、訴えの権利の強化が株式価値の損失を引き起こすことを証明する。この損失は、直接・間接の訴訟費用など、先行文献で提案されているメカニズムに起因する部分があるに過ぎない。同時に、訴訟権の強化は、企業の情報開示に対する経営者のインセンティブを歪め、情報の非対称性の拡大、資本コストの上昇、ひいては株式価値の下落を引き起こす。</p>
+        <p class="abstract-text en">Shareholders' right to sue corporations and managers for breach of securities laws is a controversial investor protection mechanism whose impact on equity value is unclear. Using exogenous variation in courts' ideology concerning the protection of outside shareholders vis a-vis corporations, we establish that strengthening the right to sue causes equity value loss. The loss only partially stems from mechanisms proposed in prior literature, such as direct and indirect litigation costs. At the same time, stronger right to sue distorts managers' incentives toward corporate disclosure, triggering larger information asymmetries, higher cost of capital, and hence reduction in the value of equity.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Disloyal Managers and Shareholders' Wealth</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Eliezer Fich; Drexel University), Jarrad Harford; University of Washington), Anh Tran; University of London)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=419" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">受託者が会社からビジネスチャンスを横取りすることの禁止は、忠実義務の基本的な部分であり、その期待は米国のコーポレート・ガバナンスに不可欠である。しかし、2000年以降、デラウェア州を含むいくつかの州では、取締役会がこの義務を免除することができるようになった。このような忠実義務の弱体化により、企業のイノベーションへの投資が大幅に減少していることが明らかになった。放棄法の適用を受けた企業は、研究開発への投資が減り、特許の取得件数も減り、価値も低下した。このことは、企業が買収を発表して内部成長機会の縮小を明らかにしたときの市場の反応によって確認できる。</p>
+        <p class="abstract-text en">The prohibition against fiduciaries appropriating business opportunities from their companies is a fundamental part of the duty of loyalty, the expectation of which is integral to U.S. corporate governance. However, starting in 2000, several states, including Delaware, allowed boards to waive this duty. Exploiting the staggered passage of waiver laws, we show that this weakening of fiduciary duty has significantly decreased firms' investment in innovation. Firms covered by waiver laws invest less in R&D, produce fewer and less valuable patents. Remaining innovation activities contribute less to firm value, a fact confirmed by the market reaction when firms reveal their curtailed internal growth opportunities by announcing acquisitions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">On Inference When Using State Corporate Laws</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Allen Hu; Yale University), Holger Spamann; Harvard University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=652" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">コーポレート・ガバナンスの効果を州法の変更によって識別する研究デザインは、法人設立の州によって標準誤差をクラスタリングしている。しかし、この標準誤差を用いた漸近推論では、偽陽性が大幅に抑制される。典型的な仕様では、ランダムに生成されたプラセボ法は、1/5/10%レベルの有意な推定治療効果を9/21/30%の確率で有している。このように有限サンプルのパフォーマンスが低いのは、クラスタサイズが不均等で、特にデラウェア州が全法人設立の半分を占めていることに起因する。ブートストラップや並べ替え検定は、ほとんど問題を解決してくれますが、一般的な頑健性チェックはそれほどでもないようです。プラセボの法則のアプローチは、検出力を計算するために使用することができ、これは実質的な効果の大きさに対してのみ、許容できるほど高くなります。</p>
+        <p class="abstract-text en">A workhorse research design identifies the effects of corporate governance by changes in state laws, clustering standard errors by state of incorporation. Asymptotic inference using these standard errors, however, dramatically understates false positives: in a typical specification, randomly generated placebo laws have 1/5/10%-level significant estimated treatment effects 9/21/30% of the time. This poor finite sample performance is due to unequal cluster sizes, especially Delaware's concentration of half of all incorporations. Bootstrap or permutation tests mostly fix the problem, common robustness checks less so. The placebo law approach can also be used to calculate power, which will be acceptably high only for substantial effect sizes.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

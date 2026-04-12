@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intangibles and Human Capital in Mergers and Acquisitions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link active">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Intangibles and Human Capital in Mergers and Acquisitions</h1>        <div class="paper-card">
+            <div class="paper-title">Big Fish in Small Ponds: Human Capital Mobility and the Rise of Boutique Banks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Janet Gao; Indiana University), Wenyu Wang; Indiana University), Xiaoyun Yu; Indiana University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">M&Aアドバイザリー業界では、伝統的にバルジ・ブラケット銀行が支配的であるが、ブティック・バンクが台頭していることを示す。バルジブラケット銀行からブティック銀行への移行は、高いパフォーマンスを発揮する個人によって行われ、その顧客や同僚もそれに追随する傾向があることを示す。また、顧客や同僚もそれに追随する傾向があることがわかった。この因果関係を検証するために、バルジブラケット銀行における部門横断的な補助金制度が、ブティックアドバイザーへの労働力の供給に外生的に影響を与えることを利用した。この結果は、人的資本の移動が産業構造を形成することを明らかにするものである。</p>
+        <p class="abstract-text en">We document a rise of boutique banks in the M&A advisory industry that is traditionally dominated by bulge bracket banks. We show that high performing individuals are more likely to migrate from bulge bracket to boutique banks, and that their clients and colleagues tend to follow. The performance of losing (gaining) banks in the transitioning bankers' specialized industries subsequently deteriorates (improves), potentially contributing to the prosperity of boutique advisors. To establish causality, we exploit the cross department subsidization within bulge bracket banks that exogenously affects the skilled labor supply to boutique advisors. Our findings highlight how human capital mobility shapes industry structures.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Announcement Returns Reflect Value Creation? (Not Really)</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Itzhak Ben-David; Ohio State University), Utpal Bhattacharya; Hong Kong University of Science and Technology), Stacey Jacobsen; Southern Methodist University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1663" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">買収発表時の株式リターンは、これらの取引によって生み出される正味現在価値を反映していると広く見なされています。そのため、発表時のリターンは買収の結果と相関しているはずである。買収者のパフォーマンスに関する一般的な指標と、実現した取引レベルの買収失敗に関する新しい指標を用い、これらの結果は発表リターンとほとんど相関がないことを明らかにする。なぜなら、結果は観測可能な取引や企業の特性に基づいて予測することができるからである。この結果は、買収によって創出される価値の指標としてのアナウンスメント・リターンの有用性に疑問を投げかけ、他の文脈でも注意を喚起するものである。</p>
+        <p class="abstract-text en">Stock returns around acquisition announcements are widely viewed as being reflective of the net present value created by these transactions. As such, announcement returns should correlate with acquisition outcomes. Using accepted measures of acquirer performance as well as a new measure of realized transaction level acquisition failure, we show that these outcomes are largely uncorrelated with announcement returns. Announcement returns do not incorporate all information available at the time of the announcement, since outcomes can be predicted based on observable deal and firm characteristics. Our results cast doubt on the usefulness of announcement returns as a measure of the value created in acquisitions and call for caution in other contexts.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Human Capital Synergies in Mergers and Acquisitions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Kai Li; University of British Columbia), Jin Wang; Wilfrid Laurier University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=818" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">1976年から2019年までの発明者のキャリアパスを追跡した大規模かつユニークなデータセットを用いて、M&A（合併・買収）が買収者の革新的能力の向上にどのように寄与するかについて、新しい証拠を提示する。まず、買収者と対象発明者の共同研究の頻度が合併後に急増すること、そして、そのような共同研究は、買収者または対象発明者のみのチームが出願した特許よりも、より先鋭的でインパクトがあり、価値のある特許に関連することを示す。さらに、買収側発明者は、同じ専門知識を持ち、地理的に近い発明者、スター発明者、大規模なネットワークを持つ発明者と共同研究を行う傾向があることを示す。最後に、買収者の革新的能力の向上には、買収者と対象発明者のコラボレーションが、対象発明者の単独雇用や知識スピルオーバーよりも重要であることを示す。M&Aは、買収者と対象発明者の協働の機会セットを拡大することによって人的資本のシナジーを実現し、画期的なイノベーションをもたらすと結論付けている。</p>
+        <p class="abstract-text en">Using a large and unique data set tracking inventors' career paths over the period 1976 2019, we provide novel evidence on how mergers and acquisitions (M&As) help improve acquirers' innovative capabilities. We first show a steep increase postmerger in the frequency of collaboration between acquirer and target inventors, and that such collaboration is associated with more radical, impactful, and valuable patents than those filed by either acquirer or target inventor only teams. We further show that acquirer inventors are more likely to collaborate with target inventors who share the same core expertise and are geographically proximate, are star inventors, and are inventors with large networks. Finally, we show that collaboration between acquirer and target inventors is more important in improving acquirers' innovative capabilities than hiring target inventors alone and knowledge spillovers. We conclude that M&As achieve human capital synergies by expanding the opportunity set for collaboration between acquirer and target inventors, leading to pathbreaking innovation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Hiring High-Skilled Labor through Mergers and Acquisitions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jun Chen; Renmin University of China), Shenje Hshieh; City University of Hong Kong), Feng Zhang; University of Utah)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=780" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、熟練した外国人労働者の供給に対する外生的なショックに対応して、米国の公的企業がM&A活動を行う可能性が高くなることを実証している。2004年にH 1Bビザの供給が大幅に減少したことと、H 1Bの抽選に漏れたことが、H 1Bプログラムを通じて熟練労働者を積極的に採用してきたハイテク分野の中小民間企業を公企業が買収する可能性を高めていることが、2つの自然実験によって明らかにされた。この結果は、特許などの無形資産を考慮した場合にも当てはまる。また、外生的M&A撤退を用いた準自然実験では、買収側と被買収側の双方が歴史的に類似した外国人労働者を雇用してきた案件ほど労働シナジーが大きいと推計された。このように、M&Aが熟練労働者の供給量の変化によって駆動されうることを実証的に証明したのは、我々が初めてである。</p>
+        <p class="abstract-text en">We document that U.S. public firms are more likely to engage in M&A activity in response to exogenous shocks to the supply of skilled foreign labor. Employing two natural experiments, we find that the significant reduction in the overall supply of H 1B visas in 2004 and annual H 1B lottery losses both increase the likelihood that public firms acquire smaller private firms in hightech sectors that also have a history of actively recruiting skilled labor through the H 1B program. Our findings hold even when accounting for targets' intangible assets such as patents. In another quasi natural experiment using exogenous M&A withdrawals, we estimate that the labor synergies are larger for deals in which both the acquirer and target have historically hired similar foreignskilled workers in terms of their job functions. We are the first to empirically establish that M&A deals can be driven by changes in skilled labor supply.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

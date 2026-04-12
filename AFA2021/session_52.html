@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Risk Factors</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link active">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Market Risk Factors</h1>        <div class="paper-card">
+            <div class="paper-title">Advice-Driven Demand and Systematic Price Fluctuations</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Itzhak Ben-David; Ohio State University), Jiacui Li; University of Utah), Andrea Rossi; University of Arizona), Yang Song; University of Washington)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1202" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、スタイル・レベルの需要圧力が資産価格決定要因の収益性に一次的な因果関係を持つという証拠を提示する。2002年以前、モーニングスターのファンドレーティングは、ファンドスタイルの最近のパフォーマンスと高い相関があった（例：大型成長株）。投資家はこれらの評価を追いかけ、その流れが価格圧力を生み出すため、評価を追いかける行動は株式市場にスタイルレベルの正のフィードバックループを引き起こした。その結果、モメンタムなどの関連するリターン・ファクターが大きな利益を生むことになった。2002年6月のモーニングスター社の方法論の改訂により、フローと投資スタイルの関係が崩れた。我々は、この方法論の変更が、2002年6月以降に多くの資産価格ファクターの収益性が突然低下したことのかなりの部分を説明できること、特に、新しいモーニングスターのスタイル調整の影響をほとんど受けていないファクターを説明できることを示す。</p>
+        <p class="abstract-text en">We present evidence that style level demand pressure has a first order causal effect on asset pricing factor profitability. Before 2002, Morningstar's fund ratings were highly correlated with the recent performance of fund styles (e.g., large cap growth). Since investors chase these ratings and flows create price pressures, rating chasing behavior caused style level positive feedback loops in the stock market. As a result, return factors like momentum and other related factors were very profitable. A revision to Morningstar's methodology in June 2002 disrupted the relation between flows and investment style. We show that this methodology change can explain a significant fraction of the suddenly decline of profitability of many asset pricing factors after June 2002, especially those mostly exposed to the new Morningstar style adjustment.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Bayesian Solutions for the Factor Zoo: We Just Ran Two Quadrillion Models</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Svetlana Bryzgalova; London Business School), Jiantao Huang; London School of Economics), Christian Julliard; London School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=675" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、線形資産価格モデルを分析するための新しいフレームワークを提案する：単純で、頑健で、高次元の問題にも適用できる。単純かつ頑健で、高次元の問題にも適用できる。（誤仕様の可能性がある）独立したモデルに対して、取引可能な因子と非取引可能な因子の両方について信頼できるリスクプレミア推定値を提供し、識別が弱いものを検出する。競合するファクターや（非ネスト化された）モデルに対して、この手法は自動的に最適な仕様を選択し（優位な仕様が存在する場合）、また、データから明確な勝者がいない場合はモデルの平均化を提供します。我々は、既存のファクターの大規模なセットによって生成された2.25兆のモデルを分析し、資産リターンの経験的なドライバーに関する新しい洞察を得ることができた。</p>
+        <p class="abstract-text en">We propose a novel framework for analyzing linear asset pricing models: simple, robust, and applicable to high dimensional problems. For a (potentially misspecified) standalone model, it provides reliable risk premia estimates of both tradable and nontradable factors, and detects those weakly identified. For competing factors and (possibly non nested) models, the method automatically selects the best specification - if a dominant one exists - or provides a model averaging, if there is no clear winner given the data. We analyze 2.25 quadrillion models generated by a large set of existing factors, and gain novel insights on the empirical drivers of asset returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">How the Wealth Was Won: Factor Shares as Economic Fundamentals</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Daniel Greenwald; Massachusetts Institute of Technology), Martin Lettau; University of California (Berkeley), Sydney Ludvigson; New York University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=100" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">なぜ、株式は上昇し、下落するのか？1989年初頭から2017年末までに、34兆ドルの実質（2017:Q4=100）株式資産が米国企業セクターによって創出された。この増加の43%は、経済が減速する中で株主への報酬の再配分によるものと推測される。経済成長が25%を占め、リスクプレミアムの低下(24%)、金利の低下(8%)がそれに続く。1952年から1988年までの間に創出された富は半分以下であったが、経済成長がその100％以上を占めている。JELG10, G12, G17.</p>
+        <p class="abstract-text en">Why do stocks rise and fall? From the beginning of 1989 to the end of 2017, 34 trillion dollars of real (2017:Q4=100) equity wealth was created by the U.S. corporate sector. We estimate that 43% of this increase was attributable to a reallocation of rewards to shareholders in a decelerating economy. Economic growth accounts for just 25%, followed by a lower risk premium (24%), and lower interest rates (8%). From 1952 to 1988 less than half as much wealth was created, but economic growth accounted for more than 100% of it. JEL: G10, G12, G17.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Anatomy of Cyber Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Rustam Jamilov; London Business School), Helene Rey; London Business School), Ahmed Tahoun; London Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=727" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">業界関係者と政策立案者の双方からの継続的な関心にもかかわらず、サイバーセキュリティの経済学に関する実証研究はまだ不足している。本論文では、Hassanら（2019）で開発された機械学習ツールを活用し、企業レベルのサイバーリスクへのエクスポージャーをテキストベースで包括的に測定することでギャップを埋めている。我々の指標は、「サイバー攻撃」、「ランサムウェア」、「データ損失」などのテキストビグラムを捉え、20年間のデータにまたがり、80以上の国について利用可能である。Equifaxのデータ流出や世界的なランサムウェア攻撃「NotPetya」など、よく知られたサイバー事件と照らし合わせて、私たちの対策を検証しています。まず、全世界のサイバーリスクの総量と不確実性が着実に増加し、センチメントが顕著に悪化していることを明らかにしました。最も影響を受けている企業の割合は、米国からヨーロッパと英国へと徐々にシフトしています。実質的にゼロだった金融セクターは、10年足らずで最も影響を受けるセクターの1つになった。続けて、企業レベルのサイバーリスクの資産価格への影響を調査した。まず、カンファレンスコールの発表に関連する窓では、サイバーリスクのエクスポージャーが株式リターンに直接的な影響を与えることが分かった。さらに、非被害企業に対する国内産業週次での有意な効果も見いだした。第二に、企業レベルのエクスポージャーとセンチメントの測定値には強い要因構造があり、サイバーリスクのエクスポージャー（CyberE）とセンチメント（CyberS）の共通要因に対するショックは反対のサインで価格決定されることが示された。全体として、我々の結果は、サイバーセキュリティがシステマティックリスクの源泉であり、企業レベルのサイバーインシデントが特有なオペレーションの混乱からシステミッククライシスへと発展する可能性があることを示唆するものであった。</p>
+        <p class="abstract-text en">Despite continuous interest from both industry participants and policy makers, empirical research on the economics of cyber security is still lacking. This paper fills the gap by constructing comprehensive text based measures of firm level exposure to cyber risk by leveraging machine learning tools developed in Hassan et al. (2019). Our indices capture such textual bigrams as 'cyber attack', 'ransomware', and 'data loss', span 20 years of data, and are available for over 80 counties. We validate our measures by cross referencing with well known reported cyber incidents such as the Equifax data breach and the 'NotPetya' global ransomware attack. We begin by documenting a steady and significant rise in aggregate cyber risk exposure and uncertainty across the Globe, with a noticeable deterioration in sentiment. The fraction of mostaffected firms is gradually shifting from the US towards Europe and the UK. From virtually zero exposure, the financial sector has grown to become one of the most affected sectors in under ten years. We continue by studying asset pricing implications of firm level cyber risk. First, in windows surrounding conference call announcements, we find direct effects of cyber risk exposure on stock returns. Furthermore, we also find significant within country industry week peer effects on non affected firms. Second, we document strong factor structure in our firm level measures of exposure and sentiment and show that shocks to the common factors in cyber risk exposure (CyberE) and sentiment (CyberS) are priced with an opposite sign. Overall, our results suggest that cyber security is a source of systematic risk and that firm level cyber incidents have the potential to grow from idiosyncratic operational disruptions into systemic crises.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

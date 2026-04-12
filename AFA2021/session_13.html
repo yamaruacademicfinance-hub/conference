@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link active">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Household Finance</h1>        <div class="paper-card">
+            <div class="paper-title">Borrowing in Response to Windfalls</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Arna Olafsson; Copenhagen Business School), Michaela Pagel; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1152" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々はアイスランド国民の代表サンプルのすべての支出、所得、残高、信用限度額に関する情報を含む高精度で包括的な取引レベルのパネルデータを使用する。その結果、宝くじによる小額の当選金、すなわち、完全に一時的な予期せぬ所得ショックから得られる限界消費性向（MPC）は、一般個人にとって1より大きいことが明らかになった。さらに、少額当選金を受け取った個人は、それに対応して当座貸越などの短期無担保消費者負債を増加させることを記録している。このような借入反応は、流動性、すなわち借入余力が比較的少ない個人にも、また多い個人にも見られる。このように、MPCが1回より大きい場合、高額な消費者金融からの借入で資金を調達し、それをかなりの期間ロールオーバーしている。このような場合、MPCは小さくなり、借入の反応も見られなくなる。また、大小いずれの場合も貯蓄は増加しない。この結果は、MPCが高いだけでなく、消費者負債も多いという過剰消費問題を示唆しており、流動性制約が風前の灯火であるMPCを説明する上で重要な証拠である。</p>
+        <p class="abstract-text en">We use high accuracy and comprehensive transaction level panel data containing information on all spending, income, balances, and credit limits of a representative sample of the Icelandic population. We document that the marginal propensity to consume (MPC) out of small windfalls due to lottery payments, i.e., perfectly temporary unexpected income shocks, is larger than one for the average individual. Furthermore, we document that individuals who receive small windfalls increase their short term unsecured consumer debt, such as overdrafts, in response. This borrowing response is prevalent for individuals having relatively little as well as a lot of liquidity, i.e., borrowing capacity. The larger than one MPCs are thus financed using expensive consumer debt that is then rolled over for a considerable period of time. For large windfalls we only observe small MPCs and no borrowing responses. We also document that individuals do not increase their savings in response to either small or large windfalls. Our findings point to overconsumption problems driving both high MPCs as well as large consumer debt holdings and are clean evidence against liquidity constraints as an explanation for high MPCs out of windfalls.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Personal Bankruptcy, Moral Hazard, and Shadow Debt</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bronson Argyle; Brigham Young University), Benjamin Iverson; Brigham Young University), Taylor Nadauld; Brigham Young University), Christopher Palmer; Massachusetts Institute of Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1666" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">新たに収集した自己破産申請者のバランスシートに関するデータを用いて、自己破産申請者による債務蓄積におけるモラルハザードを検証するための同定戦略を開発した。その結果、政策変更によって破産申請を遅らせるインセンティブを与えられた債務者は、申請前に著しく多くの無担保債務を負っていることが分かった。また、破産申請後に発生した追加債務の大部分は、信用情報機関に報告されていない「影の債務」であり、自己破産申請時の負債総額の平均16％を占めている。最後に，これらの結果は，雇用，医療，結婚のショックを受けた借り手には見られず，戦略的行動という解釈を補強するものである。</p>
+        <p class="abstract-text en">Using newly collected data on the balance sheets of personal bankruptcy filers, we develop an identification strategy to test for moral hazard in debt accumulation by bankruptcy filers. We find that debtors who are incentivized by policy changes to delay filing for bankruptcy incur significantly more unsecured debt before filing. A large share of the additional debt incurred by later filers is 'shadow debt' - debt not reported to credit bureaus, comprising an average of 16% of total liabilities on personal bankruptcy filings. Finally, these results are not present among borrowers with employment, medical, or marriage shocks, reinforcing our interpretation of strategic behavior.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Working More to Pay the Mortgage: Interest Rates and Labor Supply</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Michal Zator; Northwestern University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=432" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ポーランドの全人口に対する所得税データを用い、銀行間金利の変動による変動金利型住宅ローンの支払額の変動を利用し、住宅ローンの支払額が多いほど家計は働き、収入を得ることができることを示す。所得の増加は、支払額の増加の約35％をカバーする。この効果は、支払額と収入の比率が高いほど、また失業率が低いほど、さらに収入源の柔軟性が高いほど強くなる。労働供給の増加は、消費と貯蓄の減少を伴い、配偶者の労働供給、転職、時間外契約による追加収入など、いくつかのメカニズムによってもたらされる。金利、ひいては金融政策は負債を抱えた家計の労働供給に影響を与えることができ、消費のコミットメントを伴う労働の意思決定のモデルと整合的である。</p>
+        <p class="abstract-text en">Using income tax data for the universe of Polish population and exploiting variation in floatingrate mortgage payments driven by inter bank interest rates fluctuations, I show that households work and earn more when their mortgage payments are higher. Higher income covers around 35% of the increase in the payment. The effect is stronger for households with higher paymentto income ratio, in places with lower unemployment, and for more flexible income sources. The increase in labor supply is accompanied by a decrease in consumption and savings and is driven by several mechanisms, including spousal labor supply, change of job, and additional income from after hours contracts. Interests rates, and hence monetary policy, can affect labor supply of indebted households, consistent with a model of labor decisions with consumption commitments.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

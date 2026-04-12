@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Finance and Non-Bank Institutions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link active">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Household Finance and Non-Bank Institutions</h1>        <div class="paper-card">
+            <div class="paper-title">Gig-Labor: Trading Safety Nets for Steering Wheels</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vyacheslav Fos; Boston College), Ankit Kalda; Indiana University), Jordan Nickerson; Boston College)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=688" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、「ギグ・エコノミー」の導入により、従業員の失業への対応方法が変化することを示す。失業保険請求に関する行政データと個人の信用プロファイルをマッチングさせ、ウーバーにアクセスできる解雇された従業員は失業保険の申請をする可能性が低く、家計負債に頼ることも少なく、延滞も少ないことを示す。我々の実証的戦略は、Uberの都市間における時差参入と、自動車所有の代理人に基づく労働者間のUber参入の閾値の差を利用するものである。この結果は、自動車所有者と非所有者の時間的な差異に起因するものではないことを示唆している。全体として、Uberの導入は労働市場に大きな影響を与えたことが分かる。</p>
+        <p class="abstract-text en">This paper shows that the introduction of the 'gig economy' changes the way employees respond to job loss. Using administrative data on unemployment insurance (UI) claims matched with the credit profiles of individuals in the U.S., we show that laid o↵ employees with access to Uber are less likely to apply for UI benefits, rely less on household debt, and experience fewer delinquencies. Our empirical strategy exploits both the staggered entry of Uber across cities and the di↵erential benefit of Uber's entry across workers based on a proxy for car ownership. E↵ects are considerably attenuated for car owners with an auto lease, for whom typical mileage caps reduce the viability of participating on the ride sharing platform, suggesting the results are not driven by time varying di↵erences in car owners and non owners. Overall, our findings show that the introduction of Uber had a profound e↵ect on labor markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Grit and Credit Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jess Cornaggia; Pennsylvania State University), Kimberly Cornaggia; Pennsylvania State University), Han Xia; University of Texas at Dallas)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1254" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">大学の成績証明書など個人を特定できる情報の利用許諾を得た上で、従来のリスク要因をコントロールした場合、大学時代にコースを辞めた学生は、辛抱強い学生に比べ学生ローンのデフォルトになる可能性が13%高いことが分かった。この効果は、自分の選んだ専攻の授業を辞めた場合や、より選抜された教育機関の授業を辞めた場合に特に強く現れる。同様に、成績が悪くても自発的にコースを繰り返す学生は、あきらめた学生よりも債務不履行に陥る可能性が13%低い。この効果は、再履修にかかる社会的・金銭的コストが特に高い場合に強くなる。学生の初期生活行動は、観察可能な信用リスク指標を提供する。</p>
+        <p class="abstract-text en">With a license to use individually identifiable information, including college transcripts, we find that students who quit courses during college are 13% more likely to default on student loans than their perseverant peers, controlling for conventional risk factors. This effect is especially strong when students quit courses in their chosen major and courses at more selective institutions. Similarly, students who voluntarily repeat courses after performing poorly are 13% less likely to default than peers who give up. This effect is stronger when social / monetary costs of repeating courses are especially high. Students' early life behavior provides an observable credit risk indicator.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Peer Effects in Product Adoption</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Michael Bailey; Facebook), Drew Johnston; Harvard University), Theresa Kuchler; New York University), Johannes Stroebel; New York University), Arlene Wong; Princeton University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1721" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、携帯電話の新機種市場におけるピア効果の性質を研究している。我々の分析は、ソーシャルネットワークに関する情報とユーザーの携帯電話機種に関する情報を組み合わせたFacebookからの特定されたデータに基づいている。ピア効果を同定するために、ランダムな携帯電話の紛失とキャリア特有の契約条件から生じる友人の携帯電話新規購入の変動を用いる。友人による携帯電話の新規購入は、個人の同ブランドの携帯電話に対する需要に大きな正の長期的影響を与え、そのほとんどは友人が購入した特定の機種に集中的に作用する。我々は、社会的学習が観察されたピア・エフェクトの中心的なメカニズムであることを証明する。ピア効果は携帯電話の需要全体を増加させるが、友人が特定のブランドの携帯電話を購入することで、競合するブランドの携帯電話、特に異なるOSで動作する携帯電話に対する個人の需要を減少させることができる。この結果は、企業間競争のあり方に対する示唆を与えるものである。また、価格感受性の高い個人ほど、より強いピア・エフェクトを発揮することも明らかにした。この正の相関は、総需要の弾力性が個人需要の弾力性よりもかなり大きいことを示唆している。このチャネルを通じて、ピア効果は企業のマークアップを低下させ、多くのモデルにおいて、相対的に高い消費者余剰とより効率的な資源配分に寄与することができる。</p>
+        <p class="abstract-text en">We study the nature of peer effects in the market for new cell phones. Our analysis builds on de identified data from Facebook that combine information on social networks with information on users' cell phone models. To identify peer effects, we use variation in friends' new phone acquisitions resulting from random phone losses and carrier specific contract terms. A new phone purchase by a friend has a large positive and long term effect on an individual's own demand for phones of the same brand, most of which is concentrated on the particular model purchased by the friend. We provide evidence that social learning is a central mechanism behind the observed peer effects. While peer effects increase the overall demand for cell phones, a friend's purchase of a new phone of a particular brand can reduce individuals' own demand for phones from competing brands - in particular those running on a different operating system. We discuss the implications of these findings for the nature of firm competition. We also find that stronger peer effects are exerted by more price sensitive individuals. This positive correlation suggests that the elasticity of aggregate demand is substantially larger than the elasticity of individual demand. Through this channel, peer effects can reduce firms' markups and, in many models, can contribute to relatively higher consumer surplus and more efficient resource allocation.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Retail Financial Innovation and Stock Market Dynamics: The Case of Target Date Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jonathan Parker; Massachusetts Institute of Technology), Antoinette Schoar; Massachusetts Institute of Technology), Yang Sun; Brandeis University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1442" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2010年代のターゲットデイトファンド（TDF）の急成長は、金融イノベーションとその後の退職金制度のデフォルトオプションとしてのTDFの承認によって、個人投資家のかなりの割合を、株式市場の勢いを抑える逆張り取引戦略へ移行させることになった。TDFは、様々な資産クラスを固定（年齢に応じた）比率で保有しているため、アンダーパフォーム（アウトパフォーム）する資産クラスに積極的にリバランスを行います。これに対し、歴史的に見ると、退職後の投資家は主にパッシブあるいはトレンド追従型であり、異なる資産クラスのリターンに応じてポートフォリオシェアを変動させるか、よりパフォーマンスの高い資産クラスに再配分していたため、リターンのボラティリティを増幅していた。我々は、TDFが予測されるアセットクラスの動きに応じてリバランスを行い、リバランスによって、株式市場が好調なときにTDFの保有比率に比例した株式ファンドからの資金流出が発生することを示す。リバランスのほとんどは、株式と債券の配分がほぼ等しいTDFや60代前後の投資家に起因しており、TDF投資家からのフローは、このグループのTDFの安定化戦略を相殺することはない。最後に、我々はTDFのリバランスが株価のモメンタムを低下させることを実証した。さらに、TDF の高い銘柄で構成されたポートフォリオの時系列モメンタムは、S&P 500指数と同様に、TDF 前から TDF 後にかけて低下しており、TDF の上昇が市場全体の変動を弱めていることと整合的であった。この結果は、TDFが資産リターンのダイナミクスに大きな影響を与える可能性を示唆しており、TDF市場の拡大が続けば続くほど、その影響は大きくなると予想される。</p>
+        <p class="abstract-text en">The rapid growth of Target Date Funds (TDFs) during the 2010s - driven by financial innovation and the subsequent regulatory approval of TDFs as default options in retirement plans - has moved a substantial share of retail investors into a contrarian trading strategy that reduces stock market momentum. Because TDFs maintain fixed (age appropriate) portfolio shares of different asset classes, they actively rebalance into (out of) asset classes that underperform (outperform). Historically, in contrast, retirement investors were primarily passive or trend chasing, either letting their portfolio shares vary with the returns on different asset classes or reallocating into better performing asset classes, and so amplifying return volatility. We show that TDFs rebalance in response to asset class movements according to prediction, and the rebalancing causes outflows from equity funds when the equity market does well that are proportionate to the TDF ownership share. Most of the rebalancing is attributed to TDFs with close to equal equity bond allocation, or those for investors around their 60s, and flows from TDF investors do not offset the stabilizing strategies of the TDFs for this group. Finally, we document that TDF rebalancing leads to lower aggregate momentum in stock prices, in that stocks with higher TDF exposure experience lower market beta adjusted returns after higher market wide performance, and confirm this finding using the S&P 500 index inclusion as quasi exogenous variation for TDF ownership. Further, the time series momentum in a portfolio formed with high TDF stocks as well as that in the S&P 500 index declines from the pre TDF to the post TDF period, consistent with the rise of TDF dampening aggregate market fluctuations. Together, our results suggest the potentially large impact of TDFs on asset return dynamics that is expected to grow larger as the TDF market continues to expand.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

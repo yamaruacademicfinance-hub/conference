@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Intelligence in Finance: Impact and Applications</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_9.html" class="session-link active">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Artificial Intelligence in Finance: Impact and Applications</h1>        <div class="paper-card">
+            <div class="paper-title">AI Adoption, Firm Growth, and Industry Concentration</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tania Babina; Columbia University), Anastassia Fedyk; University of California (Berkeley), Alex Xi He; University of Maryland), James Hodson; Jozef Stefan Institute)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1574" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">どの企業が人工知能（AI）技術に投資し、AI投資後に企業はどのように変化しているのだろうか。我々は、求人情報と個人レベルの雇用プロファイル（履歴書）を独自に組み合わせて、米国の上場企業におけるAI採用パターンとその影響について包括的な画像を提供している。人的資本に基づくAI導入の新しい指標を構築し、収益、マークアップ、手元資金が多い大企業ほどAIを積極的に導入する傾向があることを実証している。AIへの投資により、これらの企業はより速い売上高の伸びを経験している。また、意外なことに、雇用の増加にも正の効果が見られる。これは、企業がAIを利用して労働者を代替するという通説とは矛盾している。AIによる成長へのプラス効果は最大手企業で最も強く、産業レベル分析ではAI導入と産業集中度の間に正の相関が見られる。しかし、AI投資企業は変動費が売上高と同程度の速度で増加するため、マークアップの増加や生産性の向上は見いだせない。直感的には、AIを導入した企業は研究開発への投資が増加し、全体的なイノベーションと新技術の実験が増加したことを裏付けている。また、企業の実際のAI人材（履歴書）とAI人材に対する需要（求人情報）を用いたAIに関する指標は、非常に一貫したパターンを示している。</p>
+        <p class="abstract-text en">Which firms invest in artificial intelligence (AI) technologies, and how do firms change following AI investments? We provide a comprehensive picture of the AI adoption patterns and impact among US public firms, using a unique combination of job postings and individuallevel employment profiles (resumes). We construct a novel measure of AI adoption based on human capital and document that larger firms with higher revenue, mark ups, and cash reserves tend to adopt AI more aggressively. Upon AI investments, these firms experience faster sales growth. Surprisingly, we also find positive effect on employment growth, inconsistent with a common belief that firms use AI to replace workers. The positive effect of AI on growth is strongest in the largest firms, and industry level analysis shows positive correlation between AI adoption and industry concentration. However, we do not find increased mark ups or higher productivity, as AI investing firms see variable costs increase just as fast as revenues. Intuitively, firms adopting AI experience higher investment in R&D, confirming increases in overall innovation and experimentation with the new technology. Our results are robust to instrumenting firm level AI adoption with local variation in industry level adoption rates, and we document very consistent patterns across measures of AI using firms' actual AI talent (resumes) and demand for AI talent (job postings).</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">AlphaPortfolio: Direct Construction through Reinforcement Learning and Economically Interpretable AI</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Will Cong; Cornell University), Ke Tang; Tsinghua University), Jingyuan Wang; Beihang University), Yang Zhang; Beihang University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=838" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、リターン分布や価格カーネルの推定を含む広く採用されている2段階のポートフォリオ管理パラダイムに代わる、強化学習による投資家の目的の直接最適化を提案する。最近のAIの飛躍的な進歩に基づき、経済・金融データの特徴に合わせたニューラルネットワークベースのマルチシーケンスモデルを開発する。その結果、AlphaPortfolioは、様々な経済的・取引的制約の下でも頑健で、サンプル外の素晴らしいパフォーマンス（例えば、シャープレシオが2以上）を実現します。さらに、アルファポートフォリオを回帰モデルや自然言語空間に投影し（例えば、多項式特徴感度分析を使用）、投資パフォーマンスを駆動する回転や非線形性を含む主要なシグナルを発見することができます。全体として、ファイナンスにおける強化深層学習の有用性を強調し、AIやビッグデータのモデルを解釈するための「経済的蒸留」手順を紹介する。</p>
+        <p class="abstract-text en">We propose direct optimization of investors' objectives via reinforcement learning, an alternative to the widely adopted two step portfolio management paradigm entailing estimations of return distributions or pricing kernels. Building upon recent breakthroughs in AI, we develop neural network based multi sequence models tailored to distinguishing features of economic and financial data. The resulting AlphaPortfolio yields stellar out of sample performances (e.g., Sharpe ratio above two) that are robust under various economic and trading restrictions. Moreover, we project AlphaPortfolio onto regressional modeling or natural language spaces (using e.g., polynomial featuresensitivity analysis) to uncover key signals, including their rotation and non linearity, that drive investment performance. Overall, we highlight the utility of reinforcement deep learning in finance and introduce 'economic distillation' procedures for interpreting AI and big data models.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Artificial Intelligence and the Future of Work: Evidence from Analysts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jillian Grennan; Duke University), Roni Michaely; University of Geneva)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=466" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">人工知能（AI）の予測される経済的影響は広く肯定的であるが、この技術によって労働市場、特に高技能労働者が混乱することが懸念されている。我々は、セキュリティアナリストの文脈で、AIと現職の労働者の間の関連性を調査した。代替の証拠として、最も優秀なアナリストは職を辞し、他のアナリストは低AI銘柄にカバレッジをシフトしていることが分かる。アナリストは経営陣と接触することでソフト的な情報優位性を得ており、そこで時間を再配分しているようで、補完性があることが示唆された。また、アナリストの予測の質も変化しており、高AI銘柄を担当するアナリストは、バイアスと予測誤差を増加させている。このようなアナリストの質の変化は、戦略的なバイアスよりも、アナリストの才能の低下に起因しているように思われる。全体として、我々の発見は、社会的スキルに依存する補完的な仕事を持つことが、AIが労働者に与える影響の重要な決定要因になることを示唆している。</p>
+        <p class="abstract-text en">While the predicted economic consequences of artificial intelligence (AI) are broadly positive, there is concern that the technology will disrupt labor markets, especially for high skilled workers. We investigate the link between AI and incumbent workers in the context of security analysts. As evidence of substitution, we find the most talented analysts quit the profession while others shift their coverage toward low AI stocks. Analysts' access to management give them a soft information advantage, and they appear to reallocate their time there suggesting some complementarity. The quality of analysts' predictions also change: analysts covering high AI stocks exhibit increased bias and forecast errors. The change in reporting quality appears to stem from a less talented pool of analysts rather than strategic bias. Overall, our findings suggest that having complementary tasks that rely on social skills will be an important determinant of the impact of AI on workers.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Text-Based Mutual Fund Peer Groups</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Simona Abis; Columbia University), Anton Lines; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1587" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、アクティブ株式投資信託が、異質な投資家の嗜好に合うように商品提供を差別化しているかどうかを問う。そして、差別化されたファンドの供給と異なる投資家タイプによる需要との間の均衡配分を研究する。我々は教師なし機械学習を用いて，目論見書に記載されたファンドの戦略に基づいて，米国のアクティブ株式ミューチュアルファンドを同業他社グループ（SPG）に分類する．その結果，ファンドの戦略には，リスク調整後リターンの違いでは説明しきれないほど多様性があることがわかった。しかし、SPGは保有銘柄の特徴に解釈可能な大きな違いを示している。また、個人投資家、機関投資家、退職者投資家をターゲットとするファンドは、SPGごとに異なる自己配分を行う可能性がある。これは、投資特性に対する選好が異なることを示していると思われる。</p>
+        <p class="abstract-text en">In this paper we ask whether active equity mutual funds differentiate their product offering to match preferences of heterogeneous investors. We then study the equilibrium allocation between the supply of differentiated funds and the demand by different investor types. We use unsupervised machine learning to categorize US active equity mutual funds into Strategy Peer Groups (SPGs) based on their strategy descriptions in prospectuses. We find rich variety in funds' self described strategies that cannot be fully accounted for by differences in risk adjusted returns. SPGs, though, display significant and interpretable differences in characteristics of stocks held. Funds in different SPGs have a different likelihood of targeting retail, institutional or retirement investors who, in turn, self allocate differently across SPGs. Likely indicating differential preferences over investment characteristics.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

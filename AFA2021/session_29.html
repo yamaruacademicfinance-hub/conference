@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Equity</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link active">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Private Equity</h1>        <div class="paper-card">
+            <div class="paper-title">A Theory of Liquidity in Private Equity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vincent Maurin; Stockholm School of Economics), David Robinson; Duke University), Per Stromberg; Stockholm School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=31" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、多くの経験的パターンが内生的に発生するプライベートエクイティのモデルを開発した。このモデルは、GPのモラルハザードとLPの非流動性リスクという、プライベートエクイティ市場の2つの重要な特徴によって成り立っている。均衡ファンド構造はGPにファンドのシェアを与えることでインセンティブを与え、LPには非流動性プレミアムで補償する。GPは、LPによる出資約束の不履行を回避するため、非効率的にドローダウンを加速させる可能性があ ります。その結果、非流動性に対してより高い耐性を持つLPは、より高いリターンを実現することになります。流通市場が存在する場合、リターンの持続性はGPレベルでは低下しますが、LPレベルでは持続します。</p>
+        <p class="abstract-text en">We develop a model of private equity in which many empirical patterns arise endogenously. Our model rests solely on two critical features of this market: moral hazard for General partners (GPs) and illiquidity risk for Limited Partners (LPs). The equilibrium fund structure incentivizes GPs with a share in the fund and compensates LPs with an illiquidity premium. GPs may inefficiently accelerate drawdowns to avoid default by LPs on capital commitments. LPs with higher tolerance to illiquidity then realize higher returns. With a secondary market, return persistence decreases at the GP level but persists at the LP level.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Ownership, Wealth, and Risk Taking: Evidence on Private Equity Fund Managers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Carsten Bienz; Norwegian School of Economics), Karin Thorburn; Norwegian School of Economics), Uwe Walz; Goethe University Frankfurt)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=651" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、プライベート・エクイティ（PE）の専門家が、運用するファンドを所有することによるインセンティブ効果を検証する。単純なモデルでは、プロフェッショナルの保有比率が高いほど、マネージャーはよりリスクの低い企業を選択し、より多くの負債を使用することが示された。この予測は、ノルウェーのプライベート・エクイティ・ファンドのサンプルで検証され、プロフェッショナルの私的財産をリスク回避の代理人として使用することで確認された。モデルと一致するように、投資先企業のリスクはマネージャーのファンドへの出資比率が高いほど減少し、レバレッジはマネージャーの総資産に比例して増加した。さらに、保有比率が高いほど、各投資先が小さくなり、ファンドの分散性が高まる。</p>
+        <p class="abstract-text en">We examine the incentive effects of private equity (PE) professionals' ownership in the funds they manage. In a simple model, we show that managers select less risky firms and use more debt the higher their ownership. We test these predictions for a sample of Norwegian PE funds and use the professionals' private wealth as a proxy for risk aversion. Consistent with the model, portfolio company risk decreases with and leverage increases with the manager's ownership in the fund when scaled with her total wealth. Moreover, the higher the ownership, the smaller is each investment, increasing the fund's diversification.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Private Equity and Financial Stability: Evidence from Failed Bank Resolution in the Crisis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Emily Johnston-Ross; FDIC), Song Ma; Yale University), Manju Puri; Duke University and NBER)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=783" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文は、金融危機における金融システムの安定化におけるプライベート・エクイティ（PE）の役割について研究している。FDICが保有する詳細な破綻銀行データとプライベート・エクイティの投資家に関する情報を組み合わせることで、危機における破綻銀行の買収と破綻処理へのプライベート・エクイティの関与に関する初のエビデンスを提供することができた。PEによる買収は、2009年から2014年の間に危機の中で買収された破綻銀行の資産のほぼ4分の1を占めた。PEは通常、銀行が買収した銀行よりもリスクの高い不採算銀行を買収する。さらに、PEの破綻銀行買収は、近隣の銀行も苦境に陥っていたため、買収能力が低い地域にある。PEが買収した破綻銀行は、先行きが不利であったにもかかわらず、支店運営や預金増加の維持能力を用いて測定すると、銀行が買収した銀行よりも回復している。我々の証拠は、PEが破綻銀行の破綻処理に資本を提供することで危機時の金融システムを安定化させ、資本不足の銀行が残した資本ギャップを埋めることで銀行買収者を補完するという解釈と整合的である。</p>
+        <p class="abstract-text en">This paper studies the role of private equity (PE) in stabilizing the financial system in the crisis. Using detailed and proprietary failed bank data from the FDIC combined with information on PE investors, we provide some of the first evidence on PE's involvement in acquisition and resolution of failed banks during the crisis. PE acquisitions accounted for nearly a quarter of all failed bank assets acquired in the crisis between 2009 and 2014. PEs typically acquire underperforming banks that are riskier than bank acquired banks. Further, PE failed bank acquisitions are in areas where the neighboring banks were also in distress and hence had a lower ability to make acquisitions. PE acquired failed banks recovered better than those acquired by banks, measured using the ability to maintain branch operations and deposit growth, despite being underperforming ex ante. Our evidence is consistent with an interpretation that PEs stabilize the financial system in crisis by providing capital to failed bank resolutions and complement bank acquirers by filling the capital gap left by undercapitalized banks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">R&D or R vs. D? Firm Innovation Strategy and Equity Ownership</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: James Driver; Texas A&M University), Adam Kolasinski; Texas A&M University), Jared Stanfield; University of Oklahoma)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1171" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、公開企業と非公開企業の大規模なパネルについて、研究開発費を個別に報告するユニークなデータセットを分析する。その結果、株式保有状況とイノベーション戦略との関係について新たな実証的事実が得られ、これらの事実と理論的に予測される均衡結果とを比較することができた。その結果、公開企業は非公開企業よりも研究強度が高く、非公開企業が相対的に探索的イノベーションを行うという均衡を予測する理論とは矛盾することが分かった。また、公企業はあらゆる種類のイノベーションに対してより積極的な投資を行っていることもわかった。これらの結果は、より革新的な企業が、資金調達の制約を緩和し、高い特異的リスクに対してより寛容な多様な株主を提供する公的な地位を選択したことを示唆している。また、先行研究におけるいくつかの一見矛盾する結果を整理すると、プライベート・エクイティ保有企業は、他の民間企業と同様に革新的であるが、その戦略は開発に偏り、研究からは遠ざかっていることがわかった。</p>
+        <p class="abstract-text en">We analyze a unique dataset that separately reports research and development expenditures for a large panel of public and private firms. We establish new empirical facts about how equity ownership status relates to innovation strategy and then compare these facts to equilibrium outcomes predicted by theory. We find public firms have greater research intensity than private firms, inconsistent with theories predicting an equilibrium wherein private firms conduct relatively more exploratory innovation. We also find public firms invest more intensely in innovation of all sorts. These results suggest more innovative firms select into public status, which relaxes financing constraints and provides a more diversified shareholder base more tolerant of high idiosyncratic risk. Reconciling several seemingly conflicting results in prior research, we find private equity held firms, though equally innovative as other private firms, skew their strategies toward development and away from research.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

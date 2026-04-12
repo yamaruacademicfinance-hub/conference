@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debt Structure</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link active">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link ">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Debt Structure</h1>        <div class="paper-card">
+            <div class="paper-title">Options Trading and Corporate Debt Structure</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jie Cao; Chinese University of Hong Kong), Michael Hertzel; Arizona State University), Jie Xu; Chinese University of Hong Kong), Xintong Zhan; Chinese University of Hong Kong)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=608" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">最近の実証研究では、オプション取引活動に伴う情報効率の向上が、企業の資源をより効率的に配分することを可能にし、企業価値を高めることが明らかにされている。本論文では、企業資源の効率的な配分に加えて、オプション取引は、公的債務への依存度を高め、よりコストの高い銀行融資への依存度を下げる債務構造を促進することによって、資金調達チャネルを通じて企業価値を高めるという仮説を立て、検証を行った。情報チャネル（情報効率の向上により公的債務の発行が促進され、銀行の優れたプライベート情報へのアクセスと処理能力に対する需要が減少する）およびガバナンスチャネル（情報効率の向上により代替ガバナンスの有効性が向上し、銀行の貸し手のガバナンスに対する需要が減少する）と整合的に、オプション取引は企業を銀行融資から公的債券へと移行させることが分かった。情報チャネル効果と整合的に、銀行借入への依存度の低下は、オプション取引に関連する情報環境の強化からより多くの恩恵を受けると予想される情報非対称性の高い企業に集中することが示された。また、ガバナンス・チャネル効果と整合的に、外部からのガバナンス圧力が高い競争産業では、オプション取引活動と銀行借入の関係がよりネガティブであることが分かった。また、オプション取引量の増加に伴い、ローン・コベナンツの厳密性が低下することが分かった。全体として、オプション取引に伴う情報効率の向上は、銀行借入に関連する独自の情報およびガバナンスに対する企業の需要を低下させることによって、資金調達コストを低下させることが示唆された。</p>
+        <p class="abstract-text en">Recent empirical studies find that increased informational efficiency associated with options trading activity enhances firm value by allowing for a more efficient allocation of firm resources. In this paper, we develop and test the hypothesis that, in addition to a more efficient allocation of firm resources, options trading also enhances firm value through a financing channel, by promoting a debt structure that relies more on public debt and less on more expensive bank financing. Consistent with both an information channel (where increased informational efficiency facilitates public debt issuance and reduces demand for the superior ability of banks to access and process private information) and a governance channel (where enhanced informational efficiency improves the effectiveness of alternative governance thereby reducing demand for bank lender governance), we find that options trading leads firms to shift from bank loans to public bonds. Consistent with an information channel effect, we show that the reduced reliance on bank borrowing is concentrated in high information asymmetry firms that are expected to benefit more from the enhanced information environment associated with options trading activity. Consistent with a governance channel effect, we find a more negative relation between options trading activity and bank borrowing in competitive industries where external governance pressure is high. In addition, we find that loan covenant strictness decreases with increases in options trading volume. Overall, our findings suggest that enhanced information efficiency associated with options trading lowers financing costs by reducing firm demand for the unique informational and governance qualities associated with bank borrowing.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Secured Credit Spreads</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Efraim Benmelech; Northwestern University), Nitish Kumar; University of Florida), Raghuram Rajan; University of Chicago)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1130" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、選択を考慮した後、特に企業の信用度が悪化し、経済が減速し、平均信用スプレッドが拡大した場合、担保付債券発行の信用スプレッドが無担保債券発行よりも低くなることを示す。しかし、他の資金調達手段がある場合、企業は有担保債の発行に消極的になる傾向がある。これは、証券発行を時系列に分析し、特に2020年初頭に米国で発生したCOVID 19パンデミックショックの前後で証明された。その結果、投資不適格の企業や、困難な時期に代替的な資金調達手段をほとんど持たない企業にとって、有担保債発行の可能性は、取引される無担保債と有担保債のスプレッドと正の相関があることが分かった。投資適格の企業では相関がない。この発行行動のパターンは、担保を保険の一形態とみなし、極端な場合にのみ使用されるものとする理論と整合的である。</p>
+        <p class="abstract-text en">We show that after accounting for selection, credit spreads for secured debt issuances are lower than for unsecured debt issuances, especially when a firm's credit quality deteriorates, the economy slows, or average credit spreads widen. Yet firms tend to be reluctant to issue secured debt when other forms of financing are available, as we demonstrate with an analysis of security issuance over time and in particular around the COVID 19 pandemic shock in the United States in early 2020. We find that for firms that are rated non investment grade and that have few alternative sources of financing in difficult times, the likelihood of secured debt issuance is positively correlated with the spread between traded unsecured and secured bonds. It is not correlated for firms that are investment grade. This pattern of issue behavior is consistent with theories that see collateral as a form of insurance, to be used only in extremis.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Dynamics of Corporate Debt Structure</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Michael Halling; Stockholm School of Economics), Jin Yu; Monash University), Josef Zechner; Vienna University of Economics and Business)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=772" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国の上場企業が不況期にはより多くの負債を異なる資金源に分散させ、負債の集中度を測る指標を平均して景気循環的に変動させていることを見出した。このようなダイナミクスには、断面的なばらつきがある。特に、景気拡大期においてすでにレバレッジが低く、負債集中度が高い企業は、不況期においてレバレッジをさらに低下させ、負債集中度を高める。サンプル平均と比較すると，これらの企業は，より小さく，よりリスクが高く，より多くの成長オプションを持ち，より高い現金残高を持つ傾向がある。サンプル期間全体では，企業は銀行借入と市場借入をほぼ同額ずつ採用しているが，これらの借入先は景気循環の中で逆の動きを見せている。総資産に占める銀行借入の割合は，不況期には非不況期の平均値の約18％増加するが，市場借入に相当する指標は約7％減少している。銀行借入、特にタームローンは、不況期には、特に高い収益性を特徴とする借り手にとって、より魅力的になるようである。クラスター分析によれば，かなりの割合の企業が，景気循環の中で負債の方針を変えていることがわかる。例えば，景気後退前には債券による資金調達のみを行なっていた企業のうち12％が，景気後退期には銀行による資金調達に切り替えている。</p>
+        <p class="abstract-text en">We find that US public firms spread out their debt more across different sources in recession quarters, making measures of debt concentration move pro cyclically, on average. There is substantial cross sectional variation in these dynamics. In particular, firms with already low leverage and high debt concentration during expansions further decrease leverage and increase debt concentration in recessions. Compared to sample averages, these firms tend to be smaller and riskier, have more growth options and higher cash levels. Over the entire sample period, firms employ bank debt and market debt in roughly equal amounts, but these debt sources exhibit opposite dynamics over the business cycle. While the fraction of total assets funded by bank debt increases in the recession by approximately 18% of its average non recession level, the equivalent measure for market debt drops by approximately 7%. Bank debt, in particular term loans, appears to become more attractive during recession quarters, especially for borrowers characterized by high profitability. A cluster analysis shows that a substantial fraction of firms changes its debt policy over the business cycle. For example, 12% of the firms that exclusively use bond financing pre recession switch to bank financing during recessions.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

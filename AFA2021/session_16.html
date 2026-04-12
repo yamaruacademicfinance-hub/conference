@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Culture</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2021 Annual Meeting</div>
+<button class="accordion-btn">Asset Pricing & Market Efficiency <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Asset Pricing: Frictions and Market Power</a><a href="session_8.html" class="session-link ">New Methods and Portfolios for the Cross Section</a><a href="session_10.html" class="session-link ">Asset Pricing: Return Dynamics</a><a href="session_20.html" class="session-link ">International Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing: Frictions and Mispricing</a><a href="session_24.html" class="session-link ">Asset Pricing: What News Matters?</a><a href="session_35.html" class="session-link ">Long-term Investors, Portfolio Choice, and Asset Prices</a><a href="session_52.html" class="session-link ">Market Risk Factors</a><a href="session_56.html" class="session-link ">Cross-Sectional Return Predictability</a><a href="session_61.html" class="session-link ">Asset Pricing and Policy</a><a href="session_65.html" class="session-link ">Short Sale Constraints and Market Efficiency</a></div><button class="accordion-btn">Corporate Finance & Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_4.html" class="session-link ">Corporate Finance: Risk Management</a><a href="session_5.html" class="session-link ">Debt Structure</a><a href="session_11.html" class="session-link ">Bankruptcy and Distress</a><a href="session_15.html" class="session-link ">Law and Corporate Governance</a><a href="session_16.html" class="session-link active">Corporate Culture</a><a href="session_18.html" class="session-link ">Finance and Product Markets</a><a href="session_27.html" class="session-link ">Labor Markets for CEOs and CFOs</a><a href="session_33.html" class="session-link ">Determinants of Corporate Leverage</a><a href="session_34.html" class="session-link ">Financing Innovation</a><a href="session_43.html" class="session-link ">Institutional Investors and Corporate Social Responsibility</a><a href="session_44.html" class="session-link ">Raising Capital</a><a href="session_47.html" class="session-link ">CEO Pay, Performance and Reputation</a><a href="session_48.html" class="session-link ">Contracts and Incentives</a><a href="session_49.html" class="session-link ">Corporate Sustainability</a><a href="session_50.html" class="session-link ">Dividend and Payout Policy</a><a href="session_58.html" class="session-link ">Institutional Investors and Governance</a><a href="session_59.html" class="session-link ">Intangibles and Human Capital in Mergers and Acquisitions</a><a href="session_62.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_63.html" class="session-link ">Entrepreneurial Finance/Venture Capital</a><a href="session_64.html" class="session-link ">Financing Investments</a><a href="session_66.html" class="session-link ">The Effects of Mandated Disclosure</a></div><button class="accordion-btn">Financial Institutions & Intermediation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_12.html" class="session-link ">Hedge Funds: Incentives and Infrastructure</a><a href="session_22.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_28.html" class="session-link ">Mutual Funds and ETFs: Current Issues</a><a href="session_29.html" class="session-link ">Private Equity</a><a href="session_32.html" class="session-link ">Credit Supply</a><a href="session_36.html" class="session-link ">Mutual Fund Flows and Marketing</a><a href="session_38.html" class="session-link ">Bank Fragility</a><a href="session_46.html" class="session-link ">Bank Loan Contracts and Pricing</a><a href="session_54.html" class="session-link ">Banking: Risk Management</a><a href="session_57.html" class="session-link ">Firm Financing: Banks vs. Non Banks</a></div><button class="accordion-btn">Macro-Finance, Crises & Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Corporate Finance and Banking</a><a href="session_6.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_19.html" class="session-link ">Financial Stability</a><a href="session_21.html" class="session-link ">Macro Finance</a><a href="session_30.html" class="session-link ">AFA SPECIAL SESSION - Finance and COVID-19: Asset Pricing and Macro-Finance</a><a href="session_51.html" class="session-link ">Economic Impact of Disasters and Uncertainty</a><a href="session_55.html" class="session-link ">Bond Yields and the Government</a><a href="session_60.html" class="session-link ">Interest Rate, Inflation, and Monetary Policy</a></div><button class="accordion-btn">Household & Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Household Finance and Non-Bank Institutions</a><a href="session_13.html" class="session-link ">Household Finance</a><a href="session_41.html" class="session-link ">Gender and Finance</a><a href="session_42.html" class="session-link ">Household Expectations in Real Estate Markets</a><a href="session_53.html" class="session-link ">Social Influence and Networks</a><a href="session_67.html" class="session-link ">The Wisdom and Folly of Crowds</a></div><button class="accordion-btn">FinTech, Data Science & Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Artificial Intelligence in Finance: Impact and Applications</a><a href="session_17.html" class="session-link ">Economic Big Data and Machine Learning: Applications and Implications</a><a href="session_26.html" class="session-link ">FinTech Innovations: Banks and Small Business</a></div><button class="accordion-btn">Market Microstructure & Specialized Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_14.html" class="session-link ">Impact of Market Institutions on Information Content and Cost of Trading</a><a href="session_25.html" class="session-link ">Finance and Development</a><a href="session_31.html" class="session-link ">Competition and Information in Trading</a><a href="session_37.html" class="session-link ">AFA/AREUEA Joint Session on Real Estate Finance</a><a href="session_39.html" class="session-link ">Derivatives</a><a href="session_40.html" class="session-link ">Determinants of Credit Spreads</a><a href="session_45.html" class="session-link ">Adverse Selection and Information Acquisition in Financial Markets</a></div></div><div class="main-content"><h1>Corporate Culture</h1>        <div class="paper-card">
+            <div class="paper-title">Exposing Revolving Doors in Executive Branch Agencies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Logan Emery; Purdue University), Mara Faccio; Purdue University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=681" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、373,011社の企業トップの地位にある1,910,150人の行政機関での職務経験を調査することにより、米国における回転ドア現象の最初の包括的なマッピングを作成した。その結果、上場企業の3社に1社は元規制当局者を採用しており、この現象は広く見られることが分かった。元規制担当者は、規制強化や罰金に伴って採用される傾向がある。不正を行いやすい企業は、元監督官を雇用した後、罰金の発生率が低下するという便益を得ることができる。他の企業は、平均して利益を得ていない。</p>
+        <p class="abstract-text en"> We develop the first comprehensive mapping of the revolving door phenomenon in the U.S. by examining the work experience in executive branch agencies of 1,910,150 individuals covering top corporate positions in 373,011 firms. We document that the phenomenon is prevalent, with one out of three public firms employing a former regulator. Former regulators tend to be hired in response to or concomitant with increased regulation, or concomitant with firms receiving fines. More cheating prone firms obtain benefits in the form of a lower incidence of fines after hiring former regulators. We do not observe other firms obtaining benefits on average.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Hidden in Plain Sight: The Role of Corporate Board of Directors in Public Charity Lobbying</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Changhyun Ahn; University of Florida), Joel Houston; University of Florida), Sehoon Kim; University of Florida)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1675" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ロビイング情報開示と企業の取締役会データにリンクした公益団体のIRSの税務申告書を用いて、取締役に企業取締役がいる公益団体は、コネクションを持つ企業の業界利益のためのロビー活動に多くの資金を費やしていることを明らかにした。この効果は、ロビー活動への支出が多い企業と関係がある場合や、資金調達に制約がある場合により強く現れる。また、取締役会の交代を慈善事業との関係に対するショックとすることで、逆因果の懸念に対処している。企業と慈善団体の間の見返り関係と一致して、コネクションを持つ企業は調達契約の増加から恩恵を受け、コネクションを持つ慈善団体はより多くの助成金や寄付金を受け取ることが分かった。この結果は、企業の政治活動を補完する手段として、経営者の慈善活動への関与を浮き彫りにしている。</p>
+        <p class="abstract-text en">Using IRS tax filings by public charities linked to lobbying disclosure and corporate board data, we show that charities with corporate directors on their boards spend more money on lobbying for the connected firms' industry interests. The effects of board connections are stronger when charities are connected to firms with greater lobbying expenditures or when charities are constrained on funding. We rule out spurious factors by controlling for firmcharity pair fixed effects, and address concerns of reverse causality using director turnovers as shocks to firm charity connections. Consistent with quid pro quo relationships between firms and charities, we find that connected firms benefit from increased procurement contracts, and that connected charities receive more grants and donations. Our results highlight executive charitable engagement as a complementary avenue for corporate political activities.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Shared Culture and Technological Innovation: Evidence from Corporate R&D Teams</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tristan Fitzgerald; Texas A&M University), Xiaoding Liu; Texas A&M University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1637" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">職場の多様性と労働生産性が注目される今日、我々は企業の研究開発プロセスにおける最も重要なインプット、すなわち新しい発明の開発を担う個々の従業員を調べることで、企業のイノベーション生産のブラックボックス化されたプロセスを開く。米国の上場企業に勤務する200万人以上の発明家の情報を用いて、発明家個人の先天的特性（文化的価値観と性別）と後天的キャリア経験が、企業の研究開発環境において互いに協力する意欲にどのように影響するか、また研究開発チームメンバー間の文化的価値の共有がイノベーション創出にどのように影響するかを調査する。また、研究開発チームメンバー間の文化的価値観の共有が革新的な研究成果にどのような影響を与えるかについても考察する。次に、共同発明者の早すぎる死亡による発明者チームの構成に対する外生的なショックを用いて、文化的に均質なチームほど、既存技術を活用し、中程度の成功を収める可能性が高い特許をより多く生み出すことを発見した。一方、文化的多様性が高いチームほど、リスクが高く、より探索的な特許を多く生み出し、インパクトのあるイノベーションになる可能性が高いことがわかった。この結果は、研究開発集約型の職場環境における様々なタイプのイノベーションの促進、およびダイバーシティ採用政策の有効性について重要な示唆を与えるものである。</p>
+        <p class="abstract-text en">Given the increasing focus on workplace diversity and labor productivity in today's economy, we open the black box process of corporate innovation production by examining the most important input into the firm's R&D process, namely the individual employees tasked with developing new inventions. Using information on over two million inventors employed at U.S. public firms, we investigate how individual inventors' inherited traits (cultural values and gender) and acquired career experiences affect their desire to collaborate with one another in a corporate R&D setting and how shared cultural values amongst R&D team members affects innovative output. We first provide novel evidence that, even amongst groups of comparably experienced inventors working in the same corporate office, inventors who share similar cultural values are 20% more likely to work together on new research projects. Second, using exogenous shocks to inventor team composition arising from premature co inventor deaths, we find that more culturally homogenous teams produce a higher quantity of patents that are more likely to exploit existing technologies and become moderately successful inventions. In contrast, more culturally diverse teams produce a higher share of risky, more exploratory patents that have a greater chance of becoming high impact innovations. Our results have important implications for promoting different types of innovation in R&D intensive workplace environments and the likely effectiveness of diversity hiring policies.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Sexism, Culture, and Firm Value: Evidence from the Harvey Weinstein Scandal and the #MeToo Movement</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Karl Lins; University of Utah), Lukas Roth; University of Alberta), Henri Servaes; London Business School), Ane Tamayo; London School of Economics)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2021&paper_id=1411" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">Harvey Weinsteinと#MeTooのイベントの間、最も高い報酬を得た5人の役員の中に女性がいることで指標化される非性差別的な企業文化を持つ企業は、1.6%の超過リターンを獲得する。このリターンに続いて、アナリストの業績予想がプラスに修正される。女性役員が少ない産業では3.2％、性差別や男女間賃金格差が大きい州に本社を置く場合はそれぞれ2.1％、2.7％に上昇する。また、女性役員が多い産業や性差別の少ない州に本社を置く企業も、正の異常リターンを得ている。この結果は、性差別のない企業文化を持つことの価値を証明するものである。</p>
+        <p class="abstract-text en">During the Harvey Weinstein and #MeToo events, firms with a non sexist corporate culture, proxied by having women among the five highest paid executives, earn excess returns of 1.6%. These returns are followed by positive revisions in analyst earnings forecasts. Returns for femaleled firms increase to 3.2% in industries with few women executives, and 2.1% and 2.7% if headquartered in states with a high level of sexism or gender pay gap, respectively. Firms in industries with more women executives or headquartered in less sexist states also earn positive abnormal returns. Our evidence attests to the value of having a non sexist culture.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

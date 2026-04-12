@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking and Real Economy</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link active">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Banking and Real Economy</h1>        <div class="paper-card">
+            <div class="paper-title">Bank Diversification and Lending Resiliency</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Michael Gelman; University of Delaware), Itay Goldstein; University of Pennsylvania), Andrew MacKinlay; Virginia Polytechnic Institute and State University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1145" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">経済危機の時代には、景気回復を促すために、銀行が融資を継続することが不可欠である。本論文では、銀行の多様化が危機時の銀行の貸出にとって重要な要因であることを示す。地域や事業の多角化が進んでいる銀行は、多角化が進んでいない銀行に比べ、危機の最中に信用供給を拡大させる。収益の流れが多様化することで、銀行はネガティブなショックを吸収し、さまざまなセグメントへの融資を継続することができる。より多くの融資を行うことで、銀行が経済に貴重な正の波及効果をもたらすのです。銀行規制の変化を多角化に対する外生的なショックとして用いると、多角化の違いから貸出効果が生じることが確認された。我々の結果は、銀行の新しい活動への進出が経済に利益をもたらすのか、それとも脅威となるのかという、文献や政策立案者の間で長年続いている議論に貢献し、大規模銀行のシステミックリスクへの影響に関する懸念に一定の対抗策を与えるものである。</p>
+        <p class="abstract-text en">In periods of economic crisis, it is essential that banks continue lending to encourage economic recovery. In this paper, we show that bank diversification is an important factor for banks' lending during a crisis. Banks with higher levels of geographic or business line diversification expand credit supply during such periods, relative to less diversified banks. A more diversified stream of earnings enable banks to better able to absorb negative shocks and continue lending to different segments. By lending more, they provide valuable positive spillover effects to the economy. Using changes in bank regulation as exogenous shocks to diversification, we confirm that the lending effects stem from differences in diversification. Our results speak to the long standing debate in the literature and among policy makers about whether the expansion of banks into new activities benefits or threatens the economy, and provide some counterbalance to concerns about the systemic risk implications of bigger banks.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Mortgage Lenders Compete Locally? Implications for Credit Access</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Greg Buchak; Stanford University), Adam Jorring; Boston College)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1779" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、住宅ローンの貸し手の集中が家計の信用アクセスに与える影響について研究している。多くの文献によると、地域の金融機関の集中度と住宅ローン金利の間にはほとんど関係がない。そのため、連邦規制当局は住宅ローン市場を全国規模とみなし、地域の集中度は金融規制や金融政策に無関係であるとみなしている。我々はこの見解が不完全であることを主張し、地域集中は金利には影響しないものの、貸出基準や初期手数料には強く影響することを示す。集中度が高い地域では、住宅ローンの申込拒否率が高く（この効果は低所得者、女性、人種的マイノリティの申込者に特に顕著）、実行される住宅ローンのプールは事前クレジットスコアと事後デフォルトの両方の観点からリスクが低い。インテンシブ・マージン（intensive margin）では，金融機関が集中する市場ほど手数料が高くなる。金利以外の手数料は，最も集中する10％の市場では，最も集中しない10％の市場に比べて平均35ベーシスポイント高くなる。ここでもまた、こうした効果は、マイノリティの申請者に最も強く現れている。この結果は、現在の政策とは異なり、信用アクセスに関心を持つ規制当局は、銀行合併の承認などの政策決定を行う際に、住宅ローン市場をローカルなものと見なすべきであることを示唆している。</p>
+        <p class="abstract-text en">We study the impact of mortgage lender concentration on household credit access. An extensive literature has found little to no relationship between local lender concentration and mortgage interest rates; consequently, federal regulators regard mortgage markets as national and view their local concentration as irrelevant to financial regulation and monetary policy. We argue that this view is incomplete, showing that although local concentration has no influence on interest rates, it strongly affects lending standards and upfront fees. In more concentrated areas, mortgage application rejection rates are higher (this effect is particularly pronounced for low income, female, and racial minority applicants), and the pool of originated mortgages is less risky in terms of both ex ante credit scores and ex post default. On the intensive margin, lenders charge higher fees in more concentrated markets: non interest fees are on average 35 basis points higher in the 10% most concentrated markets than in the 10% least concentrated markets. Again, these effects are strongest among minority applicants. Our findings suggest that contrary to current policy, regulators concerned with credit access should regard mortgage markets as local when making policy decisions such as bank merger approvals.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Effect of Bank Monitoring on Loan Repayment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nicola Branzoli; Bank of Italy), Fulvia Fringuellotti; Federal Reserve Bank of New York)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1640" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">モニタリングは銀行の存在を説明する主要な活動の一つであるが、その融資結果に対する効果に関する実証的な証拠は乏しい。我々は、イタリア信用登録簿のきめ細かいローンレベルの情報を用いて、銀行が既存の借り手に関する情報を求めることに基づいて、銀行モニタリングの新しい尺度を構築し、銀行モニタリングがローンの返済に及ぼす影響を調査した。また、銀行モニタリングの外生的な変動要因として、地方法人税率の変化を利用した因果関係分析を行った。法人税率が低下すると、貸出からのリターンが増加するため、銀行が借り手をモニターするインセンティブが向上するという理論モデルによって、同定を行うことができる。その結果、銀行のモニタリングは延滞の確率を大幅に低下させ、その効果はタームローンのような銀行の監視から最も恩恵を受けるタイプのローンほど強いことが分かった。</p>
+        <p class="abstract-text en">Monitoring is one of the main activities explaining the existence of banks, yet empirical evidence about its effect on loan outcomes is scant. Using granular loanlevel information from the Italian Credit Register, we build a novel measure of bank monitoring based on banks' requests for information on their existing borrowers and we investigate the effect of bank monitoring on loan repayment. We perform a causal analysis exploiting changes in the regional corporate tax rate as a source of exogenous variation in bank monitoring. Our identification strategy is supported by a theoretical model predicting that a decrease in the tax rate improves bank incentives to monitor borrowers by increasing returns from lending. We find that bank monitoring reduces the probability of a delinquency in a substantial way and the effect is stronger for the type of loans that benefit the most from bank oversight such as term loans.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Zombie Lending and Cross-Subsidization in a Lending Crisis</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nikolaos Artavanis; Tulane University), Brian Jonghwan Lee; Columbia University), Stavros Panageas; Anderson School of Management), Margarita Tsoutsoura; Cornell University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1486" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ギリシャの大手銀行が、近年のギリシャ金融危機の前後数年間に行った企業向け融資の価格決定について、ユニークなデータセットを用いて研究している。このデータセットのユニークな点は、融資金利、企業特性、融資特性などの他に、銀行の融資価格決定部門がアカウント・マネージャーに提供する損益分岐点レートを観察することができる点である。これにより、ローンの損益分岐点がどの程度顧客に転嫁されているかを端的に測定することができる。その結果、損益分岐点の低い借り手（「良い借り手」）には正の有意なマークアップが、損益分岐点の高い借り手（「悪い借り手」）にはゼロ、あるいはマイナスのマークアップが記録されている。パススルーは時系列では緩やかであり，良い借り手と悪い借り手の間で非対称的である。金利と損益分岐コストの乖離は借り手の将来の財務状況の変化を予測しないことから、金利は銀行のプライシング部門が入手できない付加的な情報を埋め込んでいないことが示唆される。</p>
+        <p class="abstract-text en">Using a unique dataset we study the corporate loan pricing decisions of a major Greek bank in the years surrounding the recent Greek financial crisis. The unique aspect of the dataset is that besides the loan interest rates, firm characteristics, loan characteristics, etc. we can also observe the breakeven rate that is provided to the account managers by the bank's loan pricing department. This allows a straightforward measurement of the extent to which the loan's breakeven rate is passed through to the customer. We document positive and significant markups to the low breakeven rate borrowers ('good borrowers') and zero or even negative markups to the high breakeven rate borrowers ('bad borrowers'). Pass through is sluggish in the time series and asymmetric across good and bad borrowers. The discrepancy between interest rates and breakeven costs does not predict changes in the borrower's future financial conditions, suggesting that interest rates do not embed additional information that is not available to the bank's pricing department.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

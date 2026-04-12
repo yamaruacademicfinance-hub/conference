@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquidity Management and Crises in Asset Management</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link active">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Liquidity Management and Crises in Asset Management</h1>        <div class="paper-card">
+            <div class="paper-title">Beware of Chasing Yield: Bond Fund Yield, Flows and Performance</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Hao Jiang; Michigan State University), Yuanzhi Li; Temple University), Lu Zheng; University of California (Irvine)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=749" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、投資信託の利回りが債券ファンドの投資家フローとパフォーマンスを促進する役割を研究する。SEC利回りと12ヶ月分配利回りという2つの一般的な指標を用いて、ファンドのトータルリターンやファンドの格付けをコントロールした後でも、投資家がより高い利回りの債券ファンドを追いかける傾向があるという強い証拠を見出した。利回りの高い債券ファンドは平均トータル・リターンは高いが、リターン・スプレッドはイールド・スプレッドの半分以下であり、より高いファンド・リスクに起因している。また、ハイ・イールド債券ファンドは、危機的な状況下で大きな損失を被り、それが大きな資金流出の引き金となっていることも明らかにした。JEL:G10, G11, G12, G23</p>
+        <p class="abstract-text en">This paper studies the role of mutual fund yield in driving investor flows and performance of bond funds. Using two common measures, the SEC yield and 12 month distribution yield, we find strong evidence that investors tend to chase bond funds with higher yields, even after controlling for total fund returns and fund ratings. Although bond funds with higher yields achieve higher average total returns, the return spread is less than one half of the yield spread, and is attributable to higher fund risk. We also show that high yield bond funds suffer sharp losses during crisis periods, which trigger large outflows. JEL: G10, G11, G12, G23</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Non-Banks Need Access to the Lender of Last Resort? Evidence from Mutual Fund Runs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Johannes Breckenfelder; European Central Bank), Niklas Grimm; European Central Bank), Marie Hoerova; European Central Bank)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=836" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">流動性危機が銀行以外の金融仲介機関を直撃した場合、どの中央銀行の介入が有効か？我々は、COVID19ショックが発生した際、投資信託が前例のない投資家の流出に直面したことを示し、危機を緩和するための中央銀行の資産買い入れと銀行への追加的な流動性提供の有効性を評価する。我々は、ファンドレベルの詳細なデータと、流動性供給オペにおける銀行の取り分と銀行のファンドレポ取引に関する独自のデータを使用している。資産買い入れを分析すると，COVID 19危機の前に，中央銀行による買い入れの対象となる資産の割合が高いファンドのパフォーマンスは，他の類似のファンドと比較して3.7％向上し，資金流出が66％減少したことが分かった。レポの動きを分析すると、2020年3月に中央銀行が銀行に追加で流動性を供給したことが、その関係銀行と取引するファンドへの貸出を増やしたということは見いだせない。むしろ、銀行は追加的な資産購入の発表と実施後の数週間で、ファンドへの貸し出しの満期を増やしたのである。我々の結果は、ファンドが最後の貸し手への直接的なアクセスを持っていなかったとしても、中央銀行の資産買入は、ファイアーセールのダイナミクスを止め、銀行以外の金融仲介機関への取り付けを食い止めるのに有効であったことを示唆している。</p>
+        <p class="abstract-text en">When a liquidity crisis hits non bank financial intermediaries, which central bank interventions help? We show that mutual funds faced unprecedented investor outflows as the COVID 19 shock hit and assess the effectiveness of central bank asset purchases and additional liquidity provision to banks in alleviating the crisis. We use detailed fund level data and proprietary data on bank takeups in liquidity providing operations and bank fund repo transactions. Analyzing asset purchases, we find that funds with higher shares of assets eligible for central bank purchases in their portfolio before the COVID 19 crisis saw their performance improve by 3.7% and outflows decrease by 66% relative to otherwise similar funds. Analyzing repo activity, we do not find that additional central bank liquidity provision to banks in March 2020 led to more lending to funds trading with their relationship banks. Rather, banks increased the maturity of their lending to funds in the weeks that followed the announcement and the implementation of additional asset purchases. Our results suggest that central bank asset purchases were effective in stopping fire sale dynamics and staving off runs on non bank financial intermediaries, even though funds did not have direct access to the lender of last resort.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Prime Time for Prime Funds: Floating NAV, Intraday Redemptions and Liquidity Risk During Crises</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lorenzo Casavecchia; University of Technology Sydney), Chanyuan Ge; Macquarie University), Wei Li; University of Iowa), Ashish Tiwari; University of Iowa)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=492" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、最近のイノベーション、すなわち、日中の株式償還を提供する投資信託について初めて考察する。この斬新な設計上の特徴は、2016年10月に優良機関投資家向けマネー・マーケット・ファンドが変動純資産額を採用したことを受けて登場したものである。理論モデルと一致して、複数の日中基準価額と償還窓口を提供するファンドは、終日基準価額・償還を提供するファンドと比較して、高い流動性バッファーを維持するが、ストレス期には著しく大きなアウトフローにさらされることが分かった。我々の分析は、（1）2020年3月のCOVID19ショック、（2）2018年の債務上限危機における米国債のデフォルト寸前を対象としている。</p>
+        <p class="abstract-text en">This paper offers a first look at a recent innovation, namely, mutual funds offering intraday share redemptions. This novel design feature emerged following the adoption of floating net asset values by prime institutional money market funds in October 2016. Consistent with a theoretical model, we find that funds offering multiple intraday NAVs and redemption windows maintain higher liquidity buffers but are exposed to significantly larger outflows during periods of stress, compared to funds offering end of day NAVs/redemptions. Our analysis covers (1) the COVID 19 shock of March 2020, and (2) the near default of U.S. debt during the debt ceiling crisis of 2018.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Redemption in Kind and Mutual Fund Liquidity Management</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Vikas Agarwal; Georgia State University), Honglin Ren; Renmin University of China), Ke Shen; Lehigh University), Haibei Zhao; Lehigh University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=252" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">現物償還と投資信託の流動性管理 Vikas Agarwal Georgia State University Honglin Ren 独立 Ke Shen Lehigh University Haibei Zhao Lehigh University* 2020年12月 オープンエンドm</p>
+        <p class="abstract-text en">Redemption in Kind and Mutual Fund Liquidity Management Vikas Agarwal Georgia State University Honglin Ren Independent Ke Shen Lehigh University Haibei Zhao Lehigh University* December 2020 Open end mutual funds can use redemption in kind to satisfy investor redemptions by delivering securities instead of cash. We find that funds that reserve their rights to redeem in kind experience less redempti</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

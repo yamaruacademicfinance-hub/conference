@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning and Flows in Asset Management</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link active">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Learning and Flows in Asset Management</h1>        <div class="paper-card">
+            <div class="paper-title">An Equilibrium Model of Career Concerns, Investment Horizons, and Mutual Fund Value Added</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jungsuk Han; Stockholm School of Economics), Hongxun Ruan; Peking University), Jules van Binsbergen; University of Pennsylvania), Ran Xing; Aarhus University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=648" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、キャリアへの懸念の下での投資信託の動的平衡モデルを研究し、異なる水平軸での投資機会を特徴づける。均衡リターンは競争によって内生的に決定される。短期投資戦略はスキルの啓示を早めることでファンドマネージャーに利益をもたらし、一方、ダウンサイドリスクはマネージャーの退場によって管理される。定常状態では、多数の新人でスキルのないマネジャーがこのコールオプションの価値を利用し、短期的な超過リターンを押し下げる。一方、少数の経験豊富で熟練したマネジャーは、拡張性のある長期的な投資機会を利用し、大きな付加価値を生む。我々は、米国の投資信託のデータを用いて、我々の理論的な予測を実証的に確認した。</p>
+        <p class="abstract-text en">We study a dynamic equilibrium model of mutual fund investing under career concerns that features investment opportunities at different horizons. Equilibrium returns are endogenously determined by competition. Short term investment strategies can benefit fund managers by accelerating skill revelation, while the downside risk is managed by manager exit. In the steady state, a large number of new and unskilled managers exploit the value of this call option, driving down short term excess returns. A small number of experienced and skilled managers exploit scalable long term investment opportunities, adding substantial value. We empirically confirm our theoretical predictions using US mutual fund data.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Common Fund Flows: Flow Hedging and Factor Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Winston Dou; University of Pennsylvania), Leonid Kogan; Massachusetts Institute of Technology), Wei Wu; Texas A&M University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1351" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">アクティブなミューチュアルファンドマネージャーは、マクロ経済ショックによって引き起こされる一般的な資金の流れに影響されるファンドサイズに注意を払っています。ファンドマネジャーは、低フローベータ銘柄にポートフォリオを傾けることで、共通フローショックに対するヘッジを行う。平衡状態において、共通フローショックはリスクプレミアムを獲得する。すべてのエージェントが近視眼的に振る舞っても、ICAPMに似た多因子資産価格モデルが生じる。経験的に、ファンドのフローは、共通成分がリスクプレミアムを獲得する強い因子構造に従う。そして、ファンドのポートフォリオは、平均して、低フローベータ銘柄に傾く。この傾きは、自然災害や予期せぬ貿易戦争の発表後にフローのヘッジ動機が強まると、より大きくなる。</p>
+        <p class="abstract-text en">Active mutual fund managers care about fund size, which is affected by common fund flows driven by macroeconomic shocks. Fund managers hedge against common flow shocks by tilting their portfolios toward low flow beta stocks. In equilibrium, common flow shocks earn a risk premium. A multi factor asset pricing model similar to the ICAPM arises, even with all agents behaving myopically. Empirically, fund flows obey a strong factor structure with the common component earning a risk premium, and fund portfolios are, on average, tilted toward low flow beta stocks. This tilt increases in magnitude when flow hedging motives strengthen following natural disasters and unexpected trade war announcements.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Learning From Prospectuses</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Simona Abis; Columbia University), Andrea Buffa; University of Colorado Boulder), Apoorva Javadekar; Indian School of Business), Anton Lines; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1660" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">また，投資家が過去の運用実績に加えて，投資信託による定性的な情報開示から学習する場合について検討する．その結果，専門的な運用戦略を持つファンドマネジャーは詳細な運用戦略の開示を最適に選択し，標準的な運用戦略を持つファンドマネジャーは一般的な運用戦略の説明を行うことが理論的に示された．一般的な説明文は、投資家によるベンチマークの誤りを招き、その結果、資本フローのボラティリティが高くなる。すべてのファンドマネジャーはこのようなボラティリティを嫌うが、平均以上のファクターエクスポージャを持つファンドマネジャーは、投資家がファクターリターンをマネジャーのスキルに誤って帰属させるため、ベンチマークの誤りから利益を得ることもある。このモデルは、ファンドの目論見書の包括的なデータセットを用いて実証的に検証することができる多くの予測を生み出している。その結果、標準化された戦略を持つファンドは、ファンドのボラティリティが高いにもかかわらず、説明により多くの定型的な表現を含み、規模が大きくなり、フロー・パフォーマンス感応度が低くなることが判明した。問い合わせ先： simona.abis@gsb.columbia.edu, buffa@colorado.edu, apoorva_javadekar@isb.edu, anton.lines@gsb.columbia.edu.</p>
+        <p class="abstract-text en">We study qualitative information disclosure by mutual funds when investors learn from these disclosures in addition to past performance. We show theoretically that fund managers with specialized strategies optimally choose to disclose detailed strategy descriptions, while man- agers with standardized strategies provide generic descriptions. Generic descriptions lead to errors in benchmarking by investors and thus higher volatility in capital flows. While all fund managers dislike such volatility, those with above-average factor exposures also benefit from benchmarking errors as investors incorrectly ascribe factor returns to managerial skill. The model generates a number of predictions that we are able to test empirically using a compre- hensive dataset of fund prospectuses. Consistent with the model’s predictions, we find that funds with standardized strategies include more boilerplate in their descriptions, grow larger and have lower flow-performance sensitivity, despite having greater fund flow volatility. “Contacts: simona.abis@gsb.columbia.edu, buffa@colorado.edu, apoorva_javadekar@isb.edu, and anton.lines@gsb.columbia.edu.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Who Listens to Corporate Conference Calls? The Effect of 'Soft Information' on Institutional Trading</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alan Huang; University of Waterloo), Russell Wermers; University of Maryland)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1707" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ファンダメンタルズ手法（定量的手法とは対照的）を用いた積極的な投資運用には、企業経営陣が伝える「ソフト情報」を含む、いくつかの公開情報を総合的に評価することが必要である。本論文では、ファンダメンタルズ情報の重要な伝達経路である、企業の電話会議（例：決算説明会）で行われるソフト情報のプレゼンテーションとディスカッションについて考察している。カンファレンスコールは、経営陣から投資家への情報発信の場であると同時に、アナリストが企業の収益見通しに関する経営陣の発言に異議を唱える定期的な機会でもある。つまり、カンファレンスコールは、証券アナリストと経営陣が同時に大勢で対話できる非常にパブリックな場である。2006年から2018年までの米国企業の電話会議の文字起こしデータベースのテキスト分析を用いて、機関投資家が株式の取引において電話会議の「トーン」（センチメント）に大きく反応することを見出した。機関投資家は、カンファレンス・コールの直後から4週間後までトーンに反応して売買を行い、その後もカンファレンス・コールによるアナリストの推奨度修正に反応して売買を行う。機関投資家のトーンに対する売買反応は、情報の限界価値が高い場合、例えば、カンファレンスコールの質問コーナーで情報が公開される場合、決算説明会で情報が公開される場合、情報の非対称性が高い銘柄の場合により顕著になる。本論文は、カンファレンスコールがポストReg FD時代の株価発見において重要なチャネルであることを示唆している。</p>
+        <p class="abstract-text en">Active investment management using fundamental techniques (as opposed to quantitative techniques) involves a comprehensive assessment of several public sources of corporate information - including 'soft information' conveyed by company management. In this paper, we explore an important conduit for fundamental information flow - the presentation and discussion of soft information that occurs during corporate conference calls (e.g., earnings conference calls). These calls represent a unique platform for the dissemination of information from corporate management to investment managers, as well as providing a regular opportunity for analysts to publicly challenge management's dialogue about a company's profitability outlook; that is, conference calls provide a very public venue through which stock analysts simultaneously interact, in large numbers, with firm management. Using textual analysis of a comprehensive database of transcribed U.S. corporate conference calls from 2006 to 2018, we find that institutional investors significantly react to the 'tone' (sentiment) of calls in their trades of stocks. Institutions trade on the tone immediately, and up to four weeks after the call, and, thereafter, continue to trade on conference call driven analyst recommendation revisions. The trade reaction of institutions to tone is more pronounced when the marginal value of information is higher, e.g., when information is released during the question section of a conference call, when information is released during earnings calls, and when the stock exhibits a higher degree of information asymmetry. Our paper suggests that conference calls are an important channel for stock price discovery in the post Reg FD era.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

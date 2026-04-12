@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Finance II</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link active">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Macro Finance II</h1>        <div class="paper-card">
+            <div class="paper-title">Corporate Loan Spreads and Economic Activity</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Anthony Saunders; New York University), Alessandro Spina; Copenhagen Business School), Sascha Steffen; Frankfurt School of Finance & Management), Daniel Streitz; Copenhagen Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1131" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、景気循環の変動に対するローン対債券のスプレッドの予測力を研究している。ローン流通市場に由来する新しい信用スプレッド指標を用いて、ローン市場に基づく信用スプレッドは、他の信用スプレッドや株式リターンと同様に、債券スプレッドと比較して、マクロ経済の成果に対してさらなる予測力を持つことを、米国と欧州の両方において示すものである。ローン市場または債券市場で借入を行う企業の構成の違いは、両クレジットスプレッドの予測力の違いを理解する上で重要である。産業別のローンスプレッドは異なる産業サイクルを予測し、ローンスプレッドの予測力をさらに向上させる代替的な加重スキームを構築するために使用することができる。COVID 19のパンデミックの初期に連邦準備制度が行った社債購入は、社債スプレッドを低下させたが、ローンスプレッドは上昇したままであり、今後の社債スプレッドの予測力に疑問が残る。</p>
+        <p class="abstract-text en">We study the predictive power of loan versus bond spreads for business cycle fluctuations. Using a novel credit spread measure derived from the secondary loan market, we show that loan market based credit spreads have additional predictive power for macroeconomic outcomes compared to bond spreads as well as other credit spreads and equity returns, both in the U.S. and Europe. Differences in the composition of firms borrowing in loan or bond markets are important in understanding the differential predictive power of both credit spreads. Industry specific loan spreads predict different industry cycles and can be used to construct alternative weighting schemes which further improve the predictive power of loan spreads. Corporate bond purchases by the Federal Reserve at the beginning of the COVID 19 pandemic decreased corporate bond spreads while keeping loan spreads elevated, questioning the predictive power of the bond spread going forward.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Exorbitant Privilege? The Bond Market Subsidy of Prospective Fallen Angels</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Viral Acharya; New York University (CEPR (and NBER), Ryan Banerjee; Bank for International Settlements), Matteo Crosignani; Federal Reserve Bank of New York), Tim Eisert; Erasmus University (CEPR), Renee Spigt; Erasmus University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=730" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、量的緩和（QE）によって引き起こされた米国の投資適格社債市場における資本の誤配分を記録している。2009年以降、特にQEがピークに達した時期、QEで購入された証券をより多く保有するIG投資家から、堕天使となる見込みのある企業（IG格付けぎりぎりのリスクの高い企業）は、補助金付きの債券融資を享受していた。恩恵を受けた企業は、この特権を利用してリスクの高い買収を行い、市場シェアを拡大した。M&A後の格下げに消極的な格付け機関を利用し、競合他社の雇用と投資に悪影響を与えた。結局、これらの企業はパンデミック発生時に、より深刻な格下げに見舞われた。</p>
+        <p class="abstract-text en">We document capital misallocation in the U.S. investment grade (IG) corporate bond market, driven by quantitative easing (QE). Prospective fallen angels - risky firms just above the IG rating cutoff - enjoyed subsidized bond financing since 2009, especially when the scale of QE purchases peaked and from IG focused investors that held more securities purchased in QE programs. The benefiting firms used this privilege to fund risky acquisitions and increase market share, exploiting the reluctance of credit rating agencies to downgrade post M&A and adversely affecting competitors' employment and investment. Eventually, these firms suffered more severe downgrades at the onset of the pandemic.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Financial and Total Wealth Inequality with Declining Interest Rates</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Daniel Greenwald; Massachusetts Institute of Technology), Matteo Leombroni; Stanford University), Hanno Lustig; Stanford University), Stijn Van Nieuwerburgh; Columbia University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=67" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融資産格差と長期実質金利は、戦後を通じて相互に密接に関連している。金融資産のリターンが低下したため、金融資産の多い家計は、金利低下前に計画した消費を行うために貯蓄を増やさなければならなくなった。金利の低下は金融資産の不平等を拡大させる。金融資産と人的資産の合計であり、家計の福祉に関連する概念である総資産における不平等は、金融資産の不平等よりもはるかに低く、資産分布の上位では減少さえしている。標準的なBewleyモデルは、高金融資産家計が高いデュレーションの金融ポートフォリオを持っている場合、実質金利の低下に反応して金融資産格差が増加するという観測結果をもたらす。</p>
+        <p class="abstract-text en">Financial wealth inequality and long term real interest rates track each other closely over the post war period. Faced with lower returns on financial wealth, households with high levels of financial wealth must increase savings to afford the consumption that they planned before the decline in rates. Lower rates beget higher financial wealth inequality. Inequality in total wealth, the sum of financial and human wealth and the relevant concept for household welfare, rises much less than financial wealth inequality and even declines at the top of the wealth distribution. A standard Bewley model produces the observed increase in financial wealth inequality in response to a decline in real interest rates, when high financial wealth households have a financial portfolio with high duration.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Rise of Bond Financing in Europe</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Olivier Darmouni; Columbia University), Melina Papoutsi; European Central Bank)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=455" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ユーロ圏では、銀行融資を犠牲にして、社債市場からの企業借入の割合が2000年以降2倍になった。我々は、欧州企業のミクロレベルの証拠を用いて、この総体的な伸びを分析し、この拡大の背後にある潜在的なリスクを浮き彫りにした（そのうちのいくつかは2020年春に明らかになった）。第一に、債券発行者の構成がよりリスクの高い企業へとシフトしている。一連の企業が初めて債券市場に参入したが、その規模は過去の発行者に比べて著しく小さく、レバレッジが高く、収益性も低い。第二に、債券市場への参入は、成長とリスクのトレードオフを意味する。新しい発行体は、投資と成長のために借入を行ったが、レバレッジと金利の上昇という代償を払うことになった。さらに、2020年危機で格付けの引き下げに直面した企業の大半は、2012年以降に債券市場に参入した小規模な民間企業であった。最近の混乱に鑑みれば、我々の発見は最後の貸し手政策を社債市場にも拡大することを支持するものである。</p>
+        <p class="abstract-text en">In the Euro Area, the share of corporate borrowing coming from bond markets doubled since 2000 at the expense of bank lending. We use micro level evidence from European firms to dissect this aggregate growth and highlight potential risks behind the expansion, some of which came to light in spring 2020. First, the composition of bond issuers has shifted towards riskier firms: a stream of firms entered the bond market for the first time while being significantly smaller, more levered and less profitable than historical issuers. Second, entering the bond market implies a trade off between growth and risk: new issuers borrowed to invest and grow, but , but at the cost of higher leverage and interest rates. Moreover, the majority of firms facing a credit rating downgrade in the 2020 crisis were small private firms that entered the bond market after 2012. In light of the recent turmoil, our findings support broadening lender of last resort policies to include the corporate bond market.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavioral Finance and Asset Pricing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link active">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Behavioral Finance and Asset Pricing</h1>        <div class="paper-card">
+            <div class="paper-title">Can Agents Add and Subtract When Forming Beliefs? Evidence from the Lab and Field</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pascal Kieren; University of Mannheim), Jan Muller-Dethard; University of Mannheim), Martin Weber; University of Mannheim)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1768" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、労働力のテレワークの柔軟性（LFTF）が、Covid 19のパンデミック時の資産価格と企業政策の変動を説明する上で一次効果であることを示す。具体的には、高LFTF産業の企業は低LFTF産業の企業を株式リターンにおいて有意にアウトパフォームする。この正のLFTFリターン関係はG7諸国にも及び、パンデミックがより深刻な国でより強くなっている。LFTF指標の分解分析により、テレワークの中心的要素である情報通信技術に関連する職務特性が、この結果の主要な推進力であることが示された。パンデミックショックとともに複数の職務を運用する企業の動的新古典派モデルによって、労働力の柔軟性と株式リターンの関係を捉える。モデルのメカニズムから、i)ジョブ・タスクの柔軟性が企業価値変動の産業間異質性の主要な駆動力であること、ii)労働生産性（供給）ショックと不確実性ショックを組み合わせることが、企業価値と生産高の大きな低下と持続的回復を生み出すために重要であることが強調される。</p>
+        <p class="abstract-text en">We study an intrinsic property of Bayesian information processing which does not rely on individuals having rational absolute beliefs: two equally diagnostic signals of opposite direction should cancel out. Using evidence from both the lab and field, we show that individuals not always follow this counting based principle. Systematic violations occur whenever a sequence of identical evidence is interrupted by a signal of opposite direction, which produces strong and robust overreactions. Conversely, individuals correctly follow this counting based principle whenever signals alternate while they underreact to sequences of same directed evidence. Next, we empirically analyze announcement and post announcement stock return reactions in financial markets. Consistent with our experimental evidence, we find that initial stock reactions are significantly stronger and subsequent price drifts weaker for opposite directed earnings surprises than for same directed earnings surprises. Our results provide novel insights to the paradoxical co existence of over- and underreaction to new information at the individual and market level.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Currency Anomalies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Sohnke Bartram; University of Warwick and CEPR), Leslie Djuranovik; University of Warwick), Anthony Garratt; University of Warwick)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=665" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、合理的な絶対的信念を持たないベイズ情報処理の本質的な特性、すなわち、逆方向の2つの等しい診断シグナルが相殺されることを研究した。実験室とフィールドの両方から得られた証拠を用いて、個人がこの計数ベースの原則に必ずしも従っていないことを示す。このことは、一連の同一の証拠が反対方向の信号によって中断されるたびに、系統的な違反が発生し、強力で強固な過剰反応が生じる。逆に、同じ方向のシグナルが交互に現れると、個人はこの計数原理に正しく従うが、同じ方向のシグナルの連続には過小反応する。次に、金融市場における発表と発表後の株価反応について実証的に分析した。実験結果と一致するように、我々は、逆方向の決算発表の方が同じ方向の決算発表よりも、最初の株価反応は著しく強く、その後の株価ドリフトは弱いことを発見した。この結果は、個人と市場レベルにおいて、新しい情報に対する過剰反応と過小反応の逆説的な共存在に対する新しい洞察を与えるものである。</p>
+        <p class="abstract-text en">This paper is the first to study the cross section of currency excess return predictors. Using realtime data, quantitative currency trading strategies are profitable even after transaction costs and comprehensive risk adjustments. However, risk adjusted profits decrease after the publication of the underlying academic research. In line with predictor profits reflecting mispricing, the decline is greater for strategies with larger in sample profits and lower arbitrage costs. Moreover, the effect of risk adjustments on trading profits is limited, and signal ranks and alphas decay quickly. While analysts' currency forecasts are inconsistent with currency predictors, analysts update their forecasts quickly to incorporate lagged predictor information. The results suggest that market participants learn about mispricing from academic publications, while contributing to it when following analysts' forecasts.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Model-free and Model-based Learning as Joint Drivers of Investor Behavior</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Nicholas Barberis; Yale University), Lawrence Jin; California Institute of Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=365" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国からいくつかの主要先進国へのリスク回避（RA）スピルオーバーを研究している。日次の金融市場データおよびニュースデータを用いて、米国のリスク回避イベントを同定し、米国の高リスク回避イベントの国際的な通過率は、米国の低リスク回避イベントのそれ（43％）よりも有意に高いことを示し、米国のリスク回避波及が非対称であることを示唆した。我々の実験では、米国以外の被験者が米国の金融危機のショックでプライミングされると、非対称的にネガティブな感情とポジティブな感情を示し、リスク回避度が高くなることが示された。不況ショックは好況ショックよりも外国的な性質を持っているため、感情をより変化させる可能性があり、これは我々の実験におけるRAスピルオーバーの非対称性の20％を説明する。</p>
+        <p class="abstract-text en">In the past decade, researchers in psychology and neuroscience studying human decision making have increasingly adopted a framework that combines two systems, namely 'model free' and 'model based' learning. We import this framework into a simple ﬁnancial setting, study its properties, and link it to a wide range of applications. We show that it provides a foundation for extrapolative demand and experience eﬀects; resolves a puzzling disconnect between investor allocations and beliefs in both the frequency domain and the cross section; helps explain the dispersion in stock market allocations across investors as well as the inertia in these allocations over time; and sheds light on the persistence of household investment mistakes. More broadly, the framework oﬀers a way of thinking about individual behavior that is grounded in recent evidence on the computations that the brain undertakes when estimating the value of a course of action.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Risk Aversion Propagation: Evidence from Financial Markets and Controlled Experiments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xing Huang; Washington University in St. Louis), Nancy Xu; Boston College)</div>
+            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3852463" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2020年における株価とワクチンの進捗状況の指標を用い、パンデミック終息の価値を推計した。一般均衡モデルでは、ワクチンの進捗に対する市場の反応から、パンデミック時に予想される富の喪失率を特定し、治療による経済全体の厚生利得を特定する。標準的な選好パラメータを用いると、パンデミックの終息は総資産の5 15%の価値になる。この値は、労働の選択における外部性の暴露が大きくなるほど上昇する。パンデミックの発生頻度や期間に関する不確実性がある場合、その不確実性を解消することは治療そのものと同等の価値を持ち得る。</p>
+        <p class="abstract-text en">We study risk aversion (RA) spillover from US to several major developed economies. Using daily financial market and news data, we identify US RA events and show that the international pass through of US high RA events is significantly higher (61%) than that of US low RA events (43%), suggesting asymmetric US risk aversion spillover. In our lab experiment, non US subjects when primed with a US financial bust shock exhibited asymmetrically more negative and less positive emotions, and higher risk aversion. The foreign nature of bust shocks may change emotions more than that of boom shocks, which explains 20% of the RA spillover asymmetry in our experiment.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

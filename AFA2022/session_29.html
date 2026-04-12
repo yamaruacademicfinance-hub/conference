@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cross-section of Stock Returns</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link active">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>The Cross-section of Stock Returns</h1>        <div class="paper-card">
+            <div class="paper-title">Ambiguity, Investor Disagreement, and Expected Stock Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Lawrence Hsiao; Northwestern University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=311" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は、トレーダーが銘柄の情報を伝えるパブリックシグナルについて異なる解釈を持つだけでなく、他者の解釈の情報品質についても不確実であるという不一致モデルを設定した。このモデルは、トレーダーが曖昧さを嫌うことに加えて、投資家の不同意（ID）と期待株価収益率の間に正の関係があることを予測する。このモデルの予測通り、IDが最も高い銘柄は、市場リターン、サイズ、バリュー、モメンタム、流動性の各ファクターに対するエクスポージャーを調整した上で、IDが最も低い銘柄を年間9.24%アウトパフォームすることが分かった。さらに、決算発表前にIDが高い銘柄は、決算発表時のリターンが有意に高いことも分かった。</p>
+        <p class="abstract-text en">I set up a disagreement model in which traders not only have different interpretations of a public signal that conveys information of a stock, but are also uncertain about the information quality of others' interpretations. The model along with traders being ambiguity averse predicts a positive relation between investor disagreement (ID) and expected stock return. Consistent with the model's prediction, I find that stocks in the highest ID decile outperform stocks in the lowest ID decile by 9.24 percent annually, adjusted for exposures to the market return as well as size, value, momentum, and liquidity factors. In addition, I find that stocks with higher ID prior to earnings announcements earn significantly higher earnings announcement returns.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Fundamental Extrapolation and Stock Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Dashan Huang; Singapore Management University), Huacheng Zhang; Southwestern University of Finance and Economics), Guofu Zhou; Washington University in St. Louis), Yingzi Zhu; Tsinghua University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=919" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、機械学習技術を用いてすべてのファンダメンタルズ情報を同時に外挿するプーリング戦略を提案する。この戦略は、単一のファンダメンタルズ変数を用いるナイーブな外挿戦略や、過去の価格やアナリストの予測を用いる戦略を凌駕している。ファンダメンタルズ外挿には、株価を相対的に押し上げるキャッシュフロー効果と、代表投資家の期待変動率を高めることで株価を下落させる割引率効果という、2つの価格効果があることを示すモデルを提案する。実証の結果、割引率効果がキャッシュフロー効果に優ることが示唆された。</p>
+        <p class="abstract-text en">We propose a pooling strategy to extrapolate all fundamental information simultaneously using machine learning technology. This strategy outperforms naive extrapolation strategies that use a single fundamental variable and strategies that use past prices or analyst forecasts. We propose a model to show that fundamental extrapolation has dual price effects: a cash flow effect that pushes stock price up relative to its fundamental value and a discount rate effect that depresses stock price via increasing the representative investor's expected volatility. Our empirical results suggest that the discount rate effect dominates the cash flow effect.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Open Source Cross-Sectional Asset Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrew Chen; Federal Reserve Board), Tom Zimmermann; University of Cologne)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1341" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ほぼ全てのクロスセクションの株式リターン予測因子を再現するデータとコードを提供する。過去のメタ研究から319の特性を収集し、再現されたt statsを元の論文の結果と比較した。原著論文で明らかに有意であった161の特性については、我々のロングショートポートフォリオの98％が1.96以上のt statsを見つけることができた。また、様々な証拠が混在している44の特性については、我々の再現実験では平均してt statsが2であった。再現された t stats を元のロング・ショートの t stats に回帰すると、傾きは 0.90 であり、R 2 は 83%であった。平均リターンは、特性レベルでの予測シグナルにおいて単調である。残りの114の特性は、原著論文では有意でないか、Hou, Xue, and Zhang (2020)が作成した原著を修正したものである。これらの残りの特性は、元の特性も有意であった場合、ほぼ必ず有意となる。</p>
+        <p class="abstract-text en">We provide data and code that successfully reproduces nearly all crosssectional stock return predictors. We collect 319 characteristics from previous meta studies, and compare reproduced t stats to the original papers' results. For the 161 characteristics that were clearly significant in the original papers, 98% of our long short portfolios find t stats above 1.96. For the 44 characteristics that had mixed evidence, our reproductions find t stats of 2 on average. A regression of reproduced t stats on original long short t stats finds a slope of 0.90 and an R 2 of 83%. Mean returns are monotonic in predictive signals at the characteristic level. The remaining 114 characteristics were insignificant in the original papers or are modifications of the originals created by Hou, Xue, and Zhang (2020). These remaining characteristics are almost always significant if the original characteristic was also significant.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Sectoral Labor Reallocation and Return Predictability</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Esther Eiling; University of Amsterdam), Raymond Kan; University of Toronto), Ali Sharifkhani; Northeastern University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1254" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">セクター別の労働再配置ショックは、産業間の労働者の最適配置を変化させる。我々は、産業別株式リターンのクロスセクション分散（CSV）がセクター間再配分ショックの良い代理人として機能することを示す。この指標は、部門間の求職者と求人情報のミスマッチの事後的な指標と同様に、総失業率の伸びを有意に予測する。また、CSVは将来の株式市場リターンの予測因子として極めて強力かつ頑健であることが分かった。予測回帰において、1年間のサンプル外R2乗は14.88％と高く、代替変数の長いリストを凌駕し、大きな経済的利益をもたらしている。我々は、セクターごとの労働再配置ショックが、生産性リスクへの時間変化を通じて株式リターンの予測可能性を生み出すという、生産に基づく資産価格モデルを提案する。産業間の労働再配置の必要性が生じた場合、産業は他産業から労働者を雇う可能性が高くなる。この場合、労働者を探すコストと教育コストがかかる。したがって、産業は労働調整コストが高くなり、総体的な経済変動に十分に対応できなくなる。その結果、産業全体のリスクエクスポージャーが減少し、期待収益率が低下する。このモデルは、データによって裏付けられた、検証可能な新たな示唆を与えている。例えば、CSVの予測力は、代替コストの高い高技能労働者への依存度が最も高い産業に集中することを示す。また、資本調整コスト、投資家の過剰反応・過小反応、情報拡散の遅れなど、多くの代替的な説明を排除している。1</p>
+        <p class="abstract-text en">Sectoral labor reallocation shocks change the optimal allocation of workers across industries. We show that the cross sectional dispersion in industry specific stock returns (CSV) serves as a good proxy for sectoral reallocation shocks. This measure significantly predicts aggregate unemployment growth, as well as an ex post measure of the mismatch between job seekers and vacancies across sectors. We find that CSV is a remarkably strong and robust predictor of future stock market returns. In predictive regressions, the one year out of sample R squared is as high as 14.88%, outperforming a long list of alternative variables and leading to large economic gains. We propose a production based asset pricing model in which sectoral labor reallocation shocks generate stock return predictability through time varying exposure to aggregate productivity risk. When the need for labor reallocation across industries arises, industries are more likely to hire workers from other industries. This involves more search and training costs. Hence, industries face higher labor adjustment costs, which impedes them from fully responding to aggregate economic fluctuations. In turn, their aggregate risk exposure decreases leading to lower expected returns. The model provides new testable implications which are supported by the data. For example, we show that the predictive power of CSV is concentrated among industries with the strongest dependence on high skill labor, which is costlier to replace. We also rule out a number of alternative explanations, including capital adjustment costs, investor over- or underreaction and slow information diffusion. 1</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETFs 2.0</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link active">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>ETFs 2.0</h1>        <div class="paper-card">
+            <div class="paper-title">ETF Arbitrage and International Diversification</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ilias Filippou; Washington University in St. Louis), Arie Gozluklu; University of Warwick), Hari Rozental; University of Warwick)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1432" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ETF市場の注文の不均衡で測定される各国のETF市場参加者の投資判断は、ローカルリスクよりもむしろグローバルショックによって駆動されることを示す。ETFの裁定取引は、グローバルなショックが地域経済に伝播し、米国市場とのリターン相関を高め、国際分散投資の恩恵を制限する重要なチャネルの一つであることを実証している。国別ETFの時期をずらして導入することで、原資産である外国市場と米国市場の指数間のリターン相関が上昇する。また、ETFの価格発見力が強く、裁定取引の限界が低い国ほど、米国市場とのリターン相関が高いことがわかり、提案されている裁定取引のメカニズムをさらに支持する結果となった。</p>
+        <p class="abstract-text en">We show that investment decisions of country ETF market participants measured by ETF market order imbalances are driven by global shocks, rather than local risks. We demonstrate that the ETF arbitrage mechanism is one of the key channels through which global shocks propagate to local economies leading to increased return correlation with the U.S. market, limiting the benefits from international diversification. Staggered introduction of country ETFs increases the return correlations between underlying foreign and U.S. market indices. We find that countries with stronger ETF price discovery and lower limits to arbitrage have a higher comovement with the U.S. market lending further support for the proposed arbitrage mechanism.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Fixed Income ETFs, Bond Liquidity, and Stressed Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Thomas Marta; Paris Dauphine University and Wilfrid Laurier University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=398" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、債券型上場投資信託（ETF）が社債の流動性に与える影響について検証する。社債ETFは、その構成銘柄の取引コストを低下させることを発見した。自己選択と指数効果の同定問題をコントロールした2つの明確な準自然実験により、ETFの保有と債券の流動性の間に因果関係があることが立証された。さらに、ETFは、ETFの裁定取引や市場ストレスイベント時に、その債券の流動性を悪化させることはないようである。ETFの売買高は、この結果を推進する伝達メカニズムとなっているようである。この結果は、ETFが情報の効率性を高めるという理論的な予測を支持するものである。</p>
+        <p class="abstract-text en">This paper examines the impact of Fixed Income Exchange Traded Funds (ETFs) on corporate bond liquidity. I find that corporate bonds ETFs decrease the transaction costs of their constituent securities. The use of two distinct quasi natural experiments, that control for the identification issues of self selection and of an index effect, establishes a causal relation between ETF ownership and bond liquidity. Moreover, ETFs do not appear to deteriorate the liquidity of their bonds during ETF arbitrage and market stress events. The ETF trading volume appears to be the transmission mechanism driving the results. My findings support the theoretical prediction that ETFs increase information efficiency.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Heterogeneous Effects of Passive Investing on Asset Markets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jonathan Brogaard; University of Utah), Davidson Heath; University of Utah), Da Huang; University of Utah)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1718" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、パッシブファンドが流動性の低いインデックス資産を系統的にアンダーウエ イトまたはオミットしていることを示す。その結果、ファンドのトレーディング活動は流動性を消費し、流動性の高い資産に対して市場の質を低下させるが、非流動性の資産に対しては影響を与えない。無条件の平均効果に注目し、ファンドのインデックス偏差を無視すると、局所的な治療効果が最大で58％過小評価される。全体として、パッシブ投資が原資産市場に与える影響は、仲介者がどのようにターゲット・インデックスを複製するかに依存する。</p>
+        <p class="abstract-text en">This paper shows that passive funds systematically underweight or omit illiquid index assets. As a result, their trading activity consumes liquidity and reduces market quality for liquid assets, but has no effect on illiquid assets. Focusing on the unconditional average effects and ignoring funds' index deviations underestimates the local treatment effect by up to 58%. Overall, the effects of passive investing on underlying asset markets depend on how intermediaries replicate their target index.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Two APs are Better Than One: ETF Mispricing and Primary Market Participation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Evgenii Gorbatikov; London Business School), Taisiya Sikorskaya; London Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1592" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ETF（上場投資信託）は、ファンドの価格とその公正価値の乖離を修正するために裁定者に依存している。ETFにはAP（Authorized Participant）と呼ばれる指定ブローカーが存在し、彼らはETF株式の作成と償還を行う独自の権利を有しているため、この裁定取引をリスクなく行うことができるのである。しかし、最近になって、ETFはAPが誰であるかを開示するようになった。しかし、ETFがAPを開示するようになったのはごく最近のことであり、我々は新規制報告書を用いて、ETFのAP接続ネットワークの特徴を明らかにした。このネットワークは、密集したコアとまばらな周辺部を持っています。ほんの一握りのAPが作成と償還の量の大部分を担っている。我々は、米国株式ETFのミスプライシングのレベルは、特に金融市場のボラティリティが高い時期に、ファンドのネットワークの多様性と負の相関があることを証明する。また、グローバルなシステム上重要な銀行をAPに持つETFは、ミスプライシングが高くなることがわかった。我々は、多様なネットワークが、バランスシートの制約によって引き起こされるAP固有の裁定コストの影響を軽減するのに役立つと仮定する。この説明を、ETFの空売り停止と2020年のFRBによる債券ETFの買い入れに関する証拠で実証する。ETFの株式が空売りできない場合、ネットワークの多様性がファンドのミスプライスに与える影響は急上昇し、APの在庫の重要性が浮き彫りになった。債券購入プログラムに最も関与しているAPのファンドは、プログラム実施中にミスプライスが高くなり、株式ETFの裁定取引にコミットする資本の限界が示唆された。</p>
+        <p class="abstract-text en">Exchange traded funds (ETFs) depend on arbitrageurs to correct deviations between a fund's price and its fair value. ETFs have designated brokers, called authorized participants (APs), who have the unique right to create and redeem ETF shares, and thus perform this arbitrage risk free. However, only recently have ETFs started to disclose who their APs are. Using novel regulatory filings, we characterize the network of ETF AP connections. It has a dense core and a sparse periphery. Only a handful of APs are responsible for most of the creation and redemption volume. We document that the level of mispricing in an US equity ETF is negatively related to the fund's network diversity, especially in periods of high volatility in financial markets. Also, ETFs with more global systemically important banks among their APs experience higher mispricing. We hypothesize that diverse networks help mitigate the effect of AP specific arbitrage costs induced by their balance sheet constraints. We substantiate this explanation with the evidence on ETF short selling halts and the Fed's purchases of bond ETFs in 2020. When the ETF shares cannot be sold short, the effect of network diversity on fund mispricing soars, which highlights the importance of APs' inventory. Funds with APs' most engaged in the bond buying program experience higher mispricing during the program implementation, suggesting the limitations in capital committed to equity ETF arbitrage.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

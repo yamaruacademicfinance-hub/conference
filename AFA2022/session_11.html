@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Bond Market</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link active">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link ">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Corporate Bond Market</h1>        <div class="paper-card">
+            <div class="paper-title">A One-Factor Model of Corporate Bond Premia</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Redouane Elkamhi; University of Toronto), Chanik Jo; University of Toronto), Yoshio Nozawa; Hong Kong University of Science and Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1013" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">長期消費成長率に基づく1因子モデルは、信用格付け、信用スプレッド、ダウンサイドリスク、特異変動性、長期反転、満期、金融仲介機関の資本因子に対する感応度によって分類された社債ポートフォリオのリスクプレミアムを説明する。リスク回避係数の推定値は、富裕層世帯の消費の伸びをリスク要因としてより長く用いると低くなり、20四半期の水平線を持つモデルではリスク回避係数は15となり、株式ポートフォリオから推定されるものと同様の値となった。</p>
+        <p class="abstract-text en">A one factor model based on long run consumption growth explains the risk premiums on corporate bond portfolios sorted on credit rating, credit spreads, downside risk, idiosyncratic volatility, long term reversals, maturity, and sensitivity to the financial intermediary capital factor. The estimated risk aversion coefficient is lower when we use the consumption growth of wealthy households over a longer horizon as a risk factor, and a model with a 20 quarter horizon yields a risk aversion coefficient of 15, a value similar to the one estimated from equity portfolios.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Bond Funds and Credit Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jaewon Choi; University of Illinois), Amil Dasgupta; London School of Economics), Ji Yeol Jimmy Oh; Hanyang University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=826" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">オープンエンド型投資信託の債券保有に起因するサプライサイド効果が企業の信用リスクに影響を与えることを示す。我々のモデルでは、フロー・パフォーマンス関係にあるファンドは、キャッシュフローの見通しが悪い企業の社債を、デフォルトの可能性による将来の投資家流出を恐れて、リファイナンスに消極的である。その結果、リファイナンス価格が低下し、株主の戦略的デフォルトへのインセンティブが高まり、債券ファンドの存在と信用リスクとの間に正の相関が生じる。実証的には、キャッシュフローの見通しが悪い企業では、アクティブ・ファンドの債券保有はCDSスプレッドの上昇と関連しており、ファンドのフローへの感応度が高く、ファンド保有が非流動的である場合には、より顕著であることがわかった。我々は、道具変数アプローチとBill GrossのPIMCO退社に基づく準実験を用いて、ファンド保有とクレジットスプレッドの間の内生性に対処する。</p>
+        <p class="abstract-text en">We show that supply side effects arising from the bond holdings of open end mutual funds affect corporate credit risk. In our model, funds exposed to flow performance relationships are reluctant to refinance bonds of companies with poor cash flow prospects fearing future investor outflows as a result of potential default events. This lowers refinancing prices, enhancing incentives for strategic default by equityholders, engendering a positive association between bond funds' presence and credit risk. Empirically, we find that in firms with poor cash flow prospects, active fund bond holdings are associated with increased CDS spreads, more so when funds are more sensitive to flows and when fund holdings are illiquid. We use an instrumental variable approach and a quasi experiment based on the departure of Bill Gross from PIMCO to address the endogeneity between fund holdings and credit spreads.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Crowded Ratings: Clientele Effects in the Corporate Bond Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francisco Gomes; London Business School), Ryan Lewis; University of Colorado Boulder), Jordan Nickerson; Massachusetts Institute of Technology)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1705" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">市場細分化の単純なモデルと整合的に、社債市場における格付けに基づく顧客需給の絹さや効果が示された。企業の格上げ・格下げによって生じる純資本フローは、竊問された格付けバケットに属する他の債券に大きな値動きをもたらす。ある格付けバケットに1標準偏差の資金が流入すると、5bpの債券価格の下落をもたらす。これは、マクロ変数による月次価格変動の4.1%に相当する。この効果は持続的であり、半減期はおよそ5ヵ月である。また、このモデルによって、隣接するバケットの債券価格への波及効果が有意に減衰することも確認された。</p>
+        <p class="abstract-text en"> Consistent with a simple model of market segmentation, we document ratingbased clientele e↵ects in the corporate bond market. Net capital flows that arise due to idiosyncratic firm upgrades and downgrades cause significant price movements for the other bonds in the a↵ected rating bucket. A one standard deviation flow into a rating bucket generates a 5 bp bond price reduction, equivalent to 4.1% of the monthly price variation driven by macro variables. This e↵ect is persistent, with an approximate half life of five months. Guided by the model, we also document a significant decaying spillover pattern to bond prices in adjacent buckets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Institutional Corporate Bond Demand</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lorenzo Bretscher; London Business School), Lukas Schmid; University of Southern California), Ishita Sen; Harvard University), Varun Sharma; London Business School)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=1593" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">機関投資家のポジションレベルの保有と社債の特性を関連付ける豊富なデータセットを作成し、重要なリスクソースに関する需要弾力性を推定する。機関投資家の保有額の持続性は、価格の外生的な動きを分離するための道具を提供してくれる。社債市場における主要なプレーヤーである保険会社、年金基金、投資信託の間で需要弾力性に大きな異質性があることが分かった。長期投資家は金利の動きに敏感であり、流動性を供給するのに対し、投資信託は投資期間が短く、ベンチマークに制約があるため、流動性を要求する。プライス・インパクトは危機後にすべての機関で増加し、危機前の水準を上回る状態が続いていますが、これはおそらく社債市場における規制の変更により、債券市場の流動性が全般的に低下していることを示唆しています。価格インパクトはCovid 19で大幅に上昇したが、これはおそらくディーラーが市場での仲介に消極的であることを示唆しており、企業の資金調達機会が投資家の潜在的な需要ショックに非常に敏感であることを物語っている。この結果は、投資家や投資マンデートの不均質性から、社債のプライシングに対して幅広い示唆を与えており、標準的な代表エージェントベースのモデルとは整合的でない。</p>
+        <p class="abstract-text en">We compile a rich dataset that links institutional investors' position level holdings with corporate bond characteristics and estimate demand elasticities with respect to critical sources of risk. Persistence in institutions' holdings provide us with an instrument to isolate exogenous movements in prices. We find significant heterogeneity in demand elasticities across the main players in the corporate bond market, namely insurers, pension funds, and mutual funds. Long term investors are sensitive to interest rate movements and supply liquidity, whereas mutual funds, with shorter investment horizon and benchmark constraints, demand liquidity. Price impact increased postcrisis for all institutions and has remained higher than the pre crisis levels, signaling a general decline in bond market liquidity due perhaps to regulatory changes in the corporate bond market. Price impact jumped up significantly during Covid 19, perhaps suggesting a reluctance of dealers to intermediate in the market place, and illustrating that firms' funding opportunities are highly sensitive to investors' latent demand shocks. Our results have wide ranging implications for corporate bond pricing due to heterogeneity in investors and investment mandates, and are hard to reconcile with standard, representative agent based models.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

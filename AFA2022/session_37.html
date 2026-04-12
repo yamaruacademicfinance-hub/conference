@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technology and Financial Services</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">American Finance Association 2022 Annual Meeting</div>
+<button class="accordion-btn">Behavioral Finance and Asset Management <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Behavioral Finance and Asset Pricing</a><a href="session_7.html" class="session-link ">Mutual Fund Trading and Performance</a><a href="session_8.html" class="session-link ">Behavioral Finance: Risk, Beliefs, and Factor Models</a><a href="session_28.html" class="session-link ">Learning and Flows in Asset Management</a><a href="session_34.html" class="session-link ">Investor Behavior</a><a href="session_49.html" class="session-link ">Market Mispricing and Limits to Arbitrage</a><a href="session_62.html" class="session-link ">Belief Formation and Market Efficiency</a><a href="session_64.html" class="session-link ">Corporate Finance: Behavioral</a><a href="session_66.html" class="session-link ">Liquidity Management and Crises in Asset Management</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Firms, Markets, and Information Disclosure</a><a href="session_6.html" class="session-link ">Mergers and Acquisitions</a><a href="session_10.html" class="session-link ">CEOs and Politics</a><a href="session_13.html" class="session-link ">Financial Certification, Competitive Strategy, and Innovation</a><a href="session_14.html" class="session-link ">Governance: Boards, CEOs, and Equity</a><a href="session_17.html" class="session-link ">Conflicts of Interest and Insider Trading</a><a href="session_22.html" class="session-link ">Shareholder Monitoring and Voting</a><a href="session_26.html" class="session-link ">(Ir)responsible Corporate Governance</a><a href="session_31.html" class="session-link ">Corporate Finance: Policy and Regulatory Issues</a><a href="session_36.html" class="session-link ">Mergers and Venture Financing</a><a href="session_39.html" class="session-link ">Big Data and Firm Policies</a><a href="session_40.html" class="session-link ">Contracts and Incentives</a><a href="session_41.html" class="session-link ">Corporate Social Responsibility</a><a href="session_52.html" class="session-link ">Capital Structure</a><a href="session_53.html" class="session-link ">Corporate Investment</a><a href="session_58.html" class="session-link ">Private Equity/Venture Capital</a></div><button class="accordion-btn">Asset Markets, Pricing, and Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Liquidity</a><a href="session_5.html" class="session-link ">Market Risk Factors</a><a href="session_11.html" class="session-link ">Corporate Bond Market</a><a href="session_20.html" class="session-link ">Over the Counter Markets</a><a href="session_21.html" class="session-link ">Safe Assets</a><a href="session_29.html" class="session-link ">The Cross-section of Stock Returns</a><a href="session_30.html" class="session-link ">Who is Paying Attention? Benefits of Information in Capital Markets</a><a href="session_32.html" class="session-link ">Derivatives</a><a href="session_42.html" class="session-link ">ETFs 2.0</a><a href="session_43.html" class="session-link ">Identifying the Value and Novelty of Financial Market Information</a><a href="session_51.html" class="session-link ">Return Dynamics</a><a href="session_56.html" class="session-link ">Market Microstructure: Trading on Information</a><a href="session_63.html" class="session-link ">Capital, Labor, and the Cross-section of Returns</a></div><button class="accordion-btn">Financial Institutions, Stability, and Regulation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_15.html" class="session-link ">When Banks Meet the Official Sector</a><a href="session_18.html" class="session-link ">Financial Crises and Transmission of Shocks</a><a href="session_25.html" class="session-link ">Financial Stability</a><a href="session_38.html" class="session-link ">Banking and Real Economy</a><a href="session_61.html" class="session-link ">Bank Lending Behavior</a></div><button class="accordion-btn">Household and Socio-Economic Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Household Finance I</a><a href="session_24.html" class="session-link ">Finance and Gender</a><a href="session_27.html" class="session-link ">Labor Finance I</a><a href="session_33.html" class="session-link ">Finance and Race</a><a href="session_47.html" class="session-link ">Household Finance II</a><a href="session_54.html" class="session-link ">Labor Finance II</a><a href="session_60.html" class="session-link ">SPECIAL SESSION: Persistence or Disruption of the American Caste</a><a href="session_65.html" class="session-link ">Household Finance III</a></div><button class="accordion-btn">Financial Technology and Methodologies <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_9.html" class="session-link ">Big Data/Machine Learning Applications to Financial Markets</a><a href="session_37.html" class="session-link active">Technology and Financial Services</a><a href="session_45.html" class="session-link ">DeFi and CBDCs</a><a href="session_48.html" class="session-link ">Innovation Frontiers in Finance</a><a href="session_50.html" class="session-link ">Methodologies</a></div><button class="accordion-btn">Macro, Climate, and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Finance and COVID-19</a><a href="session_12.html" class="session-link ">ESG Investing</a><a href="session_16.html" class="session-link ">Climate Finance</a><a href="session_23.html" class="session-link ">Current Issues in Real Estate Finance</a><a href="session_35.html" class="session-link ">Macro Finance I</a><a href="session_44.html" class="session-link ">International Finance</a><a href="session_46.html" class="session-link ">ESG and Sustainable Finance</a><a href="session_55.html" class="session-link ">Macro Finance II</a><a href="session_57.html" class="session-link ">Oil Prices</a><a href="session_59.html" class="session-link ">SPECIAL SESSION: On ESG: Theory and Empirics</a></div></div><div class="main-content"><h1>Technology and Financial Services</h1>        <div class="paper-card">
+            <div class="paper-title">Cutting Operational Costs by Integrating Fintech into Traditional Banking Firms</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Linda Allen; Baruch College (The City University of New York), Yu Shan; Concordia University), Yi Tang; Fordham University), Alev Yildirim; Southern Connecticut State University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=334" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ディーラー銀行がレバレッジド・バランスシートによる仲介を行うのに対し、Fintech企業はIT技術を動員し、ブローカー的手法で仲介サービスを提供する。フィンテックの銀行への統合は、生産関数をディーラーからブローカーにシフトさせることで、仲介の単価を下げる可能性がある。Fintechスコアの低いディーラー銀行のオンバランス貸出と、スコアの高いブローカー銀行の証券化、仲介預金、非金利収入を比較し、非線形・機械学習アルゴリズムを用いて「Fintechスコア」を導出した。データエンベロープメント分析および確率的コストフロンティア分析を用いて、フィンテック・スコアが高い銀行ほど経営効率が高く、危機にも強いことを発見している。</p>
+        <p class="abstract-text en">Fintech firms mobilize information technology to provide intermediation services using a broker methodology, whereas dealer banks intermediate using leveraged balance sheets. The integration of Fintech into banking may reduce the unit cost of intermediation by shifting the production function from dealer to broker. A 'Fintech score' is derived using nonlinear and machine learning algorithms that show on balance sheet lending for low Fintech score dealer banks versus securitization, brokered deposits, and non interest income for high score, broker banks. Using Data Envelopment and Stochastic Cost Frontier Analyses, we find that banks with higher Fintech scores are more operationally efficient and resilient in crises.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">FinTech Lending and Cashless Payments</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Pulak Ghosh; Indian Institute of Management Bangalore), Boris Vallee; Harvard University), Yao Zeng; University of Pennsylvania)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=576" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究は、キャッシュレス決済の情報的役割と関連づけることで、フィンテック融資の隆盛と将来の可能性を理解するための新たな視点を提供するものである。FinTech融資とキャッシュレス決済の相乗効果を理論的・実証的に明らかにする。FinTechレンディングは、借り手が譲渡可能で検証可能な情報を生み出すキャッシュレス決済を多く利用する場合、借り手をより効率的に審査します。借り手は、貸し手がそのような決済情報を頼りに審査することを期待しているので、借り手が他の借り手に差をつけるための戦略的配慮をすることで、より多くの借り手がキャッシュレス決済を採用するようになるのです。中小企業向け融資に注力するインドの大手FinTechレンダーの新規ローンレベルデータを用いると、検証可能なキャッシュレス決済の利用が多いほど（現金と比較して）、融資承認の確率が高く、金利が低く、得られた金利を条件としてデフォルトが低いことを予測できることがわかった。これらの関係は、より質の高い企業ほど顕著である。このような相乗効果は、FinTech融資とキャッシュレス決済が共に台頭したことの妥当な説明となり、バランスシートや伝統的な銀行関係を持たない代替銀行モデルを示唆するものである。また、データ共有やオープンバンキングに関する新たな政策的示唆を与えている。</p>
+        <p class="abstract-text en">This study provides a new perspective to understand the rise and future potential of FinTech lending by linking it to the informational role of cashless payments. We uncover both theoretically and empirically a synergy between FinTech lending and cashless payments. FinTech lenders screen borrowers more efficiently when borrowers use more cashless payments that produce transferrable and verifiable information. Because borrowers expect lenders to rely on such payment information to screen them, a strategic consideration for a borrower to stand out of other borrowers then pushes more borrowers to adopt cashless payments. Using novel loan level data from a large Indian FinTech lender who focuses on small business lending, we find that a larger use of verifiable cashless payments (relative to cash) predicts a higher chance of loan approval, a lower interest rate, and lower default conditional on the interest rate obtained. These relationships are more pronounced for higher quality firms. The uncovered synergy provides a plausible explanation for the joint rise of FinTech lending and cashless payments, and suggests an alternative banking model without a balance sheet or traditional banking relationships. Our findings also provide new policy implications on data sharing and open banking.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Data Privacy Paradox and Digital Demands</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Long Chen; Ant Financial / Luohan Academy), Yadong Huang; Ant Financial / Luohan Academy), Shumiao Ouyang; Princeton University), Wei Xiong; Princeton University)</div>
+            <a href="https://editorialexpress.com/cgi-bin/conference/download.cgi?db_name=AFA2022&paper_id=931" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">プライバシーガバナンスの中心的な課題は、ユーザーがサービス要求を満たすために、どのようにプライバシー選好とデータ共有のバランスをとるかを理解することである。我々は、アリペイ利用者のサンプルの調査データと行動データを組み合わせて、彼らのデータプライバシー選好がアリペイのプラットフォームにおけるサードパーティのミニプログラムとのデータ共有にどのような影響を与えるかを調査した。その結果、回答者が表明したプライバシーへの関心とデータ共有の承認数との間には関係がなく、不可解なデータ・プライバシーのパラドックスが確認された。このパラドックスは、信頼性の低い調査回答によるものではなく、データ共有によるプライバシーコストと経済的利益のトレードオフと整合的であることを示し、プライバシーへの懸念が強いユーザーほどミニプログラムの使用から多くの利益を得る傾向があるという不思議な発見をした。さらに、プライバシーへの懸念とデジタル需要との間のこの正の関係は、データプライバシーへの懸念が、デジタルアプリケーションの使用過程において、生得的ではなく、副産物として発展する可能性を示唆している。</p>
+        <p class="abstract-text en">A central issue in privacy governance is to understand how users balance their privacy preference and data sharing to satisfy service demands. We combine survey and behavioral data of a sample of Alipay users to examine how their data privacy preferences affect their data sharing with third party mini programs on the Alipay platform. We find that there is not any relationship between the respondents' stated privacy concerns and the number of data sharing authorizations, confirming the puzzling data privacy paradox. Instead of attributing this paradox to unreliable survey responses, we show that it is consistent with the trade off between privacy cost and economic benefit of data sharing, under a curious finding that users with stronger privacy concerns tend to benefit more from using mini programs. This positive relationship between privacy concerns and digital demands further suggests that data privacy concerns may be developed as a by product, rather than innate, in the process of using digital applications.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

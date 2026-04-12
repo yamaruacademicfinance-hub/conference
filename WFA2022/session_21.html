@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Funding</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link active">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Government Funding</h1>        <div class="paper-card">
+            <div class="paper-title">What Drives Variation in the U.S. Debt/Output Ratio? The Dogs that Didn't Bark</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhengyang Jiang (Northwestern University), Hanno Lustig (Stanford University), Stijn Van Nieuwerburgh (Columbia University), Mindy Z. Xiaolan (University of Texas Austin)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=824180" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">1850年から2010年までの約2世紀にわたる特許文献や職業記述書のテキスト分析を用いて、新技術の指標を構築した。産業レベルでは、技術の向上は労働生産性の向上と関連しているが、労働分配率は低下している。ある技術が特定の職業とどの程度関連しているかのばらつきを利用し、技術革新が関連する職業の現職労働者の賃金や雇用といった労働市場の成果の悪化と大きく関連していることを、公共利用と機密扱いの行政データの組み合わせで示す。労働者個人の所得に関するパネルデータから、低学歴、高齢、高賃金の労働者は、関連する技術革新の後、平均所得と所得リスクの低下が著しく大きいことが明らかになった。これらの事実を、技能置換を考慮したモデルを用いて、技術の技能補完性という標準的な見解と整合的に説明する。</p>
+        <p class="abstract-text en">We construct new technology indicators using textual analysis of patent documents and occupation task descriptions that span almost two centuries (1850 - 2010). At the industry level, improvements in technology are associated with higher labor productivity but a decline in the labor share. Exploiting variation in the extent certain technologies are related to specific occupations, we show that technological innovation has been largely associated with worse labor market outcomes - wages and employment - for incumbent workers in related occupations using a combination of public use and confidential administrative data. Panel data on individual worker earnings reveal that less educated, older, and more highly paid workers experience significantly greater declines in average earnings and earnings risk following related technological advances. We reconcile these facts with the standard view of technology skill complementarity using a model that allows for skill displacement.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Debt Capacity of a Government</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Bernard Dumas (INSEAD), Paul Ehling (BI Norwegian Business School), Chunyu Yang (BI Norwegian Business School)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=796880" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">人口の高齢化は銀行のリスクテイクに影響を与えるか？この疑問に対する最初の証拠を提供するために、我々は米国の郡における人口高齢化の地理的なばらつきを利用した。その結果、高齢化が進む郡部では、高齢者の貯蓄率が高いため、銀行への預金流入が見られることが分かった。その結果、銀行は信用供与を増やすが、特に預金がない郡では貸出基準を緩める。その結果、貸出比率は上昇し、申込拒否率は低下した。また、景気後退期には不良債権の増加が顕著になるなど、高齢化が金融の不安定化につながる可能性が示唆された。これらの結果は、高齢化によって貯蓄が増加し、地域的な投資機会が減少していることと一致する。</p>
+        <p class="abstract-text en">Does population aging affect bank risk taking? To provide first evidence on this question, we exploit geographic variation in population aging across U.S. counties. We find that banks more exposed to aging counties experience deposit inflows due to seniors' higher savings rate. Consequently, they extend more credit, but relax lending standards, particularly in counties where they raise no deposits: Loanto income ratios increase and application rejection rates decline. Risk taking by exposed banks manifests itself in a sharper rise in nonperforming loans during downturns, suggesting that population aging may lead to financial instability. These results are in line with an increase in savings and a decline in local investment opportunities induced by an aging population.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Government Debt Management and Inflation with Real and Nominal Bonds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alessandro Villa (Federal Reserve Bank of Chicago), Vytautas Valaitis (European University Institute), Lukas Schmid (University of Southern California)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=825300" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は時間整合的な銀行破綻処理メカニズムを研究している。介入が事後的に効率的である場合、政府は銀行システムに資本を注入しないことを約束することはできない。一般的な常識とは異なり、銀行間の救済金の分配を利用して事前インセンティブを与えることにより、政府はそれでもモラルハザードを回避し、ファーストベストの配分を実施することができることを示す。我々は、成績の良い銀行を支援し、成績の悪い銀行を合併を含めて解決する、信頼できるトーナメント・メカニズムの特性を分析する。我々のメカニズムは、銀行の規模が不均質な場合、銀行が不完全代替の場合、そして救済資金を使途指定できる限り、銀行間の相互接続が不均質な場合にも、うまく機能しつづける。</p>
+        <p class="abstract-text en">We study time consistent bank resolution mechanisms. When interventions are ex post efficient, a government cannot commit not to inject capital into the banking system. Contrary to common wisdom, we show that the government may still avoid moral hazard and implement the first best allocation by using the distribution of bailouts across banks to provide ex ante incentives. We analyze properties of credible tournament mechanisms that provide support to the best performing banks and resolve the worst performing ones, including through mergers. Our mechanism continues to perform well when banks are heterogeneous in size, when they are imperfect substitutes, and when they are differentially interconnected as long as bailout funds can be earmarked.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

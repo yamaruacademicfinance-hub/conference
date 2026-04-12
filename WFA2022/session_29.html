@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bias</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link active">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Bias</h1>        <div class="paper-card">
+            <div class="paper-title">Hidden Alpha</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Alexander Cochardt (University of St. Gallen), Lauren H. Cohen (Harvard University), Stephan Heller (Harvard University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=798952" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">訴訟の動的モデルを用いて、最近増えている第三者による訴訟資金調達の慣行が、曖昧な厚生的意味を持つことを示す。被告と原告は和解金をめぐって交渉する。被告は、原告への多額の送金に伴う死重損失を避けるために、コストのかかる行動をとる。訴訟金融は原告を強化し、より大きな死重損失をもたらす。しかし、訴訟金融は被告がコストのかかる行動をとることを内生的に抑止することで、原告・被告の共同余剰を改善することができる。一般的な意見とは異なり、訴訟金融は必ずしもリスクの高い軽薄な訴訟を奨励しない。</p>
+        <p class="abstract-text en"> Using a dynamic model of litigation, we show that the increasingly popular practice of third party litigation financing has ambiguous welfare implications. A defendant and a plaintiff bargain over a settlement payment. The defendant takes costly actions to avoid deadweight losses associated with large transfers to the plaintiff. Litigation financing bolsters the plaintiff, leading to larger deadweight losses. However, by endogenously deterring the defendant from taking costly actions, litigation financing can nonetheless improve the joint surplus of the plaintiff and the defendant. In contrast to popular opinion, litigation financing does not necessarily encourage high risk frivolous lawsuits.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Who Benefits from Retirement Saving Incentives in the U.S.? Evidence on Racial Gaps in Retirement Wealth Accumulation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Taha Choukhmane (Massachusetts Institute of Technology), Jorge Colmenares (Massachusetts Institute of Technology), Cormac O'Dea (Yale University), Jonathan Rothbaum (U.S. Bureau of the Census), Lawrence D. W. Schmidt (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=796768" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、市場データ手数料の導入が取引と市場の質にどのような影響を与えるかを調査している。データフィーは、導入した取引所の市場取引量、競合相場が存在する時間、可視的な流動性、価格発見における役割を減少させることがわかりました。また、ブローカーが影響を受けた取引所から成行注文や指値注文をルーティングしている様子が観察されます。市場全体では、手数料の導入により、目に見える深さと価格発見が減少しています。この結果は、一部のトレーダーはデータに対して弾力的な要求を持っており、ある取引所におけるデータ手数料の導入に対する彼らの反応が株式市場全体に波及する可能性があることを示唆しています。</p>
+        <p class="abstract-text en">We investigate how the introduction of market data fees impacts trading and market quality. We find that data fees decrease the fee introducing exchange's market volume, time with competitive quotes, visible liquidity, and role in price discovery. We observe brokers routing market and limit orders away from the impacted exchange. Market wide, the fee introduction decreases visible depth and price discovery. The results indicate that some traders have an elastic demand for data, and that their response to the introduction of data fees on one exchange can reverberate throughout the stock market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Gender Bias in Promotions: Evidence from Financial Institutions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ruidi Huang (Southern Methodist University), Erik Mayer (Southern Methodist University), Darius Miller (Southern Methodist University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=792484" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、匿名化された携帯電話の位置情報データを用いて、企業に対する訴訟に対する顧客の反応における競争の役割について研究している。集団訴訟の提起は、その後の数ヶ月間に対象企業の店舗への顧客の訪問を平均4％減少させる。この効果は、競争によって大きく左右される。より多くの競争に直面している店舗では、マイナス効果が著しく大きくなる。また、地理的な近接度、業種的な近接度のいずれにおいても、より緊密な競争はより重要である。また、訴訟提起に関連する発表リターンや四半期会計収益も、競合に強く依存する。この結果は、競争は、顧客が企業の不品行に対する規律付けを行う上で重要な要素であることを示唆している。</p>
+        <p class="abstract-text en">We study the role of competition in customers' reactions to litigation against firms, using anonymized mobile phone location data. A class action lawsuit filing results in a 4% average reduction in customer visits to target firms' outlets in the following months. The effect strongly depends on competition. Outlets facing more competition experience significantly larger negative effects. Closer competition matters more, both in terms of geographic and industry proximity. Announcement returns and quarterly accounting revenues around lawsuit filings also strongly depend on competition. Our results suggest that competition is an important component in customers' ability to discipline firms for misbehavior.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

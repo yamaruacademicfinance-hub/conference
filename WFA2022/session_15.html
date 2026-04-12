@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Decisions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link active">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Investor Decisions</h1>        <div class="paper-card">
+            <div class="paper-title">What Drives Investors' Portfolio Choices? Separating Risk Preferences from Frictions</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Taha Choukhmane (Massachusetts Institute of Technology), Tim de Silva (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=838600" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">為替レートと金利の不完備市場均衡モデルに、ドル債の利便性利回りを導入する。利便性利回りは、為替レートの決定に関するEuler方程式の確率的なくさびとして導入される。このモデルは、量的緩和がドル為替に影響を与える新しい安全資産利回りチャンネルを特定する。このモデルは、3つの為替レートのパズルを解決する。(1）量的緩和のショックが為替レートにあまり伝わらず、それゆえ為替レートの変動が小さいことを合理化することができる。(2）為替レートの断絶のパズルを解決するのに役立つが、完全な解決にはならない。(3)このモデルは、データと一致する無条件対数通貨ドル期待リターンを生成する。</p>
+        <p class="abstract-text en">We introduce convenience yields on dollar bonds into an incomplete market equilibrium model of exchange rates and interest rates. The convenience yield enters as a stochastic wedge in the Euler equation for exchange rate determination. The model identifies a novel safe asset convenience yield channel by which quantitative easing impacts the dollar exchange rate. Our model addresses three exchange rate puzzles. (1) The model can rationalize the low pass through of SDF shocks to exchange rates and hence low exchange rate volatility. (2) It helps address but does not fully resolve the exchange rate disconnect puzzle. (3) The model generates an unconditional log currency expected return on the dollar that is in line with the data.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Mortgage Cash Premium Puzzle</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Michael Reher (University of California San Diego), Rossen Valkanov (University of California San Diego)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=817152" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">BATSが欧州の2つの取引所、CXEとBXEで2013年に実施したMaker taker pricing feesの変更について研究する。CXEのリベート削減は市場の質とシェアを悪化させるが、BXEのリベート廃止とテイクフィーの削減はそれらを改善させる。我々は、流動性供給性向が高く（低く）、取引量が多い（少ない）投資家が大型（小型）銘柄を特徴づける、2つの競合する指値注文帳のモデルを導き出した。その結果、大株主のトレーダーはリベートの引き下げに反応しやすく、小株主のトレーダーはテイクフィーの引き下げに反応しやすいことが示された。</p>
+        <p class="abstract-text en">We study the 2013 changes in maker taker pricing fees implemented by BATS on its two European venues, CXE and BXE. The CXE rebate reduction deteriorates market quality and market share, whereas the BXE rebate removal and take fee reduction improve them. We derive a model of two competing limit order books, in which large (small) stocks are characterized by investors with higher (lower) propensity to supply liquidity and by greater (lower) trading activity. Consistent with our model, we show that traders in large stocks are more reactive to rebate reductions while traders in small stocks are more reactive to take fee reductions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Disposed to Be Overconfident</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Katrin G_dker (Maastricht University), Terrance Odean (University of California Berkeley)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=833280" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">私は新しい様式化された事実を発見した：米国は世界のショックに対するエクスポージャーが世界の他の地域よりも低い。世界的な景気後退は、i)米国の相対的消費成長率がROWに対して高い、ii)米国の株式市場がROWに対してアウトパフォームする、iii)米国の富のシェアが上昇する、といった特徴を持つ。後者の2つの事実は関連している。世界的な景気後退期における米国の株式市場のアウトパフォームは、反循環的な米国の富の分配を促進する。私は、これらの事実が、世界的な供給ショックに対して米国が中華民国を保証する再帰的リスク共有スキームの均衡結果であることを示す。この議論は、Epstein Zin（EZ）再帰的選好、ii）摩擦のない市場、iii）消費のホームバイアス、iv）米国の財がグローバルな財ショックにさらされにくい、という様式化した2国2財のモデルを使って定式化したものである。このように、私の結果は、再帰的選好が国際金融市場における現象の推進に果たす重要な役割に新たな光を当てるものである。</p>
+        <p class="abstract-text en">I uncover a new stylised fact: the US has lower exposure to global shocks than the rest of the world (ROW). Global recessions feature i) higher US relative consumption growth vis á-vis the ROW, ii) US stock market outperformance vis á-vis the ROW and iii) a rising US wealth share. The latter two facts are linked: US stock market outperformance during global recessions drives the countercyclical US wealth share. I show that these facts are the equilibrium outcome of a recursive risk sharing scheme where the US insures the ROW against bad global supply shocks. This argument is formalised using a stylised two country, two good endowment model with i) Epstein Zin (EZ) recursive preferences, ii) frictionless markets, iii) consumption home bias and iv) lower US good exposure to global endowment shocks. Thus my results shed new light on the important role that recursive preferences play in driving phenomena in international financial markets.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

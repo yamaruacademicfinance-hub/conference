@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factors</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link active">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Factors</h1>        <div class="paper-card">
+            <div class="paper-title">Crowding and Factor Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wenjin Kang (Shanghai University of Finance and Economics), K Geert Rouwenhorst (Yale University), Ke Tang (Tsinghua University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=828436" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、潜在的要因を持つセミパラメトリック条件付きモデルの簡単で扱いやすいふるい推定を紹介し、条件付き価格誤差と要因負荷関数の形状に関する推定を行う簡単なブートストラップ法を開発した。また、推定量と検定の大N漸近特性を、大きなT を必要とせずに確立する。その結果、要因を事前に特定することなく、非線形性を示す多くの特性から、大規模な個別資産の条件付き（動的）挙動を推定することができ、同時に、アルファ（すなわち、ミスプライス）から要因ベータを捉える特性の役割を分離することが可能になる。これらの方法を適用して、米国個別株リターンの断面差を説明し、シャープ比3以上の裁定ポートフォリオを生み出すために組み合わされた大きな非ゼロのプライシングエラーの強い証拠を発見した。</p>
+        <p class="abstract-text en">This paper introduces a simple and tractable sieve estimation of semiparametric conditional models with latent factors, and develops a simple bootstrap procedure for inference on the conditional pricing errors as well as shape of the factor loadings functions. We establish large N -asymptotic properties of the estimators and the tests without requiring large T . The results enable us to estimate conditional (dynamic) behavior of a large set of individual assets from a number of characteristics exhibiting nonlinearity without the need to pre specify factors, while allowing us to disentangle the characteristics' role in capturing factor betas from alpha (i.e., mispricing). We apply these methods to explain the cross sectional differences of individual U.S. stock returns and find strong evidence of large nonzero pricing errors that combine to produce arbitrage porfolios with Sharpe ratios above 3.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Test Assets and Weak Factors</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Stefano Giglio (Yale University), Dacheng Xiu (University of Chicago), Dake Zhang (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=805812" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、効率的な国際金融市場からの乖離または「くさび」の実質コストを、データで識別された為替レート、消費、資産リターンの個々の構成要素に応じて測定し、分解することを提案する。我々は、資産価格モデルやマクロ経済モデルに暗黙的に含まれている仮定を用いて、非効率的な金融市場のコストを推論する方法を示している。我々の分解は、為替レートの調整を通じて金融市場に対応する財市場の能力が厚生に大きな影響を与えることを実証している。このため、我々は為替レートの決定に関する異なる見解がこれらのコストにどのような影響を与えるかを探る。我々の分析は、マクロとファイナンスの文献で使用されている価格集計器に内在する為替レートの行動に関する標準的な仮定が、非効率な国際市場のコストについて非常に異なる含意をもたらすことを示している。</p>
+        <p class="abstract-text en">This paper measures and proposes a decomposition of real costs of deviations or 'wedges' from efficient international financial markets depending on individual component of exchange rates, consumption, and asset returns identified in the data. We show how to infer the costs of inefficient financial markets using the identifying assumptions that are implicit in asset pricing and macroeconomic models. Our decomposition demonstrates that the ability of goods markets to respond to financial markets through exchange rate adjustment has significant implications for welfare. For this reason, we explore how different views of exchange rate determination impact these costs. Our analysis illustrates that standard assumptions about the exchange rate behavior implicit in price aggregators used in the macro and finance literature lead to very different implications about the costs of inefficient international markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Investor Betas</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ryan Lewis (University of Colorado), Shrihari Santosh (University of Colorado Boulder)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=836864" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">先進国企業の負債の通貨建ては，その売上高の地理的分布と強い相関があることが示された。平均して、ある国での売上高が1単位増加すると、その国の通貨建ての負債の割合が等しく増加する。債券発行にかかる固定費の存在と整合的に，債券の通貨建てと売上高の地域との関係は，売上高の閾値が5％未満では消失することが分かった。最後に，債券発行における自国通貨建てバイアスと国際通貨建てバイアスの有意性を示す。特に，売上高の多い地域をコントロールすると，企業は自国通貨建ての負債と，最も取引量の多い米ドルとユーロの負債をより多く発行していることが分かる。</p>
+        <p class="abstract-text en">We document that the currency denomination of the debt of developed country firms is strongly related to the geographical distribution of their sales. On average, a unit increase in the percentage of sales in a country is associated with an equivalent increase in the proportion of debt denominated in the corresponding currency. Consistent with the existence of fixed costs of debt issuance, we find that the relationship between the currency denomination of debt and the geography of sales vanishes below the 5% threshold for sales. Finally, we document significant home currency bias and international currency bias in debt issuance. In particular, we show that, controlling for the geography of sales, firms issue more debt denominated in their home currency and the two most traded currencies, the US dollar and the euro.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

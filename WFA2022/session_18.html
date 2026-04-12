@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Borrowing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link active">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Institutional Borrowing</h1>        <div class="paper-card">
+            <div class="paper-title">Bank Loan Funds: Discretionary Values as a Source of Stability</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mustafa Emin (University of Florida), Christopher M. James (University of Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=788956" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">ESG分離の定量的な影響を評価する。事業売却が影響を与えるためには、影響を受ける企業の資本コストを変化させる必要がある。(1)社会的責任資本の割合、(2)対象企業の割合、(3)対象企業と他の株式市場の相関、の3つのインプットの関数として資本コストの変化に関する簡単な式を導出した。</p>
+        <p class="abstract-text en">We evaluate the quantitative impact of ESG divestitures. For divestitures to have impact they must change the cost of capital of affected firms. We derive a simple expression for the change in the cost of capital as a function of three inputs: (1) the fraction of socially conscious capital, (2) the fraction of targeted firms in the economy and (3) the correlation between the targeted firms and the rest of the stock market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Crowded Ratings: Clientele Effects in the Corporate Bond Market</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francisco Gomes (London Business School), Ryan Lewis (University of Colorado), Jordan Nickerson (University of Washington)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=795340" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文は、金融制約の緩和が物理的資本の質を高め、その結果、生産性も高めるという新しい証拠を提供する。インドにおける新しいプロジェクトレベルの投資データセットであるCapExを使用し、プロジェクトコスト、企業に追加された能力、投資の製品カテゴリに関するデータを用いている。物理的資本の質は、プロジェクトコストを追加設備容量で割った単位投資コスト（UIC）を用いて測定した。UICは企業間で大きなばらつきがあり、生産性やアウトプットの質との関連性が高いことが分かった。しかし、質の高い物理的資本は高価であり、十分な内部資金がなければ投資することができない。我々は、Debt Recovery Tribunals (DRT)の設立という政策が、インドの各州における対外債務調達へのアクセスに時差を生じさせていることを研究した。その結果、処理された州の企業は借入と投資を増やし、投資の増加はすべてUICの増加によるものであり、追加能力の増加によるものではないことが分かった。さらに、処理された企業は生産性と生産物の質を向上させた。これは、より大きな資金調達へのアクセスによって誘発されたUICの向上が、企業の生産性と生産物の質を向上させたという仮説と一致している。DRT設置の効果は、外部資金への依存度が高い企業や品質差別化の余地が大きい産業でより強く、この仮説はさらに支持される結果となった。また、他のチャネルが生産性やアウトプットの質の向上を完全に説明するわけではないことを、利用可能な証拠が示している。本稿は、物理的資本の質が生産性とアウトプットの質の重要な決定要因であり、企業が物理的資本の質を選択するかどうかは資金調達の可用性に依存することを明らかにした。∗</p>
+        <p class="abstract-text en">This paper provides novel evidence that reduced financial constraints increase physical capital quality and, consequently, productivity. We use a novel project level investment dataset from India, CapEx, with data on project cost, capacity added to the firm, and investment's product category. We measure physical capital quality using Unit Investment Cost (UIC), defined as the project cost divided by the additional capacity. We find UIC displays significant variation across firms and is substantially associated with productivity and output quality. However, higher quality physical capital is more expensive, and without sufficient internal funds, firms cannot invest in them. We study a policy, the establishment of Debt Recovery Tribunals (DRT), which has generated staggered variation in access to external debt financing across different Indian states. We find that firms in treated states borrowed and invested more with all the increased investment coming from an increase in UIC and not from increased additional capacity. Furthermore, treated firms increased productivity and output quality, consistent with the hypothesis that a higher UIC induced by greater access to finance increased firm productivity and output quality. The effect of DRTs establishment is stronger in firms that rely more on external financing and industries with more scope for quality differentiation, a result which further supports this hypothesis. Available evidence suggests that other channels do not completely explain the increased productivity and output quality. Overall, this paper finds physical capital quality is an important determinant of productivity and output quality, and a firm's choice of physical capital quality depends on the availability of financing. ∗</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Public Employee Pensions and Municipal Insolvency</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Sean Myers (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=792036" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">サプライチェーンにおけるグリーンイメージ。  Yilin Shi CUHK Business School, The Chinese University of Hong Kong, ylshi@link.cuhk.edu.hk Jing Wu CUHK Business School, The Chinese University of Hong Kong, jingwu@cuhk.edu.hk Yu Zhang Guanghua School of Management, Peking University, yuzhang@gsm.pku.edu.cn 顧客企業のグリーンイメージに関する認識は、自社のみならず周知の供給者にも依存するものである。本論文は、サプライヤーの環境パフォーマンスとサプライチェーンの情報開示を関連付ける最初の実証的証拠を提供する。具体的には、顧客企業が環境に責任を持つ（「良い」）サプライヤーとの関係を自発的に開示する一方で、「悪い」サプライヤーとの関係を選択的に開示しないことを示す強固な証拠を明らかにした。また、世界的な気温の変動を利用した道具変数アプローチにより、我々の発見を因果的に解釈することができる。このような企業行動は、気候変動に対する社会の認識が高まるにつれて増加し、環境情報の透明性に関する規制が強化されるにつれて減少する。この結果は、競争が激しい企業やブランド認知度の高い企業、機関投資家による保有比率が高い企業ほど顕著である。また、「環境にやさしい」サプライヤーを選択的に開示している企業は、売上高と評価が増加しており、製品消費者と金融市場がこのような行動を十分に考慮していないことが示唆される。</p>
+        <p class="abstract-text en">Green Image in Supply Chains:  Selective Disclosure of Corporate Suppliers  Yilin Shi  CUHK Business School, The Chinese University of Hong Kong, ylshi@link.cuhk.edu.hk  Jing Wu  CUHK Business School, The Chinese University of Hong Kong, jingwu@cuhk.edu.hk  Yu Zhang  Guanghua School of Management, Peking University, yuzhang@gsm.pku.edu.cn  Perception regarding a customer firm's green image depends not only on itself but also on its known suppliers. This paper provides the first empirical evidence linking the supplier's environmental performance and  supply chain information disclosure. Specifically, we uncover robust evidence showing that customer firms  voluntarily disclose relationships with environmentally responsible ('good') suppliers while selectively not  disclosing relationships with 'bad' suppliers. An instrumental variable approach using temperature volatility  worldwide supports a causal interpretation of our finding. Such corporate behavior increases with growing  public awareness of climate change and decreases with strengthened regulations on environmental information transparency. This observation is more salient for firms that face greater competition or care more about  their brand awareness and for firms that have more significant holdings by institutional investors. Firms that  selectively disclose 'green' suppliers experience increases in sales and valuation, suggesting that product  consumers and financial markets do not fully take this behavior into account.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

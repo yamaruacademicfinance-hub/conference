@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paying</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link active">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Paying</h1>        <div class="paper-card">
+            <div class="paper-title">Making Money</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gary Gorton (Yale University), Chase Ross (Federal Reserve Board of Governors), Sharon Ross (Office of Financial Research)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=798868" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">金融市場はリスクの共有と資本の効率的な配分を可能にする。我々は、多様な情報を持つリスク回避的な投資家と、投資決定を行う際に価格から学習するマネージャーからなる「フィードバック効果」モデルにおいて、これらの役割がどのように相互作用するかを特徴付ける。価格からの学習は常に投資効率を向上させるが、我々はそれが厚生を低下させるという新しい経路を明らかにした。すなわち、投資決定が株価のショックに対するエクスポージャーを変化させ、その結果、投資家のリスクヘッジ能力を変化させるのである。これは、一般的な投資判断の頑健な特徴であることを示し、企業のガバナンスや政策への示唆を概説する。JELD82, D84, G12, G14</p>
+        <p class="abstract-text en">Financial markets enable risk sharing and efficient allocation of capital. We characterize how these roles interact in a 'feedback effects' model with diversely informed, risk averse investors and a manager who learns from prices when making an investment decision. While learning from prices always improves investment efficiency, we identify a novel channel by which it can reduce welfare. Namely, investment decisions change the stock's exposure to underlying shocks and, consequently, investors' ability to hedge risk. We show that this is a robust feature of general investment decisions, and outline implications for firm governance and policy. JEL: D82, D84, G12, G14</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Digital Currency Runs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: David Skeie (University of Warwick)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=842604" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">Intermediary Based Loan Pricing∗ Pierre Mabille† Olivier Wangfl INSEAD NYU Stern April 2022 銀行へのショックはローンの価格条件と非価格条件にどのように伝わるのだろうか？我々は、異質でリスクの高い借り手と貸出能力に制限のある仲介者の間の多次元的な契約モデルを構築し、貸付条件が2つのモーメントに依存することを示す：金利に対するローン需要とデフォルト率の弾力性。この2つの十分統計量は、貸し手の資本、資金調達コスト、規制、借り手のリスクと流動性の変化に対して、貸付条件と銀行のポートフォリオリスクのクロスセクションがどのように反応するかを予測するものである。実証的な推計を用いると、これらの統計量は市場間およびリスクカテゴリー間のショックの通過の違いを説明することができる。また、インパクトと持続性によって、信用危機の動的な発生を促進する。</p>
+        <p class="abstract-text en">Intermediary Based Loan Pricing∗  Pierre Mabille†  Olivier Wangfl  INSEAD  NYU Stern  April 2022  How do shocks to banks transmit to the price and non price terms of loans? We build a model  of multidimensional contracting between heterogeneous risky borrowers and intermediaries  with limited lending capacity and show that loan terms depend on two moments: the elasticities of loan demand and default rates to interest rates. These two sufficient statistics predict  how the cross section of loan terms and banks' portfolio risk react to changes in lenders'  capital, funding costs and regulation, and borrowers' risk and liquidity. Using empirical estimates, we show that they explain differences in the pass through of shocks between markets  and risk categories. They also drive the dynamic incidence of credit crises through impact  and persistence.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Inflation and Individual Investors' Behavior: Evidence from the German Hyperinflation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Fabio Braggion (Tilburg University), Felix von Meyerinck (Tilburg University), Nic Schaub (WHU - Otto Beisheim School of Management)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=832048" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、メーカーの流動性需要が増加した場合の自動車ローン市場におけるキャプティブ・ファイナンスの役割について研究している。自動車ローンの証券化に関する新しい多国間データを用いて、流動性に制約のある総合メーカーが、クレジット・ファイヤーセールによって自動車販売から回収する現金を増加させることを可能にすることを示す。我々は、フォルクスワーゲンの排ガススキャンダルの後、メーカーの流動性コストと必要性の準外因的な変動を利用して、このチャネルを特定する。単純なキャリブレーションモデルによると、単体のメーカーが信用売りと同じ流動性を得るためには、自動車価格を10%下げなければならないことがわかる。</p>
+        <p class="abstract-text en">We study the role of captive finance in the car loan market when manufacturers' liquidity demand increases. Using a new multi country dataset on securitized car loans, we show that captive lending enables a liquidity constrained integrated manufacturer to increase the cash collected from car sales via a credit fire sale: reducing loan to value in the intensive margin and relaxing lending standards in the extensive margin increases car sale down payments, at the cost of future losses. We exploit quasi exogenous variation in manufacturers' liquidity cost and need following the Volkswagen emissions scandal to identify the channel. A simple calibrated model shows that a standalone manufacturer would have to decrease car prices by 10% to generate the same liquidity of a credit fire sale.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

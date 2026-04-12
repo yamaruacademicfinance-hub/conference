@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link active">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Bond Markets</h1>        <div class="paper-card">
+            <div class="paper-title">Risk Free Rates and Convenience Yields Around the World</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: William Diamond (University of Pennsylvania), Peter Van Tassel (Federal Reserve Bank of New York)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=782852" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">Bolton and Kacperczyk (2021a)を筆頭とする有力な新興文献は、非スケールの生排出量と株式リターンおよび営業業績の双方に強い相関があることを文書化している。我々は、2005年から2019年までの米国企業2,729社のサンプルを用いて、そのデータを再吟味し、企業規模、標準誤差の産業クラスタリング、業者推定排出量と企業開示排出量を考慮すると、米国サンプルでも欧州サンプルでも、非スケール排出量と株式リターンと営業業績の両方の関連性が消失すると結論付けている。投資家は、炭素排出量が株式市場によって値付けされていると考えることに慎重であるべきかもしれない。</p>
+        <p class="abstract-text en">An influential emerging literature, led by Bolton and Kacperczyk (2021a), documents strong correlations between unscaled raw emissions and both stock returns and operating performance. We re examine that data, using a sample of 2,729 U.S. firms from 2005 2019, and conclude that the associations between unscaled emissions and both stock returns and operating performance disappear once we account for firm size, industry clustering of standard errors, and vendor estimated versus firm disclosed emissions, both in the U.S. sample and in Europe. Investors might want to be cautious about assuming that carbon emissions are priced by equity markets.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Issuance and Valuation of Corporate Bonds with Quantitative Easing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Stefano Pegoraro (University of Notre Dame), Mattia Montagna (European Central Bank)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=827260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、米国の実在のベンチャーキャピタルによるインセンティブ付きレジュメ評価実験を採用し、投資家が関与した案件のデータを用いてマッチングを行うことで、スタートアップのESG特性が投資家の意思決定に与える影響を検証している。投資家は、連携するインキュベータで希望する実際のスタートアップとマッチングするために、ランダムなスタートアップ・ミッション（インパクト・ベンチャー対利益重視ベンチャー）を持つ複数の仮想的なスタートアップ・プロフィールを評価する必要がある。(1)環境・社会的インパクトを目指すことは、投資家のスタートアップの品質に対する期待を低下させ、利益追求型の投資家のスタートアップへのコンタクトや投資に対する興味を低下させる。この効果は、主に投資家が魅力的なスタートアップを検討する際に存在する。(ii) 投資家は、魅力的なインパクト・ベンチャーを評価する際に、より多くの注意を払う。これは、インパクト投資に対するテイスト主導の選好が存在することを示唆している。また、ESG選好は投資家の寄付行動とも相関している。(iii)インパクト投資家（利益追求型）は、インパクト・ベンチャーが自分たちと協働する可能性が高い（低い）と予想し、ソートが起こる可能性がある。(iv) ESGの負の効果は、創業者が白人男性で、創業者の学歴が低い企業ほど顕著である。興味深いことに、インパクト・ベンチャーは、実験後1年間の資金調達やビジネス・パフォーマンスの向上と相関しており、投資家が不正確な信念のためにお金をテーブルの上に置いていることが示された。ダイナミックベイズモデルを用いて、誤った信念がどのように生じ、インパクト投資の発展を妨げるかを実証する。実験的な証拠から、米国のプライベート・エクイティ市場におけるインパクト投資を改善する余地が残されていることが示された。</p>
+        <p class="abstract-text en">This paper examines the effect of startups' ESG characteristics on investors' decisions by employing an incentivized resume rating experiment with real US venture capitalists and matching investors with data on their involved deals. Investors need to evaluate multiple hypothetical startup profiles with randomized startup missions (impact ventures vs. profit driven ventures), which they know to be hypothetical, in order to be matched with their preferred real startups in the collaborating incubators. I find the following main results: (i) aiming for environmental and social impact causally lowers investors' expectations in the startup's quality, hence reducing profit driven investors' interest in contacting and investing in the startup. This effect mainly exists when investors consider attractive startups. (ii) Investors pay more attention when evaluating attractive impact ventures, suggesting the existence of taste driven preference towards impact investing. The ESG preference is also correlated with investors' donation behaviors. (iii) Sorting might happen as impact (profit driven) investors expect impact ventures to be more (less) likely to collaborate with them. (iv) The negative ESG effect is more salient for startups with white male founders and less educated founders. Interestingly, impact ventures are correlated with better fundraising and business performance during the one year period after the experiment, indicating that investors are leaving money on the table due to inaccurate beliefs. A dynamic Bayesian model is used to demonstrate how miscalibrated beliefs can arise and hinder the development of impact investment. Experimental evidence shows that there is still space to improve impact investing in the US private equity market.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Bond Convenience Yields in the Eurozone Currency Union</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Zhengyang Jiang (Northwestern University), Hanno Lustig (Stanford University), Stijn Van Nieuwerburgh (Columbia University), Mindy Z. Xiaolan (University of Texas Austin)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=798840" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、Covid19のパンデミック発生時に広く利用された政府の信用保証制度が、貸出供給を完全に増加させるのではなく、無保証信用から保証信用への代替につながったかどうかを調査する。この問題を、ユーロ圏独自の信用登録データと監督官庁の銀行データとのマッチングを用いて研究し、2つの主要な発見をした。第一に、保証付き融資は、パンデミックの影響を大きく受けたセクターの小規模だが比較的信用度の高い企業に対して、流動性が高く資本力のある大手銀行から借り入れる形で行われたことが多い。第二に，保証付き融資は，既存の非保証付き債務を部分的に代替するものであった。複数の銀行から借り入れを行っている企業にとって，代替は主に保証付き融資を行う銀行の貸出行動から生じている。代替は，パンデミックの影響をより強く受けたセクターの，よりリスクの高い小規模な企業への資金提供や，より大規模で強力な銀行からの借入で最も高くなった。全体として、政府保証はパンデミックの影響を受けた比較的信用力の高い企業への信用供与の継続に貢献したが、銀行のバランスシートにもある程度の利益をもたらしたことを示す証拠である。</p>
+        <p class="abstract-text en">We investigate whether government credit guarantee schemes, extensively used at the onset of the Covid19 pandemic, led to substitution of non guaranteed with guaranteed credit rather than fully adding to the supply of lending. We study this issue using a unique euro area credit register data, matched with supervisory bank data, and establish two main findings. First, guaranteed loans were mostly extended to small but comparatively creditworthy firms in sectors severely affected by the pandemic, borrowing from large, liquid and well capitalized banks. Second, guaranteed loans partially substitute pre existing nonguaranteed debt. For firms borrowing from multiple banks, the substitution mainly arises from the lending behavior of the bank extending guaranteed loans. Substitution was highest for funding granted to riskier and smaller firms in sectors more affected by the pandemic, and borrowing from larger and stronger banks. Overall, the evidence indicates that government guarantees contributed to the continued extension of credit to relatively creditworthy firms hit by the pandemic, but also benefited banks' balance sheets to some extent.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

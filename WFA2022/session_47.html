@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictability</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link active">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Predictability</h1>        <div class="paper-card">
+            <div class="paper-title">Finite Sample Analysis of Predictive Regressions with Long Horizon Returns</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Raymond Kan (University of Toronto), Jiening Pan (Nankai University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=806288" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、長い地平線のリターンが重複している予測回帰の厳密な有限標本分析を提供する。この分析により、有限標本における予測回帰に対する様々な漸近理論の信頼性を評価することができる。さらに、我々の有限標本分析は、リターンの予測可能性を検出する上で、短期または長期の地平線のリターンを用いた予測回帰がより強力であるかという長年の未解決問題に光を当てるものである。最後に、長期的なリターンを用いた予測回帰のスロープ係数のバイアス修正推定量とその標準誤差の推定値を提供します。我々のバイアス調整推定量のt比率は優れたサイズ特性を持ち、既存の文献にある代替案を凌駕するものである。</p>
+        <p class="abstract-text en">In this paper, we provide an exact finite sample analysis of predictive regressions with overlapping long horizon returns. This analysis allows us to evaluate the reliability of various asymptotic theories for predictive regressions in finite samples. In addition, our finite sample analysis sheds lights on the long outstanding question of whether a predictive regression with short or long horizon returns is more powerful in detecting return predictability. Finally, we provide a simple bias adjusted estimator of the slope coefficient as well as its estimated standard error for predictive regression with long horizon returns. The resulting t ratio of our bias adjusted estimator has excellent size properties and dominates existing alternatives in the literature.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Expectation Driven Term Structure of Equity and Bond Yields,</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Guihai Zhao (Bank of Canada), Ming Zeng (University of Gothenburg)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=787640" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">株式と債券の利回りの期間構造に関する最近の知見は、既存の均衡資産価格モデルに深刻な課題を投げかけている。本論文では、株式と債券の利回り（およびそのイールドスプレッド）の歴史的ダイナミクスを説明するために、主観的期待に関する新しい均衡モデルを提示する。株式・債券の利回りの動きは、主に主観的な配当・GDP成長期待に左右される。短期配当債権の利回りは、短期配当成長期待がより変動の少ない長期的な対応関係に平均回帰するため、より変動が大きい。株式利回りのプロシクリカルな傾きは、配当成長期待のカウンターシクリカルな傾きに起因する。株式リターン／イールドと名目債券リターン／イールドの相関は、1990年代後半以降、正から負に変化したが、これは主に実質GDP成長率と実質配当成長期待の相関が強くなったためであり、プロシクリカルなインフレによるものはごく一部であった。配当ストリップのリターンは予測可能であり、予測可能な配当予測の誤差と修正により、予測可能性の強さは成熟とともに減少する。このモデルは、価格配当率や超過リターンのボラティリティが持続的かつ変動的であるという点でもデータと整合的である。</p>
+        <p class="abstract-text en">Recent findings on the term structure of equity and bond yields pose serious challenges to existing equilibrium asset pricing models. This paper presents a new equilibrium model of subjective expectations to explain the joint historical dynamics of equity and bond yields (and their yield spreads). Equity/bond yields movements are mainly driven by subjective dividend/GDP growth expectations. Yields on short term dividend claims are more volatile because short term dividend growth expectation mean reverts to its less volatile long run counterpart. Procyclical slope of equity yields is due to the counter cyclical slope of dividend growth expectations. The correlation between equity returns/yields and nominal bond returns/yields switched from positive to negative after the late 1990s, mainly owing to a stronger correlation between real GDP growth and real dividend growth expectations, and only partially due to procyclical inflation. Dividend strip returns are predictable and the strength of predictability decreases with maturity due to predictable dividend forecast errors and revisions. The model is also consistent with the data in generating persistent and volatile price dividend ratios, and excess return volatility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Dividend Momentum and Stock Return Predictability: A Bayesian Approach</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Juan Antolin Diaz (London Business School), Ivan Petrella (University of Warwick), Juan Rubio Ramirez (Emory University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=784252" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">マクロファイナンスの長い伝統の中で、ベクトル自己回帰（VAR）を用いて株式リターンと配当の共同ダイナミクスを研究し、推論を明確にするためにCampbell Shiller（CS）アイデンティティによって暗示される交差方程式の制約を課している。我々はベイズ的な視点に立ち、CSの制約を課しながら、大量のリターン予測可能性に対する先験的な懐疑を内包するVARの任意の事後分布から推定する方法を開発した。その際、配当成長をシステムから省くという経験則が、いかに配当成長が持続的ではないという余分な制約を課すことになるかを示す。配当成長の持続性は、これまで見過ごされてきたリターン予測可能性のチャネルを生み出すことを強調し、これを「配当モメンタム」と名付ける。従来の推定方法と比較して、我々の制限付き情報事前分布は、サンプル外の役に立つ予測や、一般的なベンチマークを上回るシャープレシオを持つ現実的な資産配分の処方など、リターン予測可能性をより緩やかに、しかし依然として有意に導くものである。</p>
+        <p class="abstract-text en">A long tradition in macro finance studies the joint dynamics of aggregate stock returns and dividends using vector autoregressions (VARs), imposing the cross equation restrictions implied by the Campbell Shiller (CS) identity to sharpen inference. We take a Bayesian perspective and develop methods to draw from any posterior distribution of a VAR that encodes a priori skepticism about large amounts of return predictability while imposing the CS restrictions. In doing so, we show how the accepted empirical practice of omitting dividend growth from the system amounts to imposing the extra restriction that dividend growth is not persistent. We highlight that persistence in dividend growth induces a previously overlooked channel for return predictability, which we label 'dividend momentum.' Compared to conventional estimation methods, our restricted informative prior leads to a much more moderate, but still significant, degree of return predictability, with forecasts that are helpful out of sample and realistic asset allocation prescriptions with Sharpe ratios that out perform common benchmarks.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

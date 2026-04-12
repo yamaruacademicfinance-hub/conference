@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funds and markets</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link active">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Funds and markets</h1>        <div class="paper-card">
+            <div class="paper-title">Liquidity Provision to Leveraged ETFs and Equity Options Rebalancing Flows Evidence from End of Day Stock Prices</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrea Barbon (University of St. Gallen), Heiner Beckmeyer (University of Muenster), Andrea Buraschi (Imperial College London), Mathis Moerke (University of St. Gallen)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=797328" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、Becker（1957, 1993）のモデルの2つの中心的な予測を用いて、金融機関の昇進におけるジェンダー・バイアスを検証する：バイアスのある企業は、（1）わずかに昇進した女性労働者の昇進のハードルを上げる、（2）効率的な雇用慣行の見送りによるコストを発生させる、である。我々は、2014年から2019年にかけて、1,000以上のシャドウバンクから約72,000人の労働者を網羅した、住宅ローン担当者とその支店長に関する全国規模の新しいパネルを用いて、これらの予測の両方の支持を見いだした。全体として、我々の発見は、ジェンダーバイアスが金融機関におけるジェンダー格差の重要な要因であることを示す証拠となる。</p>
+        <p class="abstract-text en">We test for gender bias in promotions at financial institutions using two central predictions of Becker's (1957, 1993) model: firms with bias will (1) raise the promotion bar for marginally promoted female workers, and (2) incur costs from forgoing efficient employment practices. We find support for both of these predictions using a new nationwide panel of mortgage loan officers and their branch managers, encompassing approximately 72,000 workers from over 1,000 shadow banks from 2014 to 2019. Overall, our findings provide evidence that gender bias is an important factor in gender disparities at financial institutions.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">On the Road to Better Governance: Private Meetings and Mutual Fund Voting</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jesse Ellis (North Carolina State University), William Gerken (University of Kentucky), Russell Jame (University of Kentucky)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=796908" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">この論文では、健康リスクが企業の境界を形成しているかどうかを研究している。産業化学物質がもたらす発がんリスクを特定した「発がん性物質に関する米国報告書」によってもたらされた健康リスク認知の変動を利用したものである。その結果、新たに発がん性物質と認定された化学物質を使用している企業は、資産を売却し、汚染活動を外部委託する可能性が高いことが示された。化学物質が発がん物質であることが判明しても、全体の排出量は減少しないが、排出濃度は増加する。これは、汚染資産の所有権が統合されることを示唆している。私は、汚染資産の所有権の変化は、買収者とターゲットの両方にとって価値の増加であり、企業間の訴訟リスクの再配分と整合的であることを示す。この結果は、健康リスクが訴訟リスクを介して企業の境界を再形成し、株主に利益をもたらすが、公害問題の解決には至らないことを示唆している。</p>
+        <p class="abstract-text en">This paper studies whether health risks shape firm boundaries. I exploit the variation in perceived health risks created by the US Report on Carcinogens, which identifies cancer risks posed by industrial chemicals. I show that firms that use a newly identified carcinogen sell assets and are more likely to outsource polluting activities. Identifying a chemical as a carcinogen does not lower aggregate emission levels but increases emission concentration, implying a consolidation in the ownership of polluting assets. I show that the changes in ownership of polluting assets are value increasing for both acquirors and targets, and are consistent with a reallocation of litigation risks across firms. Together, my findings suggest that health risks reshape firm boundaries via litigation risks, which benefits shareholders but fails to resolve the pollution problem.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Passive Ownership and Price Informativeness</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Marco Sammon (Northwestern University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=842996" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2020年、米国の民間雇用者と連邦政府は、退職貯蓄制度への拠出を奨励するために、合わせて3,600億ドルを拠出した。本論文では、数百万人のアメリカ人を対象とした新しい雇用者データセットを用いて、これらの税金と雇用者のマッチングによるインセンティブが人種間の分布に与える影響を研究している。平均して、白人労働者は給与の4.6%を雇用者後援の退職金口座に拠出しているのに対し、黒人（ヒスパニック）労働者は給与の2.9%（3.3%）を拠出していることが明らかになった。また、学歴、職業、居住国、雇用主固定効果、持ち家率を考慮しても、大きな格差が残っている。このような拠出格差は、税制やマッチング・インセンティブによって増幅され、平均的な黒人（ヒスパニック）アメリカ人は、平均的な白人アメリカ人よりも60歳時点で約35万ドル（28万ドル）少ない資産で引退することを意味する。我々は、個人レベルの特徴が似ている従業員間の貢献度の差をもたらす2つのメカニズムを探った。第一に、世帯構成と親の特性が、人種間の退職金拠出における残りの格差の半分近くを説明することができる。第二に、黒人やヒスパニック系の人々は流動性制約が厳しいという証拠を発見した。黒人の退職金貯蓄者は、白人の2倍の確率で退職金を早期に引き出しており、これは流動性の代替手段へのアクセスが限られていることの表れである。これらの知見は、米国の退職金制度の制度設計が、より多く貯蓄できる人に報いるものであり、人種間の富の格差を悪化させ、世代を超えて富の不平等を伝播していることを示唆している。</p>
+        <p class="abstract-text en">In 2020, U.S. private employers and the federal government devoted a combined $360bn to encourage contributions to retirement savings plans. In this paper, we study the distributional impact of these tax and employer match incentives across racial groups using a new linked employer employee data set covering millions of Americans. On average, White workers contribute 4.6% of their salary to employer sponsored retirement accounts whereas Black (Hispanic) workers contribute 2.9% (3.3%) of their salary. Differences in income across racial groups explain only one third of this racial gap in retirement saving, and large disparities remain even after further controlling for education, occupation, county of residence, employer fixed effects, and homeownership. This gap in contributions, amplified by the tax and matching incentives, implies that the average Black (Hispanic) American would retire with around $350,000 ($280,000) less wealth at age 60 than the average White American. We explore two mechanisms driving differences in contribution between employees with similar individual level characteristics. First, household composition and parental characteristics can explain nearly half of the residual gap in retirement contributions across racial groups. Second, we find evidence that Black and Hispanic individuals face tighter liquidity constraints. Black retirement savers are twice as likely as Whites to take an early withdrawal from their retirement account in any given year, a sign of limited access to alternative means of liquidity. These findings suggest that the institutional design of U.S. retirement plans, which rewards those who can and do save more, exacerbates racial wealth gaps and propagates wealth inequality across generations.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

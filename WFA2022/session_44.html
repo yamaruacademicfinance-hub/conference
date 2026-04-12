@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasuries</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link active">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Treasuries</h1>        <div class="paper-card">
+            <div class="paper-title">Asymmetric Monetary Policy Expectations</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Anthony Diercks (Federal Reserve Board of Governors), Hiroatsu Tanaka (Federal Reserve Board of Governors), Paul Cordova (Columbia University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=836948" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">2008年以降、マネーマーケット資産の利回りは、短期国債の供給量の変化との関連性が強まっている。本稿では、流動性管理問題と規制を受ける異質な銀行をモデルに、こうした動きを記録し、合理化する。大量の超過準備と規制の強化が相まって、銀行はシャドーバンクへの流動性仲介を行うことができない。したがって、準備金の価格設定は貨幣性資産の価格設定から切り離され、財務省証券の変動に自由に反応するようになる。我々のモデルは、危機後の短期債の利回りとFRBのリバース・レポ・ファシリティーの数量を正確に予測することができる。</p>
+        <p class="abstract-text en">Since 2008, yields on money market assets have become increasingly associated with changes in the supply of short term Treasuries. This paper documents and rationalizes these developments in a model with heterogeneous banks subject to a liquidity management problem and regulation. The combination of large amounts of excess reserves and more stringent regulation prevents banks from intermediating liquidity to shadow banks. Hence, the pricing of reserves disconnects from the pricing of money like assets, making them free to react to variations in Treasury bills. Our model accurately predicts post crisis time series for short term yields and quantities at the Federal Reserve's reverse repo facility.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Treasury Bill Shortages and the Pricing of Short Term Assets</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Quentin Vandeweyer (University of Chicago), Adrien d'Avernas (Stockholm School of Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=830508" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本論文では、外部資金調達が高価な場合の持続可能な投資の規制について検討する。本論文では、Holmström and Tirole (1998)の企業金融モデルに排出権の外部性と産業均衡を導入し、企業金融のモデルを構築した。企業が十分な自己資金を持っている場合、ピグー税や世界的な排出枠は企業の削減活動（内部排出マージン）と産業規模（外部排出マージン）の両方を最適に支配するが、外部資金制約によりこの二つの目的は相反するものとなる。最適な排出税はPigouvian benchmarkを厳密に下回り、税収は総体として汚染者に還流されるべきである（あるいは排出枠を無償で発行すべきである）。環境政策が産業規模を縮小し、生産高を減少させるので、そのような縮小があまり深刻でない場合、企業は、結果として生じる製品価格の上昇によって消費者の犠牲の上に利益を得ることになる。マルチセクターの場合、資金調達の制約がグリーン産業への資源の再配分を阻害するため、ターゲット（補助金）ファイナンスが、汚染税やキャップ＆トレードメカニズムに次ぐ追加的な手段になる。</p>
+        <p class="abstract-text en">This paper examines the regulation of sustainable investment when external financing is costly. We introduce emission externalities and industry equilibrium in the Holmström and Tirole (1998) workhorse model of corporate finance. While a Pigouvian tax or a respective global cap on emissions optimally governs both firms' abatement activities (internal emission margin) and industry size (external emission margins) when firms have sufficient own funds, external financing constraints make these two objectives conflicting. The optimal emission tax is then strictly below the Pigouvian benchmark, and tax proceeds should be channeled back to polluters in the aggregate (or emission allowances should be issued for free). As environmental policy reduces industry size and thus output, when such a reduction is not too severe, firms benefit at the cost of consumers from the resulting higher product price. In the multi sector case, financing constraints inhibit the reallocation of resources to green(er) industries, and targeted (subsidized) financing becomes an additional instrument, next to a pollution tax or a cap and trade mechanism.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Fed and the Secular Decline in Interest Rates</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Sebastian Hillenbrand (New York University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=808696" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、連邦資金金利（FFR）の予想分布が時間的に歪んでいること、すなわち金融政策期待が非対称であることを示す、いくつかの新しい実証的証拠を記録している。この目的のために、プライマリーディーラー調査（SPD）への回答から1年先のFFR予想値を構築する。SPDは、資産価格から抽出される指標とは対照的に、FFRの「物理的な」将来分布を提供するものである。重要なのは、このサーベイのユニークな特徴により、リスクプレミアによらず、平均値、モード別期待値、および2つの指標間の乖離を明示的に計算することができる点である。さらに、ZLB制約を持つ単純なニューケインジアンモデルが、データにおけるパターンと同様に、正と負の両方の歪度を内生的に生成することができることを示す。集計分布の非対称性の時間変化は、調査からFFR予想を抽出する際に、平均を正しく測定することの重要性を浮き彫りにしている。我々は、金融政策期待に関する一般的な調査指標であるブルーチップ・サーベイ（BCS）によるFFR予想が、データが公開された2011年以降、平均値よりも最頻値に近い形で追跡していることを論じる。その結果、SPDから抽出された政策期待の平均値は、BCS予測によるタームプレミアと比較して、負のタームプレミアを有意に少なく示唆する。また、平均値は、平均二乗誤差の損失に基づくBCS予測を上回り、最適予測の理論と整合的である。</p>
+        <p class="abstract-text en">We document some novel empirical evidence of significant time varying skewness in the aggregate forecast distribution of the federal funds rate (FFR), i.e. asymmetric monetary policy expectations. To this end, we construct measures of the one year ahead FFR expectations from responses to the Survey of Primary Dealers (SPD). The SPD provides a 'physical' future distribution of the FFR, in contrast to measures extracted from asset prices. Importantly, this survey's unique feature allows us to explicitly compute mean and modal expectations and the discrepancy between the two measures, free of risk premia. We further show that a simple New Keynesian model with the ZLB constraint can endogenously generate both positive and negative skewness similar to patterns in the data. The time variation of asymmetry in the aggregate distribution highlights the importance of correctly measuring the mean when extracting FFR expectations from surveys. We argue that the FFR forecasts from the Blue Chip Survey (BCS), a popular survey measure of monetary policy expectations, track the mode more closely than the mean since 2011, when the data became publicly available. As a result, the mean measure of policy expectations extracted from the SPD implies significantly less negative term premia compared to term premia implied by BCS forecasts. The mean measure also outperforms the BCS forecasts based on the mean squared error loss, consistent with the theory of optimal forecasting.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

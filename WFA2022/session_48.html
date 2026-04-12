@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Decisions</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link active">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link ">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Consumer Decisions</h1>        <div class="paper-card">
+            <div class="paper-title">Consumption out of Fictitious Capital Gains and Selective Inattention</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Benjamin Loos (University of New South Wales), Steffen Meyer (University of Southern Denmark), Michaela Pagel (Columbia University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=791364" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">個人投資家の取引における行動バイアスは消費に影響を与えるか？我々は、投資家のオンライン・ポートフォリオの表示価格を変更する自然実験を利用した。その結果、投資家は「架空の」キャピタルゲイン、すなわち、実際の購入価格ではキャピタルロスとなるキャピタルゲインを新しい購入価格の下で売却し、消費していることが分かった。また、投資家は架空の利益が大きく、実際の損失が小さい場合には、架空の勝者をより多く売却し、実際の購入価格が非常に顕著な場合にも売却するが、架空の敗者については全く区別して扱わないため、気がつかないという選択的不注意があると論じる。</p>
+        <p class="abstract-text en">Do retail investors' behavioral biases in trading affect their consumption? We exploit a natural experiment that changed the displayed purchase prices in investors' online portfolios. We find that investors sell and consume 'fictitious' capital gains, i.e., displayed capital gains under the new purchase prices that are capital losses under the actual purchase prices. We argue that investors are selectively inattentive: they sell more fictitious winners when fictitious gains are larger and actual losses are smaller, they sell them even when actual purchase prices are very salient, but they notice fictitious losers as they do not treat them at all differentially.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Propagating Experiences by Competing: Micro Level Evidence from Real Estate</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Marco Giacoletti (University of Southern California), Christopher Parsons (University of Southern California)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=830732" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">競争による経験の伝播。  不動産における経験効果：競合による経験の伝播 先行研究では、不動産における経験効果として、もともと価格が高いときに購入した売り手や大家が、何年経っても高い希望価格や家賃を設定することが示されている。本論文では、このような評価誤差が価格競争を通じて近隣の不動産に伝播することを研究している。価格（家賃）のクロスセクション回帰分析では、売り手価格が高かったか低かったか-だけでなく、近隣の売り手（家主）の経験も考慮されている。2008年から2012年にかけて購入された「破綻物件」との競合は、1%を超える値引きとなる。バストアップ住宅は販売全体の10％未満であるが、その価格歪曲の増幅は集合的な（例えば郵便番号レベルの）価格と家賃に影響を与えるのに十分であると思われる。  2021年11月18日</p>
+        <p class="abstract-text en">Propagating Experiences by Competing:  Micro Level Evidence from Real Estate  Prior research indicates long lived experience effects in real estate: a seller or landlord having  originally bought when aggregate prices were high sets a high asking price and/or rent, even  many years later. This paper studies the propagation of such valuation errors to nearby  properties through price competition. In cross sectional regressions of prices (rents), sellers  prices were high or low  -  but also the experiences of nearby sellers (landlords). Competing  with a 'bust acquired' house bought during 2008 2012 is associated with discounts exceeding  1%. Although bust acquired houses comprise < 10% of all sales, the amplification of their price  distortions appears sufficient to impact aggregated (e.g., zip code level) prices and rent.  November 18, 2021</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Macroeconomic Expectations and Credit Card Spending</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mikhail Galashin (University of California Los Angeles), Martin Kanz (World Bank), Ricardo Perez Truglia (University of California Berkeley)</div>
+            <a href="https://westernfinance-portal.org/viewpaper.php?n=798196" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">マクロ経済への期待は消費者の意思決定にどのような影響を与えるのだろうか？我々は、大手商業銀行のクレジットカード顧客2,872人を対象とした自然フィールド実験により、この疑問を検証する。我々は、将来のインフレと名目為替レートに関する消費者期待を測定するための調査を実施し、これらの期待に外生的な変動を生じさせる情報提供実験を組み合わせることによって、消費者期待を測定した。調査および実験のデータは、対象者のクレジットカード取引および残高に関する詳細な行政データと結合する。すなわち、インフレ期待は耐久財への支出に、為替レート期待は貿易財への支出に、そして名目金利を一定とすれば、インフレ期待は借入金に影響を与えるはずである。我々は、参加者に提供される情報が主観的な期待に強く影響することを見出した。しかし、実際の消費行動（行政データ）や自己申告による消費計画（アンケートデータ）には、有意な影響は見られなかった。このことから、消費者はインフレや為替への期待を消費の意思決定に反映させるほどには洗練されていない、というのが我々の望ましい解釈である。消費者の期待値と行動との間に関連性がないことは、フォワードガイダンスなどのマクロ経済政策にとって重要な意味を持つ可能性がある。</p>
+        <p class="abstract-text en">How do macroeconomic expectations affect consumer decisions? We examine this question using a natural field experiment with 2,872 credit card customers from a large commercial bank. We conduct a survey to measure consumer expectations about future inflation and the nominal exchange rate and combine this with an information provision experiment that generates exogenous variation in these expectations. We merge the survey and experimental data with detailed administrative data on the subjects' credit card transactions and balances. The experiment is designed to test three standard predictions from models of intertemporal consumption choice: inflation expectations should affect spending on durables; exchange rate expectations should affect spending on tradables; and, holding constant the nominal interest rate, inflation expectations should affect borrowing. We find that the information provided to participants strongly affects subjective expectations. However, we do not find any significant effects on actual consumer behavior (as measured in administrative data) or self reported consumption plans (as measured in survey data). Our preferred interpretation is that consumers are not sophisticated enough to factor inflation and exchange rate expectations into their consumption decisions. The absence of a link between consumer expectations and behavior has potentially important implications for macroeconomic policies such as forward guidance.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrepreneurial and PE Dynamics</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link active">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Entrepreneurial and PE Dynamics</h1>        <div class="paper-card">
+            <div class="paper-title">New Technology and Business Dynamics</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Tom Meling (Ohio State University), Hans Hvide (University of Bergen)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=921900" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">経済はどのようにして新技術に適応するのだろうか？既存の文献は既存企業の役割に焦点を当てているが、我々は起業家や若い企業の重要性を強調する。背景には、ノルウェーにおけるブロードバンドインターネットの時差的な普及という自然実験がある。その結果、新技術が既存企業の生存率、雇用率、資産成長率に与える影響は小さく、起業率は4分の1に増加した。起業の質は低下しなかった。調査結果との組み合わせにより、新興企業は経済を新しいテクノロジーに適応させる上で重要な役割を果たすというシュンペーター（1934年）やアロー（1962年）の考えを支持する結果が得られた。</p>
+        <p class="abstract-text en">How does the economy adapt to new technologies? While existing literature focuses on the role of established firms, we highlight the importance of entrepreneurs and young firms. The context is a natural experiment: the staggered roll-out of broadband internet in Norway. We find that the new technology had small effects on the survival, employment and asset growth of established firms, but led to a quarter increase in startup rates. Startup quality did not decline. Combined with survey evidence, our findings support ideas from Schumpeter (1934) and Arrow (1962) that startups play an important role in adapting the economy to new technologies.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Female Representation and Talent Allocation in Entrepreneurship: The Role of Early Exposure to Entrepreneurs</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mikkel Mertz (Queen Mary University of London), Maddalena Ronchi (Northwestern University), Viola Salvestrini (Queen Mary University of London)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=925260" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、デンマークの登録データを用いて、青年期に起業家精神に触れる機会が多いほど、この職業における女性の代表性と才能の配分に影響を与えることを示す。青年期から成人期までの100万人の教育的・職業的選択を追跡し、義務教育の最後の数年間における、親が起業家である青年期の同級生の割合で測定した、起業家精神への曝露の学校内クロスコホート変動を利用する。その結果、起業家への早期接触は、女子の起業への参入と継続を促すが、男子の職業選択には影響を与えないことがわかった。この効果は、同世代の女子が起業家の親に接することによってもたらされ、女子が義務教育終了時に教育を中断し、成人後に低賃金の職業に就く可能性を低下させる。さらに、女性の起業家精神の向上は、平均的な企業よりも規模が大きく、長く存続する事業の創出と関連している。これらの知見を総合すると、文化的・情報的な性質があると思われるジェンダー特有の参入障壁が、生まれつき才能のある女性起業家が比較優位性を追求することを妨げている可能性が示唆される。</p>
+        <p class="abstract-text en">Using registry data from Denmark, this paper shows that higher exposure to entrepreneurship during adolescence affects the representation of women and the allocation of talent in this profession. We track the educational and professional choices of one million individuals from adolescence to adulthood and exploit within-school cross-cohort variation in exposure to entrepreneurship, as measured by the share of an adolescent's peers whose parents are entrepreneurs during the last years of compulsory schooling. We find that early exposure to entrepreneurs encourages girls' entry and tenure into this profession, while it does not affect the professional choices of boys. The effect is entirely driven byexposure to the entrepreneur parents of female peers and works via a decrease in girls' likelihood to discontinue education at the end of compulsory schooling and to hold low-paying jobs as adults. Moreover, the increase in female entrepreneurship is associated with the creation of businesses that are larger and survive longer than the average firm. Taken together, these findings suggest that gender-specic entry barriers, which appear to be both cultural and informational in nature, may prevent some innately talented female entrepreneurs from pursuing their comparative advantage.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">The Effects of the QSBS Exemption on Entrepreneurship and Innovation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jun Chen (Renmin University of China), Joan Farre-Mensa (University of Illinois-Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=969920" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">適格中小企業株式（QSBS）免除制度は、特定の起業家、その従業員、およびその投資家が、キャピタルゲイン税を支払うことなく、あるいは大幅に軽減されることなく、自社の株式を売却することを可能にするものである。diff-in-diff同定法を用いて、2010年のQSBS免除の引き上げにより、免除の対象となる産業での企業誕生が、対象とならない産業と比較して12％増加したことを示す。起業家精神に対する免除の効果は、起業の撤退率が高い産業、ハイテク産業、STEM雇用の割合が高い産業に集中していることを示す。また、免除は起業の雇用増加にもつながったが、それは学士号以上の学位を持つ従業員の間でのみであった。これらの結果は、QSBS免除が、起業家が起業を成功させる税引き後の利益を増加させ、高学歴の人材を引き付けやすくすることで、起業を促進したことを示唆している。さらに、QSBS免除は、ベンチャーキャピタルの第1ラウンドを調達する起業家の能力を向上させた。これらの結果を総合すると、QSBS免除は、起業希望者の創業意欲と成功に必要なリソースを調達する能力の両方を高めることが示唆される。最後に、QSBS免除は、扱われた新興企業においてより高い特許取得率につながることも示しており、このことは、QSBS免除が特に革新的な新興企業にとって有用であったことを示唆している。</p>
+        <p class="abstract-text en">The Qualified Small Business Stock (QSBS) exemption allows certain entrepreneurs, their employees, and their investors to sell shares of their companies without paying any—or only greatly reduced—capital gains taxes. Using a diff-in-diff identification strategy, we show that the QSBS exemption increase in 2010 led to a 12% increase in firm births in industries eligible for the exemption relative to non-eligible industries. We show that the exemption's effect on entrepreneurship is concentrated in industries that have a high rate of startup exits, in high-tech industries, and in those with a high fraction of STEM employment. The exemption also led to an increase in startup employment—but only among employees with a bachelor's or higher degree. These findings suggest that the QSBS exemption spurred entrepreneurship by increasing prospective entrepreneurs' after-tax benefit of founding a successful startup and by making it easier for them to attract highly-educated talent. In addition, we show that the QSBS exemption increased startups' ability to raise their first round of venture capital. Taken together, our findings suggest that the QSBS exemption increases both the willingness of prospective entrepreneurs to become founders and their ability to raise the resources they need to be successful. Finally, we also show that the QSBS exemption led to higher patenting in treated startups, thus suggesting that it was particularly helpful to innovative startups.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Selling Private Equity Fees</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Minmo Gahng (Cornell University), Blake Jackson (University of Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=915600" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">プライベート・エクイティ(PE)ファームによるGPステークスと呼ばれるゼネラル・パートナー(GP)のキャッシュフロー債権の売却と、これらの売却がファンド投資家とのエージェンシー摩擦とどのように関連しているかを検証する。資金調達とパフォーマンスに優れたプライベート・エクイティ・ファームは、GPステークを売却する傾向があり、その多くは他のプライベート・エクイティ・ファームに売却される。売り手のプライベート・エクイティ・ファームの運用資産、収入、ファンド戦略の範囲はその後増加するが、ファンドのパフォーマンスは悪化しない。売り手はファンドへの投資を増やし、雇用を増やし、投資家に優しいファンド分配を行う。我々の結果は、株式売却による「スキン・イン・ザ・ゲーム」の減少が、売り手とファンド投資家の間のエージェンシー摩擦を悪化させないことを示唆している。</p>
+        <p class="abstract-text en">We examine the sale of General Partner (GP) cash flow claims by Private Equity (PE) firms, termed GP stakes, and how these sales relate to agency frictions with fund investors. PE firms with better fundraising and performance records tend to sell GP stakes, mostly to other PE firms. Seller PE firms’ Assets Under Management, income, and scope of fund strategies subsequently increase, while fund performance does not deteriorate. Sellers invest more in their funds, increase employment, and make investor-friendly fund distributions. Our results suggest the reduced “skin-in-the-game" from stake sales does not exacerbate agency frictions between sellers and fund investors.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

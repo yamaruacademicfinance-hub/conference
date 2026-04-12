@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankruptcy</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link active">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Bankruptcy</h1>        <div class="paper-card">
+            <div class="paper-title">Bankruptcy Law and the Market for Corporate Influence</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mike Burkart (London School of Economics and Political Science), Samuel Lee (Santa Clara University), Vladimir Vladimirov (University of Amsterdam)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=932960" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、企業の影響力市場における破産法の役割を研究している。我々の理論では、破産制度は、債権者間の合意形成と、合意形成プロセスに影響を与えようとする投資家への債権売買という2つの側面から集団行動の失敗に対処する。理想的な法律は、協調的な枠組みの中でレントシーキングの手段を提供する。このような法律は、破産が市場を裁判所に「置き換える」という印象に反して、不良債権に対する積極的な投資と取引を誘発する。</p>
+        <p class="abstract-text en">We study the role of bankruptcy law within a market for corporate influence. In our theory, the bankruptcy system addresses collective action failures along two dimensions: consensus finding among claimants and trading claims to investors who seek to influence the consensus-finding process. The ideal law provides avenues for rent-seeking within a cooperative framework. Such a law induces activist investing and trading in distressed claims, contrary to the impression that bankruptcy “replaces” markets with courts.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Bankruptcy Lawyers and Credit Recovery</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Brian Jonghwan Lee (Columbia University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=928284" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">破産弁護士事務所の広告が、経済的に困窮している家計の信用回復にどのような影響を与えるかを研究している。地域のテレビ広告が販売される地理的単位に関連する境界不連続戦略を利用し、破産法事務所の広告の外生的変動に関連する破産申立てと信用回復を実証的に明らかにする。まず、申立率に対する有意な広告効果を記録し、広告によって誘発された申立者は既存の申立者と類似していることを示す。次に、信用スコア、新規住宅取得、差し押さえを含む信用成果に対する広告のプラスの効果を発見する。これらの結果は、破産という選択肢に対する家計の評価において、弁護士が情報摩擦に対処しているという証拠であると解釈している。</p>
+        <p class="abstract-text en">I study how bankruptcy law firm advertisements affect credit recovery of households in financial distress. Exploiting the border discontinuity strategy associated with the geographic unit in which local TV advertisements are sold, I empirically uncover bankruptcy filings and credit recovery related to exogenous variations in bankruptcy law firm advertisements. I first document a significant advertising effect on filing rates and show that advertising-induced filers are similar to existing filers. I then find a positive effect of advertisements on credit outcomes including credit score, new homeownership, and foreclosure. I interpret these findings as evidence that lawyers address information frictions in households’ assessment of the bankruptcy option.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Do Rights Offerings Reduce Bargaining Complexity in Chapter 11?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Gunjan Seth (University of Southern California)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=966896" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、米国連邦倒産法第11章（チャプター11）の再建において、評価の不確実性を解消するための新たな市場ベースのメカニズムとして、倒産におけるライツ・オファリングの役割を調査する。(i)過去10年間で、ライツ・オファリングは倒産の47％の資金調達に利用されたこと、(ii)一般的にヘッジファンドやプライベート・エクイティ・ファームがライツ・オファリングを提案し、引き受けていること、(iii)ライツ・オファリングの発生は株式市場のパフォーマンスと高い相関関係があること、である。道具変数設定では、他の資金調達源と比較して、ライツ・オファリングは高い回収率、連邦破産法第11条の適用期間の短縮、および破産再申立率の低下につながることを発見した。また、ライツ・オファリングは、企業価値を低下させる資産清算に頼ることなく、新たな資本にアクセスすることを可能にする。私の知見は、大規模かつ複雑な破産ケースにおける主要な交渉摩擦を緩和することによって、ライツ・オファリングが経済における資源配分の効率を改善する可能性があることを示唆している。</p>
+        <p class="abstract-text en">This paper investigates the role of rights offerings in bankruptcy as a new market-based mechanism for resolving valuation uncertainties in U.S. Chapter 11 reorganizations. Using hand-collected data on rights offerings in bankruptcy, I document three novel facts: (i) in the last decade, they were used to finance 47% of bankruptcies, (ii) hedge funds or private equity firms generally propose and underwrite them, and (iii) their occurrence is highly correlated with the performance of the stock market. In an instrumental variable setting, I find that compared with other sources of financing, rights offerings lead to higher recovery rates, shorter time spent in Chapter 11, and lower bankruptcy refiling rates. They also allow firms to access new capital without resorting to asset liquidations, which are value-reducing. My findings suggest that by alleviating key bargaining frictions in large and complex bankruptcy cases, rights offerings may improve the efficiency of resource allocation in the economy.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

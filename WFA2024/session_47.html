@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Pricing with Options</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link active">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Asset Pricing with Options</h1>        <div class="paper-card">
+            <div class="paper-title">0DTE Option Pricing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Federico Bandi (Johns Hopkins University), Nicola Fusari (Johns Hopkins University), Roberto Reno' (ESSEC Business School)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=915376" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">超ショート・テナー（0DTE）オプションの市場は、ここ数年で急激に拡大している。2023年には、0DTEの日次出来高はオプション全体の日次出来高の45%以上に達した。この爆発的な新市場について簡単に説明した後、0DTEのインプライド・ボラティリティのサーフェスの形状を捉えるように設計された、新しい価格計算式を紹介する。プライシングは、原資産の価格プロセスの連続部分の条件付特性関数のエッジワース的な拡張に依存する。この拡張は、（レバレッジによって）時間的に変化する歪度と（ボラティリティ・オ ブ・ボラティリティによって）時間的に変化する尖度を追加することによって、局所的にガウ シアンのリターン密度から確率質量をシフトさせます。この拡張は時間的に局所的であるため、0DTEのような超ショートテナーの商品の価格決定に適している。本論文では、（1）価格と（2）ヘッジが、最新の仕様と比較して大幅に改善したことを示す。最後に、0DTEに基づくリターン／変動リスク・プレミアムを推定することにより、ほぼ瞬時の予測可能性について示唆的な結果を提供する。</p>
+        <p class="abstract-text en">The market for ultra short-tenor (zero days-to-expiry or 0DTE) options has grown exponentially over the last few years. In 2023, daily volume in 0DTEs reached over 45% of overall daily option volume. After briefly describing this exploding new market, we present a novel pricing formula designed to capture the shape of the 0DTE implied volatility surface. Pricing hinges on an Edgeworth-like expansion of the conditional characteristic function of the continuous portion of the underlying's price process. The expansion shifts probability mass from an otherwise locally Gaussian return density by adding time-varying skewness (through leverage) and time-varying kurtosis (through the volatility-of-volatility). The expansion is local in time and, therefore, naturally suited to price ultra short-tenor instruments, like 0DTEs. We document considerable (1) price and (2) hedging improvements as compared to state-of-the-art specifications. We conclude by providing suggestive results on nearly instantaneous predictability by estimating 0DTE-based return/variance risk premia.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">A Non-Linear Market Model</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Tobias Sichert (Stockholm School of Economics)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=925176" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">市場リスクの非線形プライシングが、モメンタム、ベッティング・アゲインスト・ベータ、特異的ボラティリティ、流動性など、多くの著名な株式リターンのクロスセクショナル・アノマリーを説明できることを示す。非線形プライシング・モデルは、プライシング関係を仮定することなく、オプション・データから推論される。さらに、多くのアノマリーが強いテイル・リスク・エクスポージャーを持ち、それがモデルによってうまくプライシングされることを示す。このモデルの主な特徴は、年率約4%というかなりのアップサイド・リスク・プレミアムがあることである。最後に、プライシングの結果は、システマティックな分散リスクへのエクスポージャーの補正で説明できる。</p>
+        <p class="abstract-text en">I show that non-linear pricing of market risk can explain many prominent cross-sectional stock return anomalies, such as momentum, betting-against-beta, idiosyncratic volatility, and liquidity. The non-linear pricing model is inferred from options data without assumptions on the pricing relationship. I further document that many anomalies have a strong tail risk exposure, which is successfully priced by the model. A key feature of the model is a sizable upside risk premium of approximately 4% per annum. Finally, the pricing results can be explained with a compensation for exposure to systematic variance risk.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">0DTEs: Trading, Gamma Risk and Volatility Propagation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Chukwuma Dim (George Washington University), Bjorn Eraker (University of Wisconsin-Madison), Grigory Vilkov (Frankfurt School of Finance and Management)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=950096" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">最近、短期、特に当日満期（0DTE）オプションの取引が急増しており、原資産市場に不安定な影響を与えかねないとの懸念が高まっている。デルタヘッジの強度を測るために、満期までの時間とガンマの間に逆相関があることを考えると、短期オプションの建玉が大きいと、相場が大きく動いた後にボラティリティが拡大する可能性がある。我々は、主にオプションの売り手がデルタヘッジを行う（市場の動きを悪化させる）という直観に反して、午前中の高い建玉のガンマは過去のボラティリティを伝播させないことを文書化した。それどころか、それは通常、日中のボラティリティの低下と関連しており、オプションの売り手がボラティリティを予期しているか、あるいはデルタヘッジフローが建玉の両側でほぼ均衡していることを示している。我々は、0DTEストラドルの実現リターンの高いボラティリティと正の歪度を記録している。0DTEの実現バリアンス・リスク・プレミアムは、特に連邦公開市場委員会（FOMC）の発表のような不確実性のエピソードが解消された後に、例外的に高い。</p>
+        <p class="abstract-text en">Trading in short-term, especially same-day expiry (0DTE), options has recently surged, raising concerns about its possible destabilizing impact on the underlying market. Given the inverse relationship between time to expiration and gamma, measuring delta-hedging intensity, sizeable open interest in short-term options can extend volatility following large market moves. We document that contrary to the intuition that mainly option sellers delta-hedge (that would aggravate market moves), high open interest gamma in the morning does not propagate past volatility. Instead, it is typically associated with lower intraday volatility, indicating that option sellers anticipate volatility or that delta-hedging flows are largely balanced on either side of the open interest. We document high volatility and positive skewness of realized 0DTE straddle returns; 0DTEs realized variance risk premium is exceptionally high, especially after resolution of uncertainty episodes, such as Federal Open Market Committee announcements.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

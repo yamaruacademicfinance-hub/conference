@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESG Investing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link active">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>ESG Investing</h1>        <div class="paper-card">
+            <div class="paper-title">Green Tilts</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Lubos Pastor (University of Chicago), Robert Stambaugh (University of Pennsylvania), Lucian Taylor (University of Pennsylvania)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=918148" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">環境・社会・ガバナンス（ESG）特性に関連する金融機関のポートフォリオ傾斜を推計。2021年には、ESG関連銘柄の投資比率は投資業界の総資産の6%に達し、金融機関のポートフォリオの平均投資比率は22%に達する。ESG傾斜は、ボラティリティの低い銘柄や、規模が小さくアクティブ・シェアが大きい機関投資家ほど大きく、理論的予測と一致している。ESGの傾斜が大きいのは、保有銘柄の選択、特に保有銘柄のウェイトである。最大規模の機関投資家はグリーン株への傾斜を強め、その他の機関投資家や家計はブラウン株への傾斜を強めている。国連資本市場研究所（UNPRI）の署名機関や欧州の機関投資家はグリーン銘柄への傾斜が強く、銀行はブラウン銘柄への傾斜が強い。</p>
+        <p class="abstract-text en">We estimate financial institutions' portfolio tilts that relate to stocks' environmental, social, and governance (ESG) characteristics. In 2021, ESG-related tilts total 6% of the investment industry's assets and average 22% of institutions' total portfolio tilts. ESG tilts are larger for less-volatile stocks and for institutions with smaller size and greater active share, consistent with our theoretical predictions. Significant ESG tilts arise from the choice of stocks held and, especially, the weights on stocks held. The largest institutions tilt increasingly toward green stocks, while other institutions and households tilt increasingly brown. UNPRI signatories and European institutions tilt greener, banks browner.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">ESG Window Dressing</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Li An (Tsinghua University), Shiyang Huang (University of Hong Kong), Dong Lou (London School of Economics and Political Science), Xudong Wen (Hong Kong University of Science & Technology), Mingxin Xu ()</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=947548" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、個々の投資信託の四半期内取引の詳細を推論する新しい方法を開発した。投資信託は四半期ごとに保有状況を報告するが、リターンは毎日報告する必要がある。投資信託がt日目に取引を行った後、その報告されたポートフォリオのリターンは、四半期末の保有残高に基づくリターンからさらに乖離するはずである。このようにリターンの乖離が突然大きくなることで、取引の日付と金額を推測することができる。我々は、この方法を各四半期の変わり目における投資信託の戦略的取引行動の研究に適用した。投資信託は四半期終了直前に高ESG銘柄を購入し、低ESG銘柄を売却し、次の四半期の開始時に直ちに取引を反転させる。この取引パターンは、ESGパフォーマンスを高めるインセンティブが最も強い、ESG格付けの星が4つと5つに分かれるあたりの投資信託に集中しています。高ESG銘柄は四半期終了直前には低ESG銘柄をアウトパフォームし、翌四半期開始時にはアンダーパフォームする。</p>
+        <p class="abstract-text en">We develop a novel method to infer details of intra-quarter trading of individual mutual funds. Although mutual funds report their holdings once every quarter, they are required to report their returns every day. After a mutual fund executes a trade on day t, its reported portfolio return should further deviate from its quarter-end-holdings-based return. This sudden jump in return deviation allows us to infer the transaction date and amount. We apply our method to studying the strategic trading behavior of mutual funds around the turn of each quarter. We find strong evidence of quarter-end ESG-rating manipulation in the post- 2015 period: mutual funds buy high-ESG stocks and sell low-ESG stocks right before quarter ends, and reverse their trades immediately at the beginning of the next quarter. This trading pattern is concentrated among mutual funds right around the cutoff of four and five ESG rating stars, which have the strongest incentives to boost their ESG performance. These trades also affect prices: high-ESG stocks outperform low-ESG stocks right before quarter ends, and yet underperform at the beginning of the next quarter.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Responsible Consumption, Demand Elasticity, and the Green Premium</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xuhui Percy Chen (University of British Columbia), Lorenzo Garlappi (University of British Columbia), Ali Lazrak (University of British Columbia)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=961688" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">投資家が「茶色」商品よりも「緑色」商品を好むモデルにおける均衡資産価格を研究する。我々は、財の需要弾力性が資産のリスク性に決定的に影響することを示す。需要弾力性が高い場合、茶色の資産は消費リスクをヘッジするため、緑色の資産よりも安全である。商品の需要弾力性が低い場合は、その逆である。したがって、我々のモデルは、「緑色から茶色を差し引いた」株式リターンスプレッド（緑色プレミアム）がクロスセクションで変化し、需要の価格弾力性が高まるにつれて増加すると予測する。この新しい予測を米国株で検証したところ、2012年--2022年の期間において、需要弾力性の高い企業では年間グリーン・プレミアムは11.7%であったが、需要弾力性の低い企業でははるかに小さく、重要でないことが分かった。需要弾力性の高い企業の高いグリーン・プレミアムは、標準的なリスク調整と需要弾力性の代替指標にロバストであり、投資家の環境に対する懸念に対する予期せぬショックでは説明できず、期待リターンのオプション・インプライド指標を用いても強いままである。これらの結果は、責任ある消費が資産価格に与える影響を理解する上で、財の需要弾力性が重要な役割を果たすことを強調している。</p>
+        <p class="abstract-text en">We study equilibrium asset prices in a model where investors favor ``green'' over ``brown'' goods. We show that demand elasticity of goods crucially affects assets' riskiness. When demand elasticity is high, brown assets are safer than green, because they hedge against consumption risk. The opposite holds when goods' demand elasticity is low. Our model therefore predicts that the ``green minus brown'' stock return spread (green premium) varies in the cross section and increases in the price elasticity of demand. We test this novel prediction on US stocks and find that over the 2012--2022 period the annual green premium is 11.7% for firms with high demand elasticity, while it is much smaller and insignificant for firms with low demand elasticity. The high green premium for high demand elasticity firms is robust to standard risk adjustments and to alternative measures of demand elasticity; it cannot be explained by unanticipated shocks to investors' environmental concerns, and remains strong after using option-implied measures of expected returns. These findings underscore the critical role of goods' demand elasticity for understanding the impact of responsible consumption on asset prices.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

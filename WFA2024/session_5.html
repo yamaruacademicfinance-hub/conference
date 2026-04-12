@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incentives in Asset Management</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_5.html" class="session-link active">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Incentives in Asset Management</h1>        <div class="paper-card">
+            <div class="paper-title">Are Mutual Fund Managers Paid for Performance? Evidence from U.S. Administrative Earnings Data</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: John (Jianqiu) Bai (Northeastern University), Linlin Ma (Peking University), Kevin Mullally (University of Central Florida), Yuehua Tang (University of Florida)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=949844" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国国勢調査局による労働者レベルの収入に関する行政データを用いて、米国の投資信託業界におけるポートフォリオ・マネージャーの報酬の決定要因について研究した。その結果、ポートフォリオ・マネジャーの平均報酬は2020年時点で176万ドルであり、明らかに右肩上がりに偏っていることが分かった。さらに重要なことは、本サンプルにおいて強い成果報酬感応度（PPS）を示していることである。例えば、過去3年、5年、10年の平均異常リターンが1％増加すると、平均マネジャーの報酬はそれぞれ5.3％、7.8％、10.3％増加する。さらに、ポートフォリオ・マネジャーの報酬に見られる強いPPSを合理的に説明する。具体的には、ポートフォリオ・マネジャーの報酬は、フロー・パフォーマンスの関係を通じて、これらのマネジャーが投資顧問会社にもたらす期待手数料収入と強い正の相関を示している。全体として、本稿は、米国のポートフォリオ・マネジャーのPPSの強さに関する最初の推定を提供し、米国の資産運用業界におけるペイ・フォー・パフォーマンスのパラダイムに関する新しい洞察を提供する。</p>
+        <p class="abstract-text en">We study the determinants of compensation for portfolio managers in the U.S. mutual fund industry using administrative data on worker-level earnings from U.S. Census Bureau. We find that the average portfolio manager’s pay is $1.76 million in 2020 dollars, and a clear skew towards the right tail of the distribution. More importantly, we document strong pay-for-performance sensitivity (PPS) in our sample. For instance, a 1% increase in average abnormal return of the past three, five, and ten years increases an average manager’s pay by 5.3%, 7.8%, and 10.3%, respectively. Furthermore, we rationalize the strong PPS we document in portfolio manager pay. Specifically, portfolio managers’ compensation shows a strong and positive correlation with the expected fee revenue that these managers generate for investment advisors via the flow-performance relationship. Overall, our paper provides the first estimate on the strength of PPS for U.S. portfolio managers and offers novel insights into the pay-for-performance paradigm in the U.S. asset management industry.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Partisanship and Portfolio Choice: Evidence from Mutual Funds</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: William Cassidy (University of Chicago), Blair Vorsatz (Dodge and Cox)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=968044" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">政治的信条は機関投資家のポートフォリオ選択と資産需要を形成する。ドナルド・トランプが2016年にサプライズ当選した後、共和党のファンドマネージャーは、主に市場変動にさらされる銘柄の購入を通じて、ポートフォリオに占める株式比率を2％近く積極的に増加させた。我々は、同じショックに対する株式アナリストの反応を用いて、党派的信念がポートフォリオの選択を変化させることを検証した。共和党のアナリストは、トランプ氏の当選後、特に市場環境に最も影響を受ける銘柄において、短期的な業績予想を増加させた。最後に、党派性が仲介の連鎖全体を変容させたことを示す。共和党が運営するファンドと民主党が運営するファンドでは、ファンド・マネージャーの党派性とファンドの持続可能性格付けの整合性により、システム的に異なる資金流入が見られるようになった。実証結果に触発され、我々は党派的資産需要に関するKoijen-Yogoスタイルのモデルを構築した。</p>
+        <p class="abstract-text en">Political beliefs shape the portfolio choice and asset demand of institutional investors. After Donald Trump’s surprise 2016 election, Republican fund managers actively increased the equity share of their portfolios by nearly two percent, primarily through purchases of stocks exposed to market fluctuations. We validate that partisan beliefs drive changes in portfolio choice using the reaction of stock analysts to the same shock. Republican analysts increased their near-term earnings forecasts following Trump’s election, especially in those stocks most exposed to market conditions. Finally, we show that partisanship has transformed the entirety of the intermediation chain. Republican and Democratic-run funds now receive systematically different inflows due to alignment between fund manager partisanship and fund sustainability ratings. Motivated by our empirical results, we build a Koijen-Yogo style model of partisan asset demand.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Fund Flows and Income Risk of Fund Managers</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Xiao Cen (Texas A&M University), Winston Dou (University of Pennsylvania), Leonid Kogan (Massachusetts Institute of Technology), Wei Wu (Texas A&M University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=970228" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、米国国勢調査局のLEHDプログラムと様々なビッグテキストデータソースを活用することで、この種のものとしては初めてとなるユニークなデータセットを開発し、米国のアクティブ株式投資信託マネージャーの報酬とキャリアの軌跡に影響を与える要因を検証した。その結果、マネージャーの報酬は主に運用資産残高（AUM）によって決定され、運用資産残高への影響以上にリターン・パフォーマンスがボーナスに直接影響していることが分かった。顧客の利益と一致しないにもかかわらず、ファンドのフローはマネージャーの報酬とキャリアの結果に大きく影響する。資金流出が大きいと、マネジャーが（報酬が大幅に減少する）離職する可能性が4ポイント高まる。</p>
+        <p class="abstract-text en">We develop a unique dataset, the first-ever of its kind, by leveraging the US Census Bureau’s LEHD program and various big textual data sources, to examine the factors influencing the compensation and career trajectories of US active equity mutual fund managers. We find that managers’ compensation is primarily determined by assets under management (AUM), with return performance directly influencing bonuses beyond its impact on AUM. Despite not aligning with client interests, fund flows significantly affect manager compensation and career outcomes. Large fund outflows increase a manager’s likelihood of job turnover (with a substantial decline in compensation) by 4 percentage points.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

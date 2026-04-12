@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traders and Algorithms</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_17.html" class="session-link active">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Traders and Algorithms</h1>        <div class="paper-card">
+            <div class="paper-title">Whence LASSO? A Rational Interpretation</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wen Chen (Chinese University of Hong Kong-Shenzhen), Bo Hu (George Mason University), Liyan Yang (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=948248" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、不確実なファットテール事前分布と最大最小ロバスト最適化に基づくリターン予測へのLASSOの使用を合理化する。我々の理論は、LASSOの発明者であるTibshirani (1996)によるLASSOの統計的解釈における発見的学習や制限的な事前仮定を排除している。我々の設定では、エージェント（裁定者）はファットテールショックの規模について不確実である。均衡においては、エージェントはあいまいなシグナルを無視し、ほとんどあいまいでないシグナルに対しては線形に反応する。このLASSOと等価な戦略を用いることで、裁定者は余分な市場パワーを蓄積し、それが「カルテル」を誘発し、彼らの総利益を競争から守る。この結果は、限定的裁定取引の新しいメカニズムを示している。</p>
+        <p class="abstract-text en">This paper rationalizes the use of LASSO for return predictions based on uncertain fat-tail priors and max-min robust optimization. Our theory excludes heuristic learning or restrictive prior assumptions in the statistical interpretation of LASSO by its inventor Tibshirani (1996). In our setting, agents (arbitrageurs) are uncertain about the scale of fat-tail shocks. In equilibrium, they ignore a range of ambiguous signals and respond linearly to almost unambiguous signals. Using this LASSO equivalent strategy, arbitrageurs amass extra market power which induces a "cartel" to protect their total profit from being competed a way. This result shows a new mechanism for limited arbitrage.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">AI-Powered Trading, Algorithmic Collusion, and Price Efficiency</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Winston Dou (University of Pennsylvania), Itay Goldstein (University of Pennsylvania), Yan Ji (Hong Kong University of Science & Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=966504" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">AIを活用した取引として知られるアルゴリズム取引と強化学習の統合は、資本市場に大きな影響を与えている。本研究では、情報の非対称性を持つ投機筋の不完全競争モデルを用いて、AIを活用した取引戦略が投機筋の市場支配力、情報レント、価格情報性、市場流動性、ミスプライスに与える影響を探る。我々の結果は、情報を得たAI投機家は談合に「気づかない」にもかかわらず、談合的な取引戦略を自律的に学習できることを示している。このような談合戦略により、従来の独占禁止法に抵触するような相互作用はおろか、いかなる形の合意やコミュニケーションもなくとも、戦略的に情報に対して過小反応することで、超競争的な取引利益を達成することができる。アルゴリズム談合は、2つの異なるメカニズムから生まれる。第一のメカニズムは、価格トリガー戦略（人工知能）の採用によるものであり、第二のメカニズムは、均質化された学習バイアス（人工的な愚かさ）によるものである。前者のメカニズムは、限定的な価格効率とノイズ取引リスクのあるシナリオにおいてのみ顕著である。これとは対照的に、後者は価格効率が高く、ノイズ取引リスクが大きい条件下でも持続する。その結果、AIを活用した取引が普及している市場では、人工知能と愚かさの両方の影響を反映して、価格情報性と市場流動性の両方が損なわれる可能性がある。</p>
+        <p class="abstract-text en">The integration of algorithmic trading and reinforcement learning, known as AI-powered trading, has significantly impacted capital markets. This study utilizes a model of imperfect competition among informed speculators with asymmetric information to explore the implications of AI-powered trading strategies on speculators' market power, information rents, price informativeness, market liquidity, and mispricing. Our results demonstrate that informed AI speculators, even though they are ``unaware'' of collusion, can autonomously learn to employ collusive trading strategies. These collusive strategies allow them to achieve supra-competitive trading profits by strategically under-reacting to information, even without any form of agreement or communication, let alone interactions that might violate traditional antitrust regulations. Algorithmic collusion emerges from two distinct mechanisms. The first mechanism is through the adoption of price-trigger strategies (``artificial intelligence''), while the second stems from homogenized learning biases (``artificial stupidity''). The former mechanism is evident only in scenarios with limited price efficiency and noise trading risk. In contrast, the latter persists even under conditions of high price efficiency or large noise trading risk. As a result, in a market with prevalent AI-powered trading, both price informativeness and market liquidity can suffer, reflecting the influence of both artificial intelligence and stupidity.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Learning from DeFi: Would Automated Market Makers Improve Equity Trading?</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Katya Malinova (McMaster University), Andreas Park (University of Toronto)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=970480" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、暗号資産分野での成功を踏まえ、伝統的な金融市場を強化する自動マーケットメイカー（AMM）の可能性を探る。資産のトークン化の進展や、リテール注文取引の再構築に向けたSECのイニシアチブを含む規制の変化は、伝統的な市場におけるAMMの検討の妥当性を強調している。本研究は、株式におけるAMM流動性提供の実行可能性を評価し、AMMが伝統的な市場よりも改善されるかどうかを評価するための実践的な枠組みを確立するものである。米国の株式取引データを分析した結果、うまく設計されたAMMは、米国の投資家を年間数十億ドル節約できる可能性があることが分かった。こうした節約は、AMMの特徴、特にリスク分担の改善と、流動性供給者としての長期資産保有者の役割から生じる。伝統的なマーケット・メーカーとは異なり、AMMsの長期資産保有者は、バイ・アンド・ホールド戦略に比べ、日中のリスクの増分に対してのみ報酬を求める。AMMは、証券会社に滞留している資金を活用する。特に小規模の会社は、この手法によってより多くの投資家と資本を集めることができる。</p>
+        <p class="abstract-text en">We explore the potential for automated market makers (AMMs) to enhance traditional financial markets, drawing on their success in the crypto-assets space. The increasing tokenization of assets and regulatory changes, including the SEC's initiatives to reshape retail order trading, underscore the relevance of considering AMMs in traditional markets. Our study establishes a practical framework to evaluate the viability of AMM liquidity provision in equities and assess if AMMs offer improvements over traditional markets. Analyzing U.S. equity trading data, we find that well-designed AMMs could save U.S. investors billions annually. These savings arise from the distinct characteristics of AMMs, especially the improved risk-sharing and the role of long-term asset holders as liquidity providers. Unlike traditional market makers, long-term asset holders in AMMs seek compensation only for incremental intraday risk relative to a buy-and-hold strategy. They utilize locked-up capital that would otherwise remain idle at brokerages. Small firms, in particular, can benefit by attracting more investors and capital through this approach.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

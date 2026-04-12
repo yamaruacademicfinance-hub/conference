@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Economy: Investment and Risks</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link active">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Global Economy: Investment and Risks</h1>        <div class="paper-card">
+            <div class="paper-title">Original Sin Redux: Role of Duration Risk</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Carol Bertaut (Federal Reserve Board of Governors), Valentina Bruno (American University), Hyun Song Shin (Bank for International Settlements)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=919100" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">現地通貨建て新興国債券への米国投資家のフローに関するユニークかつ包括的なデータベースを用いて、ポートフォリオ・フローにおけるデュレーション・リスクと為替レート・リスクの役割を明らかにする。長期借入はロールオーバー・リスクを軽減するが、為替変動と相互作用するバリュエーション変動を増幅させる。我々の分析は、長期借入の両刃の性質を浮き彫りにし、投資信託投資家間の戦略的補完関係による市場ストレスのダイナミクスに注目させる。</p>
+        <p class="abstract-text en">We highlight the role of duration and exchange rate risks on portfolio flows by using a unique and comprehensive database of US investor flows into emerging market government bonds denominated in local currency. Borrowing long-term mitigates roll-over risk but amplifies valuation changes that further interact with currency movements. Our analysis highlights the double-edged nature of long-term borrowing and draws attention to market stress dynamics due to strategic complementarities among mutual fund investors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Tax Policy and Investment in a Global Economy</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Gabriel Chodorow-Reich (Harvard University), Matthew Smith (U.S. Department of the Treasury), Owen Zidar (Princeton University), Eric Zwick (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=955164" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、行政税務データとグローバル投資行動モデルを組み合わせて、米国史上最大の法人税減税である2017年減税・雇用法（TCJA）の投資効果および企業評価効果を評価する。我々は、Hall and Jorgenson (1967)の正統的モデルを、企業が国内と海外の拠点で生産する多国籍企業の設定に拡張した。このモデルを用いて、国内投資の4つの決定要因（国内外の限界税率と資本コスト補助金）を特徴付け、測定する。それぞれに対する国内投資の弾力性を推定し、それを用いてモデルの構造パラメータを同定し、改革のどの部分が投資に最も重要であるかを定量化し、政策の反事実を実施する。その結果、5つの主要な知見が得られた。第一に、TCJAによって平均的な税制変更を受けた企業の国内投資は、税制変更を受けなかった企業に比べて約20％増加した。第二に、TCJAは一部の米国多国籍企業に対して外資を増やす大きなインセンティブを与え、それは法改正後に大幅に増加した。第三に、国内投資も海外からのインセンティブに反応して増加し、生産における国内資本と海外資本の補完性を示している。第四に、米国企業の国内資本と総資本に対するTCJAの一般均衡長期効果は、それぞれ約6％と約9％である。最後に、我々のモデルでは、最初の10年間におけるダイナミックな労働税収と法人税収のフィードバックは、ベースラインの法人税収の2％未満である。その結果、減税による法人税収の減少は、静的効果に近いものとなる。</p>
+        <p class="abstract-text en">This paper combines administrative tax data and a model of global investment behavior to evaluate the investment and firm valuation effects of the Tax Cuts and Jobs Act (TCJA) of 2017, the largest corporate tax reduction in the history of the United States. We extend the canonical model of Hall and Jorgenson (1967) to a multinational setting in which a firm produces in domestic and international locations. We use the model to characterize and measure four determinants of domestic investment: domestic and foreign marginal tax rates and cost-of-capital subsidies. We estimate elasticities of domestic investment with respect to each and use them to identify the structural parameters of our model, to quantify which parts of the reform mattered most to investment, and to conduct policy counterfactuals. We have five main findings. First, the TCJA caused domestic investment of firms with the mean tax change to increase by roughly 20% relative to firms experiencing no tax change. Second, the TCJA created large incentives for some U.S. multinationals to increase foreign capital, which rose substantially following the law change. Third, domestic investment also increases in response to foreign incentives, indicating complementarity between domestic and foreign capital in production. Fourth, the general equilibrium long-run effects of the TCJA on the domestic and total capital of U.S. firms are around 6% and 9%, respectively. Finally, in our model, the dynamic labor and corporate tax revenue feedback in the first 10 years is less than 2% of baseline corporate revenue, as investment growth causes both higher labor tax revenues from wage growth and offsetting corporate revenue declines from more depreciation deductions. Consequently, the fall in total corporate tax revenue from the tax cut is close to the static effect.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Foreign Exchange Risk Management across the Production Network</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Wentong Chen (Cornell University), Jisu Hwang (Cornell University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=970452" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">国際貿易の文脈では、企業は輸入と輸出の両方のチャネルによって為替リスクにさらされている。本研究では、企業レベルのデータを用いて、米国企業が金融ヘッジを通じてどのように為替リスクを管理しているのか、またそのようなリスク管理戦略が生産ネットワーク全体にどのように分布しているのかを検証する。実証分析の結果、大企業、中央集権的な企業、生産ネットワークの上流と下流に極端に位置する企業ほど、金融ヘッジを利用する傾向が強いことが明らかになった。さらに、企業のナチュラル・ヘッジとヘッジの意思決定は、生産ネットワーク上のポジションと、他の企業のヘッジ活動への関心に影響されることがわかった。生産ネットワークにおけるヘッジの潜在的な正の外部性をよりよく理解するために、様々なヘッジ配分の影響を考慮したモデルを開発した。我々の調査は、生産ネットワーク全体にわたるヘッジ活動の最適でない配分が非効率をもたらす可能性があることを実証している。</p>
+        <p class="abstract-text en">In the context of international trade, firms are exposed to foreign exchange risk due to both import and export channels. This study employs firm-level data to examine how US firms manage foreign exchange risk through financial hedging, as well as the distribution of such risk management strategies across the production network. Our empirical analysis reveals that large firms, more centralized firms, as well as those situated at extreme upstream and downstream positions in the production network, are more likely to utilize financial hedging. Moreover, we find that firms’ natural hedg- ing and hedging decisions are influenced by their production network positions and their attention to other firms’ hedging activities. To better understand the potential positive externalities of hedging in the production network, we develop a model that considers the impact of various hedging allocations. Our investigation demonstrates that suboptimal distributions of hedging activities across the production network can result in inefficiencies.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

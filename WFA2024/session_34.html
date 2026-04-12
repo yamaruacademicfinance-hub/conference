@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptocurrency Bubbles and Crashes</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link active">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Cryptocurrency Bubbles and Crashes</h1>        <div class="paper-card">
+            <div class="paper-title">Fundamental Value and Bubbles: Stocks, Scams and Cryptocurrencies</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Rustam Ibragimov (Imperial College London), Christine Parlour (University of California-Berkeley), Johan Walden (University of California-Berkeley)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=930244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">観測されない、時間変動する利回りと、観測されない、時間変動する暴落リスクを持つ資産に対するファンダメンタルバリュー・プライシング方程式を仮定する。ファンダメンタルバリュー・プライシングと観測された価格系列の両方と整合的なパラメータのセットを同定する手法を提供する。この手法はバブルのセミパラメトリック検定として機能する。単位根や爆発的挙動に基づくバブルテストでは識別が困難なベンチマーク例に対して、我々のテストは良好な結果を示す。本手法を伝統的な株式と株価指数に適用した。暗号通貨に適用した場合、リスク調整後割引率が年率25%まで、さらには年率50%の場合でさえ、いくつかの主要暗号通貨についてバブルの存在を示唆している。特にイーサリアムの場合、バブルなしという帰無仮説を棄却するためには、年率64%を超える非常に高いリスク調整後割引率が必要である。</p>
+        <p class="abstract-text en">We posit a fundamental value pricing equation for an asset with unobserved, time-varying yield and unobserved, time-varying crash risk. We provide a technique to identify sets of parameters consistent with both fundamental value pricing and the observed price series. This technique performs as a semi-parametric test for bubbles. Our test performs well for benchmark examples that bubble tests based on unit roots or explosive behavior find hard to identify. We apply our method to traditional stocks and stock indices. When applied to cryptocurrencies, the test suggests the presence of a bubble for several major cryptocurrencies at risk adjusted discount rates up to 25% per year, and even at 50% per year. In particular, for Ethereum very high risk adjusted discount rates, above 64% per year, are needed for our test to fail to reject the no-bubble null hypothesis.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Anatomy of a Run: The Terra Luna Crash</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Jiageng Liu (Massachusetts Institute of Technology), Igor Makarov (London School of Economics and Political Science), Antoinette Schoar (Massachusetts Institute of Technology)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=954940" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿は、2022年5月に発生したUST（安定コイン）の暴落に至るまで、そして暴落の最中に発生したテラ・ルナ・ネットワークの包括的な分析を提供する。Terraのケースは、私的マネーの創造に内在する限界を明らかにするものである。暴落に先立ち、ネットワークの経済的ファンダメンタルズが急速に悪化していたが、システムが複雑だったため、内部関係者でもリスクの蓄積を評価し、それに応じてシステムのパラメーターを調整することが困難だったことを記録している。非中央集権的なガバナンス・メカニズムはシステムに非効率性をもたらし、不安定性をさらに悪化させた。少数の大規模なウォレットが資金を引き出し始めると、裕福で洗練された投資家はより効率的に情報を処理し、より果断に実行し、損失ははるかに小さくなった。この結果は、ブロックチェーンの透明性が公平な土俵を作れないだけでなく、投資家間の非対称性を悪化させる可能性があることを示唆している。</p>
+        <p class="abstract-text en">This paper provides a comprehensive analysis of the Terra-Luna network leadingup to and during the run on its stablecoin (UST) in May 2022. The Terra caseunderscores the limitations inherent in private money creation. We documentthat the crash was preceded by the rapidly deteriorating economic fundamentalsof the network, but the system's complexity made it difficult even for insidersto assess the buildup of risk and adjust system parameters accordingly. Decentralizedgovernance mechanisms added inefficiencies to the system and furtherexacerbated the instability. Once a few large wallets started withdrawing theirfunds, wealthier and more sophisticated investors processed information moreefficiently, ran more decisively, and realized much smaller losses. Our resultssuggest that blockchain transparency may not only fail to create a level playingfield but can exacerbate asymmetries between investors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Stablecoin Runs and the Centralization of Arbitrage</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Yiming Ma (Columbia University), Yao Zeng (University of Pennsylvania), Anthony Lee Zhang (University of Chicago)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=963060" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">米ドルを裏付けとするステーブルコインのランリスクを分析する。ステーブルコイン発行者は米ドル資産のポートフォリオを保有する一方、プライマリー市場でアービトラージャーと1ドルでステーブルコインを償還することを約束している。裁定取引は流通市場価格を1ドルで安定させるのに役立つが、最大のステーブルコイン発行者であるUSDTは、ある月に6人の公認裁定取引者としか取引していないことが分かった。なぜなら、より効率的な裁定取引は、投資家が流通市場で安定コインを売却することによる価格インパクトを減少させることで、パニック・ランのリスクを増幅させるからである。我々の推計モデルは、最大の2つのUSD安定コインであるテザー（USDT）とサークル（USDC）について、かなりのランリスクを予測している。これらの安定コインの暴落は、銀行預金や国債の重要な米ドル市場を混乱させる可能性がある。最後に、償還手数料を課すか、投資家に配当を発行することで、ランリスクを低減できる可能性があることを示す。</p>
+        <p class="abstract-text en">We analyze the run risk of USD-backed stablecoins. Stablecoin issuers hold a portfolio of US dollar assets, while promising to redeem stablecoins for $1 with arbitrageurs on the primary market. Although arbitrage helps to stabilize the secondary market price at $1, we find that the largest stablecoin issuer, USDT, only trades with 6 authorized arbitrageurs in a given month. We show issuers actively constrain arbitrage because more efficient arbitrage amplifies the risk of panic runs by reducing investors' price impact from selling stablecoins in secondary markets. Our estimated model predicts a sizable run risk for the largest two USD stablecoins, Tether (USDT) and Circle (USDC). These stablecoin runs could disrupt important USD markets for bank deposits and Treasuries. Finally, we show that run risk could be reduced by imposing redemption fees or issuing dividends to investors.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">An Anatomy of Cryptocurrency Sentiment</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Mehmet Ihsan Canayaz (Pennsylvania State University), Charles Cao (Pennsylvania State University), Giang Nguyen (Pennsylvania State University), Qiang Wang (Pennsylvania State University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=942144" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、暗号通貨センチメントの形成と、その後の暗号通貨リターンへの影響を調査した。暗号通貨の時価総額の95%を占める267の暗号通貨について、感情、価格認識、ファンダメンタルイベントを含む広範なデータセットを利用し、ソーシャルメディアのセンチメントは暗号通貨のリターンを予測するが、ニュースメディアのセンチメントは予測しないことを発見した。ファンダメンタルズ・イベントはセンチメントを形成するが、リターンを有意に予測するのはファンダメンタルズ・イベントとは無関係なセンチメントの部分である。全体として、本研究は、小売でソーシャル・メディアに積極的な投資家が支配的な市場における情報発信とセンチメント形成におけるソーシャルメディアの重要な役割を浮き彫りにしている。</p>
+        <p class="abstract-text en">We investigate the formation of cryptocurrency sentiment and its subsequent influenceon cryptocurrency returns. Utilizing an extensive dataset encompassing emotions, priceperceptions, and fundamental events for 267 cryptocurrencies, accounting for 95% ofthe total cryptocurrency market capitalization, we find that social media sentimentpredicts cryptocurrency returns, but news media sentiment does not. Fundamentalevents shape sentiment, but it is the part of sentiment unrelated to fundamental eventsthat significantly predicts returns. Overall, our study highlights social media’s crucialrole in information dissemination and sentiment formation in a market dominated byretail, social-media-active investors.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disparities in Pay, Funding and Well-Being</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link ">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_19.html" class="session-link active">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Disparities in Pay, Funding and Well-Being</h1>        <div class="paper-card">
+            <div class="paper-title">Equity Pay Beyond C-Suite</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Andrea Eisfeldt (University of California-Los Angeles), Antonio Falato (Federal Reserve Board of Governors), Dongryeol Lee (University of California-Los Angeles), Mindy Xiaolan (University of Texas-Austin)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=937356" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">エクイティ・ペイはここ数十年でますます一般的になってきているが、企業間のエクイティ・ペイ水準の差は非常に大きい。本研究では、エクイティ・ペイにおける企業間の不平等を明らかにし、エクイティ・ペイ政策における企業間格差の要因について説明する。企業レベルのエクイティ・ペイは非常に永続的であり、エクイティ・ペイの企業間格差の大部分は初期値の差に起因していることを示す。初期値の違いの一部は、企業間の財務的制約の違いや、実質的な同業他社効果に起因している。我々は、高株式報酬企業が株式報酬を最も積極的に管理し、特に株価の騰落の影響を打ち消していることを示している。また、株式報酬の高い企業は、年齢が若く、雇用成長率も高い傾向がある。また、C-Suite以上のエクイティ・ペイとCEOのエクイティ・ペイを比較し、CEOのエクイティ・ペイは持続性が低く、若い企業や雇用成長率の高い企業では実際に低いことを示す。我々は、エクイティ・ペイは報酬と資本構造の決定であると主張し、これらの類似性を明らかにする。</p>
+        <p class="abstract-text en">Equity pay has become increasingly common over the last several decades but the differences in the level of equity pay across firms are very large. This study documents the inequality in equity pay across firms and describes the drivers of firm-level differences in equity pay policies. We show that firm-level equity pay is very persistent, and a large fraction of the differences across firms in equity pay comes from differences in initial values. Some of the differences in initial values can be attributed to differences across firms' financial constraints and to substantial peer effects. We show that high equity pay firms manage equity pay most actively, in particular counteracting the effects of stock price gains and losses. High-equity pay firms tend to be younger, and to experience subsequently higher employment growth. We also compare equity pay beyond the C-Suite to CEO equity pay and show that CEOs' equity pay is much less persistent, and is actually lower at younger firms and firms that experience higher employment growth. We argue that equity pay is both a compensation and a capital structure decision, and draw out these parallels.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Disentangling the Impact of Financial Inclusion on Household Well-Being: The Business Finance Channel</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Ashish Sedai (University of Texas-Arlington), Nandini Gupta (Indiana University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=940968" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">多くの文献は、銀行アクセスは家計の信用へのアクセスを増加させることによって家計の幸福を増加させることを示している。しかし、インドにおける大規模な銀行拡大プログラムに基づく回帰不連続デザインを用いて、我々は銀行アクセスが家計ではなく企業の借入を増加させることによって家計の金融幸福度を増加させることを示す。銀行アクセスの拡大後、企業はより多くの借り入れを行い、より多くの収益を上げ、より多くの労働者を雇用し、家計の賃金収入は上昇し、家計の消費支出、貯蓄、投資の増加につながる。異質性分析によれば、銀行アクセスの拡大は主に都市部の製造業やサービス業の企業の借入を促進し、農村部の農業企業への影響は限定的である。</p>
+        <p class="abstract-text en">A large literature shows that bank access increases household well-being by increasing household access to credit. However, using a regression discontinuity design based on a major bank expansion program in India, we show that bank access increases household financial well-being by increasing borrowing by firms, not households. Following the expansion in bank access, firms borrow more, earn higher revenues, employ more workers, and household wage earnings rise, leading to increases in household consumption expenditures, savings, and investments. Heterogeneity analyses show that bank expansion predominantly spurs borrowing by urban, manufacturing and service sector firms, with limited impact on rural, agricultural firms.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Money to Burn: Wildfire Insurance via Social Networks</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: J. Anthony Cookson (University of Colorado-Boulder), Emily Gallagher (University of Colorado-Boulder), Philip Mulder (University of Wisconsin-Madison)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=912744" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">クラウドファンディングは、災害後の緊急資金調達の方法として人気が高まっている。しかし、コロラド州の大規模な山火事の被災者については、クラウドファンディングは最も弱い立場の人々を支援するよりも、裕福な受益者により多くの支援を集めていることがわかった。具体的には、収入15万ドル以上の受益者は、収入7万5000ドル以下の受益者よりも、GoFundMeで28％多く支援を受けている。また、高所得世帯は、クラウドファンディング・キャンペーンをまったく行っていない可能性が14ポイント高い。これらの調査結果は、火災によって焼失した資産価値の額という条件付きで成り立っている。災害クラウドファンディングの逆進性は、高所得世帯が持ついくつかのネットワーク上の優位性（被災地外でのコネクションの多さなど）と関連している。私たちの発見は、社会的ネットワーク保険における実質的な格差を浮き彫りにし、私たちが示したように、復興過程における所得の不平等を悪化させる可能性が高い。</p>
+        <p class="abstract-text en">Crowdfunding is an increasingly popular way to raise emergency funding after disasters. However, for victims of a major Colorado wildfire, we find that crowdfunding raised more support for wealthier beneficiaries rather than helping the most vulnerable. Specifically, beneficiaries with income above $150,000 receive 28% more support on GoFundMe than beneficiaries with income below $75,000. High-income households are also 14 percentage points more likely to have a crowdfunding campaign at all. These findings hold conditional on the amount of property value destroyed by the fire. The regressive allocation of disaster crowdfunding relates to several network advantages possessed by high-income households, including more connections outside the disaster area. Our findings highlight substantial disparities in social network insurance, which, as we show, likely exacerbate income inequalities in the recovery process.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulation, Stakeholders and Finance</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2024 Western Finance Association Meeting</div>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_17.html" class="session-link ">Traders and Algorithms</a><a href="session_18.html" class="session-link ">Valuations and Growth Expectations</a><a href="session_30.html" class="session-link ">Demand Shocks and Asset Prices</a><a href="session_33.html" class="session-link ">Replication in Finance</a><a href="session_35.html" class="session-link ">Dealers and Market Functioning</a><a href="session_40.html" class="session-link ">Disagreement, Short Sellers and Order Flows</a><a href="session_47.html" class="session-link ">Asset Pricing with Options</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_2.html" class="session-link ">Law and Finance</a><a href="session_4.html" class="session-link ">Corporate Debt</a><a href="session_7.html" class="session-link ">Bankruptcy</a><a href="session_14.html" class="session-link ">Financing Constraints and Investment</a><a href="session_25.html" class="session-link ">Talent, Preferences and Firms</a><a href="session_27.html" class="session-link ">Privatization and Regulation</a><a href="session_32.html" class="session-link ">Entrepreneurial and PE Dynamics</a><a href="session_36.html" class="session-link ">Credit Spreads and Ratings</a><a href="session_38.html" class="session-link ">Debt Securities</a><a href="session_41.html" class="session-link ">Investment, Market Power and Aggregate Outcomes</a><a href="session_43.html" class="session-link ">Politics, Bid-Rigging and Regulation</a><a href="session_44.html" class="session-link active">Regulation, Stakeholders and Finance</a></div><button class="accordion-btn">Financial Intermediation and Banking <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Incentives in Asset Management</a><a href="session_6.html" class="session-link ">Bank Runs and Failing Banks</a><a href="session_9.html" class="session-link ">Bank Funding and Geography</a><a href="session_10.html" class="session-link ">Decision Making in Mutual Funds</a><a href="session_13.html" class="session-link ">Financial Intermediation</a><a href="session_23.html" class="session-link ">Money Markets and Liquidity Dynamics</a><a href="session_31.html" class="session-link ">Intermediaries and Coordination Over the Cycle</a><a href="session_37.html" class="session-link ">Bank Balance Sheets</a><a href="session_46.html" class="session-link ">Banks, Nonbanks, and the Economy</a></div><button class="accordion-btn">Household Finance, Labor, and Inequality <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_19.html" class="session-link ">Disparities in Pay, Funding and Well-Being</a><a href="session_20.html" class="session-link ">Household and Student Debt</a><a href="session_42.html" class="session-link ">Inequality and Redistribution</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Monetary-Based Asset Pricing</a><a href="session_11.html" class="session-link ">Currency Risk Premia</a><a href="session_29.html" class="session-link ">Unconventional Monetary Policy</a><a href="session_39.html" class="session-link ">Global Economy: Investment and Risks</a><a href="session_48.html" class="session-link ">International Finance</a></div><button class="accordion-btn">Behavioral Finance, FinTech, and Information <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_8.html" class="session-link ">Behavioral Finance: Retail Investors</a><a href="session_15.html" class="session-link ">Holdouts, Trust and Morality</a><a href="session_16.html" class="session-link ">Measuring Beliefs</a><a href="session_21.html" class="session-link ">Big Data</a><a href="session_22.html" class="session-link ">Information, Attention and Outcomes</a><a href="session_26.html" class="session-link ">FinTech and Tech-Driven Intermediation</a><a href="session_34.html" class="session-link ">Cryptocurrency Bubbles and Crashes</a></div><button class="accordion-btn">Climate Finance and ESG <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Carbon Emissions and Firm Activity</a><a href="session_12.html" class="session-link ">Costs of the Climate Crisis</a><a href="session_24.html" class="session-link ">ESG Investing</a><a href="session_28.html" class="session-link ">Climate Risk</a><a href="session_45.html" class="session-link ">Costs of the Green Transition</a></div></div><div class="main-content"><h1>Regulation, Stakeholders and Finance</h1>        <div class="paper-card">
+            <div class="paper-title">The Cost of Regulatory Compliance in the United States</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Francesco Trebbi (University of California-Berkeley), Miao Zhang (University of Southern California), Michael Simkovic ()</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=923244" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">規制の研究において重要な問題のひとつは、規制遵守のコストがすべての企業に均質にかかるのか、それとも特定の企業、例えば小規模な企業が特に大きなペナルティを受けるのか、ということである。我々は、企業のコンプライアンス・コストを、政府の規則を遵守するための労働支出という観点から定量化する。包括的な事業所レベルの職業マイクロデータと職業別のタスク情報を用いて、企業の賃金に占める規制遵守に従事する従業員の割合を算出した。2002年から14年の平均では、規制コストは企業の賃金請求額の1.34%から3.33%を占め、2014年には総額2390億ドル、資本設備コストを加えると2890億ドルに達した。その結果、企業の規制対応コストと雇用規模の間には逆U字型の関係があることが明らかになり、従業員数500人程度の企業は、中小企業や大企業と比較して、賃金総額に占める規制対応コストの割合が約40％高いことが示された。最後に、企業のコンプライアンス・コストを左右する規制要件とエンフォースメントの影響を分離するために、道具変数法を開発した。</p>
+        <p class="abstract-text en">One of the key questions in the study of regulation is whether the costs of regulatory compliance fall homogeneously on all businesses or whether certain firms, for instance small ones, are especially penalized. We quantify firms' compliance costs in terms of their labor spending to adhere to government rules. Using comprehensive establishment-level occupational microdata and occupation-specific task information, we recover the proportion of a firm's wage bill attributable to employees engaged in regulatory compliance. On average for 2002-14, regulatory costs account for 1.34% to 3.33% of a firm's wage bill, totaling up in 2014 to $239 billion, and to $289 billion when adding capital equipment costs. Our findings reveal an inverted-U relation between firms' regulatory compliance costs and their scale of employment, indicating that firms with approximately 500 employees face compliance costs that are about 40 percent higher as a share of total wages compared to small or large firms. Finally, we develop an instrumental variable methodology to disentangle the influence of regulatory requirements and enforcement in driving firms' compliance costs.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Regulatory Model Secrecy and Bank Reporting Discretion</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Author: Shuo Zhao (Tilburg University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=948556" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本稿では、銀行規制当局が、報告裁量を持つ銀行を評価するために使用する規制モデルをどのように開示すべきかを研究する。私の設定においては、このような評価は経済状況と銀行の資産のファンダメンタルズの両方に依存する。規制モデルは経済状況に関するシグナルを提供し、銀行は資産のファンダメンタルズに関する情報を報告する。一方では、規制モデルを開示することは、銀行が異なる経済環境下でその資産がどのように機能するかを理解するのに役立つ。その一方で、社会的に望ましくない資産を持つ銀行が、有利な評価を得るために報告書を操作することを誘発する。規制当局は、評価ルールを最適に設計することで部分的に操作を抑止することができるが、規制モデルの開示決定は依然として必要である。最適な開示政策は、評価ルールが操作を誘発する可能性が高い場合には規制モデルを開示し、そうでない場合には非公開とすることである。このように、開示は、規制当局により害がある場合には、操作を減らすことによって評価ルールを補完する。これらの分析は、監督上のストレステストと気候変動リスクのストレステストに直接関係するものです。</p>
+        <p class="abstract-text en">This paper studies how banking regulators should disclose the regulatory models they use to assess banks that have reporting discretion. In my setting, such assessments depend on both economic conditions and the fundamentals of banks' assets. The regulatory models provide signals about economic conditions, while banks report information about their asset fundamentals. On the one hand, disclosing the models helps banks understand how their assets perform in different economic environments. On the other hand, it induces banks with socially undesirable assets to manipulate reports in order to obtain favorable assessments. While regulators can partially deter manipulation by designing the assessment rule optimally, the disclosure decision of the regulatory models remains necessary. The optimal disclosure policy is to disclose the regulatory models when the assessment rule is more likely to induce manipulation and keep them secret otherwise. In this way, disclosure complements the assessment rule by reducing manipulation when it harms the regulators more. These analyses speak directly to supervisory stress tests and climate risk stress tests.</p>
+    </div>
+</div>         <div class="paper-card">
+            <div class="paper-title">Corporate Behavior When Running the Firm for Stakeholders: Evidence from Hospitals</div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="color: #718096;">Authors: Christoph Herpfer (University of Virginia), Jianzhang Lin (Emory University), Gonzalo Maturana (Emory University)</div>
+            <a href="https://westernfinance-portal.org/viewpaper?n=961492" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、ステークホルダー志向が企業経営と業績にどのような影響を与えるかを研究している。病院の非営利から営利への転換を規定する州レベルの法改正を利用し、営利志向が病院の救急外来、メディケイド患者、ソーシャルワーカーへの支出を削減する一方で、収益への集中を高めることを発見した。スピルオーバー（波及効果）と一致し、営利転換病院の近隣に位置する非営利病院では、救急外来への受診と支出が増加している。最後に、企業行動とステークホルダーを一致させるガバナンス・チャネルを調査し、営利転換した病院は、医学博士をMBAに置き換えることで理事会を調整し、税法は非営利病院にとってガバナンスの主要な源泉であることを発見した。</p>
+        <p class="abstract-text en">We study how stakeholder orientation impacts firm management and performance. We exploit state-level law changes governing the conversion of hospitals from nonprofit to for-profit and find that for-profit orientation reduces hospital spending on emergency rooms, Medicaid patients, and social workers, while increasing focus on revenue. Consistentwith spillovers, nonprofit hospitals located near converting hospitals experience increased emergency room visits and expenditures. Finally, we investigate governance channels that align corporate behavior with stakeholders and find that converted for-profit hospitals adjust boards by replacing MDs with MBAs, and that the tax code is a major source of governance for nonprofit hospitals.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

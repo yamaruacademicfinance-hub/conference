@@ -86,6 +86,33 @@
             background-color: #800000; 
         }
 
+        /* --- フッターのデザイン --- */
+        .site-footer {
+            margin-top: 80px; /* カード群との間に十分な余白を取る */
+            padding-top: 30px;
+            border-top: 1px solid #E2E8F0; /* 薄いグレーの線で区切る */
+            text-align: center;
+            color: #718096; /* 目立ちすぎない上品なグレー */
+            font-size: 0.95em;
+        }
+        .site-footer a {
+            color: #3182CE; /* リンクは少し明るい青色 */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .site-footer a:hover {
+            color: #1A365D; /* マウスを乗せるとネイビーに */
+            text-decoration: underline;
+        }
+        .email-protect {
+            font-family: monospace; /* メールアドレスだけ等幅フォントにして見やすく */
+            background: #EDF2F7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #2D3748;
+        }
+
     </style>
 </head>
 <body>
@@ -136,7 +163,11 @@
         <h2>2026 Western Finance Association Meeting</h2>
         <p>View details →</p>
     </a>
-        </div>
+    </div>
+    <div class="site-footer">
+            <p><strong>Yamaru Finance Hub</strong></p>
+            <p>Contact: <a href="mailto:yamaru.academic.finance@gmail.com">contact<span style="display:none;">NOSPAM</span>@gmail.com</a></p>
+            <p style="font-size: 0.85em; margin-top: 15px; opacity: 0.7;">&copy; 2026 Yamaru Academic Finance. All rights reserved.</p>
     </div>
 </body>
 </html>

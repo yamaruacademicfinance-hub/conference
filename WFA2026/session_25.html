@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Trading and Investing</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+
+        /* --- サイドバー用 検索ボックス --- */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #4A5568;
+            border-radius: 6px;
+            background-color: #2D3748; /* サイドバーのネイビーに合わせる */
+            color: #FFFFFF;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #63B3ED; /* フォーカス時に水色に光る */
+            background-color: #1A202C;
+        }
+        .search-input::placeholder {
+            color: #A0AEC0;
+        }
+        /* 検索結果のドロップダウン */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none; /* 初期状態は非表示 */
+        }
+        .search-result-item {
+            display: block;
+            padding: 10px 12px;
+            border-bottom: 1px solid #E2E8F0;
+            text-decoration: none;
+            color: #2D3748;
+            font-size: 0.85em;
+        }
+        .search-result-item:hover {
+            background-color: #EDF2F7;
+        }
+        .search-result-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .search-result-author {
+            color: #718096;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2026 Western Finance Association Meeting</div>
+    
+    <div class="search-container" style="margin: 15px 15px 20px 15px;">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by title or author..." onkeyup="performSearch()">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+<script>
+    const searchIndex = [{"a":"YiLi Chien, Federal Reserve Bank of St. Louis\nZhengyang Jiang, Northwestern University\nMatteo Leombroni, Boston College\nHanno Lustig, Stanford University","s":1,"t":"What Does It Take? Quantifying Cross-Country Transfers in the Eurozone"},{"a":"Nina Boyarchenko, Federal Reserve Bank of New York\nLeonardo Elias, Federal Reserve Bank of New York","s":1,"t":"The Global Credit Cycle"},{"a":"Saki Bigio, University of California-Los Angeles\nGalo Nuño, Bank of Spain\nJorge Abad, CEMFI","s":1,"t":"The Heterogeneous Bank Lending Channel of Monetary Policy"},{"a":"Maria Chaderina, University of Oregon\nVincent Glode, University of Pennsylvania","s":2,"t":"Trading Against Expert Dealers Under Limited Information Spillovers"},{"a":"Dan Bernhardt, University of Illinois-Urbana-Champaign\nTingjun Liu, University of Hong Kong\nXiaorong Ma, University of Macau","s":2,"t":"Simplifying Auction Designs via Market Feedback"},{"a":"John Chi-Fong Kuong, Chinese University of Hong Kong","s":2,"t":"Sustaining Trading Relationships with Lemons"},{"a":"Emanuele Colonnelli, University of Chicago","s":3,"t":"How Do Global Investors Make Decisions? Evidence from Venture Capital and Private Equity"},{"a":"Vladimir Gatchev, University of Central Florida\nVladimir Ivanov, Securities and Exchange Commission\nChristo Pirinsky, University of Central Florida","s":3,"t":"Asset Sorting in Private Equity"},{"a":"Teodor Duevski, HEC Paris","s":3,"t":"Human Capital Breadth and the Financing of Innovative Startups"},{"a":"Allison Cole, Arizona State University\nMaarten Meeuwis, Washington University-St. Louis\nAlessandro Previtero, Indiana University\nNoah Stoffman, Indiana University","s":4,"t":"Financial Advisors and Retirees’ Risk-Taking"},{"a":"Taha Choukhmane, Massachusetts Institute of Technology\nTim de Silva, Stanford University\nWeidong Lin, Massachusetts Institute of Technology\nMatthew Akuzawa, Massachusetts Institute of Technology","s":4,"t":"AI Financial Advice: Supply, Demand, and Life Cycle Implications"},{"a":"Xinran Zhao, INSEAD\nNaveen Gondhi, INSEAD\nAnil Gaba, INSEAD","s":4,"t":"Fading-Memory Expectations in Equity Markets"},{"a":"Christian Opp, University of Rochester\nJules van Binsbergen, University of Pennsylvania\nBenjamin David, University of Pennsylvania","s":5,"t":"How (Not) to Identify Demand Elasticities in Dynamic Asset Markets"},{"a":"Zhiguo He, Stanford University\nPeter Kondor, London School of Economics and Political Science\nJessica Li, University of Chicago","s":5,"t":"Demand Elasticity in Dynamic Asset Pricing"},{"a":"Carter Davis, Ohio State University\nMahyar Kargar, University of Illinois-Urbana-Champaign\nJiacui Li, University of Utah\nDejanir Silva, Purdue University","s":5,"t":"On the Recovery and Usage of Demand Elasticities in Dynamic Settings"},{"a":"Hannah Unterberg, University of California-Irvine","s":6,"t":"Passive Flows, Active Woes: Passive Investing and the Decline of Active Mutual Fund Alpha"},{"a":"Victor DeMiguel, London Business School\nAlberto Martín-Utrera, Iowa State University\nRaman Uppal, EDHEC Business School","s":6,"t":"Rethinking Mutual Fund Performance: From Traditional Alpha to Achievable Alpha"},{"a":"Nick Bollen, Vanderbilt University\nVeronika Pool, Vanderbilt University\nAlexey Vasilenko, Vanderbilt University","s":6,"t":"Asset Reclassification and Mutual Fund Flows"},{"a":"Andrea Pagliuca, London Business School","s":7,"t":"Partisan Fed"},{"a":"Anna Cieslak, Duke University\nMichael McMahon, University of Oxford\nHao Pang, University of Texas-Dallas","s":7,"t":"Did I Make Myself Clear? The Fed and the Market in the Post-2020 Framework Period"},{"a":"Hengjie Ai, University of Wisconsin-Madison\nXinxin Hu, University of Wisconsin-Madison","s":7,"t":"A Model of Fed Information Effect"},{"a":"Donald Bowen, Lehigh University\nKathleen Hanley, Lehigh University\nSungjoung Kwon, Wayne State University\nWilliam Mann, Emory University\nQianqian Yu, Lehigh University","s":8,"t":"Patent Disclosure and Reliance on External Financing"},{"a":"Cameron Ellis, University of Iowa\nJohannes Jaspersen, Ludwig-Maximilian University of Munich\nValentin Luz, Ludwig-Maximilian University of Munich","s":8,"t":"Playing the Patent Lottery"},{"a":"Murillo Campello, University of Florida\nGuilherme Junqueira, University of Florida\nSpyridon Lagaras, University of Illinois-Urbana-Champaign","s":8,"t":"Entrepreneurship on a Safety Net: Evidence from the World’s Largest Cash Transfer Program"},{"a":"Ernst-Ludwig von Thadden, University of Mannheim\nBruno Biais, HEC Paris\nHans Gersbach, ETH Zürich\nStéphane Villeneuve, University of Toulouse","s":9,"t":"Dynamic Contracting with Many Agents"},{"a":"Yilin (David) Yang, University of Minnesota\nRedouane Elkamhi, University of Toronto","s":9,"t":"Too Big to Fail, Too Small to Survive"},{"a":"Gary Gorton, Yale University\nYe Li, University of Washington\nGuillermo Ordoñez, University of Pennsylvania","s":9,"t":"Information-Concealing Credit Architecture"},{"a":"Harrison Hong, Columbia University\nHeqing Huang, National University of Singapore\nNeng Wang, Columbia University","s":10,"t":"Climate Disasters and Intergenerational Equity: A Fiscal Rule for Sustainable Development"},{"a":"Parinitha Sastry, University of Pennsylvania\nIshita Sen, Harvard University\nAna-Maria Tenekedjieva, Arizona State University","s":10,"t":"The Economics of Insurance Guaranty Funds"},{"a":"Jing He, Renmin University of China\nVojislav Maksimovic, University of Maryland\nDaxuan Zhao, Renmin University of China","s":10,"t":"Climate Policy Abroad, Emissions at Home: Pollution Reshoring by U.S. Multinationals"},{"a":"Tolga Caskurlu, University of Amsterdam\nGerard Hoberg, University of Southern California\nGordon Phillips, Dartmouth College","s":11,"t":"New Technology Sectoral Disruptions"},{"a":"Abhiroop Mukerjee, Hong Kong University of Science & Technology\nBruno Pellegrino, Columbia University\nAlminas Zaldokas, National University of Singapore\nYiman Ren, University of Michigan\nTomas Tornquist, Abu Dhabi Investment Authority","s":11,"t":"New Products"},{"a":"Will Cong, Nanyang Technological University\nXiaohong Huang, Southwestern University of Finance and Economics\nSiguang Li, Hong Kong University of Science & Technology\nJian Ni, Southwestern University of Finance and Economics","s":11,"t":"Cournot Competition, Informational Feedback, and Real Efficiency"},{"a":"Agustin Hurtado, University of Maryland","s":12,"t":"Information Sharing Regimes and Financial Inclusion"},{"a":"Minnie Cui, University of Wisconsin-Madison\nCharles Smith, University of Wisconsin-Madison","s":12,"t":"Adverse Selection and Learning in Consumer Credit Markets"},{"a":"Erica Xuewei Jiang, University of California-Los Angeles\nYeonjoon Lee, Federal Reserve Bank of Richmond\nQuinn Maingi, University of Southern California","s":12,"t":"Credit Without Proximity: Informational Frictions and Unequal Gains from Technology"},{"a":"Artur Anschukov, Imperial College London\nHarjoat Bhamra, Imperial College London\nLars-Alexander Kuehn, Carnegie Mellon University","s":13,"t":"CDX Markets, Time-Varying Fear, and Corporate Leverage"},{"a":"Leonie Braeuer, University of Geneva","s":13,"t":"Exchange Rate Expectations and Currency Demand"},{"a":"Robert Rogers, London School of Economics and Political Science","s":13,"t":"Risk-Based Interest Rate Expectations"},{"a":"Markus Ibert, Copenhagen Business School","s":13,"t":"Tactical Asset Allocations of Large Asset Managers"},{"a":"Nickolay Gantchev, University of Virginia\nMariassunta Giannetti, Stockholm School of Economics\nMarcus Hober, Stockholm School of Economics","s":14,"t":"Beyond ESG: Executive Pay Metrics and Shareholder Support"},{"a":"John Bizjak, Texas Christian University\nSwami Kalpathy, Texas Christian University\nJue Ren, Texas Christian University\nBrian Young, Baylor University","s":14,"t":"Discretionary Adjustments in Relative Performance Awards"},{"a":"Jaehoon Jung, New York University","s":14,"t":"Green Moral Hazard: Estimating the Financial and the Real Implications of CEO Incentives"},{"a":"Zhi Li, Chapman University\nQiyuan Peng, University of Dayton\nLingling Wang, University of Connecticut","s":14,"t":"Adjusting CEO Pay When Rules Re-present Pay"},{"a":"Jess Cornaggia, Pennsylvania State University\nKimberly Cornaggia, Pennsylvania State University\nQiang Wang, University of Calgary\nHan Xia, University of Texas-Dallas","s":15,"t":"Student Debt and the Cinderella Effect"},{"a":"Samuel Antill, Harvard University\nEleanor Jenke, Harvard University\nRaymond Kluender, Harvard University","s":15,"t":"The Costs of Bankruptcy Misperceptions"},{"a":"Yufeng Huang, University of Rochester\nYukun Liu, University of Rochester\nBowen Luo, University of Houston\nXi Wu, University of California-Berkeley","s":15,"t":"\"No-Interest\" Advertising in High-Interest Loan Markets"},{"a":"Alexander Butler, Rice University\nAlan Crane, Rice University\nErik Mayer, University of Wisconsin-Madison\nAsli Uyanik, Rice University","s":15,"t":"Nepo Credit: The Effect of Borrowed Credit Histories"},{"a":"Olivier Dessaint, INSEAD\nNaveen Gondhi, INSEAD\nJoel Peress, INSEAD","s":16,"t":"Learning About Discount Rates"},{"a":"Andrea Andolfatto, Università Bocconi\nFederico Bastianello, London Business School","s":16,"t":"From Numbers to Words: Breaking Down Institutional Beliefs"},{"a":"Christian Heyerdahl-Larsen, BI Norwegian Business School\nPhilipp Illeditsch, Texas A&M University\nPetra Sinagl, University of Iowa","s":16,"t":"Asset Pricing with the Awareness of New Risks"},{"a":"Richard Sias, University of Arizona\nLaura Starks, University of Texas-Austin\nHarry Turtle, Colorado State University","s":16,"t":"Uncertain Uncertainty"},{"a":"Jennie Bai, Georgetown University\nErik Bostrom, Federal Reserve Board of Governors\nSebastian Infante, Federal Reserve Board of Governors\nVictoria Ivashina, Harvard University","s":17,"t":"Liquidity Flows to Bank-Affiliated Broker Dealers: Insights from Volumes and Prices"},{"a":"Lina Lu, Federal Reserve Bank of Boston\nJonathan Wallen, Harvard University","s":17,"t":"What Do Bank Trading Desks Do?"},{"a":"Junko Oguri, Northwestern University\nCristoforo Pizzimenti, Northwestern University","s":17,"t":"Ample Reserves for Whom? The Role of Foreign Banks in U.S. Monetary Policy Implementation"},{"a":"Andreas Fuster, École Polytechnique Fédérale de Lausanne\nTeodora Paligorova, Federal Reserve Board of Governors\nJames Vickery, Federal Reserve Bank of Philadelphia","s":17,"t":"Underwater: Strategic Trading and Risk Management in Bank Securities Portfolios"},{"a":"Vadim Elenev, Johns Hopkins University\nTim Landvoigt, University of Pennsylvania\nStijn Van Nieuwerburgh, Columbia University","s":18,"t":"The Austerity Threshold"},{"a":"Gill Segal, University of North Carolina-Chapel Hill\nChao Ying, Chinese University of Hong Kong","s":18,"t":"Innovation-Driven Contractions: A Missing Link for Asset Pricing Puzzles"},{"a":"Zheng Gong, University of Bonn","s":18,"t":"An Asset-Price Centric New Keynesian Model"},{"a":"Frederico Belo, INSEAD\nDapeng Hao, Renmin University of China\nXiaoji Lin, University of Minnesota\nZhigang Qiu, Renmin University of China\nJincheng Tong, University of Toronto","s":18,"t":"State Ownership, Asset Prices, and Monetary Policy Transmission: A Tale of Two Sectors"},{"a":"Hanbin Yang, London Business School\nMarco Loseto, Università Bocconi","s":19,"t":"Default Options and Market Power: Evidence from Target-Date Funds"},{"a":"Enzo Cerletti, Central Bank of Chile\nTomas Cortes, Central Bank of Chile\nBorja Larrain, Pontificia Universidad Católica de Chile\nPatricio Toro, Central Bank of Chile","s":19,"t":"Debt and Liquid Wealth: Evidence from Pension Fund Withdrawals"},{"a":"Guillermo Carranza, Yale University\nTaha Choukhmane, Massachusetts Institute of Technology\nFiona Greig, Vanguard Group\nCormac O'Dea, Yale University\nLawrence Schmidt, Massachusetts Institute of Technology","s":19,"t":"The Design of Retirement Plan Match Schedules"},{"a":"Jaden Chen, University of North Carolina-Chapel Hill\nWill Cong, Nanyang Technological University\nSiguang Li, Hong Kong University of Science & Technology","s":20,"t":"Endogenous Misinformation and Source Authentication"},{"a":"Maryam Farboodi, Massachusetts Institute of Technology\nPeter Kondor, London School of Economics and Political Science\nPablo Kurlat, University of Southern California","s":20,"t":"Equilibrium Spillover of Big Data"},{"a":"Jangwoo Lee, Chinese University of Hong Kong","s":20,"t":"Confidentiality and Competition in Concurrent Bargaining"},{"a":"Virginia Traweek, Texas Christian University\nAmiyatosh Purnanandam, University of Texas-Austin\nTaylor Begley, University of Kentucky","s":21,"t":"Shadows on Main Street: Local Financial Architecture and Asset Reallocation"},{"a":"Murillo Campello, University of Florida\nSamuel Ross, Harvard University\nTeng Wang, University of Texas-Arlington","s":21,"t":"Leveraged Loans and the Transmission of Monetary Policy"},{"a":"Kristian Blickle, Federal Reserve Bank of New York\nAdair Morse, University of California-Berkeley\nParinitha Sastry, University of Pennsylvania","s":21,"t":"Banks as Stewards"},{"a":"Deqiu Chen, University of International Business and Economics\nHaoyuan Li, University of International Business and Economics\nYujing Ma, Hong Kong Polytechnic University\nRoni Michaely, University of Hong Kong","s":22,"t":"Value, Values, and Opportunities in Corporate Environmental Practices"},{"a":"Richard Lowery, University of Texas-Austin\nMichael Sockin, University of Texas-Austin","s":22,"t":"Building Voice in Socially Responsible Investing"},{"a":"Harshini Shanker, London Business School","s":22,"t":"Ethical Capital, Coordination, and the Correction of Externalities"},{"a":"Lars Lochstoer, University of California-Los Angeles\nStig Roar Lundeby, BI Norwegian Business School\nZhaneta Tancheva, BI Norwegian Business School","s":23,"t":"Present Bias and Discount Rate Risk"},{"a":"Rong Wang, Duke University","s":23,"t":"Resolving the Zero-Beta Rate Puzzle"},{"a":"Paul Goldsmith-Pinkham, Yale University\nTianshu Lyu, Yale University","s":23,"t":"Causal Inference in Financial Event Studies"},{"a":"Elisabeth Kempf, Harvard University\nMargarita Tsoutsoura, Washington University-St. Louis\nQiping Xu, University of Illinois-Urbana-Champaign","s":24,"t":"Trickle-Down Ideology: How CEO Politics Shape the Workforce"},{"a":"Utpal Bhattacharya, Hong Kong University of Science & Technology\nTse-Chun Lin, University of Hong Kong\nJanghoon Shon, University of New South Wales","s":24,"t":"The Echoes of Muted Political Speech in Financial Speech"},{"a":"Marco Grotteria, London Business School\nLakshmi Naaraayanan, London Business School\nAndrea Pagliuca, London Business School","s":24,"t":"Politics and the Price of Housing"},{"a":"Winston Dou, University of Pennsylvania\nItay Goldstein, University of Pennsylvania\nZigang Li, University of Toronto\nLiyan Yang, University of Toronto","s":25,"t":"Human Edge, Machine Limits: AI-Human Competition in Financial Markets"},{"a":"Snehal Banerjee, University of Michigan\nMartin Szydlowski, Hong Kong University of Science & Technology","s":25,"t":"Trading against Algorithms: Price Dynamics and Risk-sharing in a Market with Q-Learners"},{"a":"Lauren Cohen, Harvard University\nYiwen Lu, University of Pennsylvania\nQuoc Nguyen, DePaul University","s":25,"t":"Mimicking Finance"},{"a":"Todd Gormley, Washington University-St. Louis\nHwanki Brian Kim, Baylor University","s":26,"t":"Do Index Funds Monitor? Revisited"},{"a":"Vincent Gregoire, HEC Montréal\nJuan Sotes-Paladino, Universidad de los Andes","s":26,"t":"Relative Performance Evaluation for Asset Managers: A Quantitative Assessment"},{"a":"Abhishek Bhardwaj, Tulane University\nAbhinav Gupta, University of North Carolina-Chapel Hill\nSabrina Howell, New York University\nKyle Zimmerschied, University of Missouri","s":26,"t":"Does Fund Size Affect Private Equity Performance? Evidence from Donations to Private Universities"},{"a":"John Griffin, University of Texas-Austin\nAlex Priest, University of Rochester","s":27,"t":"What Constrains Medicare Fraud? The Role of Firm Culture in Nursing Homes"},{"a":"Katharina Lewellen, Dartmouth College\nGiorgo Sertsios, University of Wisconsin-Milwaukee\nJiadi Xu, University of Wisconsin-Milwaukee","s":27,"t":"Financing Charity: Evidence from U.S. Hospitals"},{"a":"Kristine Hankins, University of Kentucky\nTong Liu, Massachusetts Institute of Technology\nDenis Sosyura, Arizona State University","s":27,"t":"Driving a Bargain: Negotiation Skill and Price Dispersion"},{"a":"Pauline Liang, Stanford University","s":28,"t":"Credit Crunch in Housing Under Regulation Q"},{"a":"Manuel Adelino, Duke University\nMiguel Ferreira, Universidade Nova de Lisboa\nSujiao Zhao, University of Hong Kong","s":28,"t":"Interest Rate Pass-Through With Adjustable Rate Mortgages"},{"a":"Matteo Crosignani, Federal Reserve Bank of New York\nSaketh Prazad, Harvard University","s":28,"t":"Extend-and-Pretend in the U.S. CRE Market"},{"a":"Viral Acharya, New York University\nRaghuram Rajan, University of Chicago\nBill Shu, New York University","s":29,"t":"When is Less More? Bank Arrangements for Liquidity vs Central Bank Support"},{"a":"Gary Gorton, Yale University\nChase Ross, Federal Reserve Board of Governors\nSharon Ross, Federal Reserve Board of Governors","s":29,"t":"Where Collateral Sleeps"},{"a":"Joseph Hoon, National University of Singapore\nChang Liu, National University of Singapore\nKarsten Müller, National University of Singapore\nJonathan Payne, Princeton University\nZhongxi Zheng, National University of Singapore","s":29,"t":"The Costs of Financial Crises in the United States"},{"a":"William Fuchs, University of Texas-Austin\nSatoshi Fukuda, Università Bocconi\nDaniel Neuhann, University of Texas-Austin","s":30,"t":"A Trilemma for Asset Demand Estimation"},{"a":"Samuel Hartzmark, Boston College\nAbigail Sussman, University of Chicago","s":30,"t":"Price Agnostic Demand"},{"a":"Filippo Cavaleri, University of Chicago\nAngelo Ranaldo, Basel University\nEnzo Rossi, Swiss National Bank","s":30,"t":"The Demand for Safe Assets"},{"a":"Lubos Pastor, University of Chicago\nTaisiya Sikorskaya, University of Chicago\nJinrui Wang, University of Chicago","s":31,"t":"The Hidden Cost of Stock Market Concentration: When Funds Hit Regulatory Limits"},{"a":"Ravi Jagannathan, Northwestern University\nIwan Meier, HEC Montréal\nValeri Sokolovski, University of Alberta","s":31,"t":"Dirty Business: Transition Risk of Factor Portfolios"},{"a":"AJ Chen, University of British Columbia\nGerard Hoberg, University of Southern California\nMiao (Ben) Zhang, University of Southern California","s":31,"t":"Haven’t We Seen This Before? Return Predictions from 200 Years of News"},{"a":"Leonid Kogan, Massachusetts Institute of Technology\nJun Li, University of Texas-Dallas\nXiaotuo Qiao, Harbin Institute of Technology-Shenzhen","s":31,"t":"Asset Growth Effect and Q Theory of Investment"},{"a":"Simona Abis, University of Colorado-Boulder\nBo Bian, University of British Columbia\nHuan Tang, University of Pennsylvania","s":32,"t":"Breaking the Data Chain: The Ripple Effect of Data Sharing Restrictions on Financial Markets"},{"a":"Ehsan Mahdikhani, Stockholm School of Economics","s":32,"t":"Breaching the Chinese Wall: Cross-Market Information Flow Following Financial Institution Mergers"},{"a":"Xi Dong, Baruch College\nEdward Li, City University of New York\nXintian Lin, Central University of Finance and Economics\nXin Yuan, Dongbei University of Finance and Economics","s":32,"t":"Inside Out: Who Trade Before the Start of Cyber Attacks?"},{"a":"Francesca Bastianello, University of Chicago\nPaul Décaire, Arizona State University\nMarius Guenzel, University of Pennsylvania","s":32,"t":"Valuation Models"},{"a":"Fotis Grigoris, University of Iowa\nGill Segal, University of North Carolina-Chapel Hill\nChao Ying, Chinese University of Hong Kong","s":33,"t":"Uncertainty After Dark: Evidence from 19 Million Nights of Sleep"},{"a":"Andrei Goncalves, Ohio State University\nAlessandro Melone, Ohio State University\nAndrea Ricciardi, Ohio State University","s":33,"t":"The Pricing of Geopolitical Tensions over a Century"},{"a":"Jie Cao, Hong Kong Polytechnic University\nAmit Goyal, University of Lausanne\nYajing Wang, Hong Kong Polytechnic University\nXintong Zhan, Fudan University\nWeiming (Elaine) Zhang, IE Business School","s":33,"t":"Opioid Crisis and Firm Downside Tail Risks: Evidence from the Option Market"},{"a":"Kimberly Cornaggia, Pennsylvania State University\nJess Cornaggia, Pennsylvania State University\nRyan Israelsen, Michigan State University","s":33,"t":"Unauthorized Immigration and Local Government Finances"},{"a":"Philip Bond, University of Washington\nDoron Levit, University of Washington","s":34,"t":"(Ir)responsible Takeovers"},{"a":"Brett Green, Washington University-St. Louis\nAlexander Gorbenko, University College London\nShreye Mirani, Washington University-St. Louis","s":34,"t":"Deal Terms in Takeovers"},{"a":"Hyunbok Wee, Tulane University","s":34,"t":"On the Use of Failed Bids in Estimating the Treatment Effects of Mergers and Acquisitions"},{"a":"Andras Danis, Central European University\nEvgeny Gushchin, Central European University\nBeate Thies, University of Vienna","s":34,"t":"The Effect of Takeovers on Knowledge Worker Productivity"},{"a":"Francesca Bastianello, University of Chicago\nAlex Imas, University of Chicago","s":35,"t":"Biases in Belief Updating Within and Across Domains"},{"a":"Constantin Charles, London School of Economics and Political Science\nPengfei Sui, Chinese University of Hong Kong-Shenzhen","s":35,"t":"Similarity in Financial Markets"},{"a":"Yukun Liu, Baruch College\nXiao Yin, University College London","s":35,"t":"Sentiment About Others"},{"a":"Paul Ehling, BI Norwegian Business School\nChristian Heyerdahl-Larsen, BI Norwegian Business School\nZeshu Xu, BI Norwegian Business School","s":35,"t":"Buy High, Cry Later: Beliefs-driven Cycles of Stock Market Participation"},{"a":"Hongye Guo, University of Hong Kong\nJessica Wachter, University of Pennsylvania","s":36,"t":"Forecast-Agnostic Portfolios"},{"a":"Patrick Adams, Massachusetts Institute of Technology","s":36,"t":"Stocks for the Long Run or Liquidity? Tax Data Evidence and Portfolio Choice Implications"},{"a":"Leyla Jianyu Han, Boston University\nElla Patelli, University of British Columbia","s":36,"t":"Macroeconomic Announcements and the Repricing of Earnings Risk"},{"a":"Tomislav Ladika, University of Amsterdam\nElisa Pazaj, University of Amsterdam\nZacharias Sautner, University of Zurich","s":36,"t":"Addressing Anticipation Effects in Finance"},{"a":"Kristy Jansen, University of Southern California\nWenhao Li, University of Southern California\nLukas Schmid, University of Southern California","s":37,"t":"Granular Treasury Demand with Arbitrageurs"},{"a":"Fabricius Somogyi, Northeastern University\nJonathan Wallen, Harvard University\nLingdi Xu, Harvard University","s":37,"t":"What Treasury Auctions Reveal About Investor Demand"},{"a":"William Cassidy, Washington University-St. Louis\nShreye Mirani, Washington University-St. Louis","s":37,"t":"The Debt Ceiling's Disruptive Impact: Evidence from Many Markets"},{"a":"Matteo Benetton, University of California-Berkeley\nBenjamin Hebert, Stanford University\nTimothy McQuade, University of California-Berkeley","s":38,"t":"Depositor Competition Beyond Rates"},{"a":"Yevhenii Usenko, Massachusetts Institute of Technology","s":38,"t":"Large Depositors, Retail Depositors, and the Deposits Channel of Monetary Policy"},{"a":"Dominic Cucic, Danmarks Nationalbank\nChristoph Basten, European Central Bank\nGlenn Schepens, European Central Bank","s":38,"t":"Market-Priced Savings, Bank Deposit Market Power, and Monetary Policy Transmission"},{"a":"Bo Bian, University of British Columbia\nMichaela Pagel, Washington University-St. Louis\nDevesh Raval, Federal Trade Commission\nHuan Tang, University of Pennsylvania","s":39,"t":"Consumer Surveillance and Financial Fraud"},{"a":"Alexander Copestake, International Monetary Fund\nDivya Kirti, International Monetary Fund\nSole Martinez Peria, International Monetary Fund\nYao Zeng, University of Pennsylvania","s":39,"t":"Integrating Fragmented Networks: Interoperability in Money and Payments"},{"a":"Fangzhou Lu, University of Hong Kong\nSixuan Li, University of Hong Kong\nYingyan Shi, University of Hong Kong","s":39,"t":"Robo-Advising Meets Large Language Models: Educating Investors on Alpha and Beta of Mutual Funds and Stocks"},{"a":"Alina Arefeva, University of Wisconsin-Madison\nQihui Hu, Carnegie Mellon University\nKay Jowers, Duke University\nChris Timmins, University of Wisconsin-Madison","s":40,"t":"Discrimination During Eviction Moratoria"},{"a":"Yao Lu, Tsinghua University\nHanqing Shi, Tsinghua University\nYanling Sun, Tsinghua University\nZhishu Yang, Tsinghua University","s":40,"t":"How Does Human–Machine Collaboration Work? — Evidence From Auto Finance Leasing Transactions"},{"a":"Zhenyu Gao, Chinese University of Hong Kong\nBing Han, University of Toronto\nChanik Jo, Chinese University of Hong Kong\nZhecheng Luo, Chinese University of Hong Kong","s":40,"t":"Social Transmission of Consumption"},{"a":"Pauline Lam, New York University\nJeffrey Wurgler, New York University","s":41,"t":"Green Bonds: New Label, Same Projects"},{"a":"Ingvil Gaarder, University of Chicago\nMorten Grindaker, BI Norwegian Business School\nTom Meling, Ohio State University\nMagne Mogstad, University of Chicago","s":41,"t":"Green Waste"},{"a":"Mariano Croce, Università Bocconi\nNicolas Guinez, Università Bocconi\nAlejandra Inzunza, Università Bocconi\nThien Nguyen, Federal Reserve Board of Governors\nClaudio Tebaldi, Università Bocconi","s":41,"t":"Green Coins"},{"a":"Jun Chen, University of Illinois-Chicago\nSong Ma, Yale University\nFeng Zhang, Southern Methodist University","s":42,"t":"Anti-Harassment Policy and the Startup Labor Market"},{"a":"Seung Hyeong Lee, Northwestern University\nBryan Seegmiller, Northwestern University\nYufeng Wu, Ohio State University\nMiao Ben Zhang, University of Southern California","s":42,"t":"Investing in Human Capital Incubation"},{"a":"Allison Cole, Arizona State University\nAnkit Kalda, Indiana University\nAlessandro Previtero, Indiana University","s":42,"t":"The Glass Ceiling from Day Zero: Path Dependence in Financial Advisors’ Careers"},{"a":"Pierre De Leo, University of Maryland\nLorena Keller, Texas A&M University\nGiuliano Simoncelli, University of Maryland\nMauricio Villamizar Villegas, Banco de la República (The Central Bank of Colombia)\nTomas Williams, George Washington University","s":43,"t":"Global Investors in Local-Currency Bond Markets: Implications for Bond Yields and Exchange Rates"},{"a":"Caitlin Dannhauser, Villanova University\nMichele Dathan, Federal Reserve Board of Governors\nMichael Young, University of Missouri\nQifei Zhu, National University of Singapore","s":43,"t":"Credit Where It's Not Due: Misbenchmarking by Active Bond Funds"},{"a":"Lina Han, University of Massachusetts-Amherst\nStacey Jacobsen, Southern Methodist University\nJayoung Nam, Southern Methodist University\nVeronika Pool, Vanderbilt University","s":43,"t":"Cross Trading in the Corporate Bond Market"},{"a":"Pablo Azar, Federal Reserve Bank of New York\nAdrian Casillas, New York University\nMaryam Farboodi, Massachusetts Institute of Technology","s":44,"t":"Natural Centralization in Decentralized Finance"},{"a":"Thomas Flanagan, Ohio State University","s":44,"t":"Do GSEs Subsidize Mortgage Lending?"},{"a":"Wen Chen, Texas Tech University\nShen Zhao, University of Macau\nGuofu Zhou, Washington University-St. Louis","s":44,"t":"Hide in the Herd: Uncertainty and Informational Inefficiency"},{"a":"Jordan Richmond, University of Maryland\nAdam Isen, U.S. Department of the Treasury\nMatthew Smith, U.S. Department of the Treasury\nConstantine Yannelis, Cambridge University","s":45,"t":"Buyouts with Payouts: The Impacts of Private Equity on Workers and Owners"},{"a":"Martin Aragoneses, INSEAD\nSagar Saxena, University of Pennsylvania","s":45,"t":"Industrial Policy via Venture Capital"},{"a":"Yinan Qiu, Princeton University","s":45,"t":"Venture Capital Networks and Cross-Border Startup Knowledge Spillovers"},{"a":"Matthias Fleckenstein, University of Delaware\nShohini Kundu, University of California-Los Angeles\nFrancis Longstaff, University of California-Los Angeles","s":46,"t":"Valuing Sticky Deposits"},{"a":"Filippo Cavaleri, University of Chicago","s":46,"t":"Fiscal Insurance and the Pricing of Government Debt"},{"a":"Julia Selgrad, University of Chicago\nKerry Siani, Massachusetts Institute of Technology","s":46,"t":"Monetary Policy and Investment Plans"},{"a":"Robert Battalio, University of Notre Dame\nCraig Holden, Indiana University\nMatthew Pierson, University of Pennsylvania\nJohn Shim, University of Notre Dame\nJun Wu, University of Pennsylvania","s":47,"t":"Latency and the Look-Ahead Bias in Trade and Quote Data"},{"a":"Patrick Blonien, Carnegie Mellon University\nAlexander Ober, Rice University","s":47,"t":"Is 24/7 Trading Better?"},{"a":"Amber Anand, Syracuse University\nDmitriy Muravyev, University of Illinois-Urbana-Champaign","s":47,"t":"Does Internalization Impact Quote Competition?"},{"a":"Lara Loewenstein, Federal Reserve Bank of Cleveland\nPaul Willen, Federal Reserve Bank of Boston\nYuxi Yao, University of Nebraska-Lincoln\nDavid Zhang, Rice University","s":48,"t":"Is There a Puzzle in Underwater Mortgage Default?"},{"a":"Leonel Drukker, University of California-Berkeley","s":48,"t":"Do Lower Mortgage Rates Benefit First-Time Homebuyers?"},{"a":"Paul Schmelzing, Boston College","s":48,"t":"Global Housing Returns, Discount Rates, and the Emergence of the Safe Asset, 1465-2024"}];
+
+    function performSearch() {
+        const input = document.getElementById('searchInput');
+        const query = input.value.toLowerCase().trim();
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (query.length < 2) {
+            resultsDiv.style.display = 'none';
+            return;
+        }
+
+        const hits = searchIndex.filter(p => 
+            p.t.toLowerCase().includes(query) || (p.a && p.a.toLowerCase().includes(query))
+        ).slice(0, 10);
+
+        if (hits.length > 0) {
+            resultsDiv.innerHTML = hits.map(h => `
+                <a href="session_${h.s}.html" class="search-result-item">
+                    <div class="search-result-title">${h.t}</div>
+                    <div class="search-result-author">${h.a}</div>
+                </a>
+            `).join('');
+            resultsDiv.style.display = 'block';
+        } else {
+            resultsDiv.innerHTML = '<div style="padding: 10px; color: #718096; font-size: 0.85em;">見つかりませんでした</div>';
+            resultsDiv.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const container = document.querySelector('.search-container');
+        if (container && !container.contains(event.target)) {
+            document.getElementById('searchResults').style.display = 'none';
+        }
+    });
+</script>
+<button class="accordion-btn">Asset Pricing and Market Microstructure <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Microstructure Theory</a><a href="session_5.html" class="session-link ">Demand Elasticities</a><a href="session_13.html" class="session-link ">Expectations in Asset Pricing</a><a href="session_18.html" class="session-link ">New Keynesian Asset Pricing</a><a href="session_23.html" class="session-link ">Asset Pricing Methodology</a><a href="session_30.html" class="session-link ">Asset Demand</a><a href="session_31.html" class="session-link ">Empirical Asset Pricing</a><a href="session_33.html" class="session-link ">Asset Pricing Under Unconventional Risks</a><a href="session_47.html" class="session-link ">Market Microstructure</a></div><button class="accordion-btn">Corporate Finance and Innovation <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Venture Capital and Private Equity</a><a href="session_8.html" class="session-link ">Financing and Innovation</a><a href="session_11.html" class="session-link ">Innovation and the Real Economy</a><a href="session_14.html" class="session-link ">Executive Pay</a><a href="session_27.html" class="session-link ">Healthcare Finance and Governance</a><a href="session_34.html" class="session-link ">Mergers and Acquisitions</a><a href="session_42.html" class="session-link ">Human Capital and Organizational Frictions</a><a href="session_45.html" class="session-link ">Venture Capital and the Real Economy</a></div><button class="accordion-btn">Financial Intermediation and Institutional Investors <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_6.html" class="session-link ">Mutual Funds</a><a href="session_9.html" class="session-link ">Financial Intermediation Theory</a><a href="session_17.html" class="session-link ">Bank Liquidity and Trading</a><a href="session_21.html" class="session-link ">Banks and Nonbanks in the Real Economy</a><a href="session_26.html" class="session-link ">Institutional Investors</a><a href="session_29.html" class="session-link ">Financial Crises and Liquidity</a><a href="session_38.html" class="session-link ">Deposits: Sticky or Flighty</a><a href="session_43.html" class="session-link ">Bond Funds</a></div><button class="accordion-btn">Household Finance and Consumer Credit <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Household Financial Advice and Belief Formation</a><a href="session_12.html" class="session-link ">Consumer Credit</a><a href="session_15.html" class="session-link ">Household Credit</a><a href="session_19.html" class="session-link ">Retirement Savings</a><a href="session_28.html" class="session-link ">Mortgages</a><a href="session_35.html" class="session-link ">Household Beliefs and Biases</a><a href="session_40.html" class="session-link ">Household Finance and Technology</a><a href="session_48.html" class="session-link ">Household Finance and Mortgage Markets</a></div><button class="accordion-btn">Macro-Finance and Monetary Policy <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Credit Cycles and Monetary Policy</a><a href="session_7.html" class="session-link ">The Fed and the Market</a><a href="session_24.html" class="session-link ">Politics and Finance</a><a href="session_37.html" class="session-link ">The Supply and Demand of US Treasury</a><a href="session_46.html" class="session-link ">Debt and Interest Rates</a></div><button class="accordion-btn">Information, Beliefs, and Fintech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_16.html" class="session-link ">Learning and Beliefs</a><a href="session_20.html" class="session-link ">Theory of Information</a><a href="session_25.html" class="session-link active">AI in Trading and Investing</a><a href="session_32.html" class="session-link ">Financial Markets and Information</a><a href="session_36.html" class="session-link ">Information, Expectations, and Asset Prices</a><a href="session_39.html" class="session-link ">Digital Finance and Data</a><a href="session_44.html" class="session-link ">Information Frictions and Market Efficiency</a></div><button class="accordion-btn">Climate Finance and Sustainable Investing <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_10.html" class="session-link ">Climate Risk and Climate Policy</a><a href="session_22.html" class="session-link ">Sustainable Investing</a><a href="session_41.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>AI in Trading and Investing</h1><div class="paper-card">
+    <div class="paper-title">Human Edge, Machine Limits: AI-Human Competition in Financial Markets</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Authors: Winston Dou (University of Pennsylvania), Itay Goldstein (University of Pennsylvania), Zigang Li (University of Toronto), Liyan Yang (University of Toronto)</div>
+    <a href="https://westernfinance-portal.org/viewpaper?n=1075956" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、AIを活用した投資家と、熟練度が異なる人間投資家との間の競争を研究するための理論的枠組みを構築した。人間投資家は優れた非公開情報を有しているが、認知階層構造によってモデル化された有限の戦略的推論能力によって制約を受けている。対照的に、AI投資家は、時間の経過とともに取引利益を自律的に最適化する強化学習を通じて学習し、取引を行う。 我々は、AIの高度化が学習データによって制約されるため、人間投資家が常に高度なAI投資家よりも優れたパフォーマンスを発揮し得ることを示す。その学習データは、最先端の人間トレーダーではなく、平均的なトレーダーの行動を反映しているからである。 AIの収益性を制限する3つの要因がある。(i) 人間の非公開情報の優位性、(ii) 最も洗練された人間トレーダーによる価格安定化行動、および (iii) 市場シェアの拡大に伴い増大するAI取引の価格への影響である。これらのメカニズムは、アルゴリズムの優位性には限界があることを明らかにするとともに、金融市場におけるAIと人間の競争を理解するための基礎を提供する。</p>
+        <p class="abstract-text en">We develop a theoretical framework to study competition between AI-powered and human investors with heterogeneous sophistication. Human investors possess superior private information but are limited by bounded strategic reasoning, modeled through a cognitive-hierarchy structure. AI investors, in contrast, learn and trade through reinforcement learning that autonomously optimizes trading profits over time. We show that human investors can consistently outperform sophisticated AI investors because AI sophistication is constrained by the data it learns from, which reflects the behavior of the average rather than the most advanced human trader. Three forces limit AI profitability: (i) the advantage of human private information, (ii) the price-stabilizing actions of the most sophisticated human traders, and (iii) the growing price impact of AI trading as its market share expands. Together, these mechanisms reveal the limits of algorithmic superiority and provide a foundation for understanding AI–human competition in financial markets.</p>
+    </div>
+</div> <div class="paper-card">
+    <div class="paper-title">Trading against Algorithms: Price Dynamics and Risk-sharing in a Market with Q-Learners</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Authors: Snehal Banerjee (University of Michigan), Martin Szydlowski (Hong Kong University of Science & Technology)</div>
+    <a href="https://westernfinance-portal.org/viewpaper?n=1034796" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、合理的な投資家とQ学習を行うトレーダーが存在する市場における価格形成のダイナミクスとリスク分担について検討する。Q学習者の取引は価格にフィードバックループを生み出す。すなわち、リスクのある証券に対する彼らの需要は、取引から得られると認識される利益に依存し、その利益は実現リターンに依存する。 我々は、このループが状態依存的な確率的ボラティリティ、予測可能なリターン、およびQラーナーの保有量と学習率に依存する新たな価格ダイナミクスを生み出すことを示す。合理的投資家が取引に対して強いリスク分担の動機を持っている場合、Qラーナーは価格のボラティリティを高めるにもかかわらず、（i）取引利益を得ることができ、（ii）投資家の平均効用を向上させることができることを示す。</p>
+        <p class="abstract-text en">We study pricing dynamics and risk-sharing in a market with rational investors and a Q-learning trader. The Q-learner’s trading generates a feedback loop in prices: their demand for the risky security depends on their perceived benefit from trading, which in turn, depends on realized returns. We show that this loop generates state-dependent stochastic volatility, predictable returns, and novel price dynamics which depend on the mass and learning rate of the Q-learner. When rational investors have strong risk-sharing motives for trading, we show that Q-learners can (i) earn trading profits and (ii) improve average investor utility, even though they increase the volatility of prices.</p>
+    </div>
+</div> <div class="paper-card">
+    <div class="paper-title">Mimicking Finance</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Authors: Lauren Cohen (Harvard University), Yiwen Lu (University of Pennsylvania), Quoc Nguyen (DePaul University)</div>
+    <a href="https://westernfinance-portal.org/viewpaper?n=1055628" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">我々は、人工知能（AI）と機械学習の最先端技術を活用し、主要な経済主体の行動のうち、過去の行動から予測可能な部分を抽出して分類する。経済主体自身でさえ、これらを斬新（革新的）な意思決定と見なしているかもしれない。しかし、我々は、これらの人物が不在であっても、こうした行動や振る舞いの大部分は予測可能であり、したがって模倣可能であることを、明確な対比をもって示す。 特に、投資信託運用担当者の売買方向の71％は、当該担当者が1件の売買も行わない状況下でも予測可能であることを示しています。一部の運用担当者については、これは特定の四半期における売買のほぼすべてにまで及びます。さらに、取引履歴が長く、競争の激しいカテゴリーに属していない運用担当者ほど、その行動は予測しやすく、再現しやすいことが判明しました。また、ファンドにおける運用担当者の持分比率が高いほど、その行動は予測しにくくなります。 最後に、我々は強力なパフォーマンスへの示唆を示す。予測困難な運用担当者は同業者を大幅に上回るパフォーマンスを示す一方、最も予測可能な運用担当者は著しく下回るパフォーマンスとなる。各運用担当者のポートフォリオ内においても、予測が困難な株式ポジションは、予測が容易なポジションよりも大幅に優れたパフォーマンスを示す。四半期ごとに全ファンド運用担当者を集計すると、ポジション変動が最も予測困難な銘柄は、全運用担当者を対象とした場合、ポジション変動が最も予測可能な銘柄よりもさらに著しく優れたパフォーマンスを示す。 我々のフレームワークにより、研究者は金融主体の行動セットのうち、予測可能な部分と、刺激に対する新規の反応である部分（価値の創出または破壊の観点から評価可能な部分）とを区別し、分類することが可能となる。</p>
+        <p class="abstract-text en">We use frontier advancements in Artificial Intelligence and machine learning to extract and classify the part of key economic agents’ behaviors that are predictable from past behaviors. Even the agents themselves might view these as novel (innovative) decisions; however, we show in strong contrast that a large percentage of these actions and behaviors can be predicted - and thus mimicked - in the absence of these individuals. In particular, we show that 71% of mutual fund managers’ trade directions can be predicted in the absence of the agent making a single trade. For some managers, this increases to nearly all of their trades in a given quarter. Further, we find that manager behavior is more predictable and replicable for managers who have a longer history of trading and are in less competitive categories. The larger the ownership stake of the manager in the fund, the less predictable their behavior. Lastly, we show strong performance implications: less predictable managers strongly outperform their peers, while the most predictable managers significantly underperform. Even within each manager's portfolio, those stock positions that are more difficult to predict strongly outperform those that are easier to predict. Aggregating across the universe of fund managers each quarter, stocks whose position changes are least predictable additionally significantly outperform stocks whose position changes are most predictable across the universe. Our framework allows researchers to delineate and classify the portion of financial agents’ action sets which are predictable from those which are novel responses to stimuli -- open to being evaluated for value creation or destruction.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>

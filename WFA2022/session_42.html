@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigs and Networks</title>
+    <style>
+        /* レイアウトの土台 */
+        body { 
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #F8F9FA; 
+        }
+
+        /* ★サイドバーの幅を完全に固定する設定 */
+        .sidebar { 
+            flex: 0 0 300px;    /* 伸びない(0)、縮まない(0)、幅400pxにする設定 */
+            width: 300px;       /* 基本の幅 */
+            min-width: 300px;   /* 最小幅を固定 */
+            max-width: 300px;   /* 最大幅を固定 */
+            background: #1A365D; 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            z-index: 10; 
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        .sidebar-header { 
+            padding: 25px 20px; 
+            background: #0F2547; 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            border-bottom: 1px solid #2C5282; 
+            color: #63B3ED; /* ★ここを追加（明るい水色） */
+        }
+
+        /* ★テーマ名のフォントサイズを大きく調整 */
+        .accordion-btn { 
+            background: #1A365D; 
+            color: white; 
+            width: 100%; 
+            text-align: left; 
+            border: none; 
+            padding: 18px 20px; 
+            cursor: pointer; 
+            border-bottom: 1px solid #2C5282; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            font-weight: bold; 
+            font-size: 1.0rem;      /* フォントを大きく設定 */
+            letter-spacing: 0.25px;   /* 文字間隔を少し広げて視認性向上 */
+            transition: background 0.2s;
+        }
+        .accordion-btn:hover { background: #244376; }
+
+        .accordion-content { display: none; background: #214373; }
+
+        /* セッション名のリンク */
+        .session-link { 
+            display: block; 
+            color: #E2E8F0; 
+            padding: 14px 20px 14px 30px; 
+            text-decoration: none; 
+            font-size: 0.95em; 
+            border-bottom: 1px solid #2C5282; 
+            line-height: 1.4;
+        }
+        .session-link:hover, .session-link.active { 
+            background: #3182CE; 
+            color: white; 
+        }
+
+        /* メインコンテンツエリア */
+        .main-content { 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 50px; 
+            background: #FFFFFF;
+        }
+
+        /* 論文カードなどの装飾（前回同様） */
+        .paper-card { background: white; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
+        .paper-title { font-size: 1.4em; font-weight: bold; margin: 0 0 15px; color: #2D3748; }
+        .abstract-box { background: #F7FAFC; padding: 20px; border-radius: 6px; margin-top: 20px; border: 1px solid #EDF2F7; }
+        .lang-tabs { display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #E2E8F0; }
+        .lang-btn { background: none; border: none; color: #A0AEC0; cursor: pointer; padding: 8px 12px; font-weight: bold; font-size: 0.9em; }
+        .lang-btn.active { color: #3182CE; border-bottom: 3px solid #3182CE; }
+        .abstract-text { display: none; font-size: 1rem; color: #4A5568; line-height: 1.7; }
+        .abstract-text.active { display: block; }
+
+        /* ★ ここから追加：「ホームへ戻る」リンクのデザイン ★ */
+        .home-link {
+            display: block;
+            padding: 15px 20px;
+            background: #0B1C36; /* 背景色はそのまま */
+            color: #A0AEC0;      /* ★ここを水色からグレーに変更 */
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #2C5282;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        /* ホバー時（マウスを乗せた時）の動き */
+        .home-link:hover {
+            background: #2C5282;
+            color: #FFFFFF;      /* ★マウスを乗せた時は白く光らせることで、押せることを強調 */
+        }
+
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; /* 少しコンパクトに */
+            background-color: #EDF2F7;
+            color: #2D3748;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85em;
+            border-radius: 4px;
+            border: 1px solid #CBD5E0;
+            transition: all 0.2s;
+        }
+        .pdf-btn:hover {
+            background-color: #2C5282;
+            color: #FFFFFF;
+            border-color: #2C5282;
+        }
+        .pdf-icon {
+            margin-right: 6px;
+            font-size: 1.1em;
+        }
+
+        /* --- サイドバー用 検索ボックス --- */
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #4A5568;
+            border-radius: 6px;
+            background-color: #2D3748; /* サイドバーのネイビーに合わせる */
+            color: #FFFFFF;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #63B3ED; /* フォーカス時に水色に光る */
+            background-color: #1A202C;
+        }
+        .search-input::placeholder {
+            color: #A0AEC0;
+        }
+        /* 検索結果のドロップダウン */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none; /* 初期状態は非表示 */
+        }
+        .search-result-item {
+            display: block;
+            padding: 10px 12px;
+            border-bottom: 1px solid #E2E8F0;
+            text-decoration: none;
+            color: #2D3748;
+            font-size: 0.85em;
+        }
+        .search-result-item:hover {
+            background-color: #EDF2F7;
+        }
+        .search-result-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .search-result-author {
+            color: #718096;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <a href="../index.html" class="home-link">◀ Return to Portal</a>
+    <div class="sidebar-header">2022 Western Finance Association Meeting</div>
+    
+    <div class="search-container" style="margin: 15px 15px 20px 15px;">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by title or author..." onkeyup="performSearch()">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+<script>
+    const searchIndex = [{"a":"Pedro Tremacoldi Rossi, Columbia University","s":11,"t":"Financial Regulation and Automation Adoption: Evidence from Stock Trading Firms"},{"a":"Mikhail Chernov, University of California Los Angeles\nLars A. Lochstoer, University of California Los Angeles\nDongho Song, Johns Hopkins University","s":33,"t":"The Real Channel for Nominal Bond Stock Puzzles"},{"a":"Zhengyang Jiang, Northwestern University\nHanno Lustig, Stanford University\nStijn Van Nieuwerburgh, Columbia University\nMindy Z. Xiaolan, University of Texas Austin","s":21,"t":"What Drives Variation in the U.S. Debt/Output Ratio? The Dogs that Didn't Bark"},{"a":"Yang Song, University of Washington\nMatteo Benetton, University of California Berkeley\nYu An, Johns Hopkins University","s":46,"t":"Index Providers: Whales Behind the Scenes of ETFs"},{"a":"Andrea Barbon, University of St. Gallen\nHeiner Beckmeyer, University of Muenster\nAndrea Buraschi, Imperial College London\nMathis Moerke, University of St. Gallen","s":30,"t":"Liquidity Provision to Leveraged ETFs and Equity Options Rebalancing Flows Evidence from End of Day Stock Prices"},{"a":"Pierre Mabille, INSEAD\nOlivier Wang, New York University","s":2,"t":"Intermediary Based Loan Pricing"},{"a":"Valentin Haddad, University of California Los Angeles\nPaul Huebner, University of California Los Angeles\nErik Loualiche, University of Minnesota","s":14,"t":"How Competitive is the Stock Market? Theory, Evidence from Portfolios, and Implications for the Rise of Passive Investing"},{"a":"William Diamond, University of Pennsylvania\nPeter Van Tassel, Federal Reserve Bank of New York","s":5,"t":"Risk Free Rates and Convenience Yields Around the World"},{"a":"Eric Budish, University of Chicago\nPeter Cramton, University of Cologne\nAlbert Kyle, University of Maryland\nJeongmin Lee, Washington University St. Louis\nDavid Malec, University of Maryland","s":8,"t":"Flow Trading"},{"a":"Thomas Ernst, University of Maryland\nJonathan Sokobin, Financial Industry Regulatory Authority\nChester S. Spatt, Carnegie Mellon University","s":24,"t":"The Value of Off Exchange Data"},{"a":"Doyeon Kim, Northwestern University\nManpreet Singh, Georgia Institute of Technology\nRiddha Basu, George Washington University","s":40,"t":"Tax Incentives, Small Businesses, and Physical Capital Reallocation"},{"a":"Zhengyang Jiang, Northwestern University\nArvind Krishnamurthy, Stanford University\nHanno Lustig, Stanford University\nJialu Sun, Stanford University","s":13,"t":"Beyond Incomplete Spanning: Convenience Yields and Exchange Rate Disconnect"},{"a":"Andrea Lanteri, Duke University\nAdriano A. Rampini, Duke University","s":10,"t":"Constrained Efficient Capital Reallocation"},{"a":"Anthony DeFusco, Northwestern University\nHuan Tang, London School of Economics and Political Science\nConstantine Yannelis, University of Chicago","s":34,"t":"Measuring the Welfare Cost of Asymmetric Information in Consumer Credit Markets"},{"a":"Patrick Augustin, McGill University\nFrancis Cong, McGill University\nAlexandre Corhay, University of Toronto\nMichael Weber, University of Chicago","s":19,"t":"Price Rigidities and Credit Risk"},{"a":"Mustafa Emin, University of Florida\nChristopher M. James, University of Florida","s":18,"t":"Bank Loan Funds: Discretionary Values as a Source of Stability"},{"a":"Will Cong, Cornell University\nGuanhao Feng, City University of Hong Kong\nJingyu He, City University of Hong Kong\nXin He, City University of Hong Kong","s":6,"t":"Asset Pricing with Panel Tree under Global Split Criteria"},{"a":"Yilin Shi, Chinese University of Hong Kong\nJing Wu, Chinese University of Hong Kong\nYu Zhang, Peking University","s":17,"t":"Green Image in Supply Chains: Selective Disclosure of Corporate Suppliers"},{"a":"Adam Copeland, Federal Reserve Bank of New York\nDarrell Duffie, Stanford University\nYilin (David) Yang, Stanford University","s":25,"t":"Reserves Were Not So Ample After All"},{"a":"Gustavo Joaquim, Federal Reserve Bank of Boston\nFelipe Netto, Columbia University","s":32,"t":"Bank Incentives and the Effect of the Paycheck Protection Program"},{"a":"Tony Fan, Stanford University\nYucheng Liang, Carnegie Mellon University\nCameron Peng, London School of Economics and Political Science","s":38,"t":"The Inference Forecast Gap in Belief Updating"},{"a":"Wenjin Kang, Shanghai University of Finance and Economics\nK Geert Rouwenhorst, Yale University\nKe Tang, Tsinghua University","s":9,"t":"Crowding and Factor Returns"},{"a":"Basil Williams, New York University\nAndrzej Skrzypacz, Stanford University","s":24,"t":"Spoofing in Equilibrium"},{"a":"Chen Lin, University of Hong Kong\nFangzhou Lu, University of Hong Kong\nRoni Michaely, University of Hong Kong\nShihua Qin, University of Hong Kong","s":12,"t":"SPAC IPOs and Sponsor Network Centrality"},{"a":"Nuno Clara, Duke University","s":19,"t":"Demand Elasticities, Nominal Rigidities and Asset Prices"},{"a":"Franklin Allen, Imperial College London\nMarlene Haas, Independent Scholar\nEric Nowak, Swiss Finance Institute\nMatteo Pirovan, Swiss Finance Institute\nAngel Tengulov, University of Kansas","s":31,"t":"Squeezing Shorts Through Social Media Platforms"},{"a":"Sebastian Hillenbrand, New York University\nOdhrain McCarthy, New York University","s":33,"t":"Heterogeneous Investors and Stock Market Fluctuations"},{"a":"Ivan Indriawan, Auckland University of Technology\nRoberto Pascual, University of the Balearic Islands\nAndriy Shkilko, Wilfrid Laurier University","s":8,"t":"On the Effects of Continuous Trading"},{"a":"Francisco Gomes, London Business School\nRyan Lewis, University of Colorado\nJordan Nickerson, University of Washington","s":18,"t":"Crowded Ratings: Clientele Effects in the Corporate Bond Market"},{"a":"Edith Liu, Federal Reserve Board of Governors\nKaren Lewis, University of Pennsylvania","s":7,"t":"How Can Asset Prices Value Exchange Rate Wedges?"},{"a":"Stefano Pegoraro, University of Notre Dame\nMattia Montagna, European Central Bank","s":5,"t":"Issuance and Valuation of Corporate Bonds with Quantitative Easing"},{"a":"Marios Panayides, University of Cyprus\nBarbara Rindi, Universit_ Bocconi\nIngrid M. Werner, Ohio State University","s":14,"t":"Trading Fees and Intermarket Competition"},{"a":"Giorgio Ottonello, Nova School of Business and Economics\nMartijn Boons, Tilburg University\nRossen Valkanov, University of California San Diego","s":32,"t":"Do Credit Markets Respond to Macroeconomic Shocks? The Case for Reverse Causality"},{"a":"Riccardo Colacito, University of North Carolina Chapel Hill\nYan Qian, University of North Carolina Chapel Hill\nAndreas Stathopoulos, University of North Carolina Chapel Hill","s":7,"t":"Global Sales, International Currencies and the Currency Denomination of Debt"},{"a":"Paul D_caire, Arizona State University\nMichael D. Wittry, Ohio State University","s":23,"t":"Strategic Learning and Corporate Investment"},{"a":"Jun Aoyagi, Hong Kong University of Science & Technology","s":27,"t":"High Frequency Trading, For Profit Exchanges, and Endogenous Delays"},{"a":"Bo Becker, Stockholm School of Economics\nMurillo Campello, Cornell University\nViktor Thell, Stockholm School of Economics\nDong Yan, Stockholm School of Economics","s":10,"t":"Credit Risk and the Life Cycle of Callable Bonds: Implications for Real Corporate Decisions"},{"a":"Laura Blattner, Stanford University\nScott T. Nelson, University of Chicago\nJann Spiess, Stanford University Press","s":11,"t":"Unpacking the Black Box: Regulating Algorithmic Decisions"},{"a":"Yilin (David) Yang, Stanford University","s":25,"t":"What Quantity of Reserves Is Sufficient?"},{"a":"Ruggero Jappelli, Goethe University Frankfurt\nLoriana Pelizzon, Leibniz Institute for Financial Research SAFE, Goethe University\nFrankfurt and Ca' Foscari University of Venice\nAlberto Plazzi, Universit_ della Svizzera Italiana","s":32,"t":"The Core, the Periphery, and the Disaster: Corporate Sovereign Nexus in COVID 19 Times"},{"a":"Kenneth Ahern, University of Southern California\nLei Kong, University of Alabama\nXinyan Yan, University of Dayton","s":42,"t":"The Conglomerate Network"},{"a":"Eleonora Broccardo, University of Trento\nOliver Hart, Harvard University\nLuigi Zingales, University of Chicago","s":17,"t":"Exit vs. Voice"},{"a":"Bernard Dumas, INSEAD\nPaul Ehling, BI Norwegian Business School\nChunyu Yang, BI Norwegian Business School","s":21,"t":"The Debt Capacity of a Government"},{"a":"Sophie Calder Wang, University of Pennsylvania","s":42,"t":"The Distributional Impact of the Sharing Economy on the Housing Market"},{"a":"Zhen Yan, University of Michigan","s":46,"t":"Returns to Scale among Corporate Bond Mutual Funds"},{"a":"Alexander Cochardt, University of St. Gallen\nLauren H. Cohen, Harvard University\nStephan Heller, Harvard University","s":29,"t":"Hidden Alpha"},{"a":"Daniele d'Arienzo, Nova School of Business and Economics","s":37,"t":"Maturity Increasing Overreaction and Bond Market Puzzles"},{"a":"Robert Bartlett, University of California Berkeley\nJustin McCreary, Columbia University\nMaureen O'Hara, Cornell University","s":27,"t":"The Market Inside the Market: Odd lot Quotes"},{"a":"Eitan Goldman, Indiana University\nNandini Gupta, Indiana University\nRyan Israelsen, Michigan State University","s":35,"t":"Political Polarization in Financial News"},{"a":"Adrian Buss, Frankfurt School of Finance and Management\nRaman Uppal, EDHEC Business School\nGrigory Vilkov, Frankfurt School of Finance and Management","s":33,"t":"Dynamics of Asset Demands with Confidence Heterogeneity"},{"a":"Adelina Barbalau, University of Alberta\nFederica Zeni, Imperial College London","s":43,"t":"The Optimal Design of Green Securities"},{"a":"Jing Huang, University of Chicago","s":39,"t":"Fintech Expansion"},{"a":"John M. Griffin, University of Texas Austin\nSamuel Kruger, University of Texas Austin\nPrateek Mahajan, University of Texas Austin","s":41,"t":"Did FinTech Lenders Facilitate PPP Fraud?"},{"a":"Stefano Giglio, Yale University\nDacheng Xiu, University of Chicago\nDake Zhang, University of Chicago","s":9,"t":"Test Assets and Weak Factors"},{"a":"Alessandro Villa, Federal Reserve Bank of Chicago\nVytautas Valaitis, European University Institute\nLukas Schmid, University of Southern California","s":21,"t":"Government Debt Management and Inflation with Real and Nominal Bonds"},{"a":"Florian Heider, European Central Bank\nRoman Inderst, Goethe University Frankfurt","s":43,"t":"A Corporate Finance Perspective on Environmental Policy"},{"a":"Xuelin Li, University of South Carolina\nAndrew W. Lo, Massachusetts Institute of Technology\nRichard Thakor, University of Minnesota","s":41,"t":"Paying off the Competition: Market Power and Innovation Incentives"},{"a":"Felix von Meyerinck, Tilburg University\nVesa Pursiainen, University of St. Gallen\nMarkus Schmid, University of St. Gallen","s":28,"t":"Competition and the Reputational Costs of Litigation"},{"a":"Matteo Benetton, University of California Berkeley\nSergio Mayordomo, Bank of Spain\nDaniel Paravisini, London School of Economics and Political Science","s":2,"t":"Credit Fire Sales: Captive Lending as Liquidity in Distress"},{"a":"William C. Beggs, University of San Diego\nThuong Harvison, University of Arizona","s":41,"t":"Pay to Play in Investment Management"},{"a":"Sun Yong Kim, Northwestern University","s":13,"t":"US Global Shock Exposures, Recursive Preferences and International Asset Pricing"},{"a":"Jesse Ellis, North Carolina State University\nWilliam Gerken, University of Kentucky\nRussell Jame, University of Kentucky","s":30,"t":"On the Road to Better Governance: Private Meetings and Mutual Fund Voting"},{"a":"Taha Choukhmane, Massachusetts Institute of Technology\nTim de Silva, Massachusetts Institute of Technology","s":15,"t":"What Drives Investors' Portfolio Choices? Separating Risk Preferences from Frictions"},{"a":"Ioannis Spyridopoulos, American University\nMorad Zekhnini, Michigan State University\nWilliam Grieser, Texas Christian University","s":16,"t":"The Epidemiology of Financial Constraints"},{"a":"Sam Hanson, Harvard University\nAytek Malkhozov, Queen Mary University of London\nGyuri Venter, University of Warwick","s":37,"t":"Demand Supply Imbalance Risk and Long Term Swap Spreads"},{"a":"Chukwuma Dim, Frankfurt School of Finance and Management","s":35,"t":"Should Retail Investors Listen to Social Media Analysts? Evidence from Text Implied Beliefs"},{"a":"Nicolae G_rleanu, Washington University St. Louis\nStavros Panageas, University of California Los Angeles\nGeoffery X. Zheng, New York University Shanghai","s":31,"t":"A Long and a Short Leg Make For a Wobbly Equilibrium"},{"a":"Gary Gorton, Yale University\nChase Ross, Federal Reserve Board of Governors\nSharon Ross, Office of Financial Research","s":4,"t":"Making Money"},{"a":"Jonathan Brogaard, University of Utah\nJames Brugler, University of Melbourne\nDominik Rosch, State University of New York Buffalo","s":27,"t":"Competition and Exchange Data Fees"},{"a":"Elena Andreou, University of Cyprus\nPatrick Gagliardini, Universit_ della Svizzera Italiana\nEric Ghysels, University of North Carolina Chapel Hill\nMirco Rubin, EDHEC Business School","s":22,"t":"Three Common Factors"},{"a":"Matthew Denes, Carnegie Mellon University\nSpyridon Lagaras, University of Pittsburgh\nMargarita Tsoutsoura, Cornell University","s":42,"t":"Entrepreneurship and the Platform Economy: Evidence from U.S. Tax Returns"},{"a":"Anthony Diercks, Federal Reserve Board of Governors\nHiroatsu Tanaka, Federal Reserve Board of Governors\nPaul Cordova, Columbia University","s":44,"t":"Asymmetric Monetary Policy Expectations"},{"a":"Benjamin Loos, University of New South Wales\nSteffen Meyer, University of Southern Denmark\nMichaela Pagel, Columbia University","s":48,"t":"Consumption out of Fictitious Capital Gains and Selective Inattention"},{"a":"Albert Menkveld, Vrije Universiteit Amsterdam\nAnna Dreber, Stockholm University\nFelix Holzmeister, University of Innsbruck\nJuergen Huber, University of Innsbruck\nMagnus Johannesson, Stockholm University","s":6,"t":"Non Standard Errors"},{"a":"Quentin Vandeweyer, University of Chicago\nAdrien d'Avernas, Stockholm School of Economics","s":44,"t":"Treasury Bill Shortages and the Pricing of Short Term Assets"},{"a":"Sebastian Doerr, Bank for International Settlements\nGazi Kabas_, Swiss Finance Institute\nSteven Ongena, University of Zurich","s":20,"t":"Population Aging and Bank Risk Taking"},{"a":"Marco Giacoletti, University of Southern California\nChristopher Parsons, University of Southern California","s":48,"t":"Propagating Experiences by Competing: Micro Level Evidence from Real Estate"},{"a":"Samuel Antill, Harvard University\nSteven Grenadier, Stanford University","s":28,"t":"Financing the Litigation Arms Race"},{"a":"Jonathan Brogaard, University of Utah\nMatthew C. Ringgenberg, University of Utah\nDominik Rosch, State University of New York Buffalo","s":11,"t":"Does Floor Trading Matter?"},{"a":"Wanbin Pan, University of Science and Technology of China\nZhiwei Su, Tsinghua University\nHuijun Wang, Auburn University\nJianfeng Yu, Tsinghua University","s":22,"t":"Extrapolative Market Participation"},{"a":"Hengjie Ai, University of Wisconsin Madison\nLeyla Jianyu Han, Boston University\nLai Xu, Syracuse University","s":22,"t":"Information Driven Volatility"},{"a":"Ilona Babenko, Arizona State University\nBenjamin Bennett, Tulane University\nRik Sen, University of New South Wales","s":26,"t":"Regulating CEO Pay: Evidence from the Nonprofit Revitalization Act"},{"a":"Hedi Benamar, Federal Reserve Board of Governors\nClara Vega, Federal Reserve Board of Governors\nAlain Chaboud, Federal Reserve Board of Governors","s":25,"t":"Central Bank Communication Choices: Adverse Selection, Volatility and Liquidity in a Market With Fast and Slow Traders"},{"a":"Vadim Elenev, Johns Hopkins University\nTim Landvoigt, University of Pennsylvania\nPatrick J. Shultz, University of Pennsylvania\nStijn Van Nieuwerburgh, Columbia University","s":37,"t":"Can Monetary Policy Create Fiscal Capacity?"},{"a":"Emil Siriwardane, Harvard University\nAditya Sunderam, Harvard University\nJonathan Wallen, Harvard University","s":16,"t":"Segmented Arbitrage"},{"a":"Borja Larrain, Pontificia Universidad Cat_lica de Chile\nGordon M. Phillips, Dartmouth College\nGiorgo Sertsios, University of Wisconsin Milwaukee\nFrancisco Urzua, City University of London","s":36,"t":"The Effects of Going Public on Firm Performance and Commercialization Strategy: Evidence from International IPOs"},{"a":"Winston Dou, University of Pennsylvania\nWei Wang, Queen's University\nWenyu Wang, Indiana University","s":45,"t":"Dissecting Lender Market Power in Distressed Loan Pricing"},{"a":"Arka Prava Bandyopadhyay, University of Colorado Boulder","s":12,"t":"Agency Conflicts in Securitization: Evidence from Ginnie Mae Early Buyouts"},{"a":"Dan Luo, University of Chicago","s":23,"t":"Raising Capital from Investor Syndicates with Strategic Communication"},{"a":"Xuelin Li, University of South Carolina\nMartin Szydlowski, University of Minnesota\nFangyuan Yu, University of Minnesota","s":36,"t":"Hype Cycles: Dynamic Information Design with Two Audiences"},{"a":"Corey Garriott, Bank of Canada\nVincent van Kervel, Pontificia Universidad Cat_lica de Chile\nMarius Zoican, University of Toronto","s":8,"t":"Risk Sharing in Time Priority Markets"},{"a":"Michael Reher, University of California San Diego\nRossen Valkanov, University of California San Diego","s":15,"t":"The Mortgage Cash Premium Puzzle"},{"a":"Sebastian Hillenbrand, New York University","s":44,"t":"The Fed and the Secular Decline in Interest Rates"},{"a":"Taha Choukhmane, Massachusetts Institute of Technology\nJorge Colmenares, Massachusetts Institute of Technology\nCormac O'Dea, Yale University\nJonathan Rothbaum, U.S. Bureau of the Census\nLawrence D. W. Schmidt, Massachusetts Institute of Technology","s":29,"t":"Who Benefits from Retirement Saving Incentives in the U.S.? Evidence on Racial Gaps in Retirement Wealth Accumulation"},{"a":"Leonard Kostovetsky, Boston College\nJerold Warner, University of Rochester","s":46,"t":"The Market for Fund Benchmarks: Evidence from ETFs"},{"a":"Sean Myers, University of Pennsylvania","s":18,"t":"Public Employee Pensions and Municipal Insolvency"},{"a":"Yesol Huh, Federal Reserve Board of Governors\nYou Suk Kim, Federal Reserve Board of Governors","s":12,"t":"Cheapest to Deliver Pricing, Optimal MBS Securitization, and Market Quality"},{"a":"Nicolas Hommel, Princeton University\nAugustin Landier, HEC Paris\nDavid Thesmar, Massachusetts Institute of Technology","s":36,"t":"What Works Best in Capital Budgeting?"},{"a":"Stephanie Johnson, Rice University","s":34,"t":"Mortgage Leverage and House Prices"},{"a":"Andrew Ellul, Indiana University\nCarlo Altavilla, Parthenope University of Naples\nMarco Pagano, Universit_ degli Studi di Napoli Federico II\nAndrea Polo, Luiss Guido Carli University\nThomas Vlassopoulos, European Central Bank","s":2,"t":"Loan Guarantees, Bank Lending and Credit Risk Reallocation"},{"a":"Brittany Lewis, Washington University St. Louis","s":45,"t":"Creditor Rights, Collateral Reuse, and Credit Supply"},{"a":"Aymeric Bellon, University of Pennsylvania","s":3,"t":"Fresh Start or Fresh Water: The Impact of Environmental Lender Liability"},{"a":"David Skeie, University of Warwick","s":4,"t":"Digital Currency Runs"},{"a":"Marco Sammon, Northwestern University","s":30,"t":"Passive Ownership and Price Informativeness"},{"a":"Ali Sanati, American University","s":40,"t":"How Does Removing the Tax Benefits of Debt Affect Firms? Evidence from the 2017 US Tax Reform"},{"a":"Zhengyang Jiang, Northwestern University\nRobert Richmond, New York University\nTony Zhang, Federal Reserve Board of Governors","s":13,"t":"A Portfolio Approach to Global Imbalances"},{"a":"Qihui Chen, Chinese University of Hong Kong Shenzhen\nNick Roussanov, University of Pennsylvania\nXiaoliang Wang, University of Pennsylvania","s":6,"t":"Semiparametric Conditional Factor Models: Estimation and Inference"},{"a":"Cl_ment Mazet Sonilhac, Banque de France","s":45,"t":"Information Frictions in Credit Markets"},{"a":"Zhengyang Jiang, Northwestern University\nHanno Lustig, Stanford University\nStijn Van Nieuwerburgh, Columbia University\nMindy Z. Xiaolan, University of Texas Austin","s":5,"t":"Bond Convenience Yields in the Eurozone Currency Union"},{"a":"Kose John, New York University\nThomas Rivera, McGill University\nFahad Saleh, Wake Forest University","s":39,"t":"Equilibrium Staking Levels in a Proof of Stake Blockchain"},{"a":"Andrey Malenko, University of Michigan\nNadya Malenko, University of Michigan\nChester S. Spatt, Carnegie Mellon University","s":10,"t":"Creating Controversy in Proxy Voting Advice"},{"a":"Mikhail Galashin, University of California Los Angeles\nMartin Kanz, World Bank\nRicardo Perez Truglia, University of California Berkeley","s":48,"t":"Macroeconomic Expectations and Credit Card Spending"},{"a":"Jian Feng, University of Hong Kong\nShiyang Huang, University of Hong Kong\nJiacui Li, University of Utah\nYang Song, University of Washington","s":38,"t":"Sluggish Price Reaction to Salient and Repeated Macroeconomic Releases"},{"a":"Yongjin Kim, City University of Hong Kong\nLars Alexander Kuehn, Carnegie Mellon University\nKai Li, Peking University","s":1,"t":"Learning about the Consumption Risk Exposure of Firms"},{"a":"Jitendra Aswani, Fordham University\nShivaram Rajgopal, Columbia University\nAneesh Raghunandan, London School of Economics and Political Science","s":3,"t":"Are Carbon Emissions Associated with Stock Returns ?"},{"a":"Ryan Lewis, University of Colorado\nShrihari Santosh, University of Colorado Boulder","s":9,"t":"Investor Betas"},{"a":"Alex Edmans, London Business School\nTom Gosling, London Business School\nDirk Jenter, London School of Economics and Political Science","s":26,"t":"CEO Compensation: Evidence From the Field"},{"a":"Umang Khetan, University of Iowa\nPetra Sinagl, University of Iowa","s":24,"t":"Uninformed but Predictable: Corporate Trading and Price Discovery in Over the counter FX Markets"},{"a":"Katrin G_dker, Maastricht University\nTerrance Odean, University of California Berkeley","s":15,"t":"Disposed to Be Overconfident"},{"a":"Benjamin Collier, Temple University\nCameron M. Ellis, Temple University\nBenjamin J. Keys, University of Pennsylvania","s":34,"t":"The Cost of Consumer Collateral: Evidence from Bunching"},{"a":"Brent Glover, Carnegie Mellon University\nOliver Levine, University of Wisconsin Madison","s":40,"t":"Corporate Tax Avoidance, Firm Size, and Capital Misallocation"},{"a":"Ruidi Huang, Southern Methodist University\nErik Mayer, Southern Methodist University\nDarius Miller, Southern Methodist University","s":29,"t":"Gender Bias in Promotions: Evidence from Financial Institutions"},{"a":"Danqi Hu, Northwestern University\nCharles M. Jones, Columbia University\nValerie Zhang, Northwestern University\nXiaoyan Zhang, Tsinghua University","s":35,"t":"The Rise of Reddit: How Social Media Affects Retail Investors and Short sellers' Roles in Price Discovery"},{"a":"errence Hendershott, University of California Berkeley\nDan Li, Federal Reserve Board of Governors\nDmitry Livdan, University of California Berkeley\nNorman Sch_rhoff, University of Lausanne\nKumar Venkataraman, Southern Methodist University","s":14,"t":"Quote Competition in Corporate Bonds"},{"a":"Ye Zhang, Stockholm School of Economics","s":3,"t":"Impact Investing and Venture Capital Industry: Experimental Evidence"},{"a":"Francesco D'Acunto, Boston College\nDaniel Hoang, Karlsruhe Institute of Technology\nMaritta Paloviita, Bank of Finland\nMichael Weber, University of Chicago","s":38,"t":"Human Frictions in the Transmission of Economic Policy"},{"a":"Fabio Braggion, Tilburg University\nFelix von Meyerinck, Tilburg University\nNic Schaub, WHU - Otto Beisheim School of Management","s":4,"t":"Inflation and Individual Investors' Behavior: Evidence from the German Hyperinflation"},{"a":"Joao Granja, University of Chicago\nNuno Paixao, Bank of Canada","s":20,"t":"Bank Consolidation and Uniform Pricing"},{"a":"Thomas Philippon, New York University\nOlivier Wang, New York University","s":20,"t":"Let the Worst One Fail: A Credible Solution to the Too Big To Fail Conundrum"},{"a":"Bernardo Guimaraes, Funda__o Get_lio Vargas\nPierluca Pannella, Funda__o Get_lio Vargas","s":31,"t":"Short Squeeze Bubbles"},{"a":"Raymond Kan, University of Toronto\nJiening Pan, Nankai University","s":47,"t":"Finite Sample Analysis of Predictive Regressions with Long Horizon Returns"},{"a":"Ramin Hassan, University of Minnesota\nErik Loualiche, University of Minnesota\nAlexandre R. Pecora, University of Minnesota\nColin Ward, University of Minnesota","s":7,"t":"International Trade and the Risk in Bilateral Exchange Rates"},{"a":"James Dow, London Business School\nJungsuk Han, Seoul National University\nFrancesco Sangiorgi, Frankfurt School of Finance and Management","s":26,"t":"The Short Termism Trap: Competition for Informed Investors under Stock Based CEO Compensation"},{"a":"Manasa Gopal, Georgia Institute of Technology\nPhilipp Schnabl, New York University","s":39,"t":"The Rise of Finance Companies and FinTech Lenders in Small Business Lending"},{"a":"Adrian Lam, Imperial College London","s":28,"t":"Do Health Risks Shape Firm Boundaries?"},{"a":"Guihai Zhao, Bank of Canada\nMing Zeng, University of Gothenburg","s":47,"t":"Expectation Driven Term Structure of Equity and Bond Yields,"},{"a":"Leonid Kogan, Massachusetts Institute of Technology\nDimitris Papanikolaou, Northwestern University\nLawrence D. W. Schmidt, Massachusetts Institute of Technology\nBryan Seegmiller, Massachusetts Institute of Technology","s":19,"t":"Technology Skill Complementarity and Labor Displacement: Evidence from Linking Two Centuries of Patents with Occupations"},{"a":"Poorya Kabir, National University of Singapore\nSeyed Mohammad Mansouri, Columbia University","s":16,"t":"Capital Quality, Productivity, and Financial Constraints: Evidence from India"},{"a":"Juan Antolin Diaz, London Business School\nIvan Petrella, University of Warwick\nJuan Rubio Ramirez, Emory University","s":47,"t":"Dividend Momentum and Stock Return Predictability: A Bayesian Approach"},{"a":"Shai Bernstein, Harvard University\nKunal Mehta,\nRichard Townsend, University of California San Diego\nTing Xu, University of Virginia","s":23,"t":"Reputation Spillovers in Venture Capital: Evidence from a Randomized Field Experiment"},{"a":"Jonathan Berk, Stanford University\nJules Van Binsbergen, University of Pennsylvania","s":17,"t":"The Impact of Impact Investing"},{"a":"Snehal Banerjee, University of California San Diego\nBradyn Breon Drish, University of California San Diego\nKevin Smith, Stanford University","s":1,"t":"Feedback Effects with Risk Aversion: An Application to Climate Risk"},{"a":"Jaewon Choi, University of Illinois Urbana Champaign\nMahyar Kargar, University of Illinois Urbana Champaign\nXu Tian, University of Georgia\nYufeng Wu, University of Illinois Urbana Champaign","s":1,"t":"Investor Demand, Financial Market Power, and Capital Misallocation"}];
+
+    function performSearch() {
+        const input = document.getElementById('searchInput');
+        const query = input.value.toLowerCase().trim();
+        const resultsDiv = document.getElementById('searchResults');
+        
+        if (query.length < 2) {
+            resultsDiv.style.display = 'none';
+            return;
+        }
+
+        const hits = searchIndex.filter(p => 
+            p.t.toLowerCase().includes(query) || (p.a && p.a.toLowerCase().includes(query))
+        ).slice(0, 10);
+
+        if (hits.length > 0) {
+            resultsDiv.innerHTML = hits.map(h => `
+                <a href="session_${h.s}.html" class="search-result-item">
+                    <div class="search-result-title">${h.t}</div>
+                    <div class="search-result-author">${h.a}</div>
+                </a>
+            `).join('');
+            resultsDiv.style.display = 'block';
+        } else {
+            resultsDiv.innerHTML = '<div style="padding: 10px; color: #718096; font-size: 0.85em;">見つかりませんでした</div>';
+            resultsDiv.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function(event) {
+        const container = document.querySelector('.search-container');
+        if (container && !container.contains(event.target)) {
+            document.getElementById('searchResults').style.display = 'none';
+        }
+    });
+</script>
+<button class="accordion-btn">Asset Pricing and Empirical Methods <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_5.html" class="session-link ">Bond Markets</a><a href="session_6.html" class="session-link ">Methods</a><a href="session_9.html" class="session-link ">Factors</a><a href="session_13.html" class="session-link ">Global Investing</a><a href="session_22.html" class="session-link ">Market Characteristics</a><a href="session_31.html" class="session-link ">Markets and Shorts</a><a href="session_47.html" class="session-link ">Predictability</a></div><button class="accordion-btn">Corporate Finance and Governance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_1.html" class="session-link ">Demand for Capital</a><a href="session_10.html" class="session-link ">Corporate Decisions</a><a href="session_14.html" class="session-link ">Market Competition</a><a href="session_16.html" class="session-link ">Financial Constraints</a><a href="session_23.html" class="session-link ">Raising Capital</a><a href="session_26.html" class="session-link ">CEO Compensation</a><a href="session_28.html" class="session-link ">Litigation</a><a href="session_36.html" class="session-link ">Corporate Finance</a><a href="session_40.html" class="session-link ">Taxes</a><a href="session_41.html" class="session-link ">Incentives</a></div><button class="accordion-btn">Financial Intermediation and Debt Markets <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_2.html" class="session-link ">Lending</a><a href="session_12.html" class="session-link ">Securitization</a><a href="session_18.html" class="session-link ">Institutional Borrowing</a><a href="session_20.html" class="session-link ">Bank Risk</a><a href="session_30.html" class="session-link ">Funds and markets</a><a href="session_37.html" class="session-link ">Long Debt</a><a href="session_45.html" class="session-link ">Credit Markets</a><a href="session_46.html" class="session-link ">Funds</a></div><button class="accordion-btn">Household and Behavioral Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_4.html" class="session-link ">Paying</a><a href="session_15.html" class="session-link ">Investor Decisions</a><a href="session_29.html" class="session-link ">Bias</a><a href="session_34.html" class="session-link ">Consumer Credit</a><a href="session_38.html" class="session-link ">Updating</a><a href="session_48.html" class="session-link ">Consumer Decisions</a></div><button class="accordion-btn">Macro-Finance and International Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_7.html" class="session-link ">Currencies</a><a href="session_19.html" class="session-link ">Rigidities</a><a href="session_21.html" class="session-link ">Government Funding</a><a href="session_25.html" class="session-link ">Central Bank Actions</a><a href="session_32.html" class="session-link ">Macro Shocks</a><a href="session_33.html" class="session-link ">Macro Finance</a><a href="session_44.html" class="session-link ">Treasuries</a></div><button class="accordion-btn">Market Microstructure, Information, and FinTech <span>▲</span></button><div class="accordion-content" style="display: block;"><a href="session_8.html" class="session-link ">Market Design</a><a href="session_11.html" class="session-link ">Technology and Decisions</a><a href="session_24.html" class="session-link ">Quoting and Prices</a><a href="session_27.html" class="session-link ">Microstructure</a><a href="session_35.html" class="session-link ">Media</a><a href="session_39.html" class="session-link ">FinTech</a><a href="session_42.html" class="session-link active">Gigs and Networks</a></div><button class="accordion-btn">ESG and Sustainable Finance <span>▼</span></button><div class="accordion-content" style="display: none;"><a href="session_3.html" class="session-link ">Impact Investing</a><a href="session_17.html" class="session-link ">ESG</a><a href="session_43.html" class="session-link ">Climate Finance</a></div></div><div class="main-content"><h1>Gigs and Networks</h1><div class="paper-card">
+    <div class="paper-title">The Conglomerate Network</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Authors: Kenneth Ahern (University of Southern California), Lei Kong (University of Alabama), Xinyan Yan (University of Dayton)</div>
+    <a href="https://westernfinance-portal.org/viewpaper.php?n=841204" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">7,930億ドルのPaycheck Protection Program（PPP）では、未登録の事業、住宅地にある複数の事業、従業員一人当たりの暗黙の報酬が異常に高い、別の政府プログラムで報告された仕事と大きな矛盾があるなど、誤報の可能性に関する指標を検証しています。これらの指標はすべて一貫して特定のFinTechレンダーに集中しており、7つの追加指標によって相互検証されています。不審な貸付は特定の郡や郵便番号に大きく集中し、その集中は社会的なつながりと強く関連しており、ソーシャルメディアを通じての拡散と一致しています。疑わしい融資とFinTechの市場シェアは時間とともに大きく増加し、疑わしい融資でも圧倒的に免責されている。</p>
+        <p class="abstract-text en">In the $793 billion Paycheck Protection Program (PPP), we examine metrics related to potential misreporting including non registered businesses, multiple businesses at residential addresses, abnormally high implied compensation per employee, and large inconsistencies with jobs reported in another government program. All of these measures consistently concentrate in certain FinTech lenders and are cross verified by seven additional measures. Suspicious lending heavily clusters in certain counties and zip codes, and the clustering is strongly related to social connections, consistent with spread through social media. Suspicious lending and FinTech market share increased significantly over time, and even suspicious loans are being overwhelmingly forgiven.</p>
+    </div>
+</div> <div class="paper-card">
+    <div class="paper-title">The Distributional Impact of the Sharing Economy on the Housing Market</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Author: Sophie Calder Wang (University of Pennsylvania)</div>
+    <a href="https://westernfinance-portal.org/viewpaper.php?n=783608" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">本研究は、米国の公的年金におけるペイ・トゥ・プレイの浸透度を調査するものである。投資顧問会社の政府顧客の存在と、過去のオーナーや役員による有力な州政治家への献金との間に、強い正の統計的に有意な関係があることを実証した。我々は、ペイ・トゥ・プレイ活動を禁止するSEC規則206(4)-5を準実験として採用した。規則採用以前は、寄付をするアドバイザーは、寄付をしないアドバイザーに比べて、顧客基盤に占める公的年金の割合が2倍近くあった。しかし、ルール制定後、公的年金に投資するアドバイザーの寄付が急激に減少していることが確認された。</p>
+        <p class="abstract-text en">This study investigates the pervasiveness of pay to play in U.S. public pensions. We document a strong positive and statistically significant relation between the presence of government clients for an investment advisory firm and past owner and officer donations to influential state politicians. We use the adoption of SEC Rule 206(4)-5 which prohibited pay to play activities as a quasiexperiment. Prior to rule adoption, advisors that donate have nearly twice the percentage of public pensions in their client base relative to non donor advisors. We observe a precipitous decline in donations made by advisors catering to public pension plans post rule enactment.</p>
+    </div>
+</div> <div class="paper-card">
+    <div class="paper-title">Entrepreneurship and the Platform Economy: Evidence from U.S. Tax Returns</div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="color: #718096;">Authors: Matthew Denes (Carnegie Mellon University), Spyridon Lagaras (University of Pittsburgh), Margarita Tsoutsoura (Cornell University)</div>
+    <a href="https://westernfinance-portal.org/viewpaper.php?n=803488" target="_blank" rel="noopener noreferrer" class="pdf-btn">
+        <span class="pdf-icon">📄</span> PDF
+    </a>
+    </div> <div class="abstract-box">
+        <div class="lang-tabs">
+            <button class="lang-btn active" onclick="switchLang(this, 'ja')">日本語</button>
+            <button class="lang-btn" onclick="switchLang(this, 'en')">English</button>
+        </div>
+        <p class="abstract-text ja active">既存製品の市場支配力は、企業の技術革新に対するインセンティブにどのような影響を与えるのだろうか。我々は、製薬業界のプロジェクトレベルおよび企業レベルの詳細なデータを用いて、この基本的な疑問を検討した。既存企業が市場支配力を維持するための特別なメカニズムとして、競合企業の市場参入を遅らせるための「リバースペイメント」または「ペイ・フォー・ディレイ」契約に注目した。まず、「遅延損害金」契約の利用が自由である場合、企業は直接競合企業の参入の可能性に応じてイノベーション活動を抑制することを明らかにする。次に、このような協定を反トラスト法違反の訴訟の対象とし、協定締結のインセンティブを低下させる判決を検討する。その結果、既存企業は競争相手の参入に対応するため、イノベーション活動を増加させた。その結果、イノベーションの質が向上し、科学的・商業的価値が高まったことが明らかになった。このような効果は、競争の影響をより直接的に受ける製品を持つ企業を中心に現れている。しかし、製品治療分野のレベルでは、競争激化に対応して、判決後に新規参入企業によるイノベーションが減少していることが分かった。全体として、これらの結果は、企業が市場支配力を維持できるようになるとイノベーションを起こすインセンティブが低下することと整合的であり、このことが起こる特定のチャンネルが強調された。</p>
+        <p class="abstract-text en">How does a firm's market power in existing products affect its incentives to innovate? We explore this fundamental question using granular project- and firm level data from the pharmaceutical industry, focusing on a particular mechanism through which incumbent firms maintain their market power: 'reverse payment' or 'pay for delay' agreements to delay the market entry of competitors. We first show that when firms are unfettered in their use of 'pay for delay' agreements, they reduce their innovation activities in response to the potential entry of direct competitors. We then examine a legal ruling that subjected these agreements to antitrust litigation, thereby reducing the incentive to enter into them. After the ruling, incumbent firms increased their net innovation activities in response to competitive entry. We provide evidence that this innovation is of higher 'quality' - it has greater scientific and commercial value. These effects are centered on firms with products that are more directly affected by competition. However, at the level of product therapeutic area, we find a reduction in innovation by new entrants after the ruling in response to increased competition. Overall, these results are consistent with firms having reduced incentives to innovate when they are able to maintain their market power, highlighting a specific channel through which this occurs.</p>
+    </div>
+</div>     </div>
+    <script>
+    function switchLang(btn, lang) {
+        const box = btn.closest('.abstract-box');
+        box.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        box.querySelectorAll('.abstract-text').forEach(t => t.classList.remove('active'));
+        box.querySelector('.abstract-text.' + lang).classList.add('active');
+    }
+    document.querySelectorAll(".accordion-btn").forEach(btn => {
+        btn.onclick = () => {
+            const content = btn.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            btn.querySelector("span").textContent = isOpen ? "▼" : "▲";
+        };
+    });
+    </script>
+</body></html>
